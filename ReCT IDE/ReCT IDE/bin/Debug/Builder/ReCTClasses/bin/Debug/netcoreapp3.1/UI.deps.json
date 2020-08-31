@@ -6,15 +6,15 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v3.1": {
-      "yyyyy/1.0.0": {
+      "UI/1.0.0": {
         "runtime": {
-          "yyyyy.dll": {}
+          "UI.dll": {}
         }
       }
     }
   },
   "libraries": {
-    "yyyyy/1.0.0": {
+    "UI/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

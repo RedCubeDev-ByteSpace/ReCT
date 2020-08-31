@@ -37,3 +37,39 @@ C:\Users\User\Desktop\ReCT [even mucher secret]\ReCT IDE\ReCT IDE\obj\Debug\Inte
 C:\Users\User\Desktop\ReCT [even mucher secret]\ReCT IDE\ReCT IDE\obj\Debug\AxInterop.WMPLib.dll
 C:\Users\User\Desktop\ReCT [even mucher secret]\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.ResolveComReference.cache
 C:\Users\User\Desktop\ReCT [even mucher secret]\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Startup.resources
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT IDE.exe.config
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT IDE.exe
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT IDE.pdb
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Mdb.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Pdb.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Rocks.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Buffers.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Collections.Immutable.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Memory.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.pdb
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Mdb.pdb
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Pdb.pdb
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Rocks.pdb
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Buffers.xml
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Collections.Immutable.xml
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Memory.xml
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Interop.WMPLib.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\AxInterop.WMPLib.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csprojAssemblyReference.cache
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\Interop.WMPLib.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\AxInterop.WMPLib.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.ResolveComReference.cache
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Error.resources
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Form1.resources
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Properties.Resources.resources
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Startup.resources
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.GenerateResource.cache
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.CoreCompileInputs.cache
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.CopyComplete
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.exe
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.pdb

@@ -289,6 +289,7 @@ namespace ReCT_IDE
 
         private void Build_Click(object sender, EventArgs e)
         {
+            Typechecker.Enabled = false;
             errorBox.Hide();
             saveFileDialog1.Filter = "Command (*.cmd)|*.cmd|All files (*.*)|*.*";
             var res = saveFileDialog1.ShowDialog();
@@ -299,9 +300,10 @@ namespace ReCT_IDE
             if (fileChanged)
                 Save_Click(this, new EventArgs());
 
-            rectComp.CompileRCTBC (openFile, saveFileDialog1.FileName);
+            rectComp.CompileRCTBC (saveFileDialog1.FileName, openFile, errorBox);
 
             System.Diagnostics.Process.Start("explorer.exe", string.Format("/select,\"{0}\"", saveFileDialog1.FileName));
+            Typechecker.Enabled = true;
         }
 
         private void CodeBox_Chnaged(object sender, TextChangedEventArgs e)

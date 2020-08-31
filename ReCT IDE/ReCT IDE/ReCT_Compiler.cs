@@ -41,14 +41,31 @@ namespace ReCT_IDE
                 Variables = "(" + Variables + ")";
             }
         }
-        public void CompileRCTBC(string fileOut, string code)
+        public void CompileRCTBC(string fileOut, string inPath, Error errorBox)
         {
-            var syntaxTree = SyntaxTree.Parse(code);
+            var syntaxTree = SyntaxTree.Load(inPath);
             var compilation = Compilation.Create(syntaxTree);
-            var errors = compilation.Emit(Path.GetFileNameWithoutExtension(fileOut), new string[] { @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Console.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.Extensions.dll" }, Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll"); ;
+            var errors = compilation.Emit(Path.GetFileNameWithoutExtension(fileOut), new string[] { @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Console.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.Extensions.dll" }, Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
+
+            Console.WriteLine(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
 
             if (errors.Any())
+            {
                 Console.WriteLine("oof");
+                errorBox.Show();
+                errorBox.errorBox.Clear();
+                foreach (Diagnostic d in errors)
+                {
+                    if (d.Location.Text != null)
+                    {
+                        errorBox.errorBox.Text += $"[L: {d.Location.StartLine}, C: {d.Location.StartCharacter}] {d.Message}\n";
+                    }
+                    else
+                        errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
+                }
+                errorBox.version.Text = ReCT.info.Version;
+                return;
+            }
 
             //generate runtimeconfig
             using (StreamWriter sw = new StreamWriter(new FileStream(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".runtimeconfig.json", FileMode.Create)))

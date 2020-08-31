@@ -1,0 +1,9 @@
+C:\Users\User\source\repos\ReCT\ReCT\ReCT\bin\Debug\netstandard2.1\ReCT.deps.json
+C:\Users\User\source\repos\ReCT\ReCT\ReCT\bin\Debug\netstandard2.1\ReCT.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT\bin\Debug\netstandard2.1\ReCT.pdb
+C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.1\ReCT.csprojAssemblyReference.cache
+C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.1\ReCT.AssemblyInfoInputs.cache
+C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.1\ReCT.AssemblyInfo.cs
+C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.1\ReCT.csproj.CoreCompileInputs.cache
+C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.1\ReCT.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.1\ReCT.pdb

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Desktop\\ReCT [even mucher secret]\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\yyyyy.rcproj": {}
+    "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\UI.rcproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Desktop\\ReCT [even mucher secret]\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\yyyyy.rcproj": {
+    "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\UI.rcproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\ReCT [even mucher secret]\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\yyyyy.rcproj",
-        "projectName": "yyyyy",
-        "projectPath": "C:\\Users\\User\\Desktop\\ReCT [even mucher secret]\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\yyyyy.rcproj",
+        "projectUniqueName": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\UI.rcproj",
+        "projectName": "UI",
+        "projectPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\UI.rcproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\ReCT [even mucher secret]\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\obj\\",
+        "outputPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"

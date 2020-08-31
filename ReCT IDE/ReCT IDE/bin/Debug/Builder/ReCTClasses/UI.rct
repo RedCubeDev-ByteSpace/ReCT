@@ -7,12 +7,13 @@ set winW <- 50;
 set viewPortW <- 100;
 set viewPortH <- 30;
 
+
 while(true)
 {
     draw();
     Input();
     winPosX <- winPosX + 1;
-}
+}   
 
 function draw()
 {

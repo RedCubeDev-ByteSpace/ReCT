@@ -1,0 +1,9 @@
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\UI.exe
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\UI.deps.json
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\UI.runtimeconfig.json
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\UI.runtimeconfig.dev.json
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\UI.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\obj\Debug\netcoreapp3.1\UI.rcprojAssemblyReference.cache
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\obj\Debug\netcoreapp3.1\UI.rcproj.CoreCompileInputs.cache
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\obj\Debug\netcoreapp3.1\UI.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\obj\Debug\netcoreapp3.1\UI.genruntimeconfig.cache

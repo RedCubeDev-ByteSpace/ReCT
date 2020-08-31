@@ -20,6 +20,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _consoleReadLineReference;
         private readonly MethodReference _consoleWriteLineReference;
         private readonly MethodReference _consoleClearReference;
+        private readonly MethodReference _consoleSetCoursorReference;
         private readonly MethodReference _stringConcatReference;
         private readonly MethodReference _convertToBooleanReference;
         private readonly MethodReference _convertToInt32Reference;
@@ -149,6 +150,7 @@ namespace ReCT.CodeAnalysis.Emit
             _consoleReadLineReference = ResolveMethod("System.Console", "ReadLine", Array.Empty<string>());
             _consoleWriteLineReference = ResolveMethod("System.Console", "WriteLine", new [] { "System.String" });
             _consoleClearReference = ResolveMethod("System.Console", "Clear", Array.Empty<string>());
+            _consoleSetCoursorReference = ResolveMethod("System.Console", "SetCursorPosition", new[] { "System.Int32", "System.Int32" });
 
             _stringConcatReference = ResolveMethod("System.String", "Concat", new [] { "System.String", "System.String" });
             _convertToBooleanReference = ResolveMethod("System.Convert", "ToBoolean", new [] { "System.Object" });
@@ -586,6 +588,10 @@ namespace ReCT.CodeAnalysis.Emit
             else if (node.Function == BuiltinFunctions.Clear)
             {
                 ilProcessor.Emit(OpCodes.Call, _consoleClearReference);
+            }
+            else if (node.Function == BuiltinFunctions.SetCoursor)
+            {
+                ilProcessor.Emit(OpCodes.Call, _consoleSetCoursorReference);
             }
             else
             {

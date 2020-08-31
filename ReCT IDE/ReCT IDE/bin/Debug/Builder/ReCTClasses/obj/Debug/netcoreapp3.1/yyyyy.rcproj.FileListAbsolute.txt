@@ -1,9 +1,0 @@
-C:\Users\User\Desktop\ReCT [even mucher secret]\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\yyyyy.exe
-C:\Users\User\Desktop\ReCT [even mucher secret]\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\yyyyy.deps.json
-C:\Users\User\Desktop\ReCT [even mucher secret]\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\yyyyy.runtimeconfig.json
-C:\Users\User\Desktop\ReCT [even mucher secret]\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\yyyyy.runtimeconfig.dev.json
-C:\Users\User\Desktop\ReCT [even mucher secret]\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\yyyyy.dll
-C:\Users\User\Desktop\ReCT [even mucher secret]\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\obj\Debug\netcoreapp3.1\yyyyy.rcprojAssemblyReference.cache
-C:\Users\User\Desktop\ReCT [even mucher secret]\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\obj\Debug\netcoreapp3.1\yyyyy.rcproj.CoreCompileInputs.cache
-C:\Users\User\Desktop\ReCT [even mucher secret]\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\obj\Debug\netcoreapp3.1\yyyyy.dll
-C:\Users\User\Desktop\ReCT [even mucher secret]\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\obj\Debug\netcoreapp3.1\yyyyy.genruntimeconfig.cache

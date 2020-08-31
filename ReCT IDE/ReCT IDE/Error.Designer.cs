@@ -55,14 +55,13 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox1.Location = new System.Drawing.Point(42, 88);
+            this.pictureBox1.Location = new System.Drawing.Point(33, 65);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(69, 164);
+            this.pictureBox1.Size = new System.Drawing.Size(62, 212);
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
             // 
@@ -79,6 +78,9 @@
             // 
             // pictureBox2
             // 
+            this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox2.BackgroundImage")));
             this.pictureBox2.Location = new System.Drawing.Point(-1, -2);
             this.pictureBox2.Name = "pictureBox2";
