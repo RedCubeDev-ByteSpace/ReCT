@@ -73,3 +73,5 @@ C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.CopyComplete
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.exe
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.pdb
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT.pdb
