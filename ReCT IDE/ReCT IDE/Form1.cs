@@ -29,6 +29,7 @@ namespace ReCT_IDE
 
         public Form1()
         {
+            
             InitializeComponent();
         }
 
