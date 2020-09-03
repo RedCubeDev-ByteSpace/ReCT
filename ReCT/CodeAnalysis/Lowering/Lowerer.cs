@@ -226,6 +226,7 @@ namespace ReCT.CodeAnalysis.Lowering
             );
             var whileStatement = new BoundWhileStatement(condition, whileBody, node.BreakLabel, GenerateLabel());
             var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
+                node.Variable,
                 increment,
                 whileStatement
             ));
