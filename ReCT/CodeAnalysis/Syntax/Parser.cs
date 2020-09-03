@@ -279,14 +279,28 @@ namespace ReCT.CodeAnalysis.Syntax
         private StatementSyntax ParseForStatement()
         {
             var keyword = MatchToken(SyntaxKind.ForKeyword);
-            var identifier = MatchToken(SyntaxKind.IdentifierToken);
-            var equalsToken = MatchToken(SyntaxKind.AssignToken);
-            var lowerBound = ParseExpression();
-            var toKeyword = MatchToken(SyntaxKind.ToKeyword);
-            var upperBound = ParseExpression();
+            MatchToken(SyntaxKind.OpenParenthesisToken);
+            var variable = ParseVariableDeclaration();
+            var condition = ParseExpression();
+            var action = ParseExpression();
+            MatchToken(SyntaxKind.CloseParenthesisToken);
             var body = ParseStatement();
-            return new ForStatementSyntax(_syntaxTree, keyword, identifier, equalsToken, lowerBound, toKeyword, upperBound, body);
+            return new ForStatementSyntax(_syntaxTree, keyword, variable, condition, action, body);
         }
+
+        //private StatementSyntax ParseForStatement()
+        //{
+        //    var keyword = MatchToken(SyntaxKind.ForKeyword);
+        //    MatchToken(SyntaxKind.OpenParenthesisToken);
+        //    var identifier = MatchToken(SyntaxKind.IdentifierToken);
+        //    var equalsToken = MatchToken(SyntaxKind.AssignToken);
+        //    var lowerBound = ParseExpression();
+        //    MatchToken(SyntaxKind.CloseParenthesisToken);
+        //    var toKeyword = MatchToken(SyntaxKind.ToKeyword);
+        //    var upperBound = ParseExpression();
+        //    var body = ParseStatement();
+        //    return new ForStatementSyntax(_syntaxTree, keyword, identifier, equalsToken, lowerBound, toKeyword, upperBound, body);
+        //}
 
         private StatementSyntax ParseBreakStatement()
         {

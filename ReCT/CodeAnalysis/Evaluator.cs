@@ -192,12 +192,22 @@ namespace ReCT.CodeAnalysis
                         return Convert.ToSingle(left) + Convert.ToSingle(right);
                     else
                         return (string)left + (string)right;
+
                 case BoundBinaryOperatorKind.Subtraction:
+                    if (b.Type == TypeSymbol.Float)
+                        return Convert.ToSingle(left) - Convert.ToSingle(right);
                     return (int)left - (int)right;
+
                 case BoundBinaryOperatorKind.Multiplication:
+                    if (b.Type == TypeSymbol.Float)
+                        return Convert.ToSingle(left) * Convert.ToSingle(right);
                     return (int)left * (int)right;
+
                 case BoundBinaryOperatorKind.Division:
+                    if (b.Type == TypeSymbol.Float)
+                        return Convert.ToSingle(left) / Convert.ToSingle(right);
                     return (int)left / (int)right;
+
                 case BoundBinaryOperatorKind.BitwiseAnd:
                     if (b.Type == TypeSymbol.Int)
                         return (int)left & (int)right;

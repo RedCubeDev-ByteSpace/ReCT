@@ -76,8 +76,6 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.SetKeyword;
                 case "return":
                     return SyntaxKind.ReturnKeyword;
-                case "to":
-                    return SyntaxKind.ToKeyword;
                 case "true":
                     return SyntaxKind.TrueKeyword;
                 case "var":
@@ -184,7 +182,7 @@ namespace ReCT.CodeAnalysis.Syntax
                 case SyntaxKind.ReturnKeyword:
                     return "return";
                 case SyntaxKind.ToKeyword:
-                    return "to";
+                    return "-->";
                 case SyntaxKind.TrueKeyword:
                     return "true";
                 case SyntaxKind.VarKeyword:

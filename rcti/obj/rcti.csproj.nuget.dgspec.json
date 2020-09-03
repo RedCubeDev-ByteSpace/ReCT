@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Desktop\\ReCT [much top secret]\\src\\rcti\\rcti.csproj": {}
+    "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\rcti\\rcti.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Desktop\\ReCT [much top secret]\\src\\rcti\\rcti.csproj": {
+    "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\rcti\\rcti.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\ReCT [much top secret]\\src\\rcti\\rcti.csproj",
+        "projectUniqueName": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\rcti\\rcti.csproj",
         "projectName": "rcti",
-        "projectPath": "C:\\Users\\User\\Desktop\\ReCT [much top secret]\\src\\rcti\\rcti.csproj",
+        "projectPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\rcti\\rcti.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\ReCT [much top secret]\\src\\rcti\\obj\\",
+        "outputPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\rcti\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"
@@ -31,8 +31,8 @@
         "frameworks": {
           "netcoreapp3.1": {
             "projectReferences": {
-              "C:\\Users\\User\\Desktop\\ReCT [much top secret]\\src\\ReCT\\ReCT.csproj": {
-                "projectPath": "C:\\Users\\User\\Desktop\\ReCT [much top secret]\\src\\ReCT\\ReCT.csproj"
+              "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT\\ReCT.csproj": {
+                "projectPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT\\ReCT.csproj"
               }
             }
           }
@@ -64,14 +64,14 @@
         }
       }
     },
-    "C:\\Users\\User\\Desktop\\ReCT [much top secret]\\src\\ReCT\\ReCT.csproj": {
+    "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT\\ReCT.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\ReCT [much top secret]\\src\\ReCT\\ReCT.csproj",
+        "projectUniqueName": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT\\ReCT.csproj",
         "projectName": "ReCT",
-        "projectPath": "C:\\Users\\User\\Desktop\\ReCT [much top secret]\\src\\ReCT\\ReCT.csproj",
+        "projectPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT\\ReCT.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\ReCT [much top secret]\\src\\ReCT\\obj\\",
+        "outputPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"

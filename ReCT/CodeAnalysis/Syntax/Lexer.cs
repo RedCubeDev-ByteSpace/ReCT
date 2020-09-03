@@ -49,6 +49,12 @@ namespace ReCT.CodeAnalysis.Syntax
                 case '\0':
                     _kind = SyntaxKind.EndOfFileToken;
                     break;
+
+                case '-' when Lookahead == '-' && Peek(2) == '>':
+                    _kind = SyntaxKind.ToKeyword;
+                    _position += 3;
+                    break;
+
                 case '+':
                     _kind = SyntaxKind.PlusToken;
                     _position++;

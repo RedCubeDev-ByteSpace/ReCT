@@ -107,13 +107,14 @@ namespace ReCT.CodeAnalysis.Binding
 
         protected virtual BoundStatement RewriteForStatement(BoundForStatement node)
         {
-            var lowerBound = RewriteExpression(node.LowerBound);
-            var upperBound = RewriteExpression(node.UpperBound);
+            var variable = RewriteVariableDeclaration((BoundVariableDeclaration)node.Variable);
+            var condition = RewriteExpression(node.Condition);
+            var action = RewriteExpression(node.Action);
             var body = RewriteStatement(node.Body);
-            if (lowerBound == node.LowerBound && upperBound == node.UpperBound && body == node.Body)
+            if (variable == node.Variable && condition == node.Condition && action == node.Action && body == node.Body)
                 return node;
 
-            return new BoundForStatement(node.Variable, lowerBound, upperBound, body, node.BreakLabel, node.ContinueLabel);
+            return new BoundForStatement(node.Variable, condition, action, body, node.BreakLabel, node.ContinueLabel);
         }
 
         protected virtual BoundStatement RewriteLabelStatement(BoundLabelStatement node)

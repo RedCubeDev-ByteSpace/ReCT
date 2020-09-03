@@ -185,15 +185,13 @@ namespace ReCT.CodeAnalysis.Binding
         {
             writer.WriteKeyword(SyntaxKind.ForKeyword);
             writer.WriteSpace();
-            writer.WriteIdentifier(node.Variable.Name);
+            writer.WriteKeyword(SyntaxKind.OpenParenthesisToken);
+            writer.WriteNestedStatement(node.Variable);
             writer.WriteSpace();
-            writer.WritePunctuation(SyntaxKind.AssignToken);
+            writer.WriteNestedExpression(0, node.Condition);
             writer.WriteSpace();
-            node.LowerBound.WriteTo(writer);
-            writer.WriteSpace();
-            writer.WriteKeyword(SyntaxKind.ToKeyword);
-            writer.WriteSpace();
-            node.UpperBound.WriteTo(writer);
+            writer.WriteNestedExpression(0, node.Action);
+            writer.WriteKeyword(SyntaxKind.CloseParenthesisToken);
             writer.WriteLine();
             writer.WriteNestedStatement(node.Body);
         }
