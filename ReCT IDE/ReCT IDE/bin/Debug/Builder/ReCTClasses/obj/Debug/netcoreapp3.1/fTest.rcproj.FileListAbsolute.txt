@@ -1,0 +1,9 @@
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\fTest.exe
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\fTest.deps.json
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\fTest.runtimeconfig.json
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\fTest.runtimeconfig.dev.json
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\bin\Debug\netcoreapp3.1\fTest.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\obj\Debug\netcoreapp3.1\fTest.rcprojAssemblyReference.cache
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\obj\Debug\netcoreapp3.1\fTest.rcproj.CoreCompileInputs.cache
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\obj\Debug\netcoreapp3.1\fTest.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\obj\Debug\netcoreapp3.1\fTest.genruntimeconfig.cache

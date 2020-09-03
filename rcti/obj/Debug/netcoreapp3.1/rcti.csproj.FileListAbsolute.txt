@@ -1,0 +1,40 @@
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\bin\Debug\netcoreapp3.1\rcti.exe
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\bin\Debug\netcoreapp3.1\rcti.deps.json
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\bin\Debug\netcoreapp3.1\rcti.runtimeconfig.json
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\bin\Debug\netcoreapp3.1\rcti.runtimeconfig.dev.json
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\bin\Debug\netcoreapp3.1\rcti.dll
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\bin\Debug\netcoreapp3.1\rcti.pdb
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\bin\Debug\netcoreapp3.1\Mono.Cecil.Mdb.dll
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\bin\Debug\netcoreapp3.1\Mono.Cecil.Pdb.dll
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\bin\Debug\netcoreapp3.1\Mono.Cecil.Rocks.dll
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\bin\Debug\netcoreapp3.1\Mono.Cecil.dll
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\bin\Debug\netcoreapp3.1\ReCT.dll
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\bin\Debug\netcoreapp3.1\ReCT.pdb
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\obj\Debug\netcoreapp3.1\rcti.csprojAssemblyReference.cache
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\obj\Debug\netcoreapp3.1\rcti.AssemblyInfoInputs.cache
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\obj\Debug\netcoreapp3.1\rcti.AssemblyInfo.cs
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\obj\Debug\netcoreapp3.1\rcti.csproj.CoreCompileInputs.cache
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\obj\Debug\netcoreapp3.1\rcti.csproj.CopyComplete
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\obj\Debug\netcoreapp3.1\rcti.dll
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\obj\Debug\netcoreapp3.1\rcti.pdb
+C:\Users\User\Desktop\ReCT [much top secret]\src\rcti\obj\Debug\netcoreapp3.1\rcti.genruntimeconfig.cache
+C:\Users\User\source\repos\ReCT\ReCT\rcti\bin\Debug\netcoreapp3.1\rcti.exe
+C:\Users\User\source\repos\ReCT\ReCT\rcti\bin\Debug\netcoreapp3.1\rcti.deps.json
+C:\Users\User\source\repos\ReCT\ReCT\rcti\bin\Debug\netcoreapp3.1\rcti.runtimeconfig.json
+C:\Users\User\source\repos\ReCT\ReCT\rcti\bin\Debug\netcoreapp3.1\rcti.runtimeconfig.dev.json
+C:\Users\User\source\repos\ReCT\ReCT\rcti\bin\Debug\netcoreapp3.1\rcti.dll
+C:\Users\User\source\repos\ReCT\ReCT\rcti\bin\Debug\netcoreapp3.1\rcti.pdb
+C:\Users\User\source\repos\ReCT\ReCT\rcti\bin\Debug\netcoreapp3.1\Mono.Cecil.Mdb.dll
+C:\Users\User\source\repos\ReCT\ReCT\rcti\bin\Debug\netcoreapp3.1\Mono.Cecil.Pdb.dll
+C:\Users\User\source\repos\ReCT\ReCT\rcti\bin\Debug\netcoreapp3.1\Mono.Cecil.Rocks.dll
+C:\Users\User\source\repos\ReCT\ReCT\rcti\bin\Debug\netcoreapp3.1\Mono.Cecil.dll
+C:\Users\User\source\repos\ReCT\ReCT\rcti\bin\Debug\netcoreapp3.1\ReCT.dll
+C:\Users\User\source\repos\ReCT\ReCT\rcti\bin\Debug\netcoreapp3.1\ReCT.pdb
+C:\Users\User\source\repos\ReCT\ReCT\rcti\obj\Debug\netcoreapp3.1\rcti.csprojAssemblyReference.cache
+C:\Users\User\source\repos\ReCT\ReCT\rcti\obj\Debug\netcoreapp3.1\rcti.AssemblyInfoInputs.cache
+C:\Users\User\source\repos\ReCT\ReCT\rcti\obj\Debug\netcoreapp3.1\rcti.AssemblyInfo.cs
+C:\Users\User\source\repos\ReCT\ReCT\rcti\obj\Debug\netcoreapp3.1\rcti.csproj.CoreCompileInputs.cache
+C:\Users\User\source\repos\ReCT\ReCT\rcti\obj\Debug\netcoreapp3.1\rcti.csproj.CopyComplete
+C:\Users\User\source\repos\ReCT\ReCT\rcti\obj\Debug\netcoreapp3.1\rcti.dll
+C:\Users\User\source\repos\ReCT\ReCT\rcti\obj\Debug\netcoreapp3.1\rcti.pdb
+C:\Users\User\source\repos\ReCT\ReCT\rcti\obj\Debug\netcoreapp3.1\rcti.genruntimeconfig.cache

@@ -220,5 +220,10 @@ namespace ReCT.CodeAnalysis
             var message = $"The required method '{typeName}.{methodName}({parameterTypeNameList})' cannot be resolved among the given references.";
             Report(default, message);
         }
+
+        internal void ReportCustomeMessage(string text)
+        {
+            Report(default, text);
+        }
     }
 }

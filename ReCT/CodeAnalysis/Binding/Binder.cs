@@ -714,6 +714,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.Int;
                 case "string":
                     return TypeSymbol.String;
+                case "float":
+                    return TypeSymbol.Float;
                 default:
                     return null;
             }

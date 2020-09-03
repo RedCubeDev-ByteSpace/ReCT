@@ -62,6 +62,7 @@ namespace ReCT.CodeAnalysis.Emit
                 (TypeSymbol.Int, "System.Int32"),
                 (TypeSymbol.String, "System.String"),
                 (TypeSymbol.Void, "System.Void"),
+                (TypeSymbol.Float, "System.Single"),
             };
 
             var assemblyName = new AssemblyNameDefinition(moduleName, new Version(1, 0));
@@ -380,6 +381,11 @@ namespace ReCT.CodeAnalysis.Emit
             {
                 var value = (string)node.Value;
                 ilProcessor.Emit(OpCodes.Ldstr, value);
+            }
+            else if (node.Type == TypeSymbol.Float)
+            {
+                var value = (float)node.Value;
+                ilProcessor.Emit(OpCodes.Ldc_R4, value);
             }
             else
             {

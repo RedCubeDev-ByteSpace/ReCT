@@ -40,3 +40,24 @@ C:\Users\User\Desktop\ReCT [much top secret]\rctc\obj\Debug\netcoreapp3.1\rctc.c
 C:\Users\User\Desktop\ReCT [much top secret]\rctc\obj\Debug\netcoreapp3.1\rctc.dll
 C:\Users\User\Desktop\ReCT [much top secret]\rctc\obj\Debug\netcoreapp3.1\rctc.pdb
 C:\Users\User\Desktop\ReCT [much top secret]\rctc\obj\Debug\netcoreapp3.1\rctc.genruntimeconfig.cache
+C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.exe
+C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.deps.json
+C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.runtimeconfig.json
+C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.runtimeconfig.dev.json
+C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.dll
+C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.pdb
+C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Mdb.dll
+C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Pdb.dll
+C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Rocks.dll
+C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.dll
+C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Options.dll
+C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\ReCT.dll
+C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\ReCT.pdb
+C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.csprojAssemblyReference.cache
+C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.AssemblyInfoInputs.cache
+C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.AssemblyInfo.cs
+C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.csproj.CoreCompileInputs.cache
+C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.csproj.CopyComplete
+C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.dll
+C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.pdb
+C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.genruntimeconfig.cache
