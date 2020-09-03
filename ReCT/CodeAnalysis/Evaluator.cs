@@ -188,6 +188,8 @@ namespace ReCT.CodeAnalysis
                 case BoundBinaryOperatorKind.Addition:
                     if (b.Type == TypeSymbol.Int)
                         return (int)left + (int)right;
+                    else if (b.Type == TypeSymbol.Float)
+                        return Convert.ToSingle(left) + Convert.ToSingle(right);
                     else
                         return (string)left + (string)right;
                 case BoundBinaryOperatorKind.Subtraction:

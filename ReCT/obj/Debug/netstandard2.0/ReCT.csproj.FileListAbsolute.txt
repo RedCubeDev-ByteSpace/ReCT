@@ -32,3 +32,4 @@ C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.Assembly
 C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csproj.CoreCompileInputs.cache
 C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.dll
 C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.pdb
+C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csprojAssemblyReference.cache

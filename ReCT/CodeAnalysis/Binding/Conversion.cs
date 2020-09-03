@@ -36,7 +36,7 @@ namespace ReCT.CodeAnalysis.Binding
                 return Conversion.Explicit;
             }
 
-            if (from == TypeSymbol.Bool || from == TypeSymbol.Int)
+            if (from == TypeSymbol.Bool || from == TypeSymbol.Int || from == TypeSymbol.Float)
             {
                 if (to == TypeSymbol.String)
                     return Conversion.Explicit;
@@ -44,7 +44,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (from == TypeSymbol.String)
             {
-                if (to == TypeSymbol.Bool || to == TypeSymbol.Int)
+                if (to == TypeSymbol.Bool || to == TypeSymbol.Int || to == TypeSymbol.Float)
                     return Conversion.Explicit;
             }
 
