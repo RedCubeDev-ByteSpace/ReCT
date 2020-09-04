@@ -307,7 +307,7 @@ namespace ReCT.CodeAnalysis
 
         private void Assign(VariableSymbol variable, object value)
         {
-            if (variable.Kind == SymbolKind.GlobalVariable)
+            if (variable.IsGlobal)
             {
                 _globals[variable] = value;
             }

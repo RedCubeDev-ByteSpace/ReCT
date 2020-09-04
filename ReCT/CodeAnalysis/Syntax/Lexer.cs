@@ -55,6 +55,42 @@ namespace ReCT.CodeAnalysis.Syntax
                     _position += 3;
                     break;
 
+                case '<' when Lookahead == '-' && Peek(2) == '+':
+                    _kind = SyntaxKind.EditVariableToken;
+                    _value = SyntaxKind.PlusToken;
+                    _position += 3;
+                    break;
+
+                case '<' when Lookahead == '-' && Peek(2) == '-':
+                    _kind = SyntaxKind.EditVariableToken;
+                    _value = SyntaxKind.MinusToken;
+                    _position += 3;
+                    break;
+
+                case '<' when Lookahead == '-' && Peek(2) == '*':
+                    _kind = SyntaxKind.EditVariableToken;
+                    _value = SyntaxKind.StarToken;
+                    _position += 3;
+                    break;
+
+                case '<' when Lookahead == '-' && Peek(2) == '/':
+                    _kind = SyntaxKind.EditVariableToken;
+                    _value = SyntaxKind.SlashToken;
+                    _position += 3;
+                    break;
+
+                case '+' when Lookahead == '+':
+                    _kind = SyntaxKind.SingleEditVariableToken;
+                    _value = SyntaxKind.PlusToken;
+                    _position += 3;
+                    break;
+
+                case '-' when Lookahead == '-':
+                    _kind = SyntaxKind.SingleEditVariableToken;
+                    _value = SyntaxKind.MinusToken;
+                    _position += 3;
+                    break;
+
                 case '+':
                     _kind = SyntaxKind.PlusToken;
                     _position++;

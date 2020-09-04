@@ -347,6 +347,29 @@ namespace ReCT.CodeAnalysis.Syntax
                 return new AssignmentExpressionSyntax(_syntaxTree, identifierToken, operatorToken, right);
             }
 
+            if (Peek(0).Kind == SyntaxKind.IdentifierToken &&
+                Peek(1).Kind == SyntaxKind.EditVariableToken)
+            {
+                var identifierToken = NextToken();
+                var operatorToken = NextToken();
+                var right = ParseAssignmentExpression();
+
+                var editor = new BinaryExpressionSyntax(_syntaxTree, new NameExpressionSyntax(_syntaxTree, identifierToken), new SyntaxToken(_syntaxTree, (SyntaxKind)operatorToken.Value, 0, SyntaxFacts.GetText((SyntaxKind)operatorToken.Value), null), right);
+
+                return new AssignmentExpressionSyntax(_syntaxTree, identifierToken, new SyntaxToken(_syntaxTree, SyntaxKind.EqualsToken, 0, "<-", null), editor);
+            }
+
+            if (Peek(0).Kind == SyntaxKind.IdentifierToken &&
+                Peek(1).Kind == SyntaxKind.SingleEditVariableToken)
+            {
+                var identifierToken = NextToken();
+                var operatorToken = NextToken();
+
+                var editor = new BinaryExpressionSyntax(_syntaxTree, new NameExpressionSyntax(_syntaxTree, identifierToken), new SyntaxToken(_syntaxTree, (SyntaxKind)operatorToken.Value, 0, SyntaxFacts.GetText((SyntaxKind)operatorToken.Value), null), new LiteralExpressionSyntax(_syntaxTree, new SyntaxToken(_syntaxTree, SyntaxKind.NumberToken, 0, "1", 1)));
+
+                return new AssignmentExpressionSyntax(_syntaxTree, identifierToken, new SyntaxToken(_syntaxTree, SyntaxKind.EqualsToken, 0, "<-", null), editor);
+            }
+
             return ParseBinaryExpression();
         }
 

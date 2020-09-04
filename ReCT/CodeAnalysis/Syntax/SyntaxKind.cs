@@ -79,5 +79,7 @@ namespace ReCT.CodeAnalysis.Syntax
         AssignmentExpression,
         CallExpression,
         EndKeyword,
+        EditVariableToken,
+        SingleEditVariableToken,
     }
 }
