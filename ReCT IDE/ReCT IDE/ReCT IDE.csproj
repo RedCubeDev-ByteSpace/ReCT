@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutocompleteMenu">
+      <HintPath>..\..\..\..\..\..\Desktop\AutocompleteMenu.dll</HintPath>
+    </Reference>
     <Reference Include="FastColoredTextBox">
       <HintPath>..\..\..\FastColoredTextBox.dll</HintPath>
     </Reference>

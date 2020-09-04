@@ -25,11 +25,12 @@ namespace ReCT_IDE
         public Error errorBox;
         public Process running;
 
+        public Image[] icons = new Image[6];
+
         string standardMsg = "//ReCT IDE v1.0";
 
         public Form1()
         {
-            
             InitializeComponent();
         }
 
@@ -50,7 +51,21 @@ namespace ReCT_IDE
             SetCodeBoxColors();
             fileChanged = false;
             updateWindowTitle();
+
+            icons[0] = Play.BackgroundImage;
+            icons[1] = Stop.BackgroundImage;
+            icons[2] = Build.BackgroundImage;
+
+            icons[3] = Image.FromFile("res/playIconHL.png");
+            icons[4] = Image.FromFile("res/literally_just_a_fukin_SquareIconHL.png");
+            icons[5] = Image.FromFile("res/gearIconHL.png");
         }
+
+        public void changeIcon(PictureBox box, int id, bool mode)
+        {
+            box.BackgroundImage = icons[id + (mode ? 3 : 0)];
+        }
+
         private class MenuRenderer : ToolStripProfessionalRenderer
         {
             public MenuRenderer() : base(new MenuColors()) { }
@@ -98,9 +113,10 @@ namespace ReCT_IDE
         Style StringStyle = new TextStyle(new SolidBrush(Color.FromArgb(92, 227, 61)), null, FontStyle.Regular);
         Style VarStyle = new TextStyle(new SolidBrush(Color.FromArgb(0, 157, 227)), null, FontStyle.Bold);
         Style StatementStyle = new TextStyle(new SolidBrush(Color.FromArgb(227, 85, 75)), null, FontStyle.Bold);
-        Style TypeStyle = new TextStyle(new SolidBrush(Color.FromArgb(255, 0, 96)), null, FontStyle.Regular);
-        Style NumberStyle = new TextStyle(new SolidBrush(Color.FromArgb(227, 85, 75)), null, FontStyle.Regular);
+        Style TypeStyle = new TextStyle(new SolidBrush(Color.FromArgb(24, 115, 163)), null, FontStyle.Regular);
+        Style NumberStyle = new TextStyle(new SolidBrush(Color.FromArgb(9, 170, 179)), null, FontStyle.Regular);
         Style SystemFunctionStyle = new TextStyle(new SolidBrush(Color.FromArgb(255, 131, 7)), null, FontStyle.Regular);
+        Style UserFunctionStyle = new TextStyle(new SolidBrush(Color.FromArgb(25, 189, 93)), null, FontStyle.Regular);
         Style VariableStyle = new TextStyle(new SolidBrush(Color.FromArgb(255, 212, 125)), null, FontStyle.Regular);
         Style CommentStyle = new TextStyle(new SolidBrush(Color.FromArgb(100, 100, 100)), null, FontStyle.Regular);
         Style WhiteStyle = new TextStyle(Brushes.White, null, FontStyle.Regular);
@@ -128,10 +144,10 @@ namespace ReCT_IDE
             e.ChangedRange.ClearStyle(SystemFunctionStyle);
 
             //system function highlighting
-            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(Print|Input|Random|Version|Clear)");
+            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(Print|Input|Random|Version|Clear|SetCursor|GetSizeX|GetSizeY|SetSize)");
 
             //types
-            e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b)");
+            e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b|\bfloat\b)");
 
             //function highlighting [DarkMode]
             e.ChangedRange.SetStyle(VarStyle, @"(var|set|if|else|function|true|false)", RegexOptions.Singleline);
@@ -141,7 +157,8 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(VariableStyle, rectComp.Variables);
 
             //functions
-            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(?<=\bfunction\s)(\w+)");
+            e.ChangedRange.SetStyle(UserFunctionStyle, @"(?<=\bfunction\s)(\w+)");
+            e.ChangedRange.SetStyle(UserFunctionStyle, rectComp.Functions);
 
             //statements highlighting
             e.ChangedRange.SetStyle(StatementStyle, @"(break|continue|for|return|to|while|do|end)", RegexOptions.Singleline);
@@ -317,30 +334,20 @@ namespace ReCT_IDE
         {
             errorBox.Hide();
 
-            rectComp.Check(CodeBox.Text);
-
             if (fileChanged)
                 Save_Click(this, new EventArgs());
 
-            if(rectComp.errors.Length > 0)
-            {
-                errorBox.Show();
-                errorBox.errorBox.Clear();
-                foreach(Diagnostic d in rectComp.errors)
-                {
-                    if (d.Location.Text != null)
-                    {
-                        markError(new TextChangedEventArgs(new Range(CodeBox, d.Location.StartCharacter, d.Location.StartLine, d.Location.EndCharacter, d.Location.EndLine)));
-                        errorBox.errorBox.Text += $"[L: {d.Location.StartLine}, C: {d.Location.StartCharacter}] {d.Message}\n";
-                    }
-                    else
-                        errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
-                }
-                errorBox.version.Text = ReCT.info.Version;
-                return;
-            }
+            //clear Builder dir
 
-            running = rectComp.Run(openFile);
+            if (Directory.Exists("Builder"))
+                ReCT_Compiler.ForceDeleteFilesAndFoldersRecursively("Builder");
+            if (!Directory.Exists("Builder"))
+                Directory.CreateDirectory("Builder");
+
+            rectComp.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(openFile) + ".cmd", openFile, errorBox);
+
+            string strCmdText = $"/K cd \"{Path.GetFullPath($"Builder")}\" & cls & {Path.GetFileNameWithoutExtension(openFile)}.cmd";
+            running = Process.Start("CMD.exe", strCmdText);
         }
 
         private void Stop_Click(object sender, EventArgs e)
@@ -373,6 +380,41 @@ namespace ReCT_IDE
             {
                 // Process already exited.
             }
+        }
+
+        private void Play_MouseEnter(object sender, EventArgs e)
+        {
+            changeIcon(Play, 0, true);
+        }
+
+        private void Play_MouseLeave(object sender, EventArgs e)
+        {
+            changeIcon(Play, 0, false);
+        }
+
+        private void Stop_MouseEnter(object sender, EventArgs e)
+        {
+            changeIcon(Stop, 1, true);
+        }
+
+        private void Stop_MouseLeave(object sender, EventArgs e)
+        {
+            changeIcon(Stop, 1, false);
+        }
+
+        private void Build_MouseEnter(object sender, EventArgs e)
+        {
+            changeIcon(Build, 2, true);
+        }
+
+        private void Build_MouseLeave(object sender, EventArgs e)
+        {
+            changeIcon(Build, 2, false);
+        }
+
+        private void CodeBox_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

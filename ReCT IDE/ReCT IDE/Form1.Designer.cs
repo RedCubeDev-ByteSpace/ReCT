@@ -42,15 +42,17 @@
             this.buildToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Menu = new System.Windows.Forms.MenuStrip();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.Build = new System.Windows.Forms.PictureBox();
             this.Stop = new System.Windows.Forms.PictureBox();
             this.Play = new System.Windows.Forms.PictureBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.Typechecker = new System.Timers.Timer();
+            this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.ReCTAutoComplete = new AutocompleteMenuNS.AutocompleteMenu();
             ((System.ComponentModel.ISupportInitialize)(this.CodeBox)).BeginInit();
             this.Menu.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Build)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Stop)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Play)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Typechecker)).BeginInit();
@@ -72,11 +74,13 @@
         '\"',
         '\'',
         '\''};
+            this.ReCTAutoComplete.SetAutocompleteMenu(this.CodeBox, this.ReCTAutoComplete);
             this.CodeBox.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*" +
     "(?<range>:)\\s*(?<range>[^;]+);";
             this.CodeBox.AutoScrollMinSize = new System.Drawing.Size(179, 14);
             this.CodeBox.BackBrush = null;
             this.CodeBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.CodeBox.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
             this.CodeBox.CharHeight = 14;
             this.CodeBox.CharWidth = 8;
             this.CodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
@@ -89,11 +93,13 @@
             this.CodeBox.Paddings = new System.Windows.Forms.Padding(0);
             this.CodeBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.CodeBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("CodeBox.ServiceColors")));
+            this.CodeBox.ShowFoldingLines = true;
             this.CodeBox.Size = new System.Drawing.Size(1088, 595);
             this.CodeBox.TabIndex = 1;
             this.CodeBox.Text = "fastColoredTextBox1";
             this.CodeBox.Zoom = 100;
             this.CodeBox.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.CodeBox_Chnaged);
+            this.CodeBox.Load += new System.EventHandler(this.CodeBox_Load);
             // 
             // fileToolStripMenuItem
             // 
@@ -222,17 +228,20 @@
             this.Menu.Text = "menuStrip1";
             this.Menu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.Menu_ItemClicked);
             // 
-            // pictureBox1
+            // Build
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox1.Location = new System.Drawing.Point(1056, 4);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(20, 26);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.Build_Click);
+            this.Build.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.Build.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Build.BackgroundImage")));
+            this.Build.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.Build.Location = new System.Drawing.Point(1056, 4);
+            this.Build.Name = "Build";
+            this.Build.Size = new System.Drawing.Size(20, 26);
+            this.Build.TabIndex = 2;
+            this.Build.TabStop = false;
+            this.ToolTip.SetToolTip(this.Build, "Build");
+            this.Build.Click += new System.EventHandler(this.Build_Click);
+            this.Build.MouseEnter += new System.EventHandler(this.Build_MouseEnter);
+            this.Build.MouseLeave += new System.EventHandler(this.Build_MouseLeave);
             // 
             // Stop
             // 
@@ -244,7 +253,10 @@
             this.Stop.Size = new System.Drawing.Size(15, 26);
             this.Stop.TabIndex = 3;
             this.Stop.TabStop = false;
+            this.ToolTip.SetToolTip(this.Stop, "Stop running Program");
             this.Stop.Click += new System.EventHandler(this.Stop_Click);
+            this.Stop.MouseEnter += new System.EventHandler(this.Stop_MouseEnter);
+            this.Stop.MouseLeave += new System.EventHandler(this.Stop_MouseLeave);
             // 
             // Play
             // 
@@ -256,13 +268,65 @@
             this.Play.Size = new System.Drawing.Size(15, 26);
             this.Play.TabIndex = 4;
             this.Play.TabStop = false;
+            this.ToolTip.SetToolTip(this.Play, "Run Program");
             this.Play.Click += new System.EventHandler(this.Play_Click);
+            this.Play.MouseEnter += new System.EventHandler(this.Play_MouseEnter);
+            this.Play.MouseLeave += new System.EventHandler(this.Play_MouseLeave);
             // 
             // Typechecker
             // 
+            this.Typechecker.Enabled = true;
             this.Typechecker.Interval = 5000D;
             this.Typechecker.SynchronizingObject = this;
             this.Typechecker.Elapsed += new System.Timers.ElapsedEventHandler(this.timer1_Elapsed);
+            // 
+            // ToolTip
+            // 
+            this.ToolTip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.ToolTip.ForeColor = System.Drawing.SystemColors.HighlightText;
+            // 
+            // ReCTAutoComplete
+            // 
+            this.ReCTAutoComplete.AllowsTabKey = true;
+            this.ReCTAutoComplete.AppearInterval = 100;
+            this.ReCTAutoComplete.Colors = ((AutocompleteMenuNS.Colors)(resources.GetObject("ReCTAutoComplete.Colors")));
+            this.ReCTAutoComplete.Font = new System.Drawing.Font("Liberation Mono", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ReCTAutoComplete.ImageList = null;
+            this.ReCTAutoComplete.Items = new string[] {
+        "Print",
+        "Input",
+        "Random",
+        "Version",
+        "Clear",
+        "SetCursor",
+        "GetSizeX",
+        "GetSizeY",
+        "SetSize",
+        "?",
+        "any",
+        "bool",
+        "int",
+        "string",
+        "void",
+        "float",
+        "var",
+        "set",
+        "if",
+        "else",
+        "function",
+        "true",
+        "false",
+        "set",
+        "break",
+        "continue",
+        "for",
+        "return",
+        "to",
+        "while",
+        "do",
+        "end"};
+            this.ReCTAutoComplete.LeftPadding = 0;
+            this.ReCTAutoComplete.TargetControlWrapper = null;
             // 
             // Form1
             // 
@@ -272,7 +336,7 @@
             this.ClientSize = new System.Drawing.Size(1088, 631);
             this.Controls.Add(this.Play);
             this.Controls.Add(this.Stop);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.Build);
             this.Controls.Add(this.CodeBox);
             this.Controls.Add(this.Menu);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -283,7 +347,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.CodeBox)).EndInit();
             this.Menu.ResumeLayout(false);
             this.Menu.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Build)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Stop)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Play)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Typechecker)).EndInit();
@@ -304,13 +368,15 @@
         private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
         private System.Windows.Forms.MenuStrip Menu;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox Build;
         private System.Windows.Forms.PictureBox Stop;
         private System.Windows.Forms.PictureBox Play;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Timers.Timer Typechecker;
         private System.Windows.Forms.ToolStripMenuItem autoFormatToolStripMenuItem;
+        private System.Windows.Forms.ToolTip ToolTip;
+        private AutocompleteMenuNS.AutocompleteMenu ReCTAutoComplete;
     }
 }
 

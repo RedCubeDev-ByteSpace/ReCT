@@ -17,6 +17,7 @@ namespace ReCT_IDE
     public class ReCT_Compiler
     {
         public string Variables = "";
+        public string Functions = "";
         public Diagnostic[] errors = new Diagnostic[0];
 
         public void Check(string code)
@@ -24,11 +25,12 @@ namespace ReCT_IDE
             var syntaxTree = SyntaxTree.Parse(code);
             var compilation = Compilation.Create(syntaxTree);
 
-            //var eval = compilation.Evaluate(new Dictionary<VariableSymbol, object>());
+            var eval = compilation.Evaluate(new Dictionary<VariableSymbol, object>());
 
             //errors = eval.Diagnostics.ToArray();
 
             Variables = "";
+            Functions = "";
 
             var vars = compilation.Variables.ToArray();
             foreach(VariableSymbol vs in vars)
@@ -40,43 +42,62 @@ namespace ReCT_IDE
                 Variables = Variables.Substring(0, Variables.Length - 1);
                 Variables = "(" + Variables + ")";
             }
+            var fns = compilation.Functions.ToArray();
+            foreach (FunctionSymbol fs in fns)
+            {
+                Functions += fs.Name + "|";
+            }
+            if (Functions != "")
+            {
+                Functions = Functions.Substring(0, Functions.Length - 1);
+                Functions = "(" + Functions + ")";
+            }
         }
         public void CompileRCTBC(string fileOut, string inPath, Error errorBox)
         {
             var syntaxTree = SyntaxTree.Load(inPath);
             var compilation = Compilation.Create(syntaxTree);
-            var errors = compilation.Emit(Path.GetFileNameWithoutExtension(fileOut), new string[] { @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Console.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.Extensions.dll" }, Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
 
-            Console.WriteLine(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
-
-            if (errors.Any())
+            //try
             {
-                Console.WriteLine("oof");
-                errorBox.Show();
-                errorBox.errorBox.Clear();
-                foreach (Diagnostic d in errors)
+                var errors = compilation.Emit(Path.GetFileNameWithoutExtension(fileOut), new string[] { @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Console.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.Extensions.dll" }, Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
+
+                Console.WriteLine(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
+
+                if (errors.Any())
                 {
-                    if (d.Location.Text != null)
+                    Console.WriteLine("oof");
+                    errorBox.Show();
+                    errorBox.errorBox.Clear();
+                    foreach (Diagnostic d in errors)
                     {
-                        errorBox.errorBox.Text += $"[L: {d.Location.StartLine}, C: {d.Location.StartCharacter}] {d.Message}\n";
+                        if (d.Location.Text != null)
+                        {
+                            errorBox.errorBox.Text += $"[L: {d.Location.StartLine}, C: {d.Location.StartCharacter}] {d.Message}\n";
+                        }
+                        else
+                            errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
                     }
-                    else
-                        errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
+                    errorBox.version.Text = ReCT.info.Version;
+                    return;
                 }
-                errorBox.version.Text = ReCT.info.Version;
-                return;
-            }
 
-            //generate runtimeconfig
-            using (StreamWriter sw = new StreamWriter(new FileStream(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".runtimeconfig.json", FileMode.Create)))
-            {
-                sw.Write("{\"runtimeOptions\": {\"tfm\": \"netcoreapp3.1\",\"framework\": {\"name\": \"Microsoft.NETCore.App\",\"version\": \"3.1.0\"}}}");
+                //generate runtimeconfig
+                using (StreamWriter sw = new StreamWriter(new FileStream(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".runtimeconfig.json", FileMode.Create)))
+                {
+                    sw.Write("{\"runtimeOptions\": {\"tfm\": \"netcoreapp3.1\",\"framework\": {\"name\": \"Microsoft.NETCore.App\",\"version\": \"3.1.0\"}}}");
+                }
+                using (StreamWriter sw = new StreamWriter(new FileStream(fileOut, FileMode.Create)))
+                {
+                    sw.Write($"dotnet exec {Path.GetFileNameWithoutExtension(fileOut)}.dll");
+                }
             }
-            using (StreamWriter sw = new StreamWriter(new FileStream(fileOut, FileMode.Create)))
-            {
-                sw.Write($"dotnet exec {Path.GetFileNameWithoutExtension(fileOut)}.dll");
-            }
-
+            //catch (Exception e)
+            //{
+            //    errorBox.Show();
+            //    errorBox.errorBox.Clear();
+            //    errorBox.errorBox.Text = e.Message;
+            //}
         }
         public void CompileDNCLI(string fileName, string outName)
         {

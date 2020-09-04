@@ -1,2 +1,0 @@
-C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\obj\Debug\netcoreapp3.1\consoletest.rcprojAssemblyReference.cache
-C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Builder\ReCTClasses\obj\Debug\netcoreapp3.1\consoletest.rcproj.CoreCompileInputs.cache
