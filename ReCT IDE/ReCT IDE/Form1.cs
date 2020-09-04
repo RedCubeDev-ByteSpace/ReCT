@@ -24,6 +24,7 @@ namespace ReCT_IDE
         public ReCT_Compiler rectComp = new ReCT_Compiler();
         public Error errorBox;
         public Process running;
+        string[] standardAC;
 
         public Image[] icons = new Image[6];
 
@@ -59,6 +60,8 @@ namespace ReCT_IDE
             icons[3] = Image.FromFile("res/playIconHL.png");
             icons[4] = Image.FromFile("res/literally_just_a_fukin_SquareIconHL.png");
             icons[5] = Image.FromFile("res/gearIconHL.png");
+
+            standardAC = ReCTAutoComplete.Items;
         }
 
         public void changeIcon(PictureBox box, int id, bool mode)
@@ -297,6 +300,23 @@ namespace ReCT_IDE
                 Console.WriteLine("reload");
                 CodeBox.ClearStylesBuffer();
                 ReloadHightlighting(new TextChangedEventArgs(CodeBox.Range));
+
+                List<string> ACItems = new List<string>();
+
+                foreach(string s in standardAC)
+                {
+                    ACItems.Add(s);
+                }
+                foreach (ReCT.CodeAnalysis.Symbols.FunctionSymbol f in rectComp.functions)
+                {
+                    ACItems.Add(f.Name);
+                }
+                foreach (ReCT.CodeAnalysis.Symbols.VariableSymbol v in rectComp.variables)
+                {
+                    ACItems.Add(v.Name);
+                }
+
+                ReCTAutoComplete.Items = ACItems.ToArray();
             }
         }
 

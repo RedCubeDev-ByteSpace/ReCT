@@ -18,6 +18,8 @@ namespace ReCT_IDE
     {
         public string Variables = "";
         public string Functions = "";
+        public VariableSymbol[] variables;
+        public FunctionSymbol[] functions;
         public Diagnostic[] errors = new Diagnostic[0];
 
         public void Check(string code)
@@ -33,6 +35,7 @@ namespace ReCT_IDE
             Functions = "";
 
             var vars = compilation.Variables.ToArray();
+            variables = vars;
             foreach(VariableSymbol vs in vars)
             {
                 Variables += vs.Name + "|";
@@ -43,6 +46,7 @@ namespace ReCT_IDE
                 Variables = "(" + Variables + ")";
             }
             var fns = compilation.Functions.ToArray();
+            functions = fns;
             foreach (FunctionSymbol fs in fns)
             {
                 Functions += fs.Name + "|";

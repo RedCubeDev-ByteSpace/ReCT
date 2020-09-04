@@ -85,7 +85,6 @@
             this.CodeBox.CharWidth = 8;
             this.CodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.CodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.CodeBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.CodeBox.ForeColor = System.Drawing.Color.White;
             this.CodeBox.IsReplaceMode = false;
             this.CodeBox.Location = new System.Drawing.Point(0, 36);
@@ -326,6 +325,7 @@
         "do",
         "end"};
             this.ReCTAutoComplete.LeftPadding = 0;
+            this.ReCTAutoComplete.MaximumSize = new System.Drawing.Size(500, 200);
             this.ReCTAutoComplete.TargetControlWrapper = null;
             // 
             // Form1
