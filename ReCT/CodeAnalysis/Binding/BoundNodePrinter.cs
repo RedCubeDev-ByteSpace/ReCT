@@ -39,6 +39,9 @@ namespace ReCT.CodeAnalysis.Binding
                 case BoundNodeKind.ForStatement:
                     WriteForStatement((BoundForStatement)node, writer);
                     break;
+                case BoundNodeKind.FromToStatement:
+                    WriteFromToStatement((BoundFromToStatement)node, writer);
+                    break;
                 case BoundNodeKind.LabelStatement:
                     WriteLabelStatement((BoundLabelStatement)node, writer);
                     break;
@@ -192,6 +195,24 @@ namespace ReCT.CodeAnalysis.Binding
             writer.WriteSpace();
             writer.WriteNestedExpression(0, node.Action);
             writer.WriteKeyword(SyntaxKind.CloseParenthesisToken);
+            writer.WriteLine();
+            writer.WriteNestedStatement(node.Body);
+        }
+
+        private static void WriteFromToStatement(BoundFromToStatement node, IndentedTextWriter writer)
+        {
+            writer.WriteKeyword(SyntaxKind.FromKeyword);
+            writer.WriteKeyword(SyntaxKind.OpenParenthesisToken);
+            writer.WriteIdentifier(node.Variable.Name);
+            writer.WriteSpace();
+            writer.WritePunctuation(SyntaxKind.AssignToken);
+            writer.WriteSpace();
+            node.LowerBound.WriteTo(writer);
+            writer.WriteKeyword(SyntaxKind.OpenParenthesisToken);
+            writer.WriteSpace();
+            writer.WriteKeyword(SyntaxKind.ToKeyword);
+            writer.WriteSpace();
+            node.UpperBound.WriteTo(writer);
             writer.WriteLine();
             writer.WriteNestedStatement(node.Body);
         }

@@ -50,11 +50,6 @@ namespace ReCT.CodeAnalysis.Syntax
                     _kind = SyntaxKind.EndOfFileToken;
                     break;
 
-                case '-' when Lookahead == '-' && Peek(2) == '>':
-                    _kind = SyntaxKind.ToKeyword;
-                    _position += 3;
-                    break;
-
                 case '<' when Lookahead == '-' && Peek(2) == '+':
                     _kind = SyntaxKind.EditVariableToken;
                     _value = SyntaxKind.PlusToken;
@@ -82,13 +77,13 @@ namespace ReCT.CodeAnalysis.Syntax
                 case '+' when Lookahead == '+':
                     _kind = SyntaxKind.SingleEditVariableToken;
                     _value = SyntaxKind.PlusToken;
-                    _position += 3;
+                    _position += 2;
                     break;
 
                 case '-' when Lookahead == '-':
                     _kind = SyntaxKind.SingleEditVariableToken;
                     _value = SyntaxKind.MinusToken;
-                    _position += 3;
+                    _position += 2;
                     break;
 
                 case '+':

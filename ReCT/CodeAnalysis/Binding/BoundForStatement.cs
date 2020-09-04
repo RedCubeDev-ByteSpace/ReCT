@@ -1,5 +1,3 @@
-using ReCT.CodeAnalysis.Symbols;
-
 namespace ReCT.CodeAnalysis.Binding
 {
     internal sealed class BoundForStatement : BoundLoopStatement

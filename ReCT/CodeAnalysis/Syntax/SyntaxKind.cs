@@ -81,5 +81,7 @@ namespace ReCT.CodeAnalysis.Syntax
         EndKeyword,
         EditVariableToken,
         SingleEditVariableToken,
+        FromKeyword,
+        FromToStatement,
     }
 }

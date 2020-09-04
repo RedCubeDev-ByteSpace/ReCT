@@ -68,6 +68,10 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.FalseKeyword;
                 case "for":
                     return SyntaxKind.ForKeyword;
+                case "from":
+                    return SyntaxKind.FromKeyword;
+                case "to":
+                    return SyntaxKind.ToKeyword;
                 case "function":
                     return SyntaxKind.FunctionKeyword;
                 case "if":
@@ -181,8 +185,10 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "set";
                 case SyntaxKind.ReturnKeyword:
                     return "return";
+                case SyntaxKind.FromKeyword:
+                    return "from";
                 case SyntaxKind.ToKeyword:
-                    return "-->";
+                    return "to";
                 case SyntaxKind.TrueKeyword:
                     return "true";
                 case SyntaxKind.VarKeyword:

@@ -24,5 +24,6 @@ namespace ReCT.CodeAnalysis.Binding
         BinaryExpression,
         CallExpression,
         ConversionExpression,
+        FromToStatement,
     }
 }

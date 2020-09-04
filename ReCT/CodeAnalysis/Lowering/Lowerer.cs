@@ -196,10 +196,7 @@ namespace ReCT.CodeAnalysis.Lowering
 
             var continueLabelStatement = new BoundLabelStatement(node.ContinueLabel);
             var increment = new BoundExpressionStatement(
-                new BoundAssignmentExpression(
-                    ((BoundVariableDeclaration)node.Variable).Variable,
                     node.Action
-                )
             );
             var whileBody = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
                     node.Body,
@@ -209,6 +206,44 @@ namespace ReCT.CodeAnalysis.Lowering
             var whileStatement = new BoundWhileStatement(condition, whileBody, node.BreakLabel, GenerateLabel());
             var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
                 node.Variable,
+                whileStatement
+            ));
+
+            return RewriteStatement(result);
+        }
+
+        protected override BoundStatement RewriteFromToStatement(BoundFromToStatement node)
+        {
+
+            var variableDeclaration = new BoundVariableDeclaration(node.Variable, node.LowerBound);
+            var variableExpression = new BoundVariableExpression(node.Variable);
+            var upperBoundSymbol = new LocalVariableSymbol("upperBound", true, TypeSymbol.Int);
+            var upperBoundDeclaration = new BoundVariableDeclaration(upperBoundSymbol, node.UpperBound);
+            var condition = new BoundBinaryExpression(
+                variableExpression,
+                BoundBinaryOperator.Bind(SyntaxKind.LessOrEqualsToken, TypeSymbol.Int, TypeSymbol.Int),
+                new BoundVariableExpression(upperBoundSymbol)
+            );
+            var continueLabelStatement = new BoundLabelStatement(node.ContinueLabel);
+            var increment = new BoundExpressionStatement(
+                new BoundAssignmentExpression(
+                    node.Variable,
+                    new BoundBinaryExpression(
+                        variableExpression,
+                        BoundBinaryOperator.Bind(SyntaxKind.PlusToken, TypeSymbol.Int, TypeSymbol.Int),
+                        new BoundLiteralExpression(1)
+                    )
+                )
+            );
+            var whileBody = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
+                    node.Body,
+                    continueLabelStatement,
+                    increment)
+            );
+            var whileStatement = new BoundWhileStatement(condition, whileBody, node.BreakLabel, GenerateLabel());
+            var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
+                variableDeclaration,
+                upperBoundDeclaration,
                 whileStatement
             ));
 

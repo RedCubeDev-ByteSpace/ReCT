@@ -173,6 +173,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseDoWhileStatement();
                 case SyntaxKind.ForKeyword:
                     return ParseForStatement();
+                case SyntaxKind.FromKeyword:
+                    return ParseFromToStatement();
                 case SyntaxKind.BreakKeyword:
                     return ParseBreakStatement();
                 case SyntaxKind.ContinueKeyword:
@@ -288,19 +290,19 @@ namespace ReCT.CodeAnalysis.Syntax
             return new ForStatementSyntax(_syntaxTree, keyword, variable, condition, action, body);
         }
 
-        //private StatementSyntax ParseForStatement()
-        //{
-        //    var keyword = MatchToken(SyntaxKind.ForKeyword);
-        //    MatchToken(SyntaxKind.OpenParenthesisToken);
-        //    var identifier = MatchToken(SyntaxKind.IdentifierToken);
-        //    var equalsToken = MatchToken(SyntaxKind.AssignToken);
-        //    var lowerBound = ParseExpression();
-        //    MatchToken(SyntaxKind.CloseParenthesisToken);
-        //    var toKeyword = MatchToken(SyntaxKind.ToKeyword);
-        //    var upperBound = ParseExpression();
-        //    var body = ParseStatement();
-        //    return new ForStatementSyntax(_syntaxTree, keyword, identifier, equalsToken, lowerBound, toKeyword, upperBound, body);
-        //}
+        private StatementSyntax ParseFromToStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.FromKeyword);
+            MatchToken(SyntaxKind.OpenParenthesisToken);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            var equalsToken = MatchToken(SyntaxKind.AssignToken);
+            var lowerBound = ParseExpression();
+            MatchToken(SyntaxKind.CloseParenthesisToken);
+            var toKeyword = MatchToken(SyntaxKind.ToKeyword);
+            var upperBound = ParseExpression();
+            var body = ParseStatement();
+            return new FromToStatementSyntax(_syntaxTree, keyword, identifier, equalsToken, lowerBound, toKeyword, upperBound, body);
+        }
 
         private StatementSyntax ParseBreakStatement()
         {

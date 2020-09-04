@@ -289,6 +289,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return BindDoWhileStatement((DoWhileStatementSyntax)syntax);
                 case SyntaxKind.ForStatement:
                     return BindForStatement((ForStatementSyntax)syntax);
+                case SyntaxKind.FromToStatement:
+                    return BindFromToStatement((FromToStatementSyntax)syntax);
                 case SyntaxKind.BreakStatement:
                     return BindBreakStatement((BreakStatementSyntax)syntax);
                 case SyntaxKind.ContinueStatement:
@@ -370,13 +372,28 @@ namespace ReCT.CodeAnalysis.Binding
 
             var variable = BindVariableDeclaration((VariableDeclarationSyntax)syntax.Variable);
             var condition = BindExpression(syntax.Condition, TypeSymbol.Bool);
-            var action = BindExpression(syntax.Action, TypeSymbol.Any);
+            var action = BindExpression(syntax.Action, TypeSymbol.Int);
 
             var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
 
             _scope = _scope.Parent;
 
             return new BoundForStatement(variable, condition, action, body, breakLabel, continueLabel);
+        }
+
+        private BoundStatement BindFromToStatement(FromToStatementSyntax syntax)
+        {
+            var lowerBound = BindExpression(syntax.LowerBound, TypeSymbol.Int);
+            var upperBound = BindExpression(syntax.UpperBound, TypeSymbol.Int);
+
+            _scope = new BoundScope(_scope);
+
+            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly: true, TypeSymbol.Int, syntax.Keyword.Kind);
+            var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
+
+            _scope = _scope.Parent;
+
+            return new BoundFromToStatement(variable, lowerBound, upperBound, body, breakLabel, continueLabel);
         }
 
         private BoundStatement BindLoopBody(StatementSyntax body, out BoundLabel breakLabel, out BoundLabel continueLabel)

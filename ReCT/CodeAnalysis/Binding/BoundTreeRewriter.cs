@@ -21,6 +21,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return RewriteDoWhileStatement((BoundDoWhileStatement)node);
                 case BoundNodeKind.ForStatement:
                     return RewriteForStatement((BoundForStatement)node);
+                case BoundNodeKind.FromToStatement:
+                    return RewriteFromToStatement((BoundFromToStatement)node);
                 case BoundNodeKind.LabelStatement:
                     return RewriteLabelStatement((BoundLabelStatement)node);
                 case BoundNodeKind.GotoStatement:
@@ -115,6 +117,17 @@ namespace ReCT.CodeAnalysis.Binding
                 return node;
 
             return new BoundForStatement(node.Variable, condition, action, body, node.BreakLabel, node.ContinueLabel);
+        }
+
+        protected virtual BoundStatement RewriteFromToStatement(BoundFromToStatement node)
+        {
+            var lowerBound = RewriteExpression(node.LowerBound);
+            var upperBound = RewriteExpression(node.UpperBound);
+            var body = RewriteStatement(node.Body);
+            if (lowerBound == node.LowerBound && upperBound == node.UpperBound && body == node.Body)
+                return node;
+
+            return new BoundFromToStatement(node.Variable, lowerBound, upperBound, body, node.BreakLabel, node.ContinueLabel);
         }
 
         protected virtual BoundStatement RewriteLabelStatement(BoundLabelStatement node)
