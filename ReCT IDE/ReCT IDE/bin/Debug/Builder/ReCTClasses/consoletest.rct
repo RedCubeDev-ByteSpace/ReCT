@@ -1,0 +1,7 @@
+//ReCT IDE v1.0
+Print(GetSizeX());
+Print(GetSizeY());
+var newHeight <- int(Input());
+var newWidth <- int(Input());
+
+SetSize(newWidth, newHeight);

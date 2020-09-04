@@ -14,9 +14,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\fTest.rcproj",
-      "projectName": "fTest",
-      "projectPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\fTest.rcproj",
+      "projectUniqueName": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\consoletest.rcproj",
+      "projectName": "consoletest",
+      "projectPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\consoletest.rcproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT IDE\\ReCT IDE\\bin\\Debug\\Builder\\ReCTClasses\\obj\\",
       "projectStyle": "PackageReference",

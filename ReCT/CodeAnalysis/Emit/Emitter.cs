@@ -21,6 +21,9 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _consoleWriteLineReference;
         private readonly MethodReference _consoleClearReference;
         private readonly MethodReference _consoleSetCoursorReference;
+        private readonly MethodReference _consoleGetHeightReference;
+        private readonly MethodReference _consoleGetWidthReference;
+        private readonly MethodReference _consoleSetSizeReference;
         private readonly MethodReference _stringConcatReference;
         private readonly MethodReference _convertToBooleanReference;
         private readonly MethodReference _convertToInt32Reference;
@@ -152,6 +155,11 @@ namespace ReCT.CodeAnalysis.Emit
             _consoleWriteLineReference = ResolveMethod("System.Console", "WriteLine", new [] { "System.String" });
             _consoleClearReference = ResolveMethod("System.Console", "Clear", Array.Empty<string>());
             _consoleSetCoursorReference = ResolveMethod("System.Console", "SetCursorPosition", new[] { "System.Int32", "System.Int32" });
+
+            _consoleGetHeightReference = ResolveMethod("System.Console", "get_WindowHeight", Array.Empty<string>());
+            _consoleGetWidthReference = ResolveMethod("System.Console", "get_WindowWidth", Array.Empty<string>());
+
+            _consoleSetSizeReference = ResolveMethod("System.Console", "SetWindowSize", new[] { "System.Int32", "System.Int32" });
 
             _stringConcatReference = ResolveMethod("System.String", "Concat", new [] { "System.String", "System.String" });
             _convertToBooleanReference = ResolveMethod("System.Convert", "ToBoolean", new [] { "System.Object" });
@@ -576,8 +584,8 @@ namespace ReCT.CodeAnalysis.Emit
                 return;
             }
 
-            foreach (var argument in node.Arguments)
-                EmitExpression(ilProcessor, argument);
+                foreach (var argument in node.Arguments)
+                    EmitExpression(ilProcessor, argument);
 
             if (node.Function == BuiltinFunctions.Input)
             {
@@ -595,9 +603,21 @@ namespace ReCT.CodeAnalysis.Emit
             {
                 ilProcessor.Emit(OpCodes.Call, _consoleClearReference);
             }
-            else if (node.Function == BuiltinFunctions.SetCoursor)
+            else if (node.Function == BuiltinFunctions.SetCursor)
             {
                 ilProcessor.Emit(OpCodes.Call, _consoleSetCoursorReference);
+            }
+            else if (node.Function == BuiltinFunctions.GetSizeX)
+            {
+                ilProcessor.Emit(OpCodes.Call, _consoleGetWidthReference);
+            }
+            else if (node.Function == BuiltinFunctions.GetSizeY)
+            {
+                ilProcessor.Emit(OpCodes.Call, _consoleGetHeightReference);
+            }
+            else if (node.Function == BuiltinFunctions.SetSize)
+            {
+                ilProcessor.Emit(OpCodes.Call, _consoleSetSizeReference);
             }
             else
             {
