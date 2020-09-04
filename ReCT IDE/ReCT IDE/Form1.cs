@@ -297,7 +297,6 @@ namespace ReCT_IDE
             if(CodeBox.Text != "")
             {
                 rectComp.Check(CodeBox.Text);
-                Console.WriteLine("reload");
                 CodeBox.ClearStylesBuffer();
                 ReloadHightlighting(new TextChangedEventArgs(CodeBox.Range));
 
