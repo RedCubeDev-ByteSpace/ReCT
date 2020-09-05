@@ -19,6 +19,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _objectEqualsReference;
         private readonly MethodReference _consoleReadLineReference;
         private readonly MethodReference _consoleWriteLineReference;
+        private readonly MethodReference _consoleWriteReference;
         private readonly MethodReference _consoleClearReference;
         private readonly MethodReference _consoleSetCoursorReference;
         private readonly MethodReference _consoleGetHeightReference;
@@ -153,6 +154,7 @@ namespace ReCT.CodeAnalysis.Emit
 
             _consoleReadLineReference = ResolveMethod("System.Console", "ReadLine", Array.Empty<string>());
             _consoleWriteLineReference = ResolveMethod("System.Console", "WriteLine", new [] { "System.String" });
+            _consoleWriteReference = ResolveMethod("System.Console", "Write", new [] { "System.String" });
             _consoleClearReference = ResolveMethod("System.Console", "Clear", Array.Empty<string>());
             _consoleSetCoursorReference = ResolveMethod("System.Console", "SetCursorPosition", new[] { "System.Int32", "System.Int32" });
 
@@ -594,6 +596,10 @@ namespace ReCT.CodeAnalysis.Emit
             else if (node.Function == BuiltinFunctions.Print)
             {
                 ilProcessor.Emit(OpCodes.Call, _consoleWriteLineReference);
+            }
+            else if (node.Function == BuiltinFunctions.Write)
+            {
+                ilProcessor.Emit(OpCodes.Call, _consoleWriteReference);
             }
             else if (node.Function == BuiltinFunctions.Version)
             {

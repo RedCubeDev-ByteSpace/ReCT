@@ -323,7 +323,9 @@
         "to",
         "while",
         "do",
-        "end"};
+        "end",
+        "from",
+        "Write"};
             this.ReCTAutoComplete.LeftPadding = 0;
             this.ReCTAutoComplete.MaximumSize = new System.Drawing.Size(200, 200);
             this.ReCTAutoComplete.TargetControlWrapper = null;

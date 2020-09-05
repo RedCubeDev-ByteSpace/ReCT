@@ -147,7 +147,7 @@ namespace ReCT_IDE
             e.ChangedRange.ClearStyle(SystemFunctionStyle);
 
             //system function highlighting
-            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(Print|Input|Random|Version|Clear|SetCursor|GetSizeX|GetSizeY|SetSize)");
+            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(Print|Input|Random|Version|Clear|SetCursor|GetSizeX|GetSizeY|SetSize|Write)");
 
             //types
             e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b|\bfloat\b)");
@@ -156,7 +156,8 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(VarStyle, @"(var|set|if|else|function|true|false)", RegexOptions.Singleline);
 
             //variables
-            e.ChangedRange.SetStyle(VariableStyle, @"(?<=\bvar\s)(\w+)");
+            e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+<-))");
+            e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+->))");
             e.ChangedRange.SetStyle(VariableStyle, rectComp.Variables);
 
             //functions
@@ -164,7 +165,7 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(UserFunctionStyle, rectComp.Functions);
 
             //statements highlighting
-            e.ChangedRange.SetStyle(StatementStyle, @"(break|continue|for|return|to|while|do|end)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(StatementStyle, @"(break|continue|for|return|to|while|\bdo\b|end|from)", RegexOptions.Singleline);
 
             //numbers
             e.ChangedRange.SetStyle(NumberStyle, @"(\b\d+\b)", RegexOptions.Multiline);
@@ -293,29 +294,36 @@ namespace ReCT_IDE
 
         private void timer1_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            rectComp.Variables = "";
-            if(CodeBox.Text != "")
+            try
             {
-                rectComp.Check(CodeBox.Text);
-                CodeBox.ClearStylesBuffer();
-                ReloadHightlighting(new TextChangedEventArgs(CodeBox.Range));
-
-                List<string> ACItems = new List<string>();
-
-                foreach(string s in standardAC)
+                rectComp.Variables = "";
+                if (CodeBox.Text != "")
                 {
-                    ACItems.Add(s);
-                }
-                foreach (ReCT.CodeAnalysis.Symbols.FunctionSymbol f in rectComp.functions)
-                {
-                    ACItems.Add(f.Name);
-                }
-                foreach (ReCT.CodeAnalysis.Symbols.VariableSymbol v in rectComp.variables)
-                {
-                    ACItems.Add(v.Name);
-                }
+                    rectComp.Check(CodeBox.Text);
+                    CodeBox.ClearStylesBuffer();
+                    ReloadHightlighting(new TextChangedEventArgs(CodeBox.Range));
 
-                ReCTAutoComplete.Items = ACItems.ToArray();
+                    List<string> ACItems = new List<string>();
+
+                    foreach (string s in standardAC)
+                    {
+                        ACItems.Add(s);
+                    }
+                    foreach (ReCT.CodeAnalysis.Symbols.FunctionSymbol f in rectComp.functions)
+                    {
+                        ACItems.Add(f.Name);
+                    }
+                    foreach (ReCT.CodeAnalysis.Symbols.VariableSymbol v in rectComp.variables)
+                    {
+                        ACItems.Add(v.Name);
+                    }
+
+                    ReCTAutoComplete.Items = ACItems.ToArray();
+                }
+            }
+            catch(Exception ee)
+            {
+                //Console.WriteLine(ee);
             }
         }
 
