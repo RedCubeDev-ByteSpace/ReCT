@@ -17,6 +17,7 @@ namespace ReCT.CodeAnalysis.Emit
 
         private readonly Dictionary<TypeSymbol, TypeReference> _knownTypes;
         private readonly TypeReference _consoleKeyInfoRef;
+        private readonly TypeReference _charRef;
         private readonly MethodReference _objectEqualsReference;
         private readonly MethodReference _consoleReadLineReference;
         private readonly MethodReference _consoleReadKeyReference;
@@ -79,6 +80,7 @@ namespace ReCT.CodeAnalysis.Emit
             _knownTypes = new Dictionary<TypeSymbol, TypeReference>();
 
             _consoleKeyInfoRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.ConsoleKeyInfo").ToArray()[0]);
+            _charRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.Char").ToArray()[0]);
 
             foreach (var (typeSymbol, metadataName) in builtInTypes)
             {
@@ -627,17 +629,18 @@ namespace ReCT.CodeAnalysis.Emit
             else if (node.Function == BuiltinFunctions.InputKey)
             {
                 var var0 = new VariableDefinition(_consoleKeyInfoRef);
-                //var var1 = 
+                var var1 = new VariableDefinition(_charRef);
 
                 ilProcessor.Body.Variables.Add(var0);
+                ilProcessor.Body.Variables.Add(var1);
 
                 ilProcessor.Emit(OpCodes.Call, _consoleReadKeyReference);
                 ilProcessor.Emit(OpCodes.Stloc, var0);
                 ilProcessor.Emit(OpCodes.Ldloca, var0);
                 ilProcessor.Emit(OpCodes.Call, _consoleKeyInfoGetKeyChar);
-                ilProcessor.Emit(OpCodes.Pop);
+                ilProcessor.Emit(OpCodes.Stloc, var1);
+                ilProcessor.Emit(OpCodes.Ldloca, var1);
                 ilProcessor.Emit(OpCodes.Call, _charToString);
-                ilProcessor.Emit(OpCodes.Pop);
             }
             else
             {

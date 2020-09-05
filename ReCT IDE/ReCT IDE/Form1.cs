@@ -147,7 +147,7 @@ namespace ReCT_IDE
             e.ChangedRange.ClearStyle(SystemFunctionStyle);
 
             //system function highlighting
-            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(Print|Input|Random|Version|Clear|SetCursor|GetSizeX|GetSizeY|SetSize|Write|Sleep)");
+            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(Print|InputKey|Input|Random|Version|Clear|SetCursor|GetSizeX|GetSizeY|SetSize|Write|Sleep)");
 
             //types
             e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b|\bfloat\b)");
