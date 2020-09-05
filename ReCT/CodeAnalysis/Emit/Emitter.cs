@@ -16,8 +16,12 @@ namespace ReCT.CodeAnalysis.Emit
         private DiagnosticBag _diagnostics = new DiagnosticBag();
 
         private readonly Dictionary<TypeSymbol, TypeReference> _knownTypes;
+        private readonly TypeReference _consoleKeyInfoRef;
         private readonly MethodReference _objectEqualsReference;
         private readonly MethodReference _consoleReadLineReference;
+        private readonly MethodReference _consoleReadKeyReference;
+        private readonly MethodReference _consoleKeyInfoGetKeyChar;
+        private readonly MethodReference _charToString;
         private readonly MethodReference _consoleWriteLineReference;
         private readonly MethodReference _consoleWriteReference;
         private readonly MethodReference _consoleClearReference;
@@ -73,6 +77,8 @@ namespace ReCT.CodeAnalysis.Emit
             var assemblyName = new AssemblyNameDefinition(moduleName, new Version(1, 0));
             _assemblyDefinition = AssemblyDefinition.CreateAssembly(assemblyName, moduleName, ModuleKind.Console);
             _knownTypes = new Dictionary<TypeSymbol, TypeReference>();
+
+            _consoleKeyInfoRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.ConsoleKeyInfo").ToArray()[0]);
 
             foreach (var (typeSymbol, metadataName) in builtInTypes)
             {
@@ -158,6 +164,12 @@ namespace ReCT.CodeAnalysis.Emit
             _consoleWriteReference = ResolveMethod("System.Console", "Write", new [] { "System.String" });
             _consoleClearReference = ResolveMethod("System.Console", "Clear", Array.Empty<string>());
             _consoleSetCoursorReference = ResolveMethod("System.Console", "SetCursorPosition", new[] { "System.Int32", "System.Int32" });
+
+            //ReadKey
+            _consoleReadKeyReference = ResolveMethod("System.Console", "ReadKey", Array.Empty<string>());
+            _consoleKeyInfoGetKeyChar = ResolveMethod("System.ConsoleKeyInfo", "get_KeyChar", Array.Empty<string>());
+
+            _charToString = ResolveMethod("System.Char", "ToString", Array.Empty<string>());
 
             _consoleGetHeightReference = ResolveMethod("System.Console", "get_WindowHeight", Array.Empty<string>());
             _consoleGetWidthReference = ResolveMethod("System.Console", "get_WindowWidth", Array.Empty<string>());
@@ -612,6 +624,21 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Call, _consoleSetSizeReference);
             else if (node.Function == BuiltinFunctions.Sleep)
                 ilProcessor.Emit(OpCodes.Call, _threadSlooopeReference);
+            else if (node.Function == BuiltinFunctions.InputKey)
+            {
+                var var0 = new VariableDefinition(_consoleKeyInfoRef);
+                //var var1 = 
+
+                ilProcessor.Body.Variables.Add(var0);
+
+                ilProcessor.Emit(OpCodes.Call, _consoleReadKeyReference);
+                ilProcessor.Emit(OpCodes.Stloc, var0);
+                ilProcessor.Emit(OpCodes.Ldloca, var0);
+                ilProcessor.Emit(OpCodes.Call, _consoleKeyInfoGetKeyChar);
+                ilProcessor.Emit(OpCodes.Pop);
+                ilProcessor.Emit(OpCodes.Call, _charToString);
+                ilProcessor.Emit(OpCodes.Pop);
+            }
             else
             {
                 var methodDefinition = _methods[node.Function];

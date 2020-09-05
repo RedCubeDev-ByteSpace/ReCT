@@ -63,10 +63,6 @@ namespace ReCT.CodeAnalysis.Lowering
 
         private static bool CanFallThrough(BoundStatement boundStatement)
         {
-            // TODO: We don't rewrite conditional gotos where the condition is
-            //       always true. We shouldn't handle this here, because we
-            //       should really rewrite those to unconditional gotos in the
-            //       first place.
             return boundStatement.Kind != BoundNodeKind.ReturnStatement &&
                    boundStatement.Kind != BoundNodeKind.GotoStatement;
         }
@@ -75,14 +71,6 @@ namespace ReCT.CodeAnalysis.Lowering
         {
             if (node.ElseStatement == null)
             {
-                // if <condition>
-                //      <then>
-                //
-                // ---->
-                //
-                // gotoFalse <condition> end
-                // <then>
-                // end:
                 var endLabel = GenerateLabel();
                 var gotoFalse = new BoundConditionalGotoStatement(endLabel, node.Condition, false);
                 var endLabelStatement = new BoundLabelStatement(endLabel);
@@ -91,19 +79,6 @@ namespace ReCT.CodeAnalysis.Lowering
             }
             else
             {
-                // if <condition>
-                //      <then>
-                // else
-                //      <else>
-                //
-                // ---->
-                //
-                // gotoFalse <condition> else
-                // <then>
-                // goto end
-                // else:
-                // <else>
-                // end:
 
                 var elseLabel = GenerateLabel();
                 var endLabel = GenerateLabel();
@@ -126,17 +101,6 @@ namespace ReCT.CodeAnalysis.Lowering
 
         protected override BoundStatement RewriteWhileStatement(BoundWhileStatement node)
         {
-            // while <condition>
-            //      <body>
-            //
-            // ----->
-            //
-            // goto continue
-            // body:
-            // <body>
-            // continue:
-            // gotoTrue <condition> body
-            // break:
 
             var bodyLabel = GenerateLabel();
 
@@ -160,17 +124,6 @@ namespace ReCT.CodeAnalysis.Lowering
 
         protected override BoundStatement RewriteDoWhileStatement(BoundDoWhileStatement node)
         {
-            // do
-            //      <body>
-            // while <condition>
-            //
-            // ----->
-            //
-            // body:
-            // <body>
-            // continue:
-            // gotoTrue <condition> body
-            // break:
 
             var bodyLabel = GenerateLabel();
 
