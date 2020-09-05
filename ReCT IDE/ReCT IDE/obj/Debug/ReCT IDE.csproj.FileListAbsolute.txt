@@ -60,7 +60,6 @@ C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Numerics
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Interop.WMPLib.dll
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\AxInterop.WMPLib.dll
-C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csprojAssemblyReference.cache
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\Interop.WMPLib.dll
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\AxInterop.WMPLib.dll
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.ResolveComReference.cache
@@ -76,3 +75,7 @@ C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.pdb
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT.pdb
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT.dll
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\AutocompleteMenu.dll
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT IDE.exe.manifest
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT IDE.application
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.exe.manifest
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.application

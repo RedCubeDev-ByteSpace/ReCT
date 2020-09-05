@@ -25,6 +25,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _consoleGetHeightReference;
         private readonly MethodReference _consoleGetWidthReference;
         private readonly MethodReference _consoleSetSizeReference;
+        private readonly MethodReference _threadSlooopeReference;
         private readonly MethodReference _stringConcatReference;
         private readonly MethodReference _convertToBooleanReference;
         private readonly MethodReference _convertToInt32Reference;
@@ -162,6 +163,8 @@ namespace ReCT.CodeAnalysis.Emit
             _consoleGetWidthReference = ResolveMethod("System.Console", "get_WindowWidth", Array.Empty<string>());
 
             _consoleSetSizeReference = ResolveMethod("System.Console", "SetWindowSize", new[] { "System.Int32", "System.Int32" });
+
+            _threadSlooopeReference = ResolveMethod("System.Threading.Thread", "Sleep", new[] { "System.Int32"});
 
             _stringConcatReference = ResolveMethod("System.String", "Concat", new [] { "System.String", "System.String" });
             _convertToBooleanReference = ResolveMethod("System.Convert", "ToBoolean", new [] { "System.Object" });
@@ -590,41 +593,25 @@ namespace ReCT.CodeAnalysis.Emit
                     EmitExpression(ilProcessor, argument);
 
             if (node.Function == BuiltinFunctions.Input)
-            {
                 ilProcessor.Emit(OpCodes.Call, _consoleReadLineReference);
-            }
             else if (node.Function == BuiltinFunctions.Print)
-            {
                 ilProcessor.Emit(OpCodes.Call, _consoleWriteLineReference);
-            }
             else if (node.Function == BuiltinFunctions.Write)
-            {
                 ilProcessor.Emit(OpCodes.Call, _consoleWriteReference);
-            }
             else if (node.Function == BuiltinFunctions.Version)
-            {
                 ilProcessor.Emit(OpCodes.Ldstr, info.Version);
-            }
             else if (node.Function == BuiltinFunctions.Clear)
-            {
                 ilProcessor.Emit(OpCodes.Call, _consoleClearReference);
-            }
             else if (node.Function == BuiltinFunctions.SetCursor)
-            {
                 ilProcessor.Emit(OpCodes.Call, _consoleSetCoursorReference);
-            }
             else if (node.Function == BuiltinFunctions.GetSizeX)
-            {
                 ilProcessor.Emit(OpCodes.Call, _consoleGetWidthReference);
-            }
             else if (node.Function == BuiltinFunctions.GetSizeY)
-            {
                 ilProcessor.Emit(OpCodes.Call, _consoleGetHeightReference);
-            }
             else if (node.Function == BuiltinFunctions.SetSize)
-            {
                 ilProcessor.Emit(OpCodes.Call, _consoleSetSizeReference);
-            }
+            else if (node.Function == BuiltinFunctions.Sleep)
+                ilProcessor.Emit(OpCodes.Call, _threadSlooopeReference);
             else
             {
                 var methodDefinition = _methods[node.Function];

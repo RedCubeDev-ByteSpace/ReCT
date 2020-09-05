@@ -27,7 +27,7 @@ namespace ReCT_IDE
             var syntaxTree = SyntaxTree.Parse(code);
             var compilation = Compilation.Create(syntaxTree);
 
-            var eval = compilation.Evaluate(new Dictionary<VariableSymbol, object>());
+            //var eval = compilation.Evaluate(new Dictionary<VariableSymbol, object>());
 
             //errors = eval.Diagnostics.ToArray();
 
@@ -62,9 +62,9 @@ namespace ReCT_IDE
             var syntaxTree = SyntaxTree.Load(inPath);
             var compilation = Compilation.Create(syntaxTree);
 
-            //try
+            try
             {
-                var errors = compilation.Emit(Path.GetFileNameWithoutExtension(fileOut), new string[] { @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Console.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.Extensions.dll" }, Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
+                var errors = compilation.Emit(Path.GetFileNameWithoutExtension(fileOut), new string[] { @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Console.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Threading.Thread.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.Extensions.dll" }, Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
 
                 Console.WriteLine(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
 
@@ -96,12 +96,12 @@ namespace ReCT_IDE
                     sw.Write($"dotnet exec {Path.GetFileNameWithoutExtension(fileOut)}.dll");
                 }
             }
-            //catch (Exception e)
-            //{
-            //    errorBox.Show();
-            //    errorBox.errorBox.Clear();
-            //    errorBox.errorBox.Text = e.Message;
-            //}
+            catch (Exception e)
+            {
+                errorBox.Show();
+                errorBox.errorBox.Clear();
+                errorBox.errorBox.Text = e.Message;
+            }
         }
         public void CompileDNCLI(string fileName, string outName)
         {

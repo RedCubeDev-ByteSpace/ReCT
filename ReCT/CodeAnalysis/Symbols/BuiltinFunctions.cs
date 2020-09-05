@@ -23,6 +23,7 @@ namespace ReCT.CodeAnalysis.Symbols
 
         //Other stuff
         public static readonly FunctionSymbol Version = new FunctionSymbol("Version", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
+        public static readonly FunctionSymbol Sleep = new FunctionSymbol("Sleep", ImmutableArray.Create(new ParameterSymbol("int", TypeSymbol.Int, 0)), TypeSymbol.Void);
 
         internal static IEnumerable<FunctionSymbol> GetAll()
             => typeof(BuiltinFunctions).GetFields(BindingFlags.Public | BindingFlags.Static)
