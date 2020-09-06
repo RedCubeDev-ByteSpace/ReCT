@@ -20,6 +20,9 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly FunctionSymbol SetSize = new FunctionSymbol("SetSize", ImmutableArray.Create(new ParameterSymbol("X", TypeSymbol.Int, 0), new ParameterSymbol("Y", TypeSymbol.Int, 0)), TypeSymbol.Void);
         public static readonly FunctionSymbol SetCursorVisible = new FunctionSymbol("SetCursorVisible", ImmutableArray.Create(new ParameterSymbol("bool", TypeSymbol.Bool, 0)), TypeSymbol.Void);
         public static readonly FunctionSymbol GetCursorVisible = new FunctionSymbol("GetCursorVisible", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Bool);
+        public static readonly FunctionSymbol ConsoleColorBG = new FunctionSymbol("ConsoleColorBG", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
+        public static readonly FunctionSymbol ConsoleColorFG = new FunctionSymbol("ConsoleColorFG", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
+
 
         //Math
         public static readonly FunctionSymbol Random = new FunctionSymbol("Random", ImmutableArray.Create(new ParameterSymbol("max", TypeSymbol.Int, 0)), TypeSymbol.Int);
