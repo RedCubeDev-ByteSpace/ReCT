@@ -170,8 +170,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     _kind = SyntaxKind.LessToken;
                     _position++;
                     break;
-                case '>' when Lookahead == '=':
-                    _kind = SyntaxKind.GreaterOrEqualsToken;
+                case '>' when Lookahead == '>':
+                    _kind = SyntaxKind.AccessToken;
                     _position += 2;
                     break;
                 case '>' when Lookahead != '=':
@@ -332,7 +332,7 @@ namespace ReCT.CodeAnalysis.Syntax
 
         private void ReadIdentifierOrKeyword()
         {
-            while (char.IsLetter(Current))
+            while (char.IsLetter(Current) || char.IsDigit(Current))
                 _position++;
 
             var length = _position - _start;

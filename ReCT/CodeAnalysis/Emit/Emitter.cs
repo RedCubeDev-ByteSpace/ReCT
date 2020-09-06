@@ -174,8 +174,8 @@ namespace ReCT.CodeAnalysis.Emit
             _consoleKeyInfoGetKeyChar = ResolveMethod("System.ConsoleKeyInfo", "get_KeyChar", Array.Empty<string>());
 
             _getVisableCursorRef = ResolveMethod("System.Console", "get_CursorVisible", Array.Empty<string>());
-            _setVisableCursorRef = ResolveMethod("System.Console", "set_CursorVisible", new[] { "System.Bool" });
-            
+            _setVisableCursorRef = ResolveMethod("System.Console", "set_CursorVisible", new[] { "System.Boolean" });
+
             _charToString = ResolveMethod("System.Char", "ToString", Array.Empty<string>());
 
             _consoleGetHeightReference = ResolveMethod("System.Console", "get_WindowHeight", Array.Empty<string>());
@@ -648,14 +648,9 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Call, _charToString);
             }
             else if (node.Function == BuiltinFunctions.SetCursorVisible)
-            {
                 ilProcessor.Emit(OpCodes.Call, _setVisableCursorRef);
-                
-            }
             else if (node.Function == BuiltinFunctions.GetCursorVisible)
-            {
                 ilProcessor.Emit(OpCodes.Call, _getVisableCursorRef);
-            }
             else
             {
                 var methodDefinition = _methods[node.Function];

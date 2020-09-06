@@ -485,6 +485,12 @@ namespace ReCT.CodeAnalysis.Syntax
         private ExpressionSyntax ParseNameExpression()
         {
             var identifierToken = MatchToken(SyntaxKind.IdentifierToken);
+
+            if (Peek(0).Kind == SyntaxKind.AccessToken)
+            {
+                MatchToken(SyntaxKind.AccessToken);
+            }
+
             return new NameExpressionSyntax(_syntaxTree, identifierToken);
         }
     }

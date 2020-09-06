@@ -11,4 +11,17 @@ namespace ReCT.CodeAnalysis.Syntax
         public override SyntaxKind Kind => SyntaxKind.NameExpression;
         public SyntaxToken IdentifierToken { get; }
     }
+    public sealed class RemoteNameExpressionSyntax : ExpressionSyntax
+    {
+        public RemoteNameExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifierToken, string name)
+            : base(syntaxTree)
+        {
+            IdentifierToken = identifierToken;
+            Name = name;
+        }
+
+        public override SyntaxKind Kind => SyntaxKind.NameExpression;
+        public SyntaxToken IdentifierToken { get; }
+        public string Name { get; }
+    }
 }
