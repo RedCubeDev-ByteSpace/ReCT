@@ -22,6 +22,8 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _consoleReadLineReference;
         private readonly MethodReference _consoleReadKeyReference;
         private readonly MethodReference _consoleKeyInfoGetKeyChar;
+        private readonly MethodReference _getVisableCursorRef;
+        private readonly MethodReference _setVisableCursorRef;
         private readonly MethodReference _charToString;
         private readonly MethodReference _consoleWriteLineReference;
         private readonly MethodReference _consoleWriteReference;
@@ -171,6 +173,9 @@ namespace ReCT.CodeAnalysis.Emit
             _consoleReadKeyReference = ResolveMethod("System.Console", "ReadKey", Array.Empty<string>());
             _consoleKeyInfoGetKeyChar = ResolveMethod("System.ConsoleKeyInfo", "get_KeyChar", Array.Empty<string>());
 
+            _getVisableCursorRef = ResolveMethod("System.Console", "get_CursorVisible", Array.Empty<string>());
+            _setVisableCursorRef = ResolveMethod("System.Console", "set_CursorVisible", new[] { "System.Bool" });
+            
             _charToString = ResolveMethod("System.Char", "ToString", Array.Empty<string>());
 
             _consoleGetHeightReference = ResolveMethod("System.Console", "get_WindowHeight", Array.Empty<string>());
@@ -642,6 +647,15 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Ldloca, var1);
                 ilProcessor.Emit(OpCodes.Call, _charToString);
             }
+            else if (node.Function == BuiltinFunctions.SetCursorVisible)
+            {
+                ilProcessor.Emit(OpCodes.Call, _setVisableCursorRef);
+                
+            }
+            else if (node.Function == BuiltinFunctions.GetCursorVisible)
+            {
+                ilProcessor.Emit(OpCodes.Call, _getVisableCursorRef);
+            }
             else
             {
                 var methodDefinition = _methods[node.Function];
@@ -657,7 +671,7 @@ namespace ReCT.CodeAnalysis.Emit
                 _randomReference
             );
             _typeDefinition.Fields.Add(_randomFieldDefinition);
-
+            
             var staticConstructor = new MethodDefinition(
                 ".cctor",
                 MethodAttributes.Static |
