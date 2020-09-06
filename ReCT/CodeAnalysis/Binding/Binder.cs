@@ -329,7 +329,7 @@ namespace ReCT.CodeAnalysis.Binding
             var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly, variableType, syntax.Keyword.Kind);
             var convertedInitializer = BindConversion(syntax.Initializer.Location, initializer, variableType);
 
-            return new BoundVariableDeclaration(variable, convertedInitializer);
+            return new BoundVariableDeclaration(variable, syntax.IgnoreType ? initializer : convertedInitializer);
         }
 
         private TypeSymbol BindTypeClause(TypeClauseSyntax syntax)

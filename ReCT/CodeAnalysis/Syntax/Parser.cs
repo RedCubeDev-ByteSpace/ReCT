@@ -209,8 +209,26 @@ namespace ReCT.CodeAnalysis.Syntax
             var equals = MatchToken(SyntaxKind.AssignToken);
             var initializer = ParseExpression();
             var typeClause = ParseOptionalTypeClause();
+            var ignoreType = false;
 
-            return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer);
+            ExpressionSyntax expression = initializer;
+            while(true)
+            {
+                if (expression is BinaryExpressionSyntax b)
+                    expression = b.Left;
+
+                if (expression is LiteralExpressionSyntax)
+                    break;
+                if (expression is NameExpressionSyntax)
+                    break;
+                if (expression is RemoteNameExpressionSyntax)
+                {
+                    ignoreType = true;
+                    break;
+                }
+            }
+
+            return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer, ignoreType);
         }
 
         private TypeClauseSyntax ParseOptionalTypeClause()
