@@ -24,6 +24,8 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _consoleKeyInfoGetKeyChar;
         private readonly MethodReference _getVisableCursorRef;
         private readonly MethodReference _setVisableCursorRef;
+        private readonly MethodReference _setConsoleFG;
+        private readonly MethodReference _setConsoleBG;
         private readonly MethodReference _charToString;
         private readonly MethodReference _consoleWriteLineReference;
         private readonly MethodReference _consoleWriteReference;
@@ -175,6 +177,9 @@ namespace ReCT.CodeAnalysis.Emit
 
             _getVisableCursorRef = ResolveMethod("System.Console", "get_CursorVisible", Array.Empty<string>());
             _setVisableCursorRef = ResolveMethod("System.Console", "set_CursorVisible", new[] { "System.Boolean" });
+
+            _setConsoleFG = ResolveMethod("System.Console", "set_ForegroundColor", new[] { "System.ConsoleColor" });
+            _setConsoleBG = ResolveMethod("System.Console", "set_BackgroundColor", new[] { "System.ConsoleColor" });
 
             _charToString = ResolveMethod("System.Char", "ToString", Array.Empty<string>());
 
