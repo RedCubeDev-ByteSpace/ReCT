@@ -83,5 +83,6 @@ namespace ReCT.CodeAnalysis.Syntax
         SingleEditVariableToken,
         FromKeyword,
         FromToStatement,
+        AccessToken,
     }
 }

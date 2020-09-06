@@ -83,13 +83,6 @@ namespace ReCT.CodeAnalysis.Syntax
                 var member = ParseMember();
                 members.Add(member);
 
-                // If ParseMember() did not consume any tokens,
-                // we need to skip the current token and continue
-                // in order to avoid an infinite loop.
-                //
-                // We don't need to report an error, because we'll
-                // already tried to parse an expression statement
-                // and reported one.
                 if (Current == startToken)
                     NextToken();
             }
@@ -199,14 +192,6 @@ namespace ReCT.CodeAnalysis.Syntax
 
                 var statement = ParseStatement();
                 statements.Add(statement);
-
-                // If ParseStatement() did not consume any tokens,
-                // we need to skip the current token and continue
-                // in order to avoid an infinite loop.
-                //
-                // We don't need to report an error, because we'll
-                // already tried to parse an expression statement
-                // and reported one.
                 if (Current == startToken)
                     NextToken();
             }

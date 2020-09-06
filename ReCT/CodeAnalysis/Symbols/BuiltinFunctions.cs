@@ -19,6 +19,7 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly FunctionSymbol GetSizeY = new FunctionSymbol("GetSizeY", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
         public static readonly FunctionSymbol SetSize = new FunctionSymbol("SetSize", ImmutableArray.Create(new ParameterSymbol("X", TypeSymbol.Int, 0), new ParameterSymbol("Y", TypeSymbol.Int, 0)), TypeSymbol.Void);
 
+
         //Math
         public static readonly FunctionSymbol Random = new FunctionSymbol("Random", ImmutableArray.Create(new ParameterSymbol("max", TypeSymbol.Int, 0)), TypeSymbol.Int);
 

@@ -170,6 +170,10 @@ namespace ReCT.CodeAnalysis.Syntax
                     _kind = SyntaxKind.LessToken;
                     _position++;
                     break;
+                case '>' when Lookahead == '=':
+                    _kind = SyntaxKind.GreaterOrEqualsToken;
+                    _position += 2;
+                    break;
                 case '>' when Lookahead != '=':
                     _position++;
                     _kind = SyntaxKind.GreaterToken;
