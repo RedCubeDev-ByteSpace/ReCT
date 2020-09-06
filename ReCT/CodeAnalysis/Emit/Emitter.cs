@@ -49,10 +49,13 @@ namespace ReCT.CodeAnalysis.Emit
 
         private TypeDefinition _typeDefinition;
         private FieldDefinition _randomFieldDefinition;
+        private static List<AssemblyDefinition> s_assemblies;
+        private static AssemblyDefinition s_assemblyDefinition;
 
         private Emitter(string moduleName, string[] references)
         {
             var assemblies = new List<AssemblyDefinition>();
+            s_assemblies = assemblies;
 
             foreach (var reference in references)
             {
@@ -80,6 +83,8 @@ namespace ReCT.CodeAnalysis.Emit
             var assemblyName = new AssemblyNameDefinition(moduleName, new Version(1, 0));
             _assemblyDefinition = AssemblyDefinition.CreateAssembly(assemblyName, moduleName, ModuleKind.Console);
             _knownTypes = new Dictionary<TypeSymbol, TypeReference>();
+
+            s_assemblyDefinition = _assemblyDefinition;
 
             _consoleKeyInfoRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.ConsoleKeyInfo").ToArray()[0]);
             _charRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.Char").ToArray()[0]);
@@ -192,6 +197,54 @@ namespace ReCT.CodeAnalysis.Emit
             _randomReference = ResolveType(null, "System.Random");
             _randomCtorReference = ResolveMethod("System.Random", ".ctor", Array.Empty<string>());
             _randomNextReference = ResolveMethod("System.Random", "Next", new [] { "System.Int32" });
+        }
+
+        public MethodReference ResolveMethodPublic(string typeName, string methodName, string[] parameterTypeNames)
+        {
+            var foundTypes = s_assemblies.SelectMany(a => a.Modules)
+                                       .SelectMany(m => m.Types)
+                                       .Where(t => t.FullName == typeName)
+                                       .ToArray();
+            if (foundTypes.Length == 1)
+            {
+                var foundType = foundTypes[0];
+                var methods = foundType.Methods.Where(m => m.Name == methodName);
+
+                foreach (var method in methods)
+                {
+                    if (method.Parameters.Count != parameterTypeNames.Length)
+                        continue;
+
+                    var allParametersMatch = true;
+
+                    for (var i = 0; i < parameterTypeNames.Length; i++)
+                    {
+                        if (method.Parameters[i].ParameterType.FullName != parameterTypeNames[i])
+                        {
+                            allParametersMatch = false;
+                            break;
+                        }
+                    }
+
+                    if (!allParametersMatch)
+                        continue;
+
+                    return s_assemblyDefinition.MainModule.ImportReference(method);
+                }
+
+                _diagnostics.ReportRequiredMethodNotFound(typeName, methodName, parameterTypeNames);
+                return null;
+            }
+            else if (foundTypes.Length == 0)
+            {
+                _diagnostics.ReportRequiredTypeNotFound(null, typeName);
+            }
+            else
+            {
+                _diagnostics.ReportRequiredTypeAmbiguous(null, typeName, foundTypes);
+            }
+
+            return null;
         }
 
         public static ImmutableArray<Diagnostic> Emit(BoundProgram program, string moduleName, string[] references, string outputPath)
@@ -376,6 +429,9 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundNodeKind.VariableExpression:
                     EmitVariableExpression(ilProcessor, (BoundVariableExpression)node);
                     break;
+                case BoundNodeKind.RemoteNameExpression:
+                    EmitRemoteNameExpression(ilProcessor, (BoundRemoteNameExpression)node);
+                    break;
                 case BoundNodeKind.AssignmentExpression:
                     EmitAssignmentExpression(ilProcessor, (BoundAssignmentExpression)node);
                     break;
@@ -394,6 +450,23 @@ namespace ReCT.CodeAnalysis.Emit
                 default:
                     throw new Exception($"Unexpected node kind {node.Kind}");
             }
+        }
+
+        private void EmitRemoteNameExpression(ILProcessor ilProcessor, BoundRemoteNameExpression node)
+        {
+            if (node.Variable.IsGlobal)
+            {
+                var fieldDefinition = _globals[node.Variable];
+                ilProcessor.Emit(OpCodes.Ldsfld, fieldDefinition);
+            }
+            else
+            {
+                var variableDefinition = _locals[node.Variable];
+                ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
+                
+            }
+            var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "get_" + node.CallName, Array.Empty<string>());
+            ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
         }
 
         private void EmitLiteralExpression(ILProcessor ilProcessor, BoundLiteralExpression node)

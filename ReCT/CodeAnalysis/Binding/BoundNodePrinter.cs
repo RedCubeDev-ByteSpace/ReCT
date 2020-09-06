@@ -66,6 +66,9 @@ namespace ReCT.CodeAnalysis.Binding
                 case BoundNodeKind.VariableExpression:
                     WriteVariableExpression((BoundVariableExpression)node, writer);
                     break;
+                case BoundNodeKind.RemoteNameExpression:
+                    WriteRemoteNameExpression((BoundRemoteNameExpression)node, writer);
+                    break;
                 case BoundNodeKind.AssignmentExpression:
                     WriteAssignmentExpression((BoundAssignmentExpression)node, writer);
                     break;
@@ -84,6 +87,13 @@ namespace ReCT.CodeAnalysis.Binding
                 default:
                     throw new Exception($"Unexpected node {node.Kind}");
             }
+        }
+
+        private static void WriteRemoteNameExpression(BoundRemoteNameExpression node, IndentedTextWriter writer)
+        {
+            writer.WriteIdentifier(node.Variable.Name);
+            writer.WriteKeyword(SyntaxKind.AccessToken);
+            writer.Write(node.CallName);
         }
 
         private static void WriteNestedStatement(this IndentedTextWriter writer, BoundStatement node)

@@ -322,7 +322,7 @@ namespace ReCT.CodeAnalysis.Binding
 
         private BoundStatement BindVariableDeclaration(VariableDeclarationSyntax syntax)
         {
-            var isReadOnly = syntax.Keyword.Kind == SyntaxKind.SetKeyword;
+            var isReadOnly = false;
             var type = BindTypeClause(syntax.TypeClause);
             var initializer = BindExpression(syntax.Initializer);
             var variableType = type ?? initializer.Type;
@@ -503,6 +503,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return BindLiteralExpression((LiteralExpressionSyntax)syntax);
                 case SyntaxKind.NameExpression:
                     return BindNameExpression((NameExpressionSyntax)syntax);
+                case SyntaxKind.RemoteNameExpression:
+                    return BindRemoteNameExpression((RemoteNameExpressionSyntax)syntax);
                 case SyntaxKind.AssignmentExpression:
                     return BindAssignmentExpression((AssignmentExpressionSyntax)syntax);
                 case SyntaxKind.UnaryExpression:
@@ -542,6 +544,23 @@ namespace ReCT.CodeAnalysis.Binding
                 return new BoundErrorExpression();
 
             return new BoundVariableExpression(variable);
+        }
+
+        private BoundExpression BindRemoteNameExpression(RemoteNameExpressionSyntax syntax)
+        {
+            var name = syntax.IdentifierToken.Text;
+            if (syntax.IdentifierToken.IsMissing)
+            {
+                // This means the token was inserted by the parser. We already
+                // reported error so we can just return an error expression.
+                return new BoundErrorExpression();
+            }
+
+            var variable = BindVariableReference(syntax.IdentifierToken);
+            if (variable == null)
+                return new BoundErrorExpression();
+
+            return new BoundRemoteNameExpression(variable, syntax.Name);
         }
 
         private BoundExpression BindAssignmentExpression(AssignmentExpressionSyntax syntax)

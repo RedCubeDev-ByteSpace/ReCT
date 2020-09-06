@@ -177,6 +177,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return RewriteLiteralExpression((BoundLiteralExpression)node);
                 case BoundNodeKind.VariableExpression:
                     return RewriteVariableExpression((BoundVariableExpression)node);
+                case BoundNodeKind.RemoteNameExpression:
+                    return RewriteRemoteNameExpression((BoundRemoteNameExpression)node);
                 case BoundNodeKind.AssignmentExpression:
                     return RewriteAssignmentExpression((BoundAssignmentExpression)node);
                 case BoundNodeKind.UnaryExpression:
@@ -190,6 +192,11 @@ namespace ReCT.CodeAnalysis.Binding
                 default:
                     throw new Exception($"Unexpected node: {node.Kind}");
             }
+        }
+
+        private BoundExpression RewriteRemoteNameExpression(BoundRemoteNameExpression node)
+        {
+            return node;
         }
 
         protected virtual BoundExpression RewriteErrorExpression(BoundErrorExpression node)

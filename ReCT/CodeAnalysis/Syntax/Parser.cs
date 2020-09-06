@@ -206,9 +206,10 @@ namespace ReCT.CodeAnalysis.Syntax
             var expected = Current.Kind == SyntaxKind.SetKeyword ? SyntaxKind.SetKeyword : SyntaxKind.VarKeyword;
             var keyword = MatchToken(expected);
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
-            var typeClause = ParseOptionalTypeClause();
             var equals = MatchToken(SyntaxKind.AssignToken);
             var initializer = ParseExpression();
+            var typeClause = ParseOptionalTypeClause();
+
             return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer);
         }
 
@@ -489,6 +490,8 @@ namespace ReCT.CodeAnalysis.Syntax
             if (Peek(0).Kind == SyntaxKind.AccessToken)
             {
                 MatchToken(SyntaxKind.AccessToken);
+                var internalToken = MatchToken(SyntaxKind.IdentifierToken);
+                return new RemoteNameExpressionSyntax(_syntaxTree, identifierToken, internalToken.Text);
             }
 
             return new NameExpressionSyntax(_syntaxTree, identifierToken);

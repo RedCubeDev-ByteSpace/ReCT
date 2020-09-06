@@ -25,5 +25,6 @@ namespace ReCT.CodeAnalysis.Binding
         CallExpression,
         ConversionExpression,
         FromToStatement,
+        RemoteNameExpression,
     }
 }

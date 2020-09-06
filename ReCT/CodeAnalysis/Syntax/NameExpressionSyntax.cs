@@ -1,3 +1,5 @@
+using ReCT.CodeAnalysis.Symbols;
+
 namespace ReCT.CodeAnalysis.Syntax
 {
     public sealed class NameExpressionSyntax : ExpressionSyntax
@@ -20,7 +22,7 @@ namespace ReCT.CodeAnalysis.Syntax
             Name = name;
         }
 
-        public override SyntaxKind Kind => SyntaxKind.NameExpression;
+        public override SyntaxKind Kind => SyntaxKind.RemoteNameExpression;
         public SyntaxToken IdentifierToken { get; }
         public string Name { get; }
     }
