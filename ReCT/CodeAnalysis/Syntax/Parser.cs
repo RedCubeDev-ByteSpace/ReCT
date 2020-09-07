@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
+using ReCT.CodeAnalysis.Symbols;
 using ReCT.CodeAnalysis.Text;
 
 namespace ReCT.CodeAnalysis.Syntax
@@ -209,26 +211,9 @@ namespace ReCT.CodeAnalysis.Syntax
             var equals = MatchToken(SyntaxKind.AssignToken);
             var initializer = ParseExpression();
             var typeClause = ParseOptionalTypeClause();
-            var ignoreType = false;
+            TypeSymbol returnType = null;
 
-            ExpressionSyntax expression = initializer;
-            while(true)
-            {
-                if (expression is BinaryExpressionSyntax b)
-                    expression = b.Left;
-
-                if (expression is LiteralExpressionSyntax)
-                    break;
-                if (expression is NameExpressionSyntax)
-                    break;
-                if (expression is RemoteNameExpressionSyntax)
-                {
-                    ignoreType = true;
-                    break;
-                }
-            }
-
-            return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer, ignoreType);
+            return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer, returnType);
         }
 
         private TypeClauseSyntax ParseOptionalTypeClause()
@@ -508,8 +493,8 @@ namespace ReCT.CodeAnalysis.Syntax
             if (Peek(0).Kind == SyntaxKind.AccessToken)
             {
                 MatchToken(SyntaxKind.AccessToken);
-                var internalToken = MatchToken(SyntaxKind.IdentifierToken);
-                return new RemoteNameExpressionSyntax(_syntaxTree, identifierToken, internalToken.Text);
+                var internalToken = ParseCallExpression();
+                return new RemoteNameExpressionSyntax(_syntaxTree, identifierToken, (CallExpressionSyntax)internalToken);
             }
 
             return new NameExpressionSyntax(_syntaxTree, identifierToken);

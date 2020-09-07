@@ -93,7 +93,27 @@ namespace ReCT.CodeAnalysis.Binding
         {
             writer.WriteIdentifier(node.Variable.Name);
             writer.WriteKeyword(SyntaxKind.AccessToken);
-            writer.Write(node.CallName);
+            writer.WriteIdentifier(node.Call.Function.Name);
+
+            writer.WritePunctuation(SyntaxKind.OpenParenthesisToken);
+
+            var isFirst = true;
+            foreach (var argument in node.Call.Arguments)
+            {
+                if (isFirst)
+                {
+                    isFirst = false;
+                }
+                else
+                {
+                    writer.WritePunctuation(SyntaxKind.CommaToken);
+                    writer.WriteSpace();
+                }
+
+                argument.WriteTo(writer);
+            }
+
+            writer.WritePunctuation(SyntaxKind.CloseParenthesisToken);
         }
 
         private static void WriteNestedStatement(this IndentedTextWriter writer, BoundStatement node)

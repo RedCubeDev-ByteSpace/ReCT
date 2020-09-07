@@ -470,8 +470,7 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
                 
             }
-            var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "get_" + node.CallName, Array.Empty<string>());
-            ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+            EmitTypeCallExpression(ilProcessor, node);
         }
 
         private void EmitLiteralExpression(ILProcessor ilProcessor, BoundLiteralExpression node)
@@ -670,6 +669,27 @@ namespace ReCT.CodeAnalysis.Emit
             }
         }
 
+        private void EmitTypeCallExpression(ILProcessor ilProcessor, BoundRemoteNameExpression node)
+        {
+            foreach (var argument in node.Call.Arguments)
+                EmitExpression(ilProcessor, argument);
+
+            if (node.Call.Function == BuiltinFunctions.GetLength)
+            {
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "get_Length", Array.Empty<string>());
+                ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+            }
+            else if (node.Call.Function == BuiltinFunctions.Substring)
+            {
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Substring", new[] { "System.Int32", "System.Int32" });
+                ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+            }
+            else
+            {
+                throw new Exception("Couldnt find TypeFunction: " + node.Call.Function.Name);
+            }
+        }
+
         private void EmitCallExpression(ILProcessor ilProcessor, BoundCallExpression node)
         {
             if (node.Function == BuiltinFunctions.Random)
@@ -686,8 +706,8 @@ namespace ReCT.CodeAnalysis.Emit
                 return;
             }
 
-                foreach (var argument in node.Arguments)
-                    EmitExpression(ilProcessor, argument);
+            foreach (var argument in node.Arguments)
+                EmitExpression(ilProcessor, argument);
 
             if (node.Function == BuiltinFunctions.Input)
                 ilProcessor.Emit(OpCodes.Call, _consoleReadLineReference);

@@ -25,15 +25,36 @@ namespace ReCT.CodeAnalysis.Symbols
 
 
         //Math
-        public static readonly FunctionSymbol Random = new FunctionSymbol("Random", ImmutableArray.Create(new ParameterSymbol("max", TypeSymbol.Int, 0)), TypeSymbol.Int);
+        public static readonly FunctionSymbol Random = new FunctionSymbol("Random", ImmutableArray.Create(new ParameterSymbol("min", TypeSymbol.Int, 0), new ParameterSymbol("max", TypeSymbol.Int, 0)), TypeSymbol.Int);
 
         //Other stuff
         public static readonly FunctionSymbol Version = new FunctionSymbol("Version", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
         public static readonly FunctionSymbol Sleep = new FunctionSymbol("Sleep", ImmutableArray.Create(new ParameterSymbol("int", TypeSymbol.Int, 0)), TypeSymbol.Void);
 
+        //String funcs
+        public static readonly FunctionSymbol GetLength = new FunctionSymbol("GetLength", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
+        public static readonly FunctionSymbol Substring = new FunctionSymbol("Substring", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0), new ParameterSymbol("lenght", TypeSymbol.Int, 0)), TypeSymbol.String);
+
         internal static IEnumerable<FunctionSymbol> GetAll()
             => typeof(BuiltinFunctions).GetFields(BindingFlags.Public | BindingFlags.Static)
                                        .Where(f => f.FieldType == typeof(FunctionSymbol))
                                        .Select(f => (FunctionSymbol)f.GetValue(null));
+        internal static IEnumerable<string> GetAllNames()
+        {
+            foreach(FunctionSymbol fs in GetAll())
+            {
+                yield return fs.Name;
+            }
+        }
+        internal static FunctionSymbol getFuncFromName(string name)
+        {
+            List<FunctionSymbol> fns = new List<FunctionSymbol>(GetAll());
+            for (int i = 0; i < fns.Count; i++)
+            {
+                if (fns[i].Name == name)
+                    return fns[i];
+            }
+            return null;
+        }
     }
 }

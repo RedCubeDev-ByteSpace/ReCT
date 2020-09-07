@@ -100,7 +100,7 @@ namespace ReCT_IDE
             {
                 errorBox.Show();
                 errorBox.errorBox.Clear();
-                errorBox.errorBox.Text = e.Message;
+                errorBox.errorBox.Text = e.Source + ": " + e.Message + "\n" + e.StackTrace;
             }
         }
         public void CompileDNCLI(string fileName, string outName)

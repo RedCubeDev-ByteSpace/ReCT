@@ -327,9 +327,9 @@ namespace ReCT.CodeAnalysis.Binding
             var initializer = BindExpression(syntax.Initializer);
             var variableType = type ?? initializer.Type;
             var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly, variableType, syntax.Keyword.Kind);
-            var convertedInitializer = BindConversion(syntax.Initializer.Location, initializer, variableType);
+            var convertedInitializer = BindConversion(syntax.Initializer.Location, initializer, syntax.ExternalType == null ? variableType : syntax.ExternalType);
 
-            return new BoundVariableDeclaration(variable, syntax.IgnoreType ? initializer : convertedInitializer);
+            return new BoundVariableDeclaration(variable, convertedInitializer);
         }
 
         private TypeSymbol BindTypeClause(TypeClauseSyntax syntax)
@@ -551,16 +551,15 @@ namespace ReCT.CodeAnalysis.Binding
             var name = syntax.IdentifierToken.Text;
             if (syntax.IdentifierToken.IsMissing)
             {
-                // This means the token was inserted by the parser. We already
-                // reported error so we can just return an error expression.
                 return new BoundErrorExpression();
             }
 
             var variable = BindVariableReference(syntax.IdentifierToken);
+            var call = BindCallExpression(syntax.Call);
             if (variable == null)
                 return new BoundErrorExpression();
 
-            return new BoundRemoteNameExpression(variable, syntax.Name);
+            return new BoundRemoteNameExpression(variable, (BoundCallExpression)call);
         }
 
         private BoundExpression BindAssignmentExpression(AssignmentExpressionSyntax syntax)

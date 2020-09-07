@@ -1,8 +1,10 @@
+using ReCT.CodeAnalysis.Symbols;
+
 namespace ReCT.CodeAnalysis.Syntax
 {
     public sealed class VariableDeclarationSyntax : StatementSyntax
     {
-        public VariableDeclarationSyntax(SyntaxTree syntaxTree, SyntaxToken keyword, SyntaxToken identifier, TypeClauseSyntax typeClause, SyntaxToken equalsToken, ExpressionSyntax initializer, bool ignoreType)
+        public VariableDeclarationSyntax(SyntaxTree syntaxTree, SyntaxToken keyword, SyntaxToken identifier, TypeClauseSyntax typeClause, SyntaxToken equalsToken, ExpressionSyntax initializer, TypeSymbol externalType)
             : base(syntaxTree)
         {
             Keyword = keyword;
@@ -10,7 +12,7 @@ namespace ReCT.CodeAnalysis.Syntax
             TypeClause = typeClause;
             EqualsToken = equalsToken;
             Initializer = initializer;
-            IgnoreType = ignoreType;
+            ExternalType = externalType;
         }
 
         public override SyntaxKind Kind => SyntaxKind.VariableDeclaration;
@@ -19,6 +21,6 @@ namespace ReCT.CodeAnalysis.Syntax
         public TypeClauseSyntax TypeClause { get; }
         public SyntaxToken EqualsToken { get; }
         public ExpressionSyntax Initializer { get; }
-        public bool IgnoreType { get; }
+        public TypeSymbol ExternalType { get; }
     }
 }

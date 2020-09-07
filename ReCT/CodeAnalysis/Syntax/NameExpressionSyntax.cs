@@ -15,15 +15,15 @@ namespace ReCT.CodeAnalysis.Syntax
     }
     public sealed class RemoteNameExpressionSyntax : ExpressionSyntax
     {
-        public RemoteNameExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifierToken, string name)
+        public RemoteNameExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifierToken, CallExpressionSyntax call)
             : base(syntaxTree)
         {
             IdentifierToken = identifierToken;
-            Name = name;
+            Call = call;
         }
 
         public override SyntaxKind Kind => SyntaxKind.RemoteNameExpression;
         public SyntaxToken IdentifierToken { get; }
-        public string Name { get; }
+        public CallExpressionSyntax Call { get; }
     }
 }
