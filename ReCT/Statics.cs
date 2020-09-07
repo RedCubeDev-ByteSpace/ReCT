@@ -23,7 +23,7 @@ namespace ReCT
         Gray = 7,
         Green = 10,
         Magenta = 13,
-        Red = 12, //default cube color
+        Red = 12, //default cube color //hehe
         White = 15,
         Yellow = 14,
     }

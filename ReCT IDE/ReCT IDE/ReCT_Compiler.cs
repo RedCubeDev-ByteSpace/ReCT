@@ -93,7 +93,7 @@ namespace ReCT_IDE
                 }
                 using (StreamWriter sw = new StreamWriter(new FileStream(fileOut, FileMode.Create)))
                 {
-                    sw.Write($"dotnet exec {Path.GetFileNameWithoutExtension(fileOut)}.dll");
+                    sw.Write($"dotnet exec \"{Path.GetFileNameWithoutExtension(fileOut)}.dll\"");
                 }
             }
             catch (Exception e)

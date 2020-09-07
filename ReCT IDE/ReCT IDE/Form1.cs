@@ -28,7 +28,7 @@ namespace ReCT_IDE
 
         public Image[] icons = new Image[6];
 
-        string standardMsg = "//ReCT IDE v1.0";
+        string standardMsg = "//ReCT IDE ";
 
         public Form1()
         {
@@ -48,6 +48,7 @@ namespace ReCT_IDE
         private void Form1_Load(object sender, EventArgs e)
         {
             Menu.Renderer = new MenuRenderer();
+            standardMsg += ReCT.info.Version;
             errorBox = new Error();
             SetCodeBoxColors();
             fileChanged = false;
@@ -121,6 +122,7 @@ namespace ReCT_IDE
         Style SystemFunctionStyle = new TextStyle(new SolidBrush(Color.FromArgb(255, 131, 7)), null, FontStyle.Regular);
         Style UserFunctionStyle = new TextStyle(new SolidBrush(Color.FromArgb(25, 189, 93)), null, FontStyle.Regular);
         Style VariableStyle = new TextStyle(new SolidBrush(Color.FromArgb(255, 212, 125)), null, FontStyle.Regular);
+        Style TypeFunctionStyle = new TextStyle(new SolidBrush(Color.FromArgb(159, 212, 85)), null, FontStyle.Regular);
         Style CommentStyle = new TextStyle(new SolidBrush(Color.FromArgb(100, 100, 100)), null, FontStyle.Regular);
         Style WhiteStyle = new TextStyle(Brushes.White, null, FontStyle.Regular);
 
@@ -147,13 +149,13 @@ namespace ReCT_IDE
             e.ChangedRange.ClearStyle(SystemFunctionStyle);
 
             //system function highlighting
-            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(Print|InputKey|Input|Random|Version|Clear|SetCursor|GetSizeX|GetSizeY|SetSize|Write|Sleep)");
+            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bPrint\b|\bInputKey\b|\bInput\b|\bRandom\b|\bVersion\b|\bClear\b|\bSetCursor\b|\bGetSizeX\b|\bGetSizeY\b|\bSetSize\b|\bWrite\b|\bSleep\b)");
 
             //types
             e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b|\bfloat\b)");
 
             //function highlighting [DarkMode]
-            e.ChangedRange.SetStyle(VarStyle, @"(var|set|if|else|function|true|false)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(VarStyle, @"(\bvar\b|\bset\b|\bif\b|\belse\b|\bfunction\b|\btrue\b|\bfalse\b)", RegexOptions.Singleline);
 
             //variables
             e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+<-))");
@@ -164,8 +166,11 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(UserFunctionStyle, @"(?<=\bfunction\s)(\w+)");
             e.ChangedRange.SetStyle(UserFunctionStyle, rectComp.Functions);
 
+            //type functions
+            e.ChangedRange.SetStyle(TypeFunctionStyle, @"(?<=\>>\s)(\w+)");
+
             //statements highlighting
-            e.ChangedRange.SetStyle(StatementStyle, @"(break|continue|for|return|to|while|\bdo\b|end|from)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(StatementStyle, @"(\bbreak\b|\bcontinue\b|\bfor\b|\breturn\b|\bto\b|\bwhile\b|\bdo\b|\bend\b|\bfrom\b)", RegexOptions.Singleline);
 
             //numbers
             e.ChangedRange.SetStyle(NumberStyle, @"(\b\d+\b)", RegexOptions.Multiline);
@@ -373,7 +378,7 @@ namespace ReCT_IDE
 
             rectComp.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(openFile) + ".cmd", openFile, errorBox);
 
-            string strCmdText = $"/K cd \"{Path.GetFullPath($"Builder")}\" & cls & {Path.GetFileNameWithoutExtension(openFile)}.cmd";
+            string strCmdText = $"/K cd \"{Path.GetFullPath($"Builder")}\" & cls & \"{Path.GetFileNameWithoutExtension(openFile)}.cmd\"";
             running = Process.Start("CMD.exe", strCmdText);
         }
 

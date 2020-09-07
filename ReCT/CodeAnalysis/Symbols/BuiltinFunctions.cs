@@ -25,7 +25,7 @@ namespace ReCT.CodeAnalysis.Symbols
 
 
         //Math
-        public static readonly FunctionSymbol Random = new FunctionSymbol("Random", ImmutableArray.Create(new ParameterSymbol("min", TypeSymbol.Int, 0), new ParameterSymbol("max", TypeSymbol.Int, 0)), TypeSymbol.Int);
+        public static readonly FunctionSymbol Random = new FunctionSymbol("Random", ImmutableArray.Create(new ParameterSymbol("max", TypeSymbol.Int, 0)), TypeSymbol.Int);
 
         //Other stuff
         public static readonly FunctionSymbol Version = new FunctionSymbol("Version", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
