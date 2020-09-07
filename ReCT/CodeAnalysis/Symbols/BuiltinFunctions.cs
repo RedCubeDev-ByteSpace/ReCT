@@ -33,7 +33,7 @@ namespace ReCT.CodeAnalysis.Symbols
 
         //String funcs
         public static readonly FunctionSymbol GetLength = new FunctionSymbol("GetLength", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
-        public static readonly FunctionSymbol Substring = new FunctionSymbol("Substring", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0), new ParameterSymbol("lenght", TypeSymbol.Int, 0)), TypeSymbol.String);
+        public static readonly FunctionSymbol Substring = new FunctionSymbol("Substring", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0), new ParameterSymbol("length", TypeSymbol.Int, 0)), TypeSymbol.String);
 
         internal static IEnumerable<FunctionSymbol> GetAll()
             => typeof(BuiltinFunctions).GetFields(BindingFlags.Public | BindingFlags.Static)
