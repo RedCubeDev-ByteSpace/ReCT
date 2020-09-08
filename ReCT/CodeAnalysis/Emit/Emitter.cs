@@ -44,6 +44,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _randomNextReference;
         private readonly AssemblyDefinition _assemblyDefinition;
         private readonly Dictionary<FunctionSymbol, MethodDefinition> _methods = new Dictionary<FunctionSymbol, MethodDefinition>();
+        private readonly Dictionary<string, MethodDefinition> str_methods = new Dictionary<string, MethodDefinition>();
         private readonly Dictionary<VariableSymbol, VariableDefinition> _locals = new Dictionary<VariableSymbol, VariableDefinition>();
         private readonly Dictionary<VariableSymbol, FieldDefinition> _globals = new Dictionary<VariableSymbol, FieldDefinition>();
         private readonly Dictionary<BoundLabel, int> _labels = new Dictionary<BoundLabel, int>();
@@ -80,6 +81,7 @@ namespace ReCT.CodeAnalysis.Emit
                 (TypeSymbol.String, "System.String"),
                 (TypeSymbol.Void, "System.Void"),
                 (TypeSymbol.Float, "System.Single"),
+                (TypeSymbol.Thread, "System.Threading.Thread"),
             };
 
             var assemblyName = new AssemblyNameDefinition(moduleName, new Version(1, 0));
@@ -299,6 +301,7 @@ namespace ReCT.CodeAnalysis.Emit
 
             _typeDefinition.Methods.Add(method);
             _methods.Add(function, method);
+            str_methods.Add(function.Name, method);
         }
 
         private void EmitFunctionBody(FunctionSymbol function, BoundBlockStatement body)
@@ -704,6 +707,12 @@ namespace ReCT.CodeAnalysis.Emit
 
                 ilProcessor.Emit(OpCodes.Callvirt, _randomNextReference);
                 return;
+            }
+
+            if (node.Function == BuiltinFunctions.Thread)
+            {
+                ilProcessor.Emit(OpCodes.Ldarg, 0);
+                ilProcessor.Emit(OpCodes.Ldftn, str_methods[node.]);
             }
 
             foreach (var argument in node.Arguments)

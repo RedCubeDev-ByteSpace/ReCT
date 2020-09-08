@@ -751,6 +751,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.String;
                 case "float":
                     return TypeSymbol.Float;
+                case "thread":
+                    return TypeSymbol.Thread;
                 default:
                     return null;
             }

@@ -294,6 +294,7 @@
             this.ReCTAutoComplete.Items = new string[] {
         "Print",
         "Input",
+        "InputKey",
         "Random",
         "Version",
         "Clear",
@@ -301,6 +302,8 @@
         "GetSizeX",
         "GetSizeY",
         "SetSize",
+        "SetCursorVisible",
+        "GetCursorVisible",
         "?",
         "any",
         "bool",

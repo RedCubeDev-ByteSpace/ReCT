@@ -11,6 +11,7 @@ using ReCT.CodeAnalysis.Syntax;
 using System.Diagnostics;
 using System.Threading;
 using System.Reflection;
+using System.Collections.Immutable;
 
 namespace ReCT_IDE
 {
@@ -60,17 +61,39 @@ namespace ReCT_IDE
         public void CompileRCTBC(string fileOut, string inPath, Error errorBox)
         {
             var syntaxTree = SyntaxTree.Load(inPath);
+
+            var sErrors = syntaxTree.Diagnostics;
+
+            if (sErrors.Any())
+            {
+                Console.WriteLine("oof");
+                errorBox.Show();
+                errorBox.errorBox.Clear();
+                foreach (Diagnostic d in sErrors)
+                {
+                    if (d.Location.Text != null)
+                    {
+                        errorBox.errorBox.Text += $"[L: {d.Location.StartLine}, C: {d.Location.StartCharacter}] {d.Message}\n";
+                    }
+                    else
+                        errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
+                }
+                errorBox.version.Text = ReCT.info.Version;
+                return;
+            }
+
             var compilation = Compilation.Create(syntaxTree);
+
+            ImmutableArray<Diagnostic> errors = ImmutableArray<Diagnostic>.Empty;
 
             try
             {
-                var errors = compilation.Emit(Path.GetFileNameWithoutExtension(fileOut), new string[] { @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Console.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Threading.Thread.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.Extensions.dll" }, Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
+                errors = compilation.Emit(Path.GetFileNameWithoutExtension(fileOut), new string[] { @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Console.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Threading.Thread.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Threading.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.Extensions.dll" }, Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
 
                 Console.WriteLine(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
 
                 if (errors.Any())
                 {
-                    Console.WriteLine("oof");
                     errorBox.Show();
                     errorBox.errorBox.Clear();
                     foreach (Diagnostic d in errors)
@@ -100,7 +123,25 @@ namespace ReCT_IDE
             {
                 errorBox.Show();
                 errorBox.errorBox.Clear();
-                errorBox.errorBox.Text = e.Source + ": " + e.Message + "\n" + e.StackTrace;
+
+                if (errors.Any())
+                {
+                    errorBox.Show();
+                    errorBox.errorBox.Clear();
+                    foreach (Diagnostic d in errors)
+                    {
+                        if (d.Location.Text != null)
+                        {
+                            errorBox.errorBox.Text += $"[L: {d.Location.StartLine}, C: {d.Location.StartCharacter}] {d.Message}\n";
+                        }
+                        else
+                            errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
+                    }
+                    errorBox.version.Text = ReCT.info.Version;
+                    return;
+                }
+                else
+                    errorBox.errorBox.Text = e.Source + ": " + e.Message + "\n" + e.StackTrace;
             }
         }
         public void CompileDNCLI(string fileName, string outName)
