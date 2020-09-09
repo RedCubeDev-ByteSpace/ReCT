@@ -42,6 +42,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly TypeReference _randomReference;
         private readonly MethodReference _randomCtorReference;
         private readonly MethodReference _randomNextReference;
+        private readonly MethodReference _envDie;
         private readonly AssemblyDefinition _assemblyDefinition;
         private readonly Dictionary<FunctionSymbol, MethodDefinition> _methods = new Dictionary<FunctionSymbol, MethodDefinition>();
         private readonly Dictionary<string, MethodDefinition> str_methods = new Dictionary<string, MethodDefinition>();
@@ -204,6 +205,9 @@ namespace ReCT.CodeAnalysis.Emit
             _randomReference = ResolveType(null, "System.Random");
             _randomCtorReference = ResolveMethod("System.Random", ".ctor", Array.Empty<string>());
             _randomNextReference = ResolveMethod("System.Random", "Next", new [] { "System.Int32" });
+
+            //die
+            _envDie = ResolveMethod("System.Environment", "Exit", new[] { "System.Int32" });
         }
 
         public MethodReference ResolveMethodPublic(string typeName, string methodName, string[] parameterTypeNames)
@@ -758,6 +762,8 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Call, _setVisableCursorRef);
             else if (node.Function == BuiltinFunctions.GetCursorVisible)
                 ilProcessor.Emit(OpCodes.Call, _getVisableCursorRef);
+            else if (node.Function == BuiltinFunctions.Die)
+                ilProcessor.Emit(OpCodes.Call, _envDie);
             else
             {
                 var methodDefinition = _methods[node.Function];

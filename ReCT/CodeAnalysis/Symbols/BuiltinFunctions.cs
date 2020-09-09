@@ -40,6 +40,10 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly FunctionSymbol StartThread = new FunctionSymbol("StartThread", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
         public static readonly FunctionSymbol KillThread = new FunctionSymbol("KillThread", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
 
+        //Cube functions
+        public static readonly FunctionSymbol Die = new FunctionSymbol("Die", ImmutableArray.Create(new ParameterSymbol("exitCode", TypeSymbol.Int, 0)), TypeSymbol.Int);
+
+
         internal static IEnumerable<FunctionSymbol> GetAll()
             => typeof(BuiltinFunctions).GetFields(BindingFlags.Public | BindingFlags.Static)
                                        .Where(f => f.FieldType == typeof(FunctionSymbol))
