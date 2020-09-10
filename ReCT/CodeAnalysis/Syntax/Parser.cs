@@ -112,6 +112,15 @@ namespace ReCT.CodeAnalysis.Syntax
             return new FunctionDeclarationSyntax(_syntaxTree, functionKeyword, identifier, openParenthesisToken, parameters, closeParenthesisToken, type, body);
         }
 
+        private ExpressionSyntax ParseThreadCreation()
+        {
+            var threadKeyword = MatchToken(SyntaxKind.ThreadKeyword);
+            MatchToken(SyntaxKind.OpenParenthesisToken);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            MatchToken(SyntaxKind.CloseParenthesisToken);
+            return new ThreadCreationSyntax(_syntaxTree, identifier);
+        }
+
         private SeparatedSyntaxList<ParameterSyntax> ParseParameterList()
         {
             var nodesAndSeparators = ImmutableArray.CreateBuilder<SyntaxNode>();
@@ -409,7 +418,8 @@ namespace ReCT.CodeAnalysis.Syntax
 
                 case SyntaxKind.StringToken:
                     return ParseStringLiteral();
-
+                case SyntaxKind.ThreadKeyword:
+                    return ParseThreadCreation();
                 case SyntaxKind.IdentifierToken:
                 default:
                     return ParseNameOrCallExpression();

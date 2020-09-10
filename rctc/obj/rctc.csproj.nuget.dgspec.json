@@ -1,24 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\djlw7\\Source\\Repos\\ReCT5\\rctc\\rctc.csproj": {}
+    "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\rctc\\rctc.csproj": {}
   },
   "projects": {
-    "C:\\Users\\djlw7\\Source\\Repos\\ReCT5\\rctc\\rctc.csproj": {
+    "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\rctc\\rctc.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\djlw7\\Source\\Repos\\ReCT5\\rctc\\rctc.csproj",
+        "projectUniqueName": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\rctc\\rctc.csproj",
         "projectName": "rctc",
-        "projectPath": "C:\\Users\\djlw7\\Source\\Repos\\ReCT5\\rctc\\rctc.csproj",
-        "packagesPath": "C:\\Users\\djlw7\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\djlw7\\Source\\Repos\\ReCT5\\rctc\\obj\\",
+        "projectPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\rctc\\rctc.csproj",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\rctc\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\djlw7\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -27,16 +26,13 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Users\\djlw7\\AppData\\Roaming\\Cosmos User Kit\\packages\\": {},
-          "https://api.nuget.org/v3/index.json": {},
-          "https://dotnet.myget.org/F/roslyn/api/v3/index.json": {},
-          "https://packages.stride3d.net/nuget": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp3.1": {
             "projectReferences": {
-              "C:\\Users\\djlw7\\Source\\Repos\\ReCT5\\ReCT\\ReCT.csproj": {
-                "projectPath": "C:\\Users\\djlw7\\Source\\Repos\\ReCT5\\ReCT\\ReCT.csproj"
+              "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT\\ReCT.csproj": {
+                "projectPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT\\ReCT.csproj"
               }
             }
           }
@@ -74,21 +70,20 @@
         }
       }
     },
-    "C:\\Users\\djlw7\\Source\\Repos\\ReCT5\\ReCT\\ReCT.csproj": {
+    "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT\\ReCT.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\djlw7\\Source\\Repos\\ReCT5\\ReCT\\ReCT.csproj",
+        "projectUniqueName": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT\\ReCT.csproj",
         "projectName": "ReCT",
-        "projectPath": "C:\\Users\\djlw7\\Source\\Repos\\ReCT5\\ReCT\\ReCT.csproj",
-        "packagesPath": "C:\\Users\\djlw7\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\djlw7\\Source\\Repos\\ReCT5\\ReCT\\obj\\",
+        "projectPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT\\ReCT.csproj",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\User\\source\\repos\\ReCT\\ReCT\\ReCT\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\djlw7\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -97,10 +92,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Users\\djlw7\\AppData\\Roaming\\Cosmos User Kit\\packages\\": {},
-          "https://api.nuget.org/v3/index.json": {},
-          "https://dotnet.myget.org/F/roslyn/api/v3/index.json": {},
-          "https://packages.stride3d.net/nuget": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netstandard2.0": {

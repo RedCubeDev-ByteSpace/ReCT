@@ -88,8 +88,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.WhileKeyword;
                 case "do":
                     return SyntaxKind.DoKeyword;
-                case "end":
-                    return SyntaxKind.EndKeyword;
+                case "Thread":
+                    return SyntaxKind.ThreadKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -197,8 +197,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "while";
                 case SyntaxKind.DoKeyword:
                     return "do";
-                case SyntaxKind.EndKeyword:
-                    return "end";
+                case SyntaxKind.ThreadKeyword:
+                    return "Thread";
                 default:
                     return null;
             }

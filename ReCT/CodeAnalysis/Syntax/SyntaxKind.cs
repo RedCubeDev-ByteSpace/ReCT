@@ -85,5 +85,7 @@ namespace ReCT.CodeAnalysis.Syntax
         FromToStatement,
         AccessToken,
         RemoteNameExpression,
+        ThreadKeyword,
+        ThreadCreateExpression,
     }
 }

@@ -1,1 +1,0 @@
-dotnet exec "scope test 2.dll"

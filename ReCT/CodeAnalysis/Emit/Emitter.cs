@@ -42,6 +42,8 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly TypeReference _randomReference;
         private readonly MethodReference _randomCtorReference;
         private readonly MethodReference _randomNextReference;
+        private readonly MethodReference _threadStartObjectReference;
+        private readonly MethodReference _threadObjectReference;
         private readonly MethodReference _envDie;
         private readonly AssemblyDefinition _assemblyDefinition;
         private readonly Dictionary<FunctionSymbol, MethodDefinition> _methods = new Dictionary<FunctionSymbol, MethodDefinition>();
@@ -183,14 +185,17 @@ namespace ReCT.CodeAnalysis.Emit
             _consoleReadKeyReference = ResolveMethod("System.Console", "ReadKey", Array.Empty<string>());
             _consoleKeyInfoGetKeyChar = ResolveMethod("System.ConsoleKeyInfo", "get_KeyChar", Array.Empty<string>());
 
+            //cursor visibility
             _getVisableCursorRef = ResolveMethod("System.Console", "get_CursorVisible", Array.Empty<string>());
             _setVisableCursorRef = ResolveMethod("System.Console", "set_CursorVisible", new[] { "System.Boolean" });
 
+            //fg and bg color
             _setConsoleFG = ResolveMethod("System.Console", "set_ForegroundColor", new[] { "System.ConsoleColor" });
             _setConsoleBG = ResolveMethod("System.Console", "set_BackgroundColor", new[] { "System.ConsoleColor" });
 
             _charToString = ResolveMethod("System.Char", "ToString", Array.Empty<string>());
 
+            //console functions
             _consoleGetHeightReference = ResolveMethod("System.Console", "get_WindowHeight", Array.Empty<string>());
             _consoleGetWidthReference = ResolveMethod("System.Console", "get_WindowWidth", Array.Empty<string>());
 
@@ -205,6 +210,10 @@ namespace ReCT.CodeAnalysis.Emit
             _randomReference = ResolveType(null, "System.Random");
             _randomCtorReference = ResolveMethod("System.Random", ".ctor", Array.Empty<string>());
             _randomNextReference = ResolveMethod("System.Random", "Next", new [] { "System.Int32" });
+
+            //threading
+            _threadStartObjectReference = ResolveMethod("System.Threading.ThreadStart", ".ctor", new[] { "System.Object", "System.IntPtr" });
+            _threadObjectReference = ResolveMethod("System.Threading.Thread", ".ctor", new[] { "System.Threading.ThreadStart" });
 
             //die
             _envDie = ResolveMethod("System.Environment", "Exit", new[] { "System.Int32" });
@@ -459,9 +468,20 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundNodeKind.ConversionExpression:
                     EmitConversionExpression(ilProcessor, (BoundConversionExpression)node);
                     break;
+                case BoundNodeKind.ThreadCreateExpression:
+                    EmitThreadCreate(ilProcessor, (BoundThreadCreateExpression)node);
+                    break;
                 default:
                     throw new Exception($"Unexpected node kind {node.Kind}");
             }
+        }
+
+        private void EmitThreadCreate(ILProcessor ilProcessor, BoundThreadCreateExpression node)
+        {
+            ilProcessor.Emit(OpCodes.Ldnull);
+            ilProcessor.Emit(OpCodes.Ldftn, _methods[node.Function]);
+            ilProcessor.Emit(OpCodes.Newobj, _threadStartObjectReference);
+            ilProcessor.Emit(OpCodes.Newobj, _threadObjectReference);
         }
 
         private void EmitRemoteNameExpression(ILProcessor ilProcessor, BoundRemoteNameExpression node)
@@ -691,6 +711,16 @@ namespace ReCT.CodeAnalysis.Emit
                 var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Substring", new[] { "System.Int32", "System.Int32" });
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
+            else if (node.Call.Function == BuiltinFunctions.StartThread)
+            {
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Start", Array.Empty<string>());
+                ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+            }
+            else if (node.Call.Function == BuiltinFunctions.KillThread)
+            {
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Interrupt", Array.Empty<string>());
+                ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+            }
             else
             {
                 throw new Exception("Couldnt find TypeFunction: " + node.Call.Function.Name);
@@ -711,12 +741,6 @@ namespace ReCT.CodeAnalysis.Emit
 
                 ilProcessor.Emit(OpCodes.Callvirt, _randomNextReference);
                 return;
-            }
-
-            if (node.Function == BuiltinFunctions.Thread)
-            {
-                ilProcessor.Emit(OpCodes.Ldarg, 0);
-                ilProcessor.Emit(OpCodes.Ldftn, str_methods[node.]);
             }
 
             foreach (var argument in node.Arguments)

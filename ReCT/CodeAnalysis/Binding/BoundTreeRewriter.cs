@@ -189,9 +189,16 @@ namespace ReCT.CodeAnalysis.Binding
                     return RewriteCallExpression((BoundCallExpression)node);
                 case BoundNodeKind.ConversionExpression:
                     return RewriteConversionExpression((BoundConversionExpression)node);
+                case BoundNodeKind.ThreadCreateExpression:
+                    return RewriteThreadCreateExpression((BoundThreadCreateExpression)node);
                 default:
                     throw new Exception($"Unexpected node: {node.Kind}");
             }
+        }
+
+        private BoundExpression RewriteThreadCreateExpression(BoundThreadCreateExpression node)
+        {
+            return node;
         }
 
         private BoundExpression RewriteRemoteNameExpression(BoundRemoteNameExpression node)

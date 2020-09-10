@@ -513,6 +513,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return BindBinaryExpression((BinaryExpressionSyntax)syntax);
                 case SyntaxKind.CallExpression:
                     return BindCallExpression((CallExpressionSyntax)syntax);
+                case SyntaxKind.ThreadCreateExpression:
+                    return BindThreadCreateExpression((ThreadCreationSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -616,7 +618,27 @@ namespace ReCT.CodeAnalysis.Binding
             return new BoundBinaryExpression(boundLeft, boundOperator, boundRight);
         }
 
-        private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
+        private BoundExpression BindThreadCreateExpression(ThreadCreationSyntax syntax)
+        {
+            var symbol = _scope.TryLookupSymbol(syntax.Identifier.Text);
+
+            if (symbol == null)
+            {
+                _diagnostics.ReportUndefinedFunction(syntax.Identifier.Location, syntax.Identifier.Text);
+                return new BoundErrorExpression();
+            }
+
+            var function = symbol as FunctionSymbol;
+            if (function == null)
+            {
+                _diagnostics.ReportNotAFunction(syntax.Identifier.Location, syntax.Identifier.Text);
+                return new BoundErrorExpression();
+            }
+
+            return new BoundThreadCreateExpression(function);
+        }
+
+            private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
         {
             if (syntax.Arguments.Count == 1 && LookupType(syntax.Identifier.Text) is TypeSymbol type)
                 return BindConversion(syntax.Arguments[0], type, allowExplicit: true);
