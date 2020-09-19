@@ -28,6 +28,9 @@ namespace ReCT_IDE
 
         public Image[] icons = new Image[6];
 
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        static extern bool FlashWindow(IntPtr hwnd, bool bInvert);
+
         string standardMsg = "//ReCT IDE ";
 
         public Form1()

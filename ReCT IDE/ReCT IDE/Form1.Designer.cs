@@ -50,7 +50,6 @@
             this.Typechecker = new System.Timers.Timer();
             this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ReCTAutoComplete = new AutocompleteMenuNS.AutocompleteMenu();
-            this.Info = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.CodeBox)).BeginInit();
             this.Menu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Build)).BeginInit();
@@ -78,7 +77,7 @@
             this.ReCTAutoComplete.SetAutocompleteMenu(this.CodeBox, this.ReCTAutoComplete);
             this.CodeBox.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*" +
     "(?<range>:)\\s*(?<range>[^;]+);";
-            this.CodeBox.AutoScrollMinSize = new System.Drawing.Size(179, 14);
+            this.CodeBox.AutoScrollMinSize = new System.Drawing.Size(51, 14);
             this.CodeBox.BackBrush = null;
             this.CodeBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.CodeBox.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
@@ -96,7 +95,7 @@
             this.CodeBox.ShowFoldingLines = true;
             this.CodeBox.Size = new System.Drawing.Size(1088, 595);
             this.CodeBox.TabIndex = 1;
-            this.CodeBox.Text = "fastColoredTextBox1";
+            this.CodeBox.Text = "kek";
             this.CodeBox.Zoom = 100;
             this.CodeBox.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.CodeBox_Chnaged);
             this.CodeBox.Load += new System.EventHandler(this.CodeBox_Load);
@@ -194,7 +193,6 @@
             this.reCTToolStripMenuItem.Name = "reCTToolStripMenuItem";
             this.reCTToolStripMenuItem.Size = new System.Drawing.Size(84, 29);
             this.reCTToolStripMenuItem.Text = "ReCT ▾";
-            this.reCTToolStripMenuItem.ToolTipText = "idk";
             // 
             // buildToolStripMenuItem
             // 
@@ -341,12 +339,6 @@
             this.ReCTAutoComplete.MaximumSize = new System.Drawing.Size(200, 200);
             this.ReCTAutoComplete.TargetControlWrapper = null;
             // 
-            // Info
-            // 
-            this.Info.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
-            this.Info.ToolTipTitle = "Print";
-            this.Info.Popup += new System.Windows.Forms.PopupEventHandler(this.toolTip1_Popup);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -396,7 +388,6 @@
         private System.Windows.Forms.ToolStripMenuItem autoFormatToolStripMenuItem;
         private System.Windows.Forms.ToolTip ToolTip;
         private AutocompleteMenuNS.AutocompleteMenu ReCTAutoComplete;
-        private System.Windows.Forms.ToolTip Info;
     }
 }
 

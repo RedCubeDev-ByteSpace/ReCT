@@ -173,6 +173,14 @@ namespace ReCT.CodeAnalysis.Emit
                 return null;
             }
 
+            //register array types
+            _knownTypes.Add(TypeSymbol.AnyArr, _knownTypes[TypeSymbol.Any].MakeArrayType());
+            _knownTypes.Add(TypeSymbol.IntArr, _knownTypes[TypeSymbol.Int].MakeArrayType());
+            _knownTypes.Add(TypeSymbol.BoolArr, _knownTypes[TypeSymbol.Bool].MakeArrayType());
+            _knownTypes.Add(TypeSymbol.StringArr, _knownTypes[TypeSymbol.String].MakeArrayType());
+            _knownTypes.Add(TypeSymbol.FloatArr, _knownTypes[TypeSymbol.Float].MakeArrayType());
+            _knownTypes.Add(TypeSymbol.ThreadArr, _knownTypes[TypeSymbol.Thread].MakeArrayType());
+
             _objectEqualsReference = ResolveMethod("System.Object", "Equals", new [] { "System.Object", "System.Object" });
 
             _consoleReadLineReference = ResolveMethod("System.Console", "ReadLine", Array.Empty<string>());
@@ -436,7 +444,7 @@ namespace ReCT.CodeAnalysis.Emit
         {
             EmitExpression(ilProcessor, node.Expression);
 
-            if (node.Expression.Type != TypeSymbol.Void)
+            if (node.Expression.Type != TypeSymbol.Void && !(node.Expression is BoundAssignmentExpression))
                 ilProcessor.Emit(OpCodes.Pop);
         }
 
@@ -471,9 +479,18 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundNodeKind.ThreadCreateExpression:
                     EmitThreadCreate(ilProcessor, (BoundThreadCreateExpression)node);
                     break;
+                case BoundNodeKind.ArrayCreationExpression:
+                    EmitArrayCreate(ilProcessor, (BoundArrayCreationExpression)node);
+                    break;
                 default:
                     throw new Exception($"Unexpected node kind {node.Kind}");
             }
+        }
+
+        private void EmitArrayCreate(ILProcessor ilProcessor, BoundArrayCreationExpression node)
+        {
+            EmitExpression(ilProcessor, node.Length);
+            ilProcessor.Emit(OpCodes.Newarr, _knownTypes[node.ArrayType]);
         }
 
         private void EmitThreadCreate(ILProcessor ilProcessor, BoundThreadCreateExpression node)
@@ -537,15 +554,29 @@ namespace ReCT.CodeAnalysis.Emit
             }
             else
             {
-                if(node.Variable.IsGlobal)
+                try
                 {
-                    var fieldDefinition = _globals[node.Variable];
-                    ilProcessor.Emit(OpCodes.Ldsfld, fieldDefinition);
+
+                    if (node.Variable.IsGlobal)
+                    {
+                        var fieldDefinition = _globals[node.Variable];
+                        ilProcessor.Emit(OpCodes.Ldsfld, fieldDefinition);
+                    }
+                    else
+                    {
+                        var variableDefinition = _locals[node.Variable];
+                        ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
+                    }
+
+                    if (node.isArray)
+                    {
+                        EmitExpression(ilProcessor, node.Index);
+                        ilProcessor.Emit(OpCodes.Ldelem_Ref);
+                    }
                 }
-                else
+                catch
                 {
-                    var variableDefinition = _locals[node.Variable];
-                    ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
+                    throw new Exception($"EMITTER ERROR: Could not find Variable / Object '{node.Variable.Name}'");
                 }
             }
         }
@@ -559,6 +590,20 @@ namespace ReCT.CodeAnalysis.Emit
                 fieldDefinition = _globals[node.Variable];
             else
                 variableDefinition = _locals[node.Variable];
+
+            if(node.isArray)
+            {
+                if (node.Variable.IsGlobal)
+                    ilProcessor.Emit(OpCodes.Ldsfld, fieldDefinition);
+                else
+                    ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
+
+                EmitExpression(ilProcessor, node.Index);
+                EmitExpression(ilProcessor, node.Expression);
+
+                ilProcessor.Emit(OpCodes.Stelem_Ref);
+                return;
+            }
 
             EmitExpression(ilProcessor, node.Expression);
             ilProcessor.Emit(OpCodes.Dup);

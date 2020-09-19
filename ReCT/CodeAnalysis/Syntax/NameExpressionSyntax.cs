@@ -10,20 +10,17 @@ namespace ReCT.CodeAnalysis.Syntax
             IdentifierToken = identifierToken;
         }
 
-        public override SyntaxKind Kind => SyntaxKind.NameExpression;
-        public SyntaxToken IdentifierToken { get; }
-    }
-    public sealed class RemoteNameExpressionSyntax : ExpressionSyntax
-    {
-        public RemoteNameExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifierToken, CallExpressionSyntax call)
+        public NameExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifierToken, ExpressionSyntax index)
             : base(syntaxTree)
         {
             IdentifierToken = identifierToken;
-            Call = call;
+            Index = index;
+            isArray = true;
         }
 
-        public override SyntaxKind Kind => SyntaxKind.RemoteNameExpression;
+        public override SyntaxKind Kind => SyntaxKind.NameExpression;
         public SyntaxToken IdentifierToken { get; }
-        public CallExpressionSyntax Call { get; }
+        public ExpressionSyntax Index { get; }
+        public bool isArray { get; }
     }
 }

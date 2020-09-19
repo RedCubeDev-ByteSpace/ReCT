@@ -359,6 +359,24 @@ namespace ReCT.CodeAnalysis.Syntax
             }
 
             if (Peek(0).Kind == SyntaxKind.IdentifierToken &&
+                Peek(1).Kind == SyntaxKind.OpenBracketToken)
+            {
+                var identifierToken = NextToken();
+                MatchToken(SyntaxKind.OpenBracketToken);
+                var index = ParseAssignmentExpression();
+                MatchToken(SyntaxKind.CloseBracketToken);
+
+                if(Peek(0).Kind == SyntaxKind.AssignToken)
+                {
+                    var operatorToken = NextToken();
+                    var right = ParseAssignmentExpression();
+                    return new AssignmentExpressionSyntax(_syntaxTree, identifierToken, operatorToken, right, index);
+                }
+
+                return new NameExpressionSyntax(_syntaxTree, identifierToken, index);
+            }
+
+            if (Peek(0).Kind == SyntaxKind.IdentifierToken &&
                 Peek(1).Kind == SyntaxKind.EditVariableToken)
             {
                 var identifierToken = NextToken();

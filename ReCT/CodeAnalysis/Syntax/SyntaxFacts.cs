@@ -167,6 +167,10 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "{";
                 case SyntaxKind.CloseBraceToken:
                     return "}";
+                case SyntaxKind.OpenBracketToken:
+                    return "[";
+                case SyntaxKind.CloseBracketToken:
+                    return "]";
                 case SyntaxKind.TypeToken:
                     return "->";
                 case SyntaxKind.CommaToken:

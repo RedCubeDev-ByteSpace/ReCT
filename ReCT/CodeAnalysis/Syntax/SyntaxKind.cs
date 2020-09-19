@@ -90,5 +90,7 @@ namespace ReCT.CodeAnalysis.Syntax
         MakeKeyword,
         ArrayKeyword,
         ArrayCreateExpression,
+        OpenBracketToken,
+        CloseBracketToken,
     }
 }

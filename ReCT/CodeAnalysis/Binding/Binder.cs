@@ -547,6 +547,12 @@ namespace ReCT.CodeAnalysis.Binding
             if (variable == null)
                 return new BoundErrorExpression();
 
+            if(syntax.isArray)
+            {
+                var index = BindExpressionInternal(syntax.Index);
+                return new BoundVariableExpression(variable, index, ArrayToType(variable.Type));
+            }
+
             return new BoundVariableExpression(variable);
         }
 
@@ -586,6 +592,13 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (variable.IsReadOnly)
                 _diagnostics.ReportCannotAssign(syntax.EqualsToken.Location, name);
+
+            if(syntax.isArray)
+            {
+                var cExpression = BindConversion(syntax.Expression.Location, boundExpression, ArrayToType(variable.Type));
+                var boundIndex = BindExpression(syntax.Index);
+                return new BoundAssignmentExpression(variable, cExpression, boundIndex);
+            }
 
             var convertedExpression = BindConversion(syntax.Expression.Location, boundExpression, variable.Type);
 
@@ -786,6 +799,19 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.Float;
                 case "thread":
                     return TypeSymbol.Thread;
+
+                case "anyArr":
+                    return TypeSymbol.AnyArr;
+                case "boolArr":
+                    return TypeSymbol.BoolArr;
+                case "intArr":
+                    return TypeSymbol.IntArr;
+                case "stringArr":
+                    return TypeSymbol.StringArr;
+                case "floatArr":
+                    return TypeSymbol.FloatArr;
+                case "threadArr":
+                    return TypeSymbol.ThreadArr;
                 default:
                     return null;
             }
@@ -807,6 +833,24 @@ namespace ReCT.CodeAnalysis.Binding
 
 
             return null;
+        }
+        private TypeSymbol ArrayToType(TypeSymbol type)
+        {
+            if (type == TypeSymbol.AnyArr)
+                return TypeSymbol.Any;
+            else if (type == TypeSymbol.BoolArr)
+                return TypeSymbol.Bool;
+            else if (type == TypeSymbol.IntArr)
+                return TypeSymbol.Int;
+            else if (type == TypeSymbol.StringArr)
+                return TypeSymbol.String;
+            else if (type == TypeSymbol.FloatArr)
+                return TypeSymbol.Float;
+            else if (type == TypeSymbol.ThreadArr)
+                return TypeSymbol.Thread;
+
+
+            return type;
         }
     }
 }
