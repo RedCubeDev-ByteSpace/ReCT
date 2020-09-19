@@ -87,5 +87,8 @@ namespace ReCT.CodeAnalysis.Syntax
         RemoteNameExpression,
         ThreadKeyword,
         ThreadCreateExpression,
+        MakeKeyword,
+        ArrayKeyword,
+        ArrayCreateExpression,
     }
 }

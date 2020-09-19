@@ -155,7 +155,7 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b|\bfloat\b)");
 
             //function highlighting [DarkMode]
-            e.ChangedRange.SetStyle(VarStyle, @"(\bvar\b|\bset\b|\bif\b|\belse\b|\bfunction\b|\btrue\b|\bfalse\b)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(VarStyle, @"(\bvar\b|\bset\b|\bif\b|\belse\b|\bfunction\b|\btrue\b|\bfalse\b|\bmake\b|\barray\b)", RegexOptions.Singleline);
 
             //variables
             e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+<-))");
@@ -445,6 +445,11 @@ namespace ReCT_IDE
         }
 
         private void CodeBox_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolTip1_Popup(object sender, PopupEventArgs e)
         {
 
         }

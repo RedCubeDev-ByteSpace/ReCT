@@ -27,5 +27,6 @@ namespace ReCT.CodeAnalysis.Binding
         FromToStatement,
         RemoteNameExpression,
         ThreadCreateExpression,
+        ArrayCreationExpression,
     }
 }

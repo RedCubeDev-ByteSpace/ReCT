@@ -90,6 +90,10 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.DoKeyword;
                 case "Thread":
                     return SyntaxKind.ThreadKeyword;
+                case "make":
+                    return SyntaxKind.MakeKeyword;
+                case "array":
+                    return SyntaxKind.ArrayKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -197,6 +201,10 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "while";
                 case SyntaxKind.DoKeyword:
                     return "do";
+                case SyntaxKind.MakeKeyword:
+                    return "make";
+                case SyntaxKind.ArrayKeyword:
+                    return "array";
                 case SyntaxKind.ThreadKeyword:
                     return "Thread";
                 default:

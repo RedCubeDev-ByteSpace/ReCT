@@ -515,6 +515,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return BindCallExpression((CallExpressionSyntax)syntax);
                 case SyntaxKind.ThreadCreateExpression:
                     return BindThreadCreateExpression((ThreadCreationSyntax)syntax);
+                case SyntaxKind.ArrayCreateExpression:
+                    return BindArrayCreationExpression((ArrayCreationSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -562,6 +564,15 @@ namespace ReCT.CodeAnalysis.Binding
                 return new BoundErrorExpression();
 
             return new BoundRemoteNameExpression(variable, (BoundCallExpression)call);
+        }
+
+        private BoundExpression BindArrayCreationExpression(ArrayCreationSyntax syntax)
+        {
+            var type = LookupType(syntax.Type.Text);
+            var length = BindExpressionInternal(syntax.Length);
+            var arrType = TypeToArray(type);
+
+            return new BoundArrayCreationExpression(type, length, arrType);
         }
 
         private BoundExpression BindAssignmentExpression(AssignmentExpressionSyntax syntax)
@@ -778,6 +789,24 @@ namespace ReCT.CodeAnalysis.Binding
                 default:
                     return null;
             }
+        }
+        private TypeSymbol TypeToArray(TypeSymbol type)
+        {
+            if (type == TypeSymbol.Any)
+                return TypeSymbol.AnyArr;
+            else if (type == TypeSymbol.Bool)
+                return TypeSymbol.BoolArr;
+            else if (type == TypeSymbol.Int)
+                return TypeSymbol.IntArr;
+            else if (type == TypeSymbol.String)
+                return TypeSymbol.StringArr;
+            else if (type == TypeSymbol.Float)
+                return TypeSymbol.FloatArr;
+            else if (type == TypeSymbol.Thread)
+                return TypeSymbol.ThreadArr;
+
+
+            return null;
         }
     }
 }

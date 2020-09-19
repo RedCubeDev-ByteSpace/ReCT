@@ -11,6 +11,14 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly TypeSymbol Float = new TypeSymbol("float");
         public static readonly TypeSymbol Thread = new TypeSymbol("thread");
 
+        //arrays
+        public static readonly TypeSymbol AnyArr = new TypeSymbol("any[]");
+        public static readonly TypeSymbol BoolArr = new TypeSymbol("bool[]");
+        public static readonly TypeSymbol IntArr = new TypeSymbol("int[]");
+        public static readonly TypeSymbol StringArr = new TypeSymbol("string[]");
+        public static readonly TypeSymbol FloatArr = new TypeSymbol("float[]");
+        public static readonly TypeSymbol ThreadArr = new TypeSymbol("thread[]");
+
         private TypeSymbol(string name)
             : base(name)
         {

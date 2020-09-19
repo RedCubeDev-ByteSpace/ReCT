@@ -50,6 +50,7 @@
             this.Typechecker = new System.Timers.Timer();
             this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ReCTAutoComplete = new AutocompleteMenuNS.AutocompleteMenu();
+            this.Info = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.CodeBox)).BeginInit();
             this.Menu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Build)).BeginInit();
@@ -85,7 +86,6 @@
             this.CodeBox.CharWidth = 8;
             this.CodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.CodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.CodeBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.CodeBox.ForeColor = System.Drawing.Color.White;
             this.CodeBox.IsReplaceMode = false;
             this.CodeBox.Location = new System.Drawing.Point(0, 36);
@@ -194,6 +194,7 @@
             this.reCTToolStripMenuItem.Name = "reCTToolStripMenuItem";
             this.reCTToolStripMenuItem.Size = new System.Drawing.Size(84, 29);
             this.reCTToolStripMenuItem.Text = "ReCT ▾";
+            this.reCTToolStripMenuItem.ToolTipText = "idk";
             // 
             // buildToolStripMenuItem
             // 
@@ -340,6 +341,12 @@
             this.ReCTAutoComplete.MaximumSize = new System.Drawing.Size(200, 200);
             this.ReCTAutoComplete.TargetControlWrapper = null;
             // 
+            // Info
+            // 
+            this.Info.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.Info.ToolTipTitle = "Print";
+            this.Info.Popup += new System.Windows.Forms.PopupEventHandler(this.toolTip1_Popup);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -389,6 +396,7 @@
         private System.Windows.Forms.ToolStripMenuItem autoFormatToolStripMenuItem;
         private System.Windows.Forms.ToolTip ToolTip;
         private AutocompleteMenuNS.AutocompleteMenu ReCTAutoComplete;
+        private System.Windows.Forms.ToolTip Info;
     }
 }
 

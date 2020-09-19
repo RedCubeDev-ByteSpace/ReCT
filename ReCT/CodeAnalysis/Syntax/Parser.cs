@@ -121,6 +121,17 @@ namespace ReCT.CodeAnalysis.Syntax
             return new ThreadCreationSyntax(_syntaxTree, identifier);
         }
 
+        private ExpressionSyntax ParseArrayCreation()
+        {
+            var makeKeyword = MatchToken(SyntaxKind.MakeKeyword);
+            var type = MatchToken(SyntaxKind.IdentifierToken);
+            var arrayKeyword = MatchToken(SyntaxKind.ArrayKeyword);
+            MatchToken(SyntaxKind.OpenParenthesisToken);
+            var length = ParseExpression();
+            MatchToken(SyntaxKind.CloseParenthesisToken);
+            return new ArrayCreationSyntax(_syntaxTree, type, length);
+        }
+
         private SeparatedSyntaxList<ParameterSyntax> ParseParameterList()
         {
             var nodesAndSeparators = ImmutableArray.CreateBuilder<SyntaxNode>();
@@ -420,6 +431,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseStringLiteral();
                 case SyntaxKind.ThreadKeyword:
                     return ParseThreadCreation();
+                case SyntaxKind.MakeKeyword:
+                    return ParseArrayCreation();
                 case SyntaxKind.IdentifierToken:
                 default:
                     return ParseNameOrCallExpression();
