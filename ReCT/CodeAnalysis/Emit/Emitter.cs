@@ -606,7 +606,7 @@ namespace ReCT.CodeAnalysis.Emit
             }
 
             EmitExpression(ilProcessor, node.Expression);
-            ilProcessor.Emit(OpCodes.Dup);
+            //ilProcessor.Emit(OpCodes.Dup);
 
             if (node.Variable.IsGlobal)
                 ilProcessor.Emit(OpCodes.Stsfld, fieldDefinition);

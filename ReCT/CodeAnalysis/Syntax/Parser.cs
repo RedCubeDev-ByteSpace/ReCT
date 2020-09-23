@@ -510,7 +510,7 @@ namespace ReCT.CodeAnalysis.Syntax
                    Current.Kind != SyntaxKind.CloseParenthesisToken &&
                    Current.Kind != SyntaxKind.EndOfFileToken)
             {
-                var expression = ParseExpression();
+                var expression = ParseAssignmentExpression();
                 nodesAndSeparators.Add(expression);
 
                 if (Current.Kind == SyntaxKind.CommaToken)
