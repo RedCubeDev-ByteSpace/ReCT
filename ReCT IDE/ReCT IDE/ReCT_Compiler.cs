@@ -110,13 +110,27 @@ namespace ReCT_IDE
                 }
 
                 //generate runtimeconfig
-                using (StreamWriter sw = new StreamWriter(new FileStream(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".runtimeconfig.json", FileMode.Create)))
+                 using (StreamWriter sw = new StreamWriter(new FileStream(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".runtimeconfig.json", FileMode.Create)))
                 {
                     sw.Write("{\"runtimeOptions\": {\"tfm\": \"netcoreapp3.1\",\"framework\": {\"name\": \"Microsoft.NETCore.App\",\"version\": \"3.1.0\"}}}");
                 }
                 using (StreamWriter sw = new StreamWriter(new FileStream(fileOut, FileMode.Create)))
                 {
-                    sw.Write($"dotnet exec \"{Path.GetFileNameWithoutExtension(fileOut)}.dll\"");
+                    string firstPart = "";
+                    string secondPart = "";
+
+                    using (StreamReader sr = new StreamReader(new FileStream("ExeBuilder/exebuilderbytecode0", FileMode.Open)))
+                    {
+                        firstPart = sr.ReadToEnd();
+                        sr.Close();
+                    }
+                    using (StreamReader sr = new StreamReader(new FileStream("ExeBuilder/exebuilderbytecode1", FileMode.Open)))
+                    {
+                        secondPart = sr.ReadToEnd();
+                        sr.Close();
+                    }
+
+                    sw.Write(firstPart + $"dotnet exec \"{Path.GetFileNameWithoutExtension(fileOut)}.dll\"" + secondPart);
                 }
             }
             catch (Exception e)

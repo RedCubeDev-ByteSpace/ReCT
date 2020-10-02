@@ -344,7 +344,7 @@ namespace ReCT_IDE
         {
             Typechecker.Enabled = false;
             errorBox.Hide();
-            saveFileDialog1.Filter = "Command (*.cmd)|*.cmd|All files (*.*)|*.*";
+            saveFileDialog1.Filter = "exe (*.exe)|*.exe|All files (*.*)|*.*";
             var res = saveFileDialog1.ShowDialog();
 
             if (res != DialogResult.OK)

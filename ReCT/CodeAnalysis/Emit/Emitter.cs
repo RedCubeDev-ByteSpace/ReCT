@@ -405,7 +405,7 @@ namespace ReCT.CodeAnalysis.Emit
         {
             var _globalField = new FieldDefinition(
                 "$" + node.Variable.Name,
-                FieldAttributes.Static | FieldAttributes.Private,
+                FieldAttributes.Static | FieldAttributes.Public,
                 _knownTypes[node.Variable.Type]
             );
             _typeDefinition.Fields.Add(_globalField);
