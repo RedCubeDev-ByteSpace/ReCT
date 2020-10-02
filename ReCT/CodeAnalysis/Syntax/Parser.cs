@@ -350,15 +350,6 @@ namespace ReCT.CodeAnalysis.Syntax
         private ExpressionSyntax ParseAssignmentExpression()
         {
             if (Peek(0).Kind == SyntaxKind.IdentifierToken &&
-                Peek(1).Kind == SyntaxKind.AssignToken)
-            {
-                var identifierToken = NextToken();
-                var operatorToken = NextToken();
-                var right = ParseAssignmentExpression();
-                return new AssignmentExpressionSyntax(_syntaxTree, identifierToken, operatorToken, right);
-            }
-
-            if (Peek(0).Kind == SyntaxKind.IdentifierToken &&
                 Peek(1).Kind == SyntaxKind.OpenBracketToken)
             {
                 var identifierToken = NextToken();
@@ -366,7 +357,7 @@ namespace ReCT.CodeAnalysis.Syntax
                 var index = ParseAssignmentExpression();
                 MatchToken(SyntaxKind.CloseBracketToken);
 
-                if(Peek(0).Kind == SyntaxKind.AssignToken)
+                if (Peek(0).Kind == SyntaxKind.AssignToken)
                 {
                     var operatorToken = NextToken();
                     var right = ParseAssignmentExpression();
@@ -374,6 +365,15 @@ namespace ReCT.CodeAnalysis.Syntax
                 }
 
                 return new NameExpressionSyntax(_syntaxTree, identifierToken, index);
+            }
+
+            if (Peek(0).Kind == SyntaxKind.IdentifierToken &&
+                Peek(1).Kind == SyntaxKind.AssignToken)
+            {
+                var identifierToken = NextToken();
+                var operatorToken = NextToken();
+                var right = ParseAssignmentExpression();
+                return new AssignmentExpressionSyntax(_syntaxTree, identifierToken, operatorToken, right);
             }
 
             if (Peek(0).Kind == SyntaxKind.IdentifierToken &&

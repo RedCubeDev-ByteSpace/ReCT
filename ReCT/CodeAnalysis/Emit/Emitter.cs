@@ -21,6 +21,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _objectEqualsReference;
         private readonly MethodReference _consoleReadLineReference;
         private readonly MethodReference _consoleReadKeyReference;
+        private readonly MethodReference _consoleGetKeyReference;
         private readonly MethodReference _consoleKeyInfoGetKeyChar;
         private readonly MethodReference _getVisableCursorRef;
         private readonly MethodReference _setVisableCursorRef;
@@ -191,6 +192,7 @@ namespace ReCT.CodeAnalysis.Emit
 
             //ReadKey
             _consoleReadKeyReference = ResolveMethod("System.Console", "ReadKey", Array.Empty<string>());
+            _consoleGetKeyReference = ResolveMethod("System.Console", "ReadKey", new[] { "System.Boolean"});
             _consoleKeyInfoGetKeyChar = ResolveMethod("System.ConsoleKeyInfo", "get_KeyChar", Array.Empty<string>());
 
             //cursor visibility
@@ -503,7 +505,11 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitRemoteNameExpression(ILProcessor ilProcessor, BoundRemoteNameExpression node)
         {
-            if (node.Variable.IsGlobal)
+            if (node.Variable is ParameterSymbol parameter)
+            {
+                ilProcessor.Emit(OpCodes.Ldarg, parameter.Ordinal);
+            }
+            else if (node.Variable.IsGlobal)
             {
                 var fieldDefinition = _globals[node.Variable];
                 ilProcessor.Emit(OpCodes.Ldsfld, fieldDefinition);
@@ -548,36 +554,32 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitVariableExpression(ILProcessor ilProcessor, BoundVariableExpression node)
         {
-            if (node.Variable is ParameterSymbol parameter)
+            try
             {
-                ilProcessor.Emit(OpCodes.Ldarg, parameter.Ordinal);
+                if (node.Variable is ParameterSymbol parameter)
+                {
+                    ilProcessor.Emit(OpCodes.Ldarg, parameter.Ordinal);
+                }
+                else if (node.Variable.IsGlobal)
+                {
+                    var fieldDefinition = _globals[node.Variable];
+                    ilProcessor.Emit(OpCodes.Ldsfld, fieldDefinition);
+                }
+                else
+                {
+                    var variableDefinition = _locals[node.Variable];
+                    ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
+                }
+
+                if (node.isArray)
+                {
+                    EmitExpression(ilProcessor, node.Index);
+                    ilProcessor.Emit(OpCodes.Ldelem_Ref);
+                }
             }
-            else
+            catch
             {
-                try
-                {
-
-                    if (node.Variable.IsGlobal)
-                    {
-                        var fieldDefinition = _globals[node.Variable];
-                        ilProcessor.Emit(OpCodes.Ldsfld, fieldDefinition);
-                    }
-                    else
-                    {
-                        var variableDefinition = _locals[node.Variable];
-                        ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
-                    }
-
-                    if (node.isArray)
-                    {
-                        EmitExpression(ilProcessor, node.Index);
-                        ilProcessor.Emit(OpCodes.Ldelem_Ref);
-                    }
-                }
-                catch
-                {
-                    throw new Exception($"EMITTER ERROR: Could not find Variable / Object '{node.Variable.Name}'");
-                }
+                throw new Exception($"EMITTER ERROR: Could not find Variable / Object '{node.Variable.Name}'");
             }
         }
 
@@ -766,6 +768,10 @@ namespace ReCT.CodeAnalysis.Emit
                 var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Interrupt", Array.Empty<string>());
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
+            else if (node.Call.Function == BuiltinFunctions.GetArrayLength)
+            {
+                ilProcessor.Emit(OpCodes.Ldlen);
+            }
             else
             {
                 throw new Exception("Couldnt find TypeFunction: " + node.Call.Function.Name);
@@ -827,12 +833,33 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Ldloca, var1);
                 ilProcessor.Emit(OpCodes.Call, _charToString);
             }
+            else if (node.Function == BuiltinFunctions.InputAction)
+            {
+                var var0 = new VariableDefinition(_consoleKeyInfoRef);
+                var var1 = new VariableDefinition(_charRef);
+
+                ilProcessor.Body.Variables.Add(var0);
+                ilProcessor.Body.Variables.Add(var1);
+
+                ilProcessor.Emit(OpCodes.Ldc_I4_1);
+                ilProcessor.Emit(OpCodes.Call, _consoleGetKeyReference);
+                ilProcessor.Emit(OpCodes.Stloc, var0);
+                ilProcessor.Emit(OpCodes.Ldloca, var0);
+                ilProcessor.Emit(OpCodes.Call, _consoleKeyInfoGetKeyChar);
+                ilProcessor.Emit(OpCodes.Stloc, var1);
+                ilProcessor.Emit(OpCodes.Ldloca, var1);
+                ilProcessor.Emit(OpCodes.Call, _charToString);
+            }
             else if (node.Function == BuiltinFunctions.SetCursorVisible)
                 ilProcessor.Emit(OpCodes.Call, _setVisableCursorRef);
             else if (node.Function == BuiltinFunctions.GetCursorVisible)
                 ilProcessor.Emit(OpCodes.Call, _getVisableCursorRef);
             else if (node.Function == BuiltinFunctions.Die)
                 ilProcessor.Emit(OpCodes.Call, _envDie);
+            else if (node.Function == BuiltinFunctions.ConsoleColorBG)
+                ilProcessor.Emit(OpCodes.Call, _setConsoleBG);
+            else if (node.Function == BuiltinFunctions.ConsoleColorFG)
+                ilProcessor.Emit(OpCodes.Call, _setConsoleFG);
             else
             {
                 var methodDefinition = _methods[node.Function];

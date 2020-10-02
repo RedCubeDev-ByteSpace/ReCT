@@ -36,6 +36,11 @@ namespace ReCT.CodeAnalysis.Binding
                 return Conversion.Explicit;
             }
 
+            if (from == TypeSymbol.AnyArr && to == TypeSymbol.Any)
+                return Conversion.Explicit;
+            if (from == TypeSymbol.Any && to == TypeSymbol.AnyArr)
+                return Conversion.Explicit;
+
             if (from == TypeSymbol.Bool || from == TypeSymbol.Int || from == TypeSymbol.Float)
             {
                 if (to == TypeSymbol.String)

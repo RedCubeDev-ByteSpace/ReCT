@@ -13,6 +13,7 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly FunctionSymbol Write = new FunctionSymbol("Write", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
         public static readonly FunctionSymbol Input = new FunctionSymbol("Input", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
         public static readonly FunctionSymbol InputKey = new FunctionSymbol("InputKey", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
+        public static readonly FunctionSymbol InputAction = new FunctionSymbol("InputAction", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
         public static readonly FunctionSymbol Clear = new FunctionSymbol("Clear", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
         public static readonly FunctionSymbol SetCursor = new FunctionSymbol("SetCursor", ImmutableArray.Create(new ParameterSymbol("xCoord", TypeSymbol.Int, 0), new ParameterSymbol("yCoord", TypeSymbol.Int, 0)), TypeSymbol.Void);
         public static readonly FunctionSymbol GetSizeX = new FunctionSymbol("GetSizeX", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
@@ -20,8 +21,8 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly FunctionSymbol SetSize = new FunctionSymbol("SetSize", ImmutableArray.Create(new ParameterSymbol("X", TypeSymbol.Int, 0), new ParameterSymbol("Y", TypeSymbol.Int, 0)), TypeSymbol.Void);
         public static readonly FunctionSymbol SetCursorVisible = new FunctionSymbol("SetCursorVisible", ImmutableArray.Create(new ParameterSymbol("bool", TypeSymbol.Bool, 0)), TypeSymbol.Void);
         public static readonly FunctionSymbol GetCursorVisible = new FunctionSymbol("GetCursorVisible", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Bool);
-        public static readonly FunctionSymbol ConsoleColorBG = new FunctionSymbol("ConsoleColorBG", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol ConsoleColorFG = new FunctionSymbol("ConsoleColorFG", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
+        public static readonly FunctionSymbol ConsoleColorBG = new FunctionSymbol("SetConsoleBackground", ImmutableArray.Create(new ParameterSymbol("num", TypeSymbol.Int, 0)), TypeSymbol.Void);
+        public static readonly FunctionSymbol ConsoleColorFG = new FunctionSymbol("SetConsoleForeground", ImmutableArray.Create(new ParameterSymbol("num", TypeSymbol.Int, 0)), TypeSymbol.Void);
 
 
         //Math
@@ -39,9 +40,11 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly FunctionSymbol StartThread = new FunctionSymbol("StartThread", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
         public static readonly FunctionSymbol KillThread = new FunctionSymbol("KillThread", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
 
+        //Arr functions
+        public static readonly FunctionSymbol GetArrayLength = new FunctionSymbol("GetArrayLength", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
+
         //Cube functions
         public static readonly FunctionSymbol Die = new FunctionSymbol("Die", ImmutableArray.Create(new ParameterSymbol("exitCode", TypeSymbol.Int, 0)), TypeSymbol.Int);
-
 
         internal static IEnumerable<FunctionSymbol> GetAll()
             => typeof(BuiltinFunctions).GetFields(BindingFlags.Public | BindingFlags.Static)

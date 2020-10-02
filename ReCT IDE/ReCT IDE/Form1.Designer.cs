@@ -85,6 +85,7 @@
             this.CodeBox.CharWidth = 8;
             this.CodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.CodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.CodeBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.CodeBox.ForeColor = System.Drawing.Color.White;
             this.CodeBox.IsReplaceMode = false;
             this.CodeBox.Location = new System.Drawing.Point(0, 36);
@@ -202,6 +203,7 @@
             this.buildToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
             this.buildToolStripMenuItem.Size = new System.Drawing.Size(184, 30);
             this.buildToolStripMenuItem.Text = "Build";
+            this.buildToolStripMenuItem.Click += new System.EventHandler(this.buildToolStripMenuItem_Click);
             // 
             // runToolStripMenuItem
             // 
@@ -210,6 +212,7 @@
             this.runToolStripMenuItem.Name = "runToolStripMenuItem";
             this.runToolStripMenuItem.Size = new System.Drawing.Size(184, 30);
             this.runToolStripMenuItem.Text = "Export";
+            this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
             // 
             // Menu
             // 
@@ -295,6 +298,7 @@
         "Print",
         "Input",
         "InputKey",
+        "InputAction",
         "Random",
         "Version",
         "Clear",
@@ -305,6 +309,8 @@
         "SetCursorVisible",
         "GetCursorVisible",
         "Thread",
+        "SetConsoleBackground",
+        "SetConsoleForeground",
         "?",
         "any",
         "bool",
@@ -312,6 +318,13 @@
         "string",
         "void",
         "float",
+        "thread",
+        "anyArr",
+        "boolArr",
+        "intArr",
+        "stringArr",
+        "floatArr",
+        "threadArr",
         "var",
         "set",
         "if",
@@ -334,7 +347,8 @@
         "GetLength",
         "Substring",
         "StartThread",
-        "KillThread"};
+        "KillThread",
+        "GetArrayLength"};
             this.ReCTAutoComplete.LeftPadding = 0;
             this.ReCTAutoComplete.MaximumSize = new System.Drawing.Size(200, 200);
             this.ReCTAutoComplete.TargetControlWrapper = null;

@@ -26,7 +26,7 @@ namespace ReCT_IDE
         public Process running;
         string[] standardAC;
 
-        public Image[] icons = new Image[6];
+        public Image[] icons = new Image[7];
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         static extern bool FlashWindow(IntPtr hwnd, bool bInvert);
@@ -65,7 +65,17 @@ namespace ReCT_IDE
             icons[4] = Image.FromFile("res/literally_just_a_fukin_SquareIconHL.png");
             icons[5] = Image.FromFile("res/gearIconHL.png");
 
+            icons[6] = Image.FromFile("res/playIconLoad.png");
+
             standardAC = ReCTAutoComplete.Items;
+        }
+
+        public void startAllowed(bool allowed)
+        {
+            if(!allowed)
+                Play.BackgroundImage = icons[6];
+            else
+                Play.BackgroundImage = icons[0];
         }
 
         public void changeIcon(PictureBox box, int id, bool mode)
@@ -152,10 +162,10 @@ namespace ReCT_IDE
             e.ChangedRange.ClearStyle(SystemFunctionStyle);
 
             //system function highlighting
-            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bSetCursorVisible\b|\bThread\b|\bGetCursorVisible\b|\bPrint\b|\bInputKey\b|\bInput\b|\bRandom\b|\bVersion\b|\bClear\b|\bSetCursor\b|\bGetSizeX\b|\bGetSizeY\b|\bSetSize\b|\bWrite\b|\bSleep\b)");
+            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bInputAction\b|\bSetConsoleForeground\b|\bSetConsoleBackground\b|\bSetCursorVisible\b|\bThread\b|\bGetCursorVisible\b|\bPrint\b|\bInputKey\b|\bInput\b|\bRandom\b|\bVersion\b|\bClear\b|\bSetCursor\b|\bGetSizeX\b|\bGetSizeY\b|\bSetSize\b|\bWrite\b|\bSleep\b)");
 
             //types
-            e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b|\bfloat\b)");
+            e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b|\bfloat\b|\bthread\b|\banyArr\b|\bboolArr\b|\bintArr\b|\bstringArr\b|\bfloatArr\b|\bthreadArr\b)");
 
             //function highlighting [DarkMode]
             e.ChangedRange.SetStyle(VarStyle, @"(\bvar\b|\bset\b|\bif\b|\belse\b|\bfunction\b|\btrue\b|\bfalse\b|\bmake\b|\barray\b)", RegexOptions.Singleline);
@@ -307,7 +317,7 @@ namespace ReCT_IDE
                 rectComp.Variables = "";
                 if (CodeBox.Text != "")
                 {
-                    rectComp.Check(CodeBox.Text);
+                    rectComp.Check(CodeBox.Text, this);
                     CodeBox.ClearStylesBuffer();
                     ReloadHightlighting(new TextChangedEventArgs(CodeBox.Range));
 
@@ -344,7 +354,7 @@ namespace ReCT_IDE
         {
             Typechecker.Enabled = false;
             errorBox.Hide();
-            saveFileDialog1.Filter = "exe (*.exe)|*.exe|All files (*.*)|*.*";
+            saveFileDialog1.Filter = "Launcher (*.cmd)|*.cmd|All files (*.*)|*.*";
             var res = saveFileDialog1.ShowDialog();
 
             if (res != DialogResult.OK)
@@ -379,7 +389,7 @@ namespace ReCT_IDE
             if (!Directory.Exists("Builder"))
                 Directory.CreateDirectory("Builder");
 
-            rectComp.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(openFile) + ".cmd", openFile, errorBox);
+            if (!rectComp.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(openFile) + ".cmd", openFile, errorBox)) return;
 
             string strCmdText = $"/K cd \"{Path.GetFullPath($"Builder")}\" & cls & \"{Path.GetFileNameWithoutExtension(openFile)}.cmd\"";
             running = Process.Start("CMD.exe", strCmdText);
@@ -455,6 +465,16 @@ namespace ReCT_IDE
         private void toolTip1_Popup(object sender, PopupEventArgs e)
         {
 
+        }
+
+        private void buildToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Play_Click(sender, e);
+        }
+
+        private void runToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Build_Click(sender, e);
         }
     }
 }

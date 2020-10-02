@@ -23,8 +23,10 @@ namespace ReCT_IDE
         public FunctionSymbol[] functions;
         public Diagnostic[] errors = new Diagnostic[0];
 
-        public void Check(string code)
+        public void Check(string code, Form1 form)
         {
+            form.startAllowed(false);
+
             var syntaxTree = SyntaxTree.Parse(code);
             var compilation = Compilation.Create(syntaxTree);
 
@@ -39,7 +41,7 @@ namespace ReCT_IDE
             variables = vars;
             foreach(VariableSymbol vs in vars)
             {
-                Variables += vs.Name + "|";
+                Variables += "\\b" + vs.Name + "\\b" + "|";
             }
             if(Variables != "")
             {
@@ -50,15 +52,16 @@ namespace ReCT_IDE
             functions = fns;
             foreach (FunctionSymbol fs in fns)
             {
-                Functions += fs.Name + "|";
+                Functions += "\\b" + fs.Name + "\\b" + "|";
             }
             if (Functions != "")
             {
                 Functions = Functions.Substring(0, Functions.Length - 1);
                 Functions = "(" + Functions + ")";
             }
+            form.startAllowed(true);
         }
-        public void CompileRCTBC(string fileOut, string inPath, Error errorBox)
+        public bool CompileRCTBC(string fileOut, string inPath, Error errorBox)
         {
             var syntaxTree = SyntaxTree.Load(inPath);
 
@@ -79,7 +82,7 @@ namespace ReCT_IDE
                         errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
                 }
                 errorBox.version.Text = ReCT.info.Version;
-                return;
+                return false;
             }
 
             var compilation = Compilation.Create(syntaxTree);
@@ -106,31 +109,17 @@ namespace ReCT_IDE
                             errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
                     }
                     errorBox.version.Text = ReCT.info.Version;
-                    return;
+                    return false;
                 }
 
                 //generate runtimeconfig
-                 using (StreamWriter sw = new StreamWriter(new FileStream(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".runtimeconfig.json", FileMode.Create)))
+                using (StreamWriter sw = new StreamWriter(new FileStream(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".runtimeconfig.json", FileMode.Create)))
                 {
                     sw.Write("{\"runtimeOptions\": {\"tfm\": \"netcoreapp3.1\",\"framework\": {\"name\": \"Microsoft.NETCore.App\",\"version\": \"3.1.0\"}}}");
                 }
                 using (StreamWriter sw = new StreamWriter(new FileStream(fileOut, FileMode.Create)))
                 {
-                    string firstPart = "";
-                    string secondPart = "";
-
-                    using (StreamReader sr = new StreamReader(new FileStream("ExeBuilder/exebuilderbytecode0", FileMode.Open)))
-                    {
-                        firstPart = sr.ReadToEnd();
-                        sr.Close();
-                    }
-                    using (StreamReader sr = new StreamReader(new FileStream("ExeBuilder/exebuilderbytecode1", FileMode.Open)))
-                    {
-                        secondPart = sr.ReadToEnd();
-                        sr.Close();
-                    }
-
-                    sw.Write(firstPart + $"dotnet exec \"{Path.GetFileNameWithoutExtension(fileOut)}.dll\"" + secondPart);
+                    sw.Write($"dotnet exec \"{Path.GetFileNameWithoutExtension(fileOut)}.dll\"");
                 }
             }
             catch (Exception e)
@@ -152,11 +141,16 @@ namespace ReCT_IDE
                             errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
                     }
                     errorBox.version.Text = ReCT.info.Version;
-                    return;
+                    return false;
                 }
                 else
+                {
+                    errorBox.errorBox.Text = "THIS ERROR MIGHT BE INTERNAL! Please try again in a few seconds. (ReCT is unstable sometimes so you might have to try multiple times) \n" + errorBox.errorBox.Text;
                     errorBox.errorBox.Text = e.Source + ": " + e.Message + "\n" + e.StackTrace;
+                    return false;
+                }
             }
+            return true;
         }
         public void CompileDNCLI(string fileName, string outName)
         {
