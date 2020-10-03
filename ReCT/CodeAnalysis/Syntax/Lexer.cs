@@ -197,6 +197,7 @@ namespace ReCT.CodeAnalysis.Syntax
                 case '"':
                     ReadString();
                     break;
+                case '#':
                 case '/' when Lookahead == '/':
                     ReadComment();
                     break;

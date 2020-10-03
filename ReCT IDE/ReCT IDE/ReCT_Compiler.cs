@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Reflection;
 using System.Collections.Immutable;
+using System.Text.RegularExpressions;
 
 namespace ReCT_IDE
 {
@@ -63,7 +64,61 @@ namespace ReCT_IDE
         }
         public bool CompileRCTBC(string fileOut, string inPath, Error errorBox)
         {
+            string code = "";
+            using (StreamReader sr = new StreamReader(new FileStream(inPath, FileMode.Open)))
+            {
+                code = sr.ReadToEnd();
+                sr.Close();
+            }
+
             var syntaxTree = SyntaxTree.Load(inPath);
+
+            if (code.Contains("#attach"))
+            {
+                var lookingforfile = "";
+                try
+                {
+                    List<string> neededFiles = new List<string>();
+                    List<string> neededCode = new List<string>();
+                    var matches = Regex.Matches(code, @"(?<=#attach\(\" + "\"" + @")(.*)(?=\" + "\"" + @"\))");
+
+                    for (int i = 0; i < matches.Count; i++)
+                    {
+                        neededFiles.Add(matches[i].Value);
+                    }
+
+                    foreach (string p in neededFiles)
+                    {
+                        var lp = p;
+                        if(!p.Contains(":"))
+                        {
+                            lp = Path.GetDirectoryName(inPath) + "\\" + p;
+                        }
+
+                        lookingforfile = lp;
+
+                        using (StreamReader sr = new StreamReader(new FileStream(lp, FileMode.Open)))
+                        {
+                            neededCode.Add(sr.ReadToEnd());
+                            sr.Close();
+                        }
+                    }
+
+                    for (int i = 0; i < neededFiles.Count; i++)
+                    {
+                        code = code.Replace($"#attach(\"{neededFiles[i]}\")", neededCode[i]);
+                    }
+
+                    syntaxTree = SyntaxTree.Parse(code);
+                }
+                catch
+                {
+                    errorBox.Show();
+                    errorBox.errorBox.Clear();
+                    errorBox.errorBox.Text = $"[L: ?, C: ?] Could not find attachment file '{lookingforfile}'!";
+                    return false;
+                }
+            }
 
             var sErrors = syntaxTree.Diagnostics;
 

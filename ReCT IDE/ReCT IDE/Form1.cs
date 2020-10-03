@@ -130,6 +130,7 @@ namespace ReCT_IDE
         Style StringStyle = new TextStyle(new SolidBrush(Color.FromArgb(92, 227, 61)), null, FontStyle.Regular);
         Style VarStyle = new TextStyle(new SolidBrush(Color.FromArgb(0, 157, 227)), null, FontStyle.Bold);
         Style StatementStyle = new TextStyle(new SolidBrush(Color.FromArgb(227, 85, 75)), null, FontStyle.Bold);
+        Style AttachStyle = new TextStyle(new SolidBrush(Color.FromArgb(232, 128, 121)), null, FontStyle.Regular);
         Style TypeStyle = new TextStyle(new SolidBrush(Color.FromArgb(24, 115, 163)), null, FontStyle.Regular);
         Style NumberStyle = new TextStyle(new SolidBrush(Color.FromArgb(9, 170, 179)), null, FontStyle.Regular);
         Style SystemFunctionStyle = new TextStyle(new SolidBrush(Color.FromArgb(255, 131, 7)), null, FontStyle.Regular);
@@ -157,6 +158,8 @@ namespace ReCT_IDE
 
             //comment highlighting [DarkMode]
             e.ChangedRange.SetStyle(CommentStyle, @"//.*$", RegexOptions.Multiline);
+
+            e.ChangedRange.SetStyle(AttachStyle, @"(#attach\b)", RegexOptions.Singleline);
 
             //clear style of range [DarkMode]
             e.ChangedRange.ClearStyle(SystemFunctionStyle);
