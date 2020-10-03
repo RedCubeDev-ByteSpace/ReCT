@@ -162,7 +162,7 @@ namespace ReCT_IDE
             e.ChangedRange.ClearStyle(SystemFunctionStyle);
 
             //system function highlighting
-            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bInputAction\b|\bSetConsoleForeground\b|\bSetConsoleBackground\b|\bSetCursorVisible\b|\bThread\b|\bGetCursorVisible\b|\bPrint\b|\bInputKey\b|\bInput\b|\bRandom\b|\bVersion\b|\bClear\b|\bSetCursor\b|\bGetSizeX\b|\bGetSizeY\b|\bSetSize\b|\bWrite\b|\bSleep\b)");
+            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bFloor\b|\bCeil\b|\bInputAction\b|\bSetConsoleForeground\b|\bSetConsoleBackground\b|\bSetCursorVisible\b|\bThread\b|\bGetCursorVisible\b|\bPrint\b|\bInputKey\b|\bInput\b|\bRandom\b|\bVersion\b|\bClear\b|\bSetCursor\b|\bGetSizeX\b|\bGetSizeY\b|\bSetSize\b|\bWrite\b|\bSleep\b)");
 
             //types
             e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b|\bfloat\b|\bthread\b|\banyArr\b|\bboolArr\b|\bintArr\b|\bstringArr\b|\bfloatArr\b|\bthreadArr\b)");

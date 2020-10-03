@@ -18,6 +18,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly Dictionary<TypeSymbol, TypeReference> _knownTypes;
         private readonly TypeReference _consoleKeyInfoRef;
         private readonly TypeReference _charRef;
+        private readonly TypeReference _doubleRef;
         private readonly MethodReference _objectEqualsReference;
         private readonly MethodReference _consoleReadLineReference;
         private readonly MethodReference _consoleReadKeyReference;
@@ -39,10 +40,14 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _stringConcatReference;
         private readonly MethodReference _convertToBooleanReference;
         private readonly MethodReference _convertToInt32Reference;
+        private readonly MethodReference _convertToSingleReference;
         private readonly MethodReference _convertToStringReference;
+        private readonly MethodReference _convertToDoubleReference;
         private readonly TypeReference _randomReference;
         private readonly MethodReference _randomCtorReference;
         private readonly MethodReference _randomNextReference;
+        private readonly MethodReference _mathFloorReference;
+        private readonly MethodReference _mathCeilReference;
         private readonly MethodReference _threadStartObjectReference;
         private readonly MethodReference _threadObjectReference;
         private readonly MethodReference _envDie;
@@ -96,6 +101,7 @@ namespace ReCT.CodeAnalysis.Emit
 
             _consoleKeyInfoRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.ConsoleKeyInfo").ToArray()[0]);
             _charRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.Char").ToArray()[0]);
+            _doubleRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.Double").ToArray()[0]);
 
             foreach (var (typeSymbol, metadataName) in builtInTypes)
             {
@@ -216,10 +222,16 @@ namespace ReCT.CodeAnalysis.Emit
             _stringConcatReference = ResolveMethod("System.String", "Concat", new [] { "System.String", "System.String" });
             _convertToBooleanReference = ResolveMethod("System.Convert", "ToBoolean", new [] { "System.Object" });
             _convertToInt32Reference = ResolveMethod("System.Convert", "ToInt32", new [] { "System.Object" });
+            _convertToSingleReference = ResolveMethod("System.Convert", "ToSingle", new [] { "System.Object" });
             _convertToStringReference = ResolveMethod("System.Convert", "ToString", new [] { "System.Object" });
+            _convertToDoubleReference = ResolveMethod("System.Convert", "ToDouble", new[] { "System.Object" });
             _randomReference = ResolveType(null, "System.Random");
             _randomCtorReference = ResolveMethod("System.Random", ".ctor", Array.Empty<string>());
             _randomNextReference = ResolveMethod("System.Random", "Next", new [] { "System.Int32" });
+
+            //Meth
+            _mathFloorReference = ResolveMethod("System.Math", "Floor", new[] { "System.Double" });
+            _mathCeilReference = ResolveMethod("System.Math", "Ceiling", new[] { "System.Double" });
 
             //threading
             _threadStartObjectReference = ResolveMethod("System.Threading.ThreadStart", ".ctor", new[] { "System.Object", "System.IntPtr" });
@@ -860,6 +872,18 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Call, _setConsoleBG);
             else if (node.Function == BuiltinFunctions.ConsoleColorFG)
                 ilProcessor.Emit(OpCodes.Call, _setConsoleFG);
+            else if (node.Function == BuiltinFunctions.Floor)
+            {
+                ilProcessor.Emit(OpCodes.Conv_R8);
+                ilProcessor.Emit(OpCodes.Call, _mathCeilReference);
+                ilProcessor.Emit(OpCodes.Conv_I4);
+            }
+            else if (node.Function == BuiltinFunctions.Ceil)
+            {
+                ilProcessor.Emit(OpCodes.Conv_R8);
+                ilProcessor.Emit(OpCodes.Call, _mathCeilReference);
+                ilProcessor.Emit(OpCodes.Conv_I4);
+            }
             else
             {
                 var methodDefinition = _methods[node.Function];
@@ -896,7 +920,14 @@ namespace ReCT.CodeAnalysis.Emit
         {
             EmitExpression(ilProcessor, node.Expression);
             var needsBoxing = node.Expression.Type == TypeSymbol.Bool ||
-                              node.Expression.Type == TypeSymbol.Int;
+                              node.Expression.Type == TypeSymbol.Int ||
+                              node.Expression.Type == TypeSymbol.Float ||
+                              node.Expression.Type == TypeSymbol.AnyArr ||
+                              node.Expression.Type == TypeSymbol.IntArr ||
+                              node.Expression.Type == TypeSymbol.FloatArr ||
+                              node.Expression.Type == TypeSymbol.StringArr ||
+                              node.Expression.Type == TypeSymbol.BoolArr ||
+                              node.Expression.Type == TypeSymbol.ThreadArr;
             if (needsBoxing)
                 ilProcessor.Emit(OpCodes.Box, _knownTypes[node.Expression.Type]);
 
@@ -912,9 +943,37 @@ namespace ReCT.CodeAnalysis.Emit
             {
                 ilProcessor.Emit(OpCodes.Call, _convertToInt32Reference);
             }
+            else if (node.Type == TypeSymbol.Float)
+            {
+                ilProcessor.Emit(OpCodes.Call, _convertToSingleReference);
+            }
             else if (node.Type == TypeSymbol.String)
             {
                 ilProcessor.Emit(OpCodes.Call, _convertToStringReference);
+            }
+            else if (node.Type == TypeSymbol.AnyArr)
+            {
+                ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.AnyArr]);
+            }
+            else if (node.Type == TypeSymbol.IntArr)
+            {
+                ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.IntArr]);
+            }
+            else if (node.Type == TypeSymbol.FloatArr)
+            {
+                ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.FloatArr]);
+            }
+            else if (node.Type == TypeSymbol.StringArr)
+            {
+                ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.StringArr]);
+            }
+            else if (node.Type == TypeSymbol.BoolArr)
+            {
+                ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.BoolArr]);
+            }
+            else if (node.Type == TypeSymbol.ThreadArr)
+            {
+                ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.ThreadArr]);
             }
             else
             {

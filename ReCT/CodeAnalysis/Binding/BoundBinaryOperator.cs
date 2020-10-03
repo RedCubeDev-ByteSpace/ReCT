@@ -47,6 +47,9 @@ namespace ReCT.CodeAnalysis.Binding
             new BoundBinaryOperator(SyntaxKind.GreaterToken, BoundBinaryOperatorKind.Greater, TypeSymbol.Int, TypeSymbol.Bool),
             new BoundBinaryOperator(SyntaxKind.GreaterOrEqualsToken, BoundBinaryOperatorKind.GreaterOrEquals, TypeSymbol.Int, TypeSymbol.Bool),
 
+            new BoundBinaryOperator(SyntaxKind.EqualsToken, BoundBinaryOperatorKind.Equals, TypeSymbol.Any, TypeSymbol.Bool),
+            new BoundBinaryOperator(SyntaxKind.NotEqualsToken, BoundBinaryOperatorKind.NotEquals, TypeSymbol.Any, TypeSymbol.Bool),
+
             new BoundBinaryOperator(SyntaxKind.PlusToken, BoundBinaryOperatorKind.Addition, TypeSymbol.Float),
             new BoundBinaryOperator(SyntaxKind.MinusToken, BoundBinaryOperatorKind.Subtraction, TypeSymbol.Float),
             new BoundBinaryOperator(SyntaxKind.StarToken, BoundBinaryOperatorKind.Multiplication, TypeSymbol.Float),
@@ -92,6 +95,19 @@ namespace ReCT.CodeAnalysis.Binding
             new BoundBinaryOperator(SyntaxKind.GreaterOrEqualsToken, BoundBinaryOperatorKind.GreaterOrEquals, TypeSymbol.Float, TypeSymbol.Int, TypeSymbol.Bool),
             new BoundBinaryOperator(SyntaxKind.GreaterOrEqualsToken, BoundBinaryOperatorKind.GreaterOrEquals, TypeSymbol.Int, TypeSymbol.Float, TypeSymbol.Bool),
 
+            #region arrays
+            new BoundBinaryOperator(SyntaxKind.EqualsToken, BoundBinaryOperatorKind.Equals, TypeSymbol.AnyArr, TypeSymbol.Bool),
+            new BoundBinaryOperator(SyntaxKind.EqualsToken, BoundBinaryOperatorKind.Equals, TypeSymbol.IntArr, TypeSymbol.Bool),
+            new BoundBinaryOperator(SyntaxKind.EqualsToken, BoundBinaryOperatorKind.Equals, TypeSymbol.FloatArr, TypeSymbol.Bool),
+            new BoundBinaryOperator(SyntaxKind.EqualsToken, BoundBinaryOperatorKind.Equals, TypeSymbol.StringArr, TypeSymbol.Bool),
+            new BoundBinaryOperator(SyntaxKind.EqualsToken, BoundBinaryOperatorKind.Equals, TypeSymbol.BoolArr, TypeSymbol.Bool),
+
+            new BoundBinaryOperator(SyntaxKind.NotEqualsToken, BoundBinaryOperatorKind.NotEquals, TypeSymbol.AnyArr, TypeSymbol.Bool),
+            new BoundBinaryOperator(SyntaxKind.NotEqualsToken, BoundBinaryOperatorKind.NotEquals, TypeSymbol.IntArr, TypeSymbol.Bool),
+            new BoundBinaryOperator(SyntaxKind.NotEqualsToken, BoundBinaryOperatorKind.NotEquals, TypeSymbol.FloatArr, TypeSymbol.Bool),
+            new BoundBinaryOperator(SyntaxKind.NotEqualsToken, BoundBinaryOperatorKind.NotEquals, TypeSymbol.StringArr, TypeSymbol.Bool),
+            new BoundBinaryOperator(SyntaxKind.NotEqualsToken, BoundBinaryOperatorKind.NotEquals, TypeSymbol.BoolArr, TypeSymbol.Bool),
+            #endregion
 
             new BoundBinaryOperator(SyntaxKind.AmpersandToken, BoundBinaryOperatorKind.BitwiseAnd, TypeSymbol.Bool),
             new BoundBinaryOperator(SyntaxKind.AmpersandAmpersandToken, BoundBinaryOperatorKind.LogicalAnd, TypeSymbol.Bool),

@@ -36,9 +36,39 @@ namespace ReCT.CodeAnalysis.Binding
                 return Conversion.Explicit;
             }
 
+            if (from == TypeSymbol.Int && to == TypeSymbol.Float)
+            {
+                return Conversion.Explicit;
+            }
+            if (from == TypeSymbol.Float && to == TypeSymbol.Int)
+            {
+                return Conversion.Explicit;
+            }
+
             if (from == TypeSymbol.AnyArr && to == TypeSymbol.Any)
                 return Conversion.Explicit;
             if (from == TypeSymbol.Any && to == TypeSymbol.AnyArr)
+                return Conversion.Explicit;
+
+            if (from == TypeSymbol.BoolArr && to == TypeSymbol.Any)
+                return Conversion.Explicit;
+            if (from == TypeSymbol.Any && to == TypeSymbol.BoolArr)
+                return Conversion.Explicit;
+            if (from == TypeSymbol.IntArr && to == TypeSymbol.Any)
+                return Conversion.Explicit;
+            if (from == TypeSymbol.Any && to == TypeSymbol.IntArr)
+                return Conversion.Explicit;
+            if (from == TypeSymbol.FloatArr && to == TypeSymbol.Any)
+                return Conversion.Explicit;
+            if (from == TypeSymbol.Any && to == TypeSymbol.FloatArr)
+                return Conversion.Explicit;
+            if (from == TypeSymbol.ThreadArr && to == TypeSymbol.Any)
+                return Conversion.Explicit;
+            if (from == TypeSymbol.Any && to == TypeSymbol.ThreadArr)
+                return Conversion.Explicit;
+            if (from == TypeSymbol.StringArr && to == TypeSymbol.Any)
+                return Conversion.Explicit;
+            if (from == TypeSymbol.Any && to == TypeSymbol.StringArr)
                 return Conversion.Explicit;
 
             if (from == TypeSymbol.Bool || from == TypeSymbol.Int || from == TypeSymbol.Float)
