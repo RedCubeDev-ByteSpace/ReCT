@@ -77,7 +77,7 @@
             this.ReCTAutoComplete.SetAutocompleteMenu(this.CodeBox, this.ReCTAutoComplete);
             this.CodeBox.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*" +
     "(?<range>:)\\s*(?<range>[^;]+);";
-            this.CodeBox.AutoScrollMinSize = new System.Drawing.Size(51, 14);
+            this.CodeBox.AutoScrollMinSize = new System.Drawing.Size(26, 14);
             this.CodeBox.BackBrush = null;
             this.CodeBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.CodeBox.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
@@ -88,13 +88,13 @@
             this.CodeBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.CodeBox.ForeColor = System.Drawing.Color.White;
             this.CodeBox.IsReplaceMode = false;
-            this.CodeBox.Location = new System.Drawing.Point(0, 36);
+            this.CodeBox.Location = new System.Drawing.Point(0, 20);
             this.CodeBox.Name = "CodeBox";
             this.CodeBox.Paddings = new System.Windows.Forms.Padding(0);
             this.CodeBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.CodeBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("CodeBox.ServiceColors")));
             this.CodeBox.ShowFoldingLines = true;
-            this.CodeBox.Size = new System.Drawing.Size(1088, 595);
+            this.CodeBox.Size = new System.Drawing.Size(1084, 571);
             this.CodeBox.TabIndex = 1;
             this.CodeBox.Text = "kek";
             this.CodeBox.Zoom = 100;
@@ -365,7 +365,6 @@
             this.Controls.Add(this.Play);
             this.Controls.Add(this.Stop);
             this.Controls.Add(this.Build);
-            this.Controls.Add(this.CodeBox);
             this.Controls.Add(this.Menu);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.Menu;
