@@ -50,6 +50,13 @@
             this.Typechecker = new System.Timers.Timer();
             this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ReCTAutoComplete = new AutocompleteMenuNS.AutocompleteMenu();
+            this.Tab = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.CodeBox)).BeginInit();
             this.Menu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Build)).BeginInit();
@@ -77,7 +84,7 @@
             this.ReCTAutoComplete.SetAutocompleteMenu(this.CodeBox, this.ReCTAutoComplete);
             this.CodeBox.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*" +
     "(?<range>:)\\s*(?<range>[^;]+);";
-            this.CodeBox.AutoScrollMinSize = new System.Drawing.Size(26, 14);
+            this.CodeBox.AutoScrollMinSize = new System.Drawing.Size(51, 14);
             this.CodeBox.BackBrush = null;
             this.CodeBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.CodeBox.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
@@ -85,16 +92,15 @@
             this.CodeBox.CharWidth = 8;
             this.CodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.CodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.CodeBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.CodeBox.ForeColor = System.Drawing.Color.White;
             this.CodeBox.IsReplaceMode = false;
-            this.CodeBox.Location = new System.Drawing.Point(0, 20);
+            this.CodeBox.Location = new System.Drawing.Point(0, 65);
             this.CodeBox.Name = "CodeBox";
             this.CodeBox.Paddings = new System.Windows.Forms.Padding(0);
             this.CodeBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.CodeBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("CodeBox.ServiceColors")));
             this.CodeBox.ShowFoldingLines = true;
-            this.CodeBox.Size = new System.Drawing.Size(1084, 571);
+            this.CodeBox.Size = new System.Drawing.Size(1088, 566);
             this.CodeBox.TabIndex = 1;
             this.CodeBox.Text = "kek";
             this.CodeBox.Zoom = 100;
@@ -356,16 +362,115 @@
             this.ReCTAutoComplete.MaximumSize = new System.Drawing.Size(200, 200);
             this.ReCTAutoComplete.TargetControlWrapper = null;
             // 
+            // Tab
+            // 
+            this.Tab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.Tab.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Tab.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Tab.ForeColor = System.Drawing.Color.White;
+            this.Tab.Location = new System.Drawing.Point(17, 35);
+            this.Tab.Name = "Tab";
+            this.Tab.Size = new System.Drawing.Size(93, 34);
+            this.Tab.TabIndex = 5;
+            this.Tab.Text = "Untitled*";
+            this.Tab.UseVisualStyleBackColor = false;
+            // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.ForeColor = System.Drawing.Color.White;
+            this.button1.Location = new System.Drawing.Point(215, 35);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(93, 34);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "System";
+            this.button1.UseVisualStyleBackColor = false;
+            // 
+            // button2
+            // 
+            this.button2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.ForeColor = System.Drawing.Color.White;
+            this.button2.Location = new System.Drawing.Point(116, 35);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(93, 34);
+            this.button2.TabIndex = 6;
+            this.button2.Text = "Tab";
+            this.button2.UseVisualStyleBackColor = false;
+            // 
+            // button3
+            // 
+            this.button3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.ForeColor = System.Drawing.Color.White;
+            this.button3.Location = new System.Drawing.Point(314, 35);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(93, 35);
+            this.button3.TabIndex = 6;
+            this.button3.Text = "Coming";
+            this.button3.UseVisualStyleBackColor = false;
+            // 
+            // button4
+            // 
+            this.button4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button4.ForeColor = System.Drawing.Color.White;
+            this.button4.Location = new System.Drawing.Point(413, 35);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(93, 34);
+            this.button4.TabIndex = 6;
+            this.button4.Text = "Sometime";
+            this.button4.UseVisualStyleBackColor = false;
+            // 
+            // button5
+            // 
+            this.button5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button5.ForeColor = System.Drawing.Color.White;
+            this.button5.Location = new System.Drawing.Point(512, 35);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(93, 34);
+            this.button5.TabIndex = 6;
+            this.button5.Text = "Soon!";
+            this.button5.UseVisualStyleBackColor = false;
+            // 
+            // button6
+            // 
+            this.button6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.button6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button6.ForeColor = System.Drawing.Color.White;
+            this.button6.Location = new System.Drawing.Point(611, 35);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(93, 34);
+            this.button6.TabIndex = 7;
+            this.button6.Text = "(v1.3 lol)";
+            this.button6.UseVisualStyleBackColor = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.ClientSize = new System.Drawing.Size(1088, 631);
+            this.Controls.Add(this.CodeBox);
+            this.Controls.Add(this.Tab);
             this.Controls.Add(this.Play);
             this.Controls.Add(this.Stop);
             this.Controls.Add(this.Build);
             this.Controls.Add(this.Menu);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.button5);
+            this.Controls.Add(this.button6);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.Menu;
             this.Name = "Form1";
@@ -404,6 +509,13 @@
         private System.Windows.Forms.ToolStripMenuItem autoFormatToolStripMenuItem;
         private System.Windows.Forms.ToolTip ToolTip;
         private AutocompleteMenuNS.AutocompleteMenu ReCTAutoComplete;
+        private System.Windows.Forms.Button Tab;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button6;
     }
 }
 

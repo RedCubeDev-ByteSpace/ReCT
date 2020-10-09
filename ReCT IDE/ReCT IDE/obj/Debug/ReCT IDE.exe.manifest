@@ -163,14 +163,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT IDE.exe" size="648664">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT IDE.exe" size="649688">
       <assemblyIdentity name="ReCT IDE" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>URVUNvKP7SY/xpLtHfmSRvlU/h2AKDlACJT1nU904jE=</dsig:DigestValue>
+        <dsig:DigestValue>KNZEwbVelesamhjpPn0KIBHDeUqd1wDTJNvErwN7mYY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -258,13 +258,13 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="ReCT IDE.exe.config" size="555">
+  <file name="ReCT IDE.exe.config" size="541">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>j4dQ7blmRSMw/UTPox4xxWk2pe0z3+RiyAaynwTRm/E=</dsig:DigestValue>
+      <dsig:DigestValue>E5cjsjJll2YD8nkcY7zr9SPfYpRmo+aUnkPGqyXg/Ag=</dsig:DigestValue>
     </hash>
   </file>
   <file name="rectIcon.ico" size="102965">
