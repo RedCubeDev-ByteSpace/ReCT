@@ -26,12 +26,19 @@ namespace ReCT_IDE
         public Process running;
         string[] standardAC;
 
+        bool tabSwitch = false;
+
+        public Button TabPrefab;
+
         public Image[] icons = new Image[7];
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         static extern bool FlashWindow(IntPtr hwnd, bool bInvert);
 
         string standardMsg = "//ReCT IDE ";
+
+        List<Tab> tabs = new List<Tab>();
+        int currentTab = 0;
 
         public Form1()
         {
@@ -55,7 +62,7 @@ namespace ReCT_IDE
             errorBox = new Error();
             SetCodeBoxColors();
             fileChanged = false;
-            updateWindowTitle();
+            //updateWindowTitle();
 
             icons[0] = Play.BackgroundImage;
             icons[1] = Stop.BackgroundImage;
@@ -68,6 +75,14 @@ namespace ReCT_IDE
             icons[6] = Image.FromFile("res/playIconLoad.png");
 
             standardAC = ReCTAutoComplete.Items;
+
+            TabPrefab = (Button)CtrlClone.ControlFactory.CloneCtrl(Tab);
+            Tab.Dispose();
+            Controls.Remove(Tab);
+
+            var tab = makeNewTab();
+            tabs.Add(tab);
+            OrderTabs();
         }
 
         public void startAllowed(bool allowed)
@@ -203,44 +218,88 @@ namespace ReCT_IDE
 
         #endregion
 
+        Tab makeNewTab()
+        {
+            var newTab = new Tab();
+            newTab.button = (Button)CtrlClone.ControlFactory.CloneCtrl(TabPrefab);
+            newTab.code = standardMsg;
+            newTab.saved = true;
+            newTab.button.Click += Tab_Click;
+            newTab.button.FlatStyle = FlatStyle.Flat;
+            newTab.button.FlatAppearance.BorderSize = 0;
+            newTab.name = "Untitled";
+            Controls.Add(newTab.button);
+            return newTab;
+        }
+
+        void OrderTabs()
+        {
+            try
+            {
+                for (int i = 0; i < tabs.Count; i++)
+                {
+                    tabs[i].button.Location = new Point(5 + (100 * i), 35);
+                    tabs[i].button.Text = tabs[i].name;
+
+                    if (!tabs[i].saved)
+                        tabs[i].button.Text += "*";
+
+                    tabs[i].button.BackColor = Color.FromArgb(32, 32, 32);
+                }
+                tabs[currentTab].button.BackColor = Color.FromArgb(64, 41, 41);
+            }
+            catch { }
+        }
+
         private void New_Click(object sender, EventArgs e)
         {
-            if (!fileChanged)
-            {
-                CodeBox.Text = standardMsg;
-                CodeBox.ClearUndo();
-                openFile = "";
-            }
-            else
-            {
-                var result = MessageBox.Show("You have unsaved changes!\nAre you sure you want to create a new File?", "Warning!", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                if (result == DialogResult.Yes)
-                {
-                    CodeBox.Text = standardMsg;
-                    CodeBox.ClearUndo();
-                    fileChanged = false;
-                    openFile = "";
-                }
-            }
-            updateWindowTitle();
+            tabs[currentTab].code = CodeBox.Text;
+            tabs.Add(makeNewTab());
+            switchTab(tabs.Count - 1);
+            tabs[currentTab].name = "Untitled";
+            OrderTabs();
+
+            //if (!fileChanged)
+            //{
+            //    CodeBox.Text = standardMsg;
+            //    CodeBox.ClearUndo();
+            //    openFile = "";
+            //}
+            //else
+            //{
+            //    var result = MessageBox.Show("You have unsaved changes!\nAre you sure you want to create a new File?", "Warning!", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);https://pcpartpicker.com/user/RedCooooobe/saved/CdnKpg
+            //    if (result == DialogResult.Yes)
+            //    {
+            //        CodeBox.Text = standardMsg;
+            //        CodeBox.ClearUndo();
+            //        fileChanged = false;
+            //        openFile = "";
+            //    }
+            //}
+            //updateWindowTitle();
         }
 
         private void Open_Click(object sender, EventArgs e)
         {
-            if(fileChanged)
-            {
-                var result = MessageBox.Show("You have unsaved changes!\nAre you sure you want to open a File?", "Warning!", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                if (result != DialogResult.Yes)
-                {
-                    return;
-                }
-            }
+            //if(fileChanged)
+            //{
+            //    var result = MessageBox.Show("You have unsaved changes!\nAre you sure you want to open a File?", "Warning!", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+            //    if (result != DialogResult.Yes)
+            //    {
+            //        return;
+            //    }
+            //}
 
             openFileDialog1.Filter = "ReCT code files (*.rct)|*.rct|All files (*.*)|*.*";
             var res = openFileDialog1.ShowDialog();
 
             if (res != DialogResult.OK)
                 return;
+
+            tabs[currentTab].code = CodeBox.Text;
+            tabs.Add(makeNewTab());
+            switchTab(tabs.Count - 1);
+                        
 
             using (StreamReader sr = new StreamReader(new FileStream(openFileDialog1.FileName, FileMode.Open)))
             {
@@ -249,28 +308,29 @@ namespace ReCT_IDE
                 sr.Close();
             }
 
-            openFile = openFileDialog1.FileName;
-            fileChanged = false;
-            updateWindowTitle();
+            tabs[currentTab].name = Path.GetFileName(openFileDialog1.FileName);
+            tabs[currentTab].path = openFileDialog1.FileName;
+            tabs[currentTab].saved = true;
+            OrderTabs();
         }
 
         private void Save_Click(object sender, EventArgs e)
         {
-            if(openFile == "")
+            if(tabs[currentTab].path == "" || tabs[currentTab].path == null)
             {
                 SaveAs_Click(sender, e);
                 return;
             }
 
-            using (StreamWriter sw = new StreamWriter(new FileStream(openFile, FileMode.Create)))
+            using (StreamWriter sw = new StreamWriter(new FileStream(tabs[currentTab].path, FileMode.Create)))
             {
                 sw.Write(CodeBox.Text);
                 sw.Close();
             }
 
-            fileChanged = false;
+            tabs[currentTab].saved = true;
 
-            updateWindowTitle();
+            OrderTabs();
         }
 
         private void SaveAs_Click(object sender, EventArgs e)
@@ -287,29 +347,29 @@ namespace ReCT_IDE
                 sw.Close();
             }
 
-            openFile = saveFileDialog1.FileName;
-            fileChanged = false;
-            updateWindowTitle();
+            tabs[currentTab].path = saveFileDialog1.FileName;
+            tabs[currentTab].name = Path.GetFileName(saveFileDialog1.FileName);
+            tabs[currentTab].saved = true;
+            OrderTabs();
         }
 
-        void updateWindowTitle()
-        {
-            var title = "ReCT IDE";
 
-            title += " - ";
-
-            if (fileChanged) title += "*";
-
-            title += openFile == "" ? "Untitled" : Path.GetFileName(openFile);
-
-            Text = title;
-        }
         void edited()
         {
-            if(!fileChanged)
+            if (tabSwitch)
+                return;
+
+            try
             {
-                fileChanged = true;
-                updateWindowTitle();
+                if (tabs[currentTab].saved)
+                {
+                    tabs[currentTab].saved = false;
+                    OrderTabs();
+                }
+            }
+            catch
+            {
+
             }
         }
 
@@ -366,7 +426,7 @@ namespace ReCT_IDE
             if (fileChanged)
                 Save_Click(this, new EventArgs());
 
-            rectComp.CompileRCTBC (saveFileDialog1.FileName, openFile, errorBox);
+            rectComp.CompileRCTBC (saveFileDialog1.FileName, tabs[currentTab].path, errorBox);
 
             System.Diagnostics.Process.Start("explorer.exe", string.Format("/select,\"{0}\"", saveFileDialog1.FileName));
             Typechecker.Enabled = true;
@@ -375,6 +435,7 @@ namespace ReCT_IDE
         private void CodeBox_Chnaged(object sender, TextChangedEventArgs e)
         {
             ReloadHightlighting(e);
+
             edited();
         }
 
@@ -392,9 +453,9 @@ namespace ReCT_IDE
             if (!Directory.Exists("Builder"))
                 Directory.CreateDirectory("Builder");
 
-            if (!rectComp.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(openFile) + ".cmd", openFile, errorBox)) return;
+            if (!rectComp.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(tabs[currentTab].path) + ".cmd", tabs[currentTab].path, errorBox)) return;
 
-            string strCmdText = $"/K cd \"{Path.GetFullPath($"Builder")}\" & cls & \"{Path.GetFileNameWithoutExtension(openFile)}.cmd\"";
+            string strCmdText = $"/K cd \"{Path.GetFullPath($"Builder")}\" & cls & \"{Path.GetFileNameWithoutExtension(tabs[currentTab].path)}.cmd\"";
             running = Process.Start("CMD.exe", strCmdText);
         }
 
@@ -479,5 +540,105 @@ namespace ReCT_IDE
         {
             Build_Click(sender, e);
         }
+
+        private void Tab_Click(object sender, EventArgs e)
+        {
+            switchTab(findPressedTab(sender));
+        }
+
+        int findPressedTab(object button)
+        {
+            for(int i = 0; i < tabs.Count; i++)
+            {
+                if (tabs[i].button == (Button)button)
+                    return i;
+            }
+            return 0;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            if (tabs.Count == 1)
+                return;
+
+            if(!tabs[currentTab].saved)
+            {
+                var result = MessageBox.Show("WAIT!\nYou have some unsaved changes!\nDo you want to save them?", "Warning!", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning); https://pcpartpicker.com/user/RedCooooobe/saved/CdnKpg
+                if (result == DialogResult.Yes)
+                {
+                    Save_Click(this, new EventArgs());
+                }
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+            }
+
+            int tabToDelete = currentTab;
+
+            Controls.Remove(tabs[tabToDelete].button);
+            tabs.RemoveAt(tabToDelete);
+
+            switchTab(0);
+            OrderTabs();
+        }
+
+        void switchTab(int tab)
+        {
+            tabSwitch = true;
+            Console.WriteLine("tabswitch true");
+
+            if (tab != currentTab)
+            {
+                if (currentTab < tabs.Count)
+                {
+                    tabs[currentTab].code = CodeBox.Text;
+                    tabs[currentTab].button.BackColor = Color.FromArgb(32, 32, 32);
+                }
+                currentTab = tab;
+                CodeBox.ClearUndo();
+            }
+            
+            tabs[currentTab].button.BackColor = Color.FromArgb(64, 41, 41);
+            CodeBox.Text = tabs[currentTab].code;
+
+            tabswitchTimer.Start();
+        }
+
+        private void tabswitchTimer_Tick(object sender, EventArgs e)
+        {
+            tabswitchTimer.Stop();
+            tabSwitch = false;
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach(Tab t in tabs)
+            {
+                if (!t.saved)
+                {
+                    var result = MessageBox.Show($"WAIT!\nYou have some unsaved changes in '{t.name}'!\nDo you want to save them?", "Warning!", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning); https://pcpartpicker.com/user/RedCooooobe/saved/CdnKpg
+                    if (result == DialogResult.Yes)
+                    {
+                        switchTab(findPressedTab(t.button));
+                        Save_Click(this, new EventArgs());
+                    }
+                    if (result == DialogResult.Cancel)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    class Tab
+    {
+        public Button button;
+        public string code;
+        public string name;
+        public string path;
+        public bool saved;
     }
 }

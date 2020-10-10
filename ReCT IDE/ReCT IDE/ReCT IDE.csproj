@@ -127,6 +127,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ControlFactory.cs" />
     <Compile Include="Error.cs">
       <SubType>Form</SubType>
     </Compile>

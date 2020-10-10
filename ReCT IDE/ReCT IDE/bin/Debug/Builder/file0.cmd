@@ -1,1 +1,0 @@
-dotnet exec "file0.dll"
