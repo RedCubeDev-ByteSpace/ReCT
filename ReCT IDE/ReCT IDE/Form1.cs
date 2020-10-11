@@ -14,6 +14,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DiscordRPC;
+using System.Threading;
 
 namespace ReCT_IDE
 {
@@ -26,6 +28,11 @@ namespace ReCT_IDE
         public Process running;
         string[] standardAC;
 
+        Discord dc;
+        RichPresence presence;
+
+        Settings settings;
+
         bool tabSwitch = false;
 
         public Button TabPrefab;
@@ -34,6 +41,9 @@ namespace ReCT_IDE
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         static extern bool FlashWindow(IntPtr hwnd, bool bInvert);
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        public static extern bool ShowWindow(System.IntPtr hWnd, int cmdShow);
+
 
         string standardMsg = "//ReCT IDE ";
 
@@ -83,6 +93,33 @@ namespace ReCT_IDE
             var tab = makeNewTab();
             tabs.Add(tab);
             OrderTabs();
+
+            settings = new Settings(this);
+            settings.Hide();
+
+            settings.autosave.SelectedIndex = Properties.Settings.Default.Autosave;
+            settings.maximize.SelectedIndex = Properties.Settings.Default.Maximize ? 1 : 0;
+            settings.maximizeRect.SelectedIndex = Properties.Settings.Default.MaximizeRect ? 1 : 0;         
+
+            dc = new Discord();
+            dc.Initialize();
+
+            presence = new RichPresence()
+            {
+                Details = "Working on Untitled...",
+                Timestamps = new Timestamps()
+                {
+                    Start = DateTime.UtcNow
+                },
+                Assets = new Assets()
+                {
+                    LargeImageKey = "rect",
+                    LargeImageText = "ReCT IDE",
+                }
+            };
+
+            presence.Details = "Working on " + tabs[currentTab].name + "...";
+            dc.client.SetPresence(presence);
         }
 
         public void startAllowed(bool allowed)
@@ -296,9 +333,12 @@ namespace ReCT_IDE
             if (res != DialogResult.OK)
                 return;
 
-            tabs[currentTab].code = CodeBox.Text;
-            tabs.Add(makeNewTab());
-            switchTab(tabs.Count - 1);
+            if (tabs.Count != 1 || tabs[0].name != "Untitled" || !tabs[0].saved)
+            {
+                tabs[currentTab].code = CodeBox.Text;
+                tabs.Add(makeNewTab());
+                switchTab(tabs.Count - 1);
+            }
                         
 
             using (StreamReader sr = new StreamReader(new FileStream(openFileDialog1.FileName, FileMode.Open)))
@@ -312,6 +352,9 @@ namespace ReCT_IDE
             tabs[currentTab].path = openFileDialog1.FileName;
             tabs[currentTab].saved = true;
             OrderTabs();
+
+            Properties.Settings.Default.LastOpenFile = openFileDialog1.FileName;
+            Properties.Settings.Default.Save();
         }
 
         private void Save_Click(object sender, EventArgs e)
@@ -367,10 +410,7 @@ namespace ReCT_IDE
                     OrderTabs();
                 }
             }
-            catch
-            {
-
-            }
+            catch{}
         }
 
         private void timer1_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -380,7 +420,7 @@ namespace ReCT_IDE
                 rectComp.Variables = "";
                 if (CodeBox.Text != "")
                 {
-                    rectComp.Check(CodeBox.Text, this);
+                    rectComp.Check(CodeBox.Text, this, tabs[currentTab].path);
                     CodeBox.ClearStylesBuffer();
                     ReloadHightlighting(new TextChangedEventArgs(CodeBox.Range));
 
@@ -443,6 +483,13 @@ namespace ReCT_IDE
         {
             errorBox.Hide();
 
+            try
+            {
+                if(running != null)
+                    KillProcessAndChildren(running.Id);
+            }
+            catch { }
+
             if (fileChanged)
                 Save_Click(this, new EventArgs());
 
@@ -456,7 +503,15 @@ namespace ReCT_IDE
             if (!rectComp.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(tabs[currentTab].path) + ".cmd", tabs[currentTab].path, errorBox)) return;
 
             string strCmdText = $"/K cd \"{Path.GetFullPath($"Builder")}\" & cls & \"{Path.GetFileNameWithoutExtension(tabs[currentTab].path)}.cmd\"";
-            running = Process.Start("CMD.exe", strCmdText);
+
+            running = new Process();
+            running.StartInfo.FileName = "CMD.exe";
+            running.StartInfo.Arguments = strCmdText;
+
+            if(Properties.Settings.Default.Maximize)
+                running.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
+
+            running.Start();
         }
 
         private void Stop_Click(object sender, EventArgs e)
@@ -603,6 +658,9 @@ namespace ReCT_IDE
             CodeBox.Text = tabs[currentTab].code;
 
             tabswitchTimer.Start();
+
+            presence.Details = "Working on " + tabs[currentTab].name + "...";
+            dc.client.SetPresence(presence);
         }
 
         private void tabswitchTimer_Tick(object sender, EventArgs e)
@@ -629,6 +687,79 @@ namespace ReCT_IDE
                         return;
                     }
                 }
+            }
+        }
+
+        public void updateFromSettings()
+        {
+            switch(Properties.Settings.Default.Autosave)
+            {
+                case 0:
+                    Autosave.Stop();
+                    break;
+                case 1:
+                    Autosave.Start();
+                    Autosave.Interval = 60000;
+                    break;
+                case 2:
+                    Autosave.Start();
+                    Autosave.Interval = 60000 * 2;
+                    break;
+                case 3:
+                    Autosave.Start();
+                    Autosave.Interval = 60000 * 5;
+                    break;
+                case 4:
+                    Autosave.Start();
+                    Autosave.Interval = 60000 * 10;
+                    break;
+            }
+
+            if (Properties.Settings.Default.MaximizeRect)
+                this.WindowState = FormWindowState.Maximized;
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            settings.Show();
+        }
+
+        private void Autosave_Tick(object sender, EventArgs e)
+        {
+            Console.WriteLine("AutosaveTick!");
+            if (tabs[currentTab].path != "" && tabs[currentTab].path != null)
+                Save_Click(null, new EventArgs());
+        }
+
+        private void MaxTimer_Tick(object sender, EventArgs e)
+        {
+            ShowWindow(running.MainWindowHandle, 3);
+            MaxTimer.Stop();
+        }
+
+        private void openLastFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.LastOpenFile != "")
+            {
+                if (tabs.Count != 1 || tabs[0].name != "Untitled" || !tabs[0].saved)
+                {
+                    tabs[currentTab].code = CodeBox.Text;
+                    tabs.Add(makeNewTab());
+                    switchTab(tabs.Count - 1);
+                }
+
+
+                using (StreamReader sr = new StreamReader(new FileStream(Properties.Settings.Default.LastOpenFile, FileMode.Open)))
+                {
+                    CodeBox.Text = sr.ReadToEnd();
+                    CodeBox.ClearUndo();
+                    sr.Close();
+                }
+
+                tabs[currentTab].name = Path.GetFileName(Properties.Settings.Default.LastOpenFile);
+                tabs[currentTab].path = Properties.Settings.Default.LastOpenFile;
+                tabs[currentTab].saved = true;
+                OrderTabs();
             }
         }
     }

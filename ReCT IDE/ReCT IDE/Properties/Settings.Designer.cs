@@ -22,5 +22,53 @@ namespace ReCT_IDE.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Autosave {
+            get {
+                return ((int)(this["Autosave"]));
+            }
+            set {
+                this["Autosave"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Maximize {
+            get {
+                return ((bool)(this["Maximize"]));
+            }
+            set {
+                this["Maximize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MaximizeRect {
+            get {
+                return ((bool)(this["MaximizeRect"]));
+            }
+            set {
+                this["MaximizeRect"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastOpenFile {
+            get {
+                return ((string)(this["LastOpenFile"]));
+            }
+            set {
+                this["LastOpenFile"] = value;
+            }
+        }
     }
 }

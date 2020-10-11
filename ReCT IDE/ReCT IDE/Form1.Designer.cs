@@ -34,6 +34,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.New = new System.Windows.Forms.ToolStripMenuItem();
             this.Open = new System.Windows.Forms.ToolStripMenuItem();
+            this.openLastFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Save = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,6 +42,7 @@
             this.reCTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buildToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Menu = new System.Windows.Forms.MenuStrip();
             this.Build = new System.Windows.Forms.PictureBox();
             this.Stop = new System.Windows.Forms.PictureBox();
@@ -53,6 +55,8 @@
             this.Tab = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tabswitchTimer = new System.Windows.Forms.Timer(this.components);
+            this.Autosave = new System.Windows.Forms.Timer(this.components);
+            this.MaxTimer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.CodeBox)).BeginInit();
             this.Menu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Build)).BeginInit();
@@ -89,6 +93,7 @@
             this.CodeBox.CharWidth = 8;
             this.CodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.CodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.CodeBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.CodeBox.ForeColor = System.Drawing.Color.White;
             this.CodeBox.IsReplaceMode = false;
             this.CodeBox.Location = new System.Drawing.Point(0, 65);
@@ -136,6 +141,8 @@
             // 
             this.Open.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.Open.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.Open.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openLastFileToolStripMenuItem});
             this.Open.ForeColor = System.Drawing.Color.White;
             this.Open.Name = "Open";
             this.Open.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
@@ -143,6 +150,17 @@
             this.Open.Text = "Open";
             this.Open.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay;
             this.Open.Click += new System.EventHandler(this.Open_Click);
+            // 
+            // openLastFileToolStripMenuItem
+            // 
+            this.openLastFileToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
+            this.openLastFileToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.openLastFileToolStripMenuItem.Name = "openLastFileToolStripMenuItem";
+            this.openLastFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.O)));
+            this.openLastFileToolStripMenuItem.Size = new System.Drawing.Size(304, 30);
+            this.openLastFileToolStripMenuItem.Text = "Open last File";
+            this.openLastFileToolStripMenuItem.Click += new System.EventHandler(this.openLastFileToolStripMenuItem_Click);
             // 
             // Save
             // 
@@ -192,7 +210,8 @@
             // 
             this.reCTToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buildToolStripMenuItem,
-            this.runToolStripMenuItem});
+            this.runToolStripMenuItem,
+            this.settingsToolStripMenuItem});
             this.reCTToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.reCTToolStripMenuItem.Name = "reCTToolStripMenuItem";
             this.reCTToolStripMenuItem.Size = new System.Drawing.Size(84, 29);
@@ -204,7 +223,7 @@
             this.buildToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.buildToolStripMenuItem.Name = "buildToolStripMenuItem";
             this.buildToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.buildToolStripMenuItem.Size = new System.Drawing.Size(180, 30);
+            this.buildToolStripMenuItem.Size = new System.Drawing.Size(177, 30);
             this.buildToolStripMenuItem.Text = "Run";
             this.buildToolStripMenuItem.Click += new System.EventHandler(this.buildToolStripMenuItem_Click);
             // 
@@ -213,9 +232,18 @@
             this.runToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.runToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.runToolStripMenuItem.Name = "runToolStripMenuItem";
-            this.runToolStripMenuItem.Size = new System.Drawing.Size(180, 30);
+            this.runToolStripMenuItem.Size = new System.Drawing.Size(177, 30);
             this.runToolStripMenuItem.Text = "Build";
             this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
+            this.settingsToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(177, 30);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // Menu
             // 
@@ -391,6 +419,14 @@
             this.tabswitchTimer.Interval = 500;
             this.tabswitchTimer.Tick += new System.EventHandler(this.tabswitchTimer_Tick);
             // 
+            // Autosave
+            // 
+            this.Autosave.Tick += new System.EventHandler(this.Autosave_Tick);
+            // 
+            // MaxTimer
+            // 
+            this.MaxTimer.Tick += new System.EventHandler(this.MaxTimer_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -447,6 +483,10 @@
         private System.Windows.Forms.Button Tab;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Timer tabswitchTimer;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.Timer Autosave;
+        private System.Windows.Forms.Timer MaxTimer;
+        private System.Windows.Forms.ToolStripMenuItem openLastFileToolStripMenuItem;
     }
 }
 

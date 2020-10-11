@@ -24,16 +24,57 @@ namespace ReCT_IDE
         public FunctionSymbol[] functions;
         public Diagnostic[] errors = new Diagnostic[0];
 
-        public void Check(string code, Form1 form)
+        public void Check(string code, Form1 form, string inPath)
         {
             form.startAllowed(false);
-
             var syntaxTree = SyntaxTree.Parse(code);
+
+            if (code.Contains("#attach"))
+            {
+                var lookingforfile = "";
+                try
+                {
+                    List<string> neededFiles = new List<string>();
+                    List<string> neededCode = new List<string>();
+                    var matches = Regex.Matches(code, @"(?<=#attach\(\" + "\"" + @")(.*)(?=\" + "\"" + @"\))");
+
+                    for (int i = 0; i < matches.Count; i++)
+                    {
+                        neededFiles.Add(matches[i].Value);
+                    }
+
+                    foreach (string p in neededFiles)
+                    {
+                        var lp = p;
+                        if (!p.Contains(":"))
+                        {
+                            lp = Path.GetDirectoryName(inPath) + "\\" + p;
+                        }
+
+                        lookingforfile = lp;
+
+                        using (StreamReader sr = new StreamReader(new FileStream(lp, FileMode.Open)))
+                        {
+                            neededCode.Add(sr.ReadToEnd());
+                            sr.Close();
+                        }
+                    }
+
+                    for (int i = 0; i < neededFiles.Count; i++)
+                    {
+                        code = code.Replace($"#attach(\"{neededFiles[i]}\")", neededCode[i]);
+                    }
+
+                    syntaxTree = SyntaxTree.Parse(code);
+                }
+                catch
+                {
+                    return;
+                }
+            }
+
             var compilation = Compilation.Create(syntaxTree);
 
-            //var eval = compilation.Evaluate(new Dictionary<VariableSymbol, object>());
-
-            //errors = eval.Diagnostics.ToArray();
 
             Variables = "";
             Functions = "";

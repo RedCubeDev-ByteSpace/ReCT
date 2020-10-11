@@ -84,3 +84,4 @@ C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Newtonsoft.Json
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\DiscordRPC.pdb
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\DiscordRPC.xml
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Newtonsoft.Json.xml
+C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Settings.resources
