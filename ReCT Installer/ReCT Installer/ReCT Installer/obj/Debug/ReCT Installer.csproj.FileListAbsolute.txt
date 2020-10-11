@@ -1,0 +1,10 @@
+C:\Users\User\source\repos\ReCT\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\bin\Debug\ReCT Installer.exe.config
+C:\Users\User\source\repos\ReCT\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\bin\Debug\ReCT Installer.exe
+C:\Users\User\source\repos\ReCT\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\bin\Debug\ReCT Installer.pdb
+C:\Users\User\source\repos\ReCT\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT Installer.csprojAssemblyReference.cache
+C:\Users\User\source\repos\ReCT\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT_Installer.Form1.resources
+C:\Users\User\source\repos\ReCT\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT_Installer.Properties.Resources.resources
+C:\Users\User\source\repos\ReCT\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT Installer.csproj.GenerateResource.cache
+C:\Users\User\source\repos\ReCT\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT Installer.csproj.CoreCompileInputs.cache
+C:\Users\User\source\repos\ReCT\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT Installer.exe
+C:\Users\User\source\repos\ReCT\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT Installer.pdb

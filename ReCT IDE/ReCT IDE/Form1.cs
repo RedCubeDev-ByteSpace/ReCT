@@ -762,6 +762,11 @@ namespace ReCT_IDE
                 OrderTabs();
             }
         }
+
+        private void reloadHighlightingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+        }
     }
 
     class Tab

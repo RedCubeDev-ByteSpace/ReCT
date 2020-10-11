@@ -163,14 +163,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT IDE.exe" size="2988504">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT IDE.exe" size="2989016">
       <assemblyIdentity name="ReCT IDE" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>ZC4yZgxV6lyHvn22/NG9EvYOZvb8nKhWPWpddcE1IBg=</dsig:DigestValue>
+        <dsig:DigestValue>RWtQgY4mmnNGLZdAjXH4G8i+M9W3CwgI+MrYUMTj1eA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
