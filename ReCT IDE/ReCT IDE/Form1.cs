@@ -765,7 +765,18 @@ namespace ReCT_IDE
 
         private void reloadHighlightingToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            var code = CodeBox.Text;
+            var pos = CodeBox.Selection;
+            CodeBox.Text = "";
+            reload(code, pos);
+        }
+
+        private async Task reload(string c, Range p)
+        {
+            await Task.Delay(10);
+            CodeBox.Text = c;
+            CodeBox.Selection = p;
+            CodeBox.Focus();
         }
     }
 
