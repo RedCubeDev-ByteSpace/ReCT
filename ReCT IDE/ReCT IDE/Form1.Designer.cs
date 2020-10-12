@@ -39,6 +39,7 @@
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reloadHighlightingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reCTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buildToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,7 +58,6 @@
             this.tabswitchTimer = new System.Windows.Forms.Timer(this.components);
             this.Autosave = new System.Windows.Forms.Timer(this.components);
             this.MaxTimer = new System.Windows.Forms.Timer(this.components);
-            this.reloadHighlightingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.CodeBox)).BeginInit();
             this.Menu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Build)).BeginInit();
@@ -94,6 +94,7 @@
             this.CodeBox.CharWidth = 8;
             this.CodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.CodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.CodeBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.CodeBox.ForeColor = System.Drawing.Color.White;
             this.CodeBox.IsReplaceMode = false;
             this.CodeBox.Location = new System.Drawing.Point(0, 65);
@@ -203,9 +204,19 @@
             this.autoFormatToolStripMenuItem.Name = "autoFormatToolStripMenuItem";
             this.autoFormatToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.F)));
-            this.autoFormatToolStripMenuItem.Size = new System.Drawing.Size(288, 30);
+            this.autoFormatToolStripMenuItem.Size = new System.Drawing.Size(303, 30);
             this.autoFormatToolStripMenuItem.Text = "Auto Format";
             this.autoFormatToolStripMenuItem.Click += new System.EventHandler(this.autoFormatToolStripMenuItem_Click);
+            // 
+            // reloadHighlightingToolStripMenuItem
+            // 
+            this.reloadHighlightingToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
+            this.reloadHighlightingToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.reloadHighlightingToolStripMenuItem.Name = "reloadHighlightingToolStripMenuItem";
+            this.reloadHighlightingToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
+            this.reloadHighlightingToolStripMenuItem.Size = new System.Drawing.Size(303, 30);
+            this.reloadHighlightingToolStripMenuItem.Text = "Reload Highlighting";
+            this.reloadHighlightingToolStripMenuItem.Click += new System.EventHandler(this.reloadHighlightingToolStripMenuItem_Click);
             // 
             // reCTToolStripMenuItem
             // 
@@ -224,7 +235,7 @@
             this.buildToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.buildToolStripMenuItem.Name = "buildToolStripMenuItem";
             this.buildToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.buildToolStripMenuItem.Size = new System.Drawing.Size(180, 30);
+            this.buildToolStripMenuItem.Size = new System.Drawing.Size(177, 30);
             this.buildToolStripMenuItem.Text = "Run";
             this.buildToolStripMenuItem.Click += new System.EventHandler(this.buildToolStripMenuItem_Click);
             // 
@@ -233,7 +244,7 @@
             this.runToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.runToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.runToolStripMenuItem.Name = "runToolStripMenuItem";
-            this.runToolStripMenuItem.Size = new System.Drawing.Size(180, 30);
+            this.runToolStripMenuItem.Size = new System.Drawing.Size(177, 30);
             this.runToolStripMenuItem.Text = "Build";
             this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
             // 
@@ -242,7 +253,7 @@
             this.settingsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.settingsToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 30);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(177, 30);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
@@ -335,6 +346,8 @@
         "Version",
         "Clear",
         "SetCursor",
+        "GetCursorX",
+        "GetCursorY",
         "GetSizeX",
         "GetSizeY",
         "SetSize",
@@ -345,6 +358,15 @@
         "SetConsoleForeground",
         "Floor",
         "Ceil",
+        "ReadFile",
+        "WriteFile",
+        "FileExists",
+        "DirectoryExists",
+        "DeleteFile",
+        "DeleteDirectory",
+        "CreateDirectory",
+        "GetFilesInDirectory",
+        "GetDirsInDirectory",
         "?",
         "any",
         "bool",
@@ -427,16 +449,6 @@
             // MaxTimer
             // 
             this.MaxTimer.Tick += new System.EventHandler(this.MaxTimer_Tick);
-            // 
-            // reloadHighlightingToolStripMenuItem
-            // 
-            this.reloadHighlightingToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
-            this.reloadHighlightingToolStripMenuItem.ForeColor = System.Drawing.Color.White;
-            this.reloadHighlightingToolStripMenuItem.Name = "reloadHighlightingToolStripMenuItem";
-            this.reloadHighlightingToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.reloadHighlightingToolStripMenuItem.Size = new System.Drawing.Size(303, 30);
-            this.reloadHighlightingToolStripMenuItem.Text = "Reload Highlighting";
-            this.reloadHighlightingToolStripMenuItem.Click += new System.EventHandler(this.reloadHighlightingToolStripMenuItem_Click);
             // 
             // Form1
             // 

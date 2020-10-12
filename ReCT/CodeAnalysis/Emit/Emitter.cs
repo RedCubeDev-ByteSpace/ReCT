@@ -26,6 +26,8 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _consoleKeyInfoGetKeyChar;
         private readonly MethodReference _getVisableCursorRef;
         private readonly MethodReference _setVisableCursorRef;
+        private readonly MethodReference _getCursorXReference;
+        private readonly MethodReference _getCursorYReference;
         private readonly MethodReference _setConsoleFG;
         private readonly MethodReference _setConsoleBG;
         private readonly MethodReference _charToString;
@@ -40,6 +42,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _stringConcatReference;
         private readonly MethodReference _convertToBooleanReference;
         private readonly MethodReference _convertToInt32Reference;
+        private readonly MethodReference _convertToUInt8Reference;
         private readonly MethodReference _convertToSingleReference;
         private readonly MethodReference _convertToStringReference;
         private readonly MethodReference _convertToDoubleReference;
@@ -50,6 +53,15 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _mathCeilReference;
         private readonly MethodReference _threadStartObjectReference;
         private readonly MethodReference _threadObjectReference;
+        private readonly MethodReference _IOReadAllTextReference;
+        private readonly MethodReference _IOWriteAllTextReference;
+        private readonly MethodReference _IOFileExistsReference;
+        private readonly MethodReference _IODirExistsReference;
+        private readonly MethodReference _IOFileDeleteReference;
+        private readonly MethodReference _IODirDeleteReference;
+        private readonly MethodReference _IODirCreateReference;
+        private readonly MethodReference _IOGetFilesInDirReference;
+        private readonly MethodReference _IOGetDirsInDirReference;
         private readonly MethodReference _envDie;
         private readonly AssemblyDefinition _assemblyDefinition;
         private readonly Dictionary<FunctionSymbol, MethodDefinition> _methods = new Dictionary<FunctionSymbol, MethodDefinition>();
@@ -87,6 +99,7 @@ namespace ReCT.CodeAnalysis.Emit
                 (TypeSymbol.Any, "System.Object"),
                 (TypeSymbol.Bool, "System.Boolean"),
                 (TypeSymbol.Int, "System.Int32"),
+                (TypeSymbol.Byte, "System.Byte"),
                 (TypeSymbol.String, "System.String"),
                 (TypeSymbol.Void, "System.Void"),
                 (TypeSymbol.Float, "System.Single"),
@@ -108,6 +121,9 @@ namespace ReCT.CodeAnalysis.Emit
                 var typeReference = ResolveType(typeSymbol.Name, metadataName);
                 _knownTypes.Add(typeSymbol, typeReference);
             }
+
+            if (_knownTypes[TypeSymbol.Byte] == null)
+                Console.WriteLine("byte is Null");
 
             TypeReference ResolveType(string rectName, string metadataName)
             {
@@ -183,6 +199,7 @@ namespace ReCT.CodeAnalysis.Emit
             //register array types
             _knownTypes.Add(TypeSymbol.AnyArr, _knownTypes[TypeSymbol.Any].MakeArrayType());
             _knownTypes.Add(TypeSymbol.IntArr, _knownTypes[TypeSymbol.Int].MakeArrayType());
+            _knownTypes.Add(TypeSymbol.ByteArr, _knownTypes[TypeSymbol.Byte].MakeArrayType());
             _knownTypes.Add(TypeSymbol.BoolArr, _knownTypes[TypeSymbol.Bool].MakeArrayType());
             _knownTypes.Add(TypeSymbol.StringArr, _knownTypes[TypeSymbol.String].MakeArrayType());
             _knownTypes.Add(TypeSymbol.FloatArr, _knownTypes[TypeSymbol.Float].MakeArrayType());
@@ -205,6 +222,10 @@ namespace ReCT.CodeAnalysis.Emit
             _getVisableCursorRef = ResolveMethod("System.Console", "get_CursorVisible", Array.Empty<string>());
             _setVisableCursorRef = ResolveMethod("System.Console", "set_CursorVisible", new[] { "System.Boolean" });
 
+            //cursor getPos
+            _getCursorXReference = ResolveMethod("System.Console", "get_CursorLeft", Array.Empty<string>());
+            _getCursorYReference = ResolveMethod("System.Console", "get_CursorTop", Array.Empty<string>());
+
             //fg and bg color
             _setConsoleFG = ResolveMethod("System.Console", "set_ForegroundColor", new[] { "System.ConsoleColor" });
             _setConsoleBG = ResolveMethod("System.Console", "set_BackgroundColor", new[] { "System.ConsoleColor" });
@@ -222,6 +243,7 @@ namespace ReCT.CodeAnalysis.Emit
             _stringConcatReference = ResolveMethod("System.String", "Concat", new [] { "System.String", "System.String" });
             _convertToBooleanReference = ResolveMethod("System.Convert", "ToBoolean", new [] { "System.Object" });
             _convertToInt32Reference = ResolveMethod("System.Convert", "ToInt32", new [] { "System.Object" });
+            _convertToUInt8Reference = ResolveMethod("System.Convert", "ToByte", new [] { "System.Object" });
             _convertToSingleReference = ResolveMethod("System.Convert", "ToSingle", new [] { "System.Object" });
             _convertToStringReference = ResolveMethod("System.Convert", "ToString", new [] { "System.Object" });
             _convertToDoubleReference = ResolveMethod("System.Convert", "ToDouble", new[] { "System.Object" });
@@ -236,6 +258,21 @@ namespace ReCT.CodeAnalysis.Emit
             //threading
             _threadStartObjectReference = ResolveMethod("System.Threading.ThreadStart", ".ctor", new[] { "System.Object", "System.IntPtr" });
             _threadObjectReference = ResolveMethod("System.Threading.Thread", ".ctor", new[] { "System.Threading.ThreadStart" });
+
+            //IO
+            _IOReadAllTextReference = ResolveMethod("System.IO.File", "ReadAllText", new[] { "System.String" });
+            _IOWriteAllTextReference = ResolveMethod("System.IO.File", "WriteAllText", new[] { "System.String", "System.String" });
+
+            _IOFileExistsReference = ResolveMethod("System.IO.File", "Exists", new[] { "System.String" });
+            _IODirExistsReference = ResolveMethod("System.IO.Directory", "Exists", new[] { "System.String" });
+
+            _IOFileDeleteReference = ResolveMethod("System.IO.File", "Delete", new[] { "System.String" });
+            _IODirDeleteReference = ResolveMethod("System.IO.Directory", "Delete", new[] { "System.String" });
+
+            _IODirCreateReference = ResolveMethod("System.IO.Directory", "CreateDirectory", new[] { "System.String" });
+
+            _IOGetFilesInDirReference = ResolveMethod("System.IO.Directory", "GetFiles", new[] { "System.String" });
+            _IOGetDirsInDirReference = ResolveMethod("System.IO.Directory", "GetDirectories", new[] { "System.String" });
 
             //die
             _envDie = ResolveMethod("System.Environment", "Exit", new[] { "System.Int32" });
@@ -546,6 +583,11 @@ namespace ReCT.CodeAnalysis.Emit
             else if (node.Type == TypeSymbol.Int)
             {
                 var value = (int)node.Value;
+                ilProcessor.Emit(OpCodes.Ldc_I4, value);
+            }
+            else if (node.Type == TypeSymbol.Byte)
+            {
+                var value = (byte)node.Value;
                 ilProcessor.Emit(OpCodes.Ldc_I4, value);
             }
             else if (node.Type == TypeSymbol.String)
@@ -884,6 +926,31 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Call, _mathCeilReference);
                 ilProcessor.Emit(OpCodes.Conv_I4);
             }
+            else if (node.Function == BuiltinFunctions.ReadFile)
+                ilProcessor.Emit(OpCodes.Call, _IOReadAllTextReference);
+            else if (node.Function == BuiltinFunctions.WriteFile)
+                ilProcessor.Emit(OpCodes.Call, _IOWriteAllTextReference);
+            else if (node.Function == BuiltinFunctions.FileExists)
+                ilProcessor.Emit(OpCodes.Call, _IOFileExistsReference);
+            else if (node.Function == BuiltinFunctions.DirectoryExists)
+                ilProcessor.Emit(OpCodes.Call, _IODirExistsReference);
+            else if (node.Function == BuiltinFunctions.DeleteFile)
+                ilProcessor.Emit(OpCodes.Call, _IOFileDeleteReference);
+            else if (node.Function == BuiltinFunctions.DeleteDirectory)
+                ilProcessor.Emit(OpCodes.Call, _IODirDeleteReference);
+            else if (node.Function == BuiltinFunctions.CreateDirectory)
+            {
+                ilProcessor.Emit(OpCodes.Call, _IODirCreateReference);
+                ilProcessor.Emit(OpCodes.Pop);
+            }
+            else if (node.Function == BuiltinFunctions.GetCursorX)
+                ilProcessor.Emit(OpCodes.Call, _getCursorXReference);
+            else if (node.Function == BuiltinFunctions.GetCursorY)
+                ilProcessor.Emit(OpCodes.Call, _getCursorYReference);
+            else if (node.Function == BuiltinFunctions.GetFilesInDir)
+                ilProcessor.Emit(OpCodes.Call, _IOGetFilesInDirReference);
+            else if (node.Function == BuiltinFunctions.GetDirectoriesInDir)
+                ilProcessor.Emit(OpCodes.Call, _IOGetDirsInDirReference);
             else
             {
                 var methodDefinition = _methods[node.Function];
@@ -942,6 +1009,10 @@ namespace ReCT.CodeAnalysis.Emit
             else if (node.Type == TypeSymbol.Int)
             {
                 ilProcessor.Emit(OpCodes.Call, _convertToInt32Reference);
+            }
+            else if (node.Type == TypeSymbol.Byte)
+            {
+                ilProcessor.Emit(OpCodes.Call, _convertToUInt8Reference);
             }
             else if (node.Type == TypeSymbol.Float)
             {

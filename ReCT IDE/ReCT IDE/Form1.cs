@@ -217,7 +217,7 @@ namespace ReCT_IDE
             e.ChangedRange.ClearStyle(SystemFunctionStyle);
 
             //system function highlighting
-            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bFloor\b|\bCeil\b|\bInputAction\b|\bSetConsoleForeground\b|\bSetConsoleBackground\b|\bSetCursorVisible\b|\bThread\b|\bGetCursorVisible\b|\bPrint\b|\bInputKey\b|\bInput\b|\bRandom\b|\bVersion\b|\bClear\b|\bSetCursor\b|\bGetSizeX\b|\bGetSizeY\b|\bSetSize\b|\bWrite\b|\bSleep\b)");
+            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bGetDirsInDirectory\b|\bGetFilesInDirectory\b|\bGetCursorY\b|\bGetCursorX\b|\bCreateDirectory\b|\bDeleteDirectory\b|\bDeleteFile\b|\bDirectoryExists\b|\bFileExists\b|\bWriteFile\b|\bReadFile\b|\bFloor\b|\bCeil\b|\bInputAction\b|\bSetConsoleForeground\b|\bSetConsoleBackground\b|\bSetCursorVisible\b|\bThread\b|\bGetCursorVisible\b|\bPrint\b|\bInputKey\b|\bInput\b|\bRandom\b|\bVersion\b|\bClear\b|\bSetCursor\b|\bGetSizeX\b|\bGetSizeY\b|\bSetSize\b|\bWrite\b|\bSleep\b)");
 
             //types
             e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b|\bfloat\b|\bthread\b|\banyArr\b|\bboolArr\b|\bintArr\b|\bstringArr\b|\bfloatArr\b|\bthreadArr\b)");
@@ -490,7 +490,7 @@ namespace ReCT_IDE
             }
             catch { }
 
-            if (fileChanged)
+            if (!tabs[currentTab].saved)
                 Save_Click(this, new EventArgs());
 
             //clear Builder dir
