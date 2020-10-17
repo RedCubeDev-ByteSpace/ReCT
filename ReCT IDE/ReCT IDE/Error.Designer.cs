@@ -99,6 +99,7 @@
             this.Controls.Add(this.errorBox);
             this.Controls.Add(this.pictureBox2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Error";
             this.Text = "Error";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Error_FormClosing);

@@ -799,8 +799,12 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.Float;
                 case "thread":
                     return TypeSymbol.Thread;
-                case "byte":
-                    return TypeSymbol.Byte;
+                case "tcpclient":
+                    return TypeSymbol.TCPClient;
+                case "tcplistener":
+                    return TypeSymbol.TCPListener;
+                case "tcpsocket":
+                    return TypeSymbol.TCPSocket;
 
                 case "anyArr":
                     return TypeSymbol.AnyArr;
@@ -814,8 +818,12 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.FloatArr;
                 case "threadArr":
                     return TypeSymbol.ThreadArr;
-                case "byteArr":
-                    return TypeSymbol.ByteArr;
+                case "tcpclientArr":
+                    return TypeSymbol.TCPClientArr;
+                case "tcplistenerArr":
+                    return TypeSymbol.TCPListenerArr;
+                case "tcpsocketArr":
+                    return TypeSymbol.TCPSocketArr;
                 default:
                     return null;
             }
@@ -828,14 +836,18 @@ namespace ReCT.CodeAnalysis.Binding
                 return TypeSymbol.BoolArr;
             else if (type == TypeSymbol.Int)
                 return TypeSymbol.IntArr;
-            else if (type == TypeSymbol.Byte)
-                return TypeSymbol.ByteArr;
             else if (type == TypeSymbol.String)
                 return TypeSymbol.StringArr;
             else if (type == TypeSymbol.Float)
                 return TypeSymbol.FloatArr;
             else if (type == TypeSymbol.Thread)
                 return TypeSymbol.ThreadArr;
+            else if (type == TypeSymbol.TCPClient)
+                return TypeSymbol.TCPClientArr;
+            else if (type == TypeSymbol.TCPListener)
+                return TypeSymbol.TCPListenerArr;
+            else if (type == TypeSymbol.TCPSocket)
+                return TypeSymbol.TCPSocketArr;
 
 
             return null;
@@ -848,15 +860,18 @@ namespace ReCT.CodeAnalysis.Binding
                 return TypeSymbol.Bool;
             else if (type == TypeSymbol.IntArr)
                 return TypeSymbol.Int;
-            else if (type == TypeSymbol.ByteArr)
-                return TypeSymbol.Byte;
             else if (type == TypeSymbol.StringArr)
                 return TypeSymbol.String;
             else if (type == TypeSymbol.FloatArr)
                 return TypeSymbol.Float;
             else if (type == TypeSymbol.ThreadArr)
                 return TypeSymbol.Thread;
-
+            else if (type == TypeSymbol.TCPClientArr)
+                return TypeSymbol.TCPClient;
+            else if (type == TypeSymbol.TCPListenerArr)
+                return TypeSymbol.TCPListener;
+            else if (type == TypeSymbol.TCPSocketArr)
+                return TypeSymbol.TCPSocket;
 
             return type;
         }

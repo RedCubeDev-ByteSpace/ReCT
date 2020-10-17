@@ -42,6 +42,7 @@
             this.reloadHighlightingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reCTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buildToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.forceRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Menu = new System.Windows.Forms.MenuStrip();
@@ -232,19 +233,32 @@
             // buildToolStripMenuItem
             // 
             this.buildToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
+            this.buildToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.forceRunToolStripMenuItem});
             this.buildToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.buildToolStripMenuItem.Name = "buildToolStripMenuItem";
             this.buildToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.buildToolStripMenuItem.Size = new System.Drawing.Size(177, 30);
+            this.buildToolStripMenuItem.Size = new System.Drawing.Size(180, 30);
             this.buildToolStripMenuItem.Text = "Run";
             this.buildToolStripMenuItem.Click += new System.EventHandler(this.buildToolStripMenuItem_Click);
+            // 
+            // forceRunToolStripMenuItem
+            // 
+            this.forceRunToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
+            this.forceRunToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.forceRunToolStripMenuItem.Name = "forceRunToolStripMenuItem";
+            this.forceRunToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.R)));
+            this.forceRunToolStripMenuItem.Size = new System.Drawing.Size(273, 30);
+            this.forceRunToolStripMenuItem.Text = "Force Run";
+            this.forceRunToolStripMenuItem.Click += new System.EventHandler(this.forceRunToolStripMenuItem_Click);
             // 
             // runToolStripMenuItem
             // 
             this.runToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.runToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.runToolStripMenuItem.Name = "runToolStripMenuItem";
-            this.runToolStripMenuItem.Size = new System.Drawing.Size(177, 30);
+            this.runToolStripMenuItem.Size = new System.Drawing.Size(180, 30);
             this.runToolStripMenuItem.Text = "Build";
             this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
             // 
@@ -253,7 +267,7 @@
             this.settingsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.settingsToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(177, 30);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 30);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
@@ -511,6 +525,7 @@
         private System.Windows.Forms.Timer MaxTimer;
         private System.Windows.Forms.ToolStripMenuItem openLastFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reloadHighlightingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem forceRunToolStripMenuItem;
     }
 }
 

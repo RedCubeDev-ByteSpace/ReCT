@@ -103,7 +103,7 @@ namespace ReCT_IDE
             }
             form.startAllowed(true);
         }
-        public bool CompileRCTBC(string fileOut, string inPath, Error errorBox)
+        public static bool CompileRCTBC(string fileOut, string inPath, Error errorBox)
         {
             string code = "";
             using (StreamReader sr = new StreamReader(new FileStream(inPath, FileMode.Open)))
@@ -112,7 +112,7 @@ namespace ReCT_IDE
                 sr.Close();
             }
 
-            var syntaxTree = SyntaxTree.Load(inPath);
+            var syntaxTree = SyntaxTree.Parse(code);
 
             if (code.Contains("#attach"))
             {
@@ -181,13 +181,12 @@ namespace ReCT_IDE
                 return false;
             }
 
-            var compilation = Compilation.Create(syntaxTree);
-
             ImmutableArray<Diagnostic> errors = ImmutableArray<Diagnostic>.Empty;
 
             try
             {
-                errors = compilation.Emit(Path.GetFileNameWithoutExtension(fileOut), new string[] { @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.IO.FileSystem.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Console.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Threading.Thread.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Threading.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.Extensions.dll" }, Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
+                var compilation = Compilation.Create(syntaxTree);
+                errors = compilation.Emit(Path.GetFileNameWithoutExtension(fileOut), new string[] { @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Net.Sockets.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.IO.FileSystem.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Console.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Threading.Thread.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Threading.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.Extensions.dll" }, Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
 
                 Console.WriteLine(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
 
@@ -242,7 +241,7 @@ namespace ReCT_IDE
                 else
                 {
                     errorBox.errorBox.Text = "THIS ERROR MIGHT BE INTERNAL! Please try again in a few seconds. (ReCT is unstable sometimes so you might have to try multiple times) \n" + errorBox.errorBox.Text;
-                    errorBox.errorBox.Text = e.Source + ": " + e.Message + "\n" + e.StackTrace;
+                    errorBox.errorBox.Text += e.Source + ": " + e.Message + "\n" + e.StackTrace;
                     return false;
                 }
             }

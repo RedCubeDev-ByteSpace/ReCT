@@ -23,7 +23,8 @@ namespace ReCT_IDE
     {
         public string openFile = "";
         public bool fileChanged = false;
-        public ReCT_Compiler rectComp = new ReCT_Compiler();
+        public ReCT_Compiler rectCompCheck = new ReCT_Compiler();
+        public ReCT_Compiler rectCompBuild = new ReCT_Compiler();
         public Error errorBox;
         public Process running;
         string[] standardAC;
@@ -92,7 +93,6 @@ namespace ReCT_IDE
 
             var tab = makeNewTab();
             tabs.Add(tab);
-            OrderTabs();
 
             settings = new Settings(this);
             settings.Hide();
@@ -120,6 +120,8 @@ namespace ReCT_IDE
 
             presence.Details = "Working on " + tabs[currentTab].name + "...";
             dc.client.SetPresence(presence);
+
+            OrderTabs();
         }
 
         public void startAllowed(bool allowed)
@@ -228,11 +230,11 @@ namespace ReCT_IDE
             //variables
             e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+<-))");
             e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+->))");
-            e.ChangedRange.SetStyle(VariableStyle, rectComp.Variables);
+            e.ChangedRange.SetStyle(VariableStyle, rectCompCheck.Variables);
 
             //functions
             e.ChangedRange.SetStyle(UserFunctionStyle, @"(?<=\bfunction\s)(\w+)");
-            e.ChangedRange.SetStyle(UserFunctionStyle, rectComp.Functions);
+            e.ChangedRange.SetStyle(UserFunctionStyle, rectCompCheck.Functions);
 
             //type functions
             e.ChangedRange.SetStyle(TypeFunctionStyle, @"(?<=\>>\s)(\w+)");
@@ -286,6 +288,9 @@ namespace ReCT_IDE
                 tabs[currentTab].button.BackColor = Color.FromArgb(64, 41, 41);
             }
             catch { }
+
+            presence.Details = "Working on " + tabs[currentTab].name + "...";
+            dc.client.SetPresence(presence);
         }
 
         private void New_Click(object sender, EventArgs e)
@@ -328,6 +333,9 @@ namespace ReCT_IDE
             //}
 
             openFileDialog1.Filter = "ReCT code files (*.rct)|*.rct|All files (*.*)|*.*";
+
+            ((ToolStripMenuItem)sender).Owner.Hide();
+
             var res = openFileDialog1.ShowDialog();
 
             if (res != DialogResult.OK)
@@ -417,10 +425,10 @@ namespace ReCT_IDE
         {
             try
             {
-                rectComp.Variables = "";
+                rectCompCheck.Variables = "";
                 if (CodeBox.Text != "")
                 {
-                    rectComp.Check(CodeBox.Text, this, tabs[currentTab].path);
+                    rectCompCheck.Check(CodeBox.Text, this, tabs[currentTab].path);
                     CodeBox.ClearStylesBuffer();
                     ReloadHightlighting(new TextChangedEventArgs(CodeBox.Range));
 
@@ -430,11 +438,11 @@ namespace ReCT_IDE
                     {
                         ACItems.Add(s);
                     }
-                    foreach (ReCT.CodeAnalysis.Symbols.FunctionSymbol f in rectComp.functions)
+                    foreach (ReCT.CodeAnalysis.Symbols.FunctionSymbol f in rectCompCheck.functions)
                     {
                         ACItems.Add(f.Name);
                     }
-                    foreach (ReCT.CodeAnalysis.Symbols.VariableSymbol v in rectComp.variables)
+                    foreach (ReCT.CodeAnalysis.Symbols.VariableSymbol v in rectCompCheck.variables)
                     {
                         ACItems.Add(v.Name);
                     }
@@ -466,7 +474,7 @@ namespace ReCT_IDE
             if (fileChanged)
                 Save_Click(this, new EventArgs());
 
-            rectComp.CompileRCTBC (saveFileDialog1.FileName, tabs[currentTab].path, errorBox);
+            ReCT_Compiler.CompileRCTBC (saveFileDialog1.FileName, tabs[currentTab].path, errorBox);
 
             System.Diagnostics.Process.Start("explorer.exe", string.Format("/select,\"{0}\"", saveFileDialog1.FileName));
             Typechecker.Enabled = true;
@@ -500,7 +508,7 @@ namespace ReCT_IDE
             if (!Directory.Exists("Builder"))
                 Directory.CreateDirectory("Builder");
 
-            if (!rectComp.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(tabs[currentTab].path) + ".cmd", tabs[currentTab].path, errorBox)) return;
+            if (!ReCT_Compiler.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(tabs[currentTab].path) + ".cmd", tabs[currentTab].path, errorBox)) return;
 
             string strCmdText = $"/K cd \"{Path.GetFullPath($"Builder")}\" & cls & \"{Path.GetFileNameWithoutExtension(tabs[currentTab].path)}.cmd\"";
 
@@ -640,8 +648,13 @@ namespace ReCT_IDE
 
         void switchTab(int tab)
         {
+            presence.Details = "Working on " + tabs[currentTab].name + "...";
+            dc.client.SetPresence(presence);
+
             tabSwitch = true;
-            Console.WriteLine("tabswitch true");
+
+            if (tabs.Count == 1)
+                return;
 
             if (tab != currentTab)
             {
@@ -658,9 +671,6 @@ namespace ReCT_IDE
             CodeBox.Text = tabs[currentTab].code;
 
             tabswitchTimer.Start();
-
-            presence.Details = "Working on " + tabs[currentTab].name + "...";
-            dc.client.SetPresence(presence);
         }
 
         private void tabswitchTimer_Tick(object sender, EventArgs e)
@@ -777,6 +787,60 @@ namespace ReCT_IDE
             CodeBox.Text = c;
             CodeBox.Selection = p;
             CodeBox.Focus();
+        }
+
+        private void forceRunToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            forceRun();
+        }
+
+        private async Task forceRun()
+        {
+            bool res;
+            int counter = 0;
+            do
+            {
+                errorBox.Hide();
+                await Task.Delay(10);
+                counter++;
+
+                if (counter > 10)
+                    break;
+
+
+                try
+                {
+                    if (running != null)
+                        KillProcessAndChildren(running.Id);
+                }
+                catch { }
+
+                if (!tabs[currentTab].saved)
+                    Save_Click(this, new EventArgs());
+
+                //clear Builder dir
+
+                if (Directory.Exists("Builder"))
+                    ReCT_Compiler.ForceDeleteFilesAndFoldersRecursively("Builder");
+                if (!Directory.Exists("Builder"))
+                    Directory.CreateDirectory("Builder");
+
+                res = ReCT_Compiler.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(tabs[currentTab].path) + ".cmd", tabs[currentTab].path, errorBox);
+                if (!res) continue;
+
+                string strCmdText = $"/K cd \"{Path.GetFullPath($"Builder")}\" & cls & \"{Path.GetFileNameWithoutExtension(tabs[currentTab].path)}.cmd\"";
+
+                running = new Process();
+                running.StartInfo.FileName = "CMD.exe";
+                running.StartInfo.Arguments = strCmdText;
+
+                if (Properties.Settings.Default.Maximize)
+                    running.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
+
+                running.Start();
+
+                return;
+            } while (!res);
         }
     }
 

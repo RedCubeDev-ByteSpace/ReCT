@@ -26,6 +26,9 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly FunctionSymbol ConsoleColorBG = new FunctionSymbol("SetConsoleBackground", ImmutableArray.Create(new ParameterSymbol("num", TypeSymbol.Int, 0)), TypeSymbol.Void);
         public static readonly FunctionSymbol ConsoleColorFG = new FunctionSymbol("SetConsoleForeground", ImmutableArray.Create(new ParameterSymbol("num", TypeSymbol.Int, 0)), TypeSymbol.Void);
 
+        //Networking
+        public static readonly FunctionSymbol ConnectTCPClient = new FunctionSymbol("ConnectTCPClient", ImmutableArray.Create(new ParameterSymbol("address", TypeSymbol.String, 0), new ParameterSymbol("port", TypeSymbol.Int, 0)), TypeSymbol.TCPClient);
+        public static readonly FunctionSymbol ListenOnTCPPort = new FunctionSymbol("ListenOnTCPPort", ImmutableArray.Create(new ParameterSymbol("port", TypeSymbol.Int, 0)), TypeSymbol.TCPListener);
 
         //Math
         public static readonly FunctionSymbol Random = new FunctionSymbol("Random", ImmutableArray.Create(new ParameterSymbol("max", TypeSymbol.Int, 0)), TypeSymbol.Int);
@@ -58,8 +61,20 @@ namespace ReCT.CodeAnalysis.Symbols
         //Arr functions
         public static readonly FunctionSymbol GetArrayLength = new FunctionSymbol("GetArrayLength", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
 
+        //TCP functions
+        public static readonly FunctionSymbol OpenSocket = new FunctionSymbol("OpenSocket", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.TCPSocket);
+
+        public static readonly FunctionSymbol WriteToSocket = new FunctionSymbol("WriteToSocket", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
+        public static readonly FunctionSymbol ReadSocket = new FunctionSymbol("ReadSocket", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
+
+        public static readonly FunctionSymbol WriteToClient = new FunctionSymbol("WriteToClient", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
+        public static readonly FunctionSymbol ReadClient = new FunctionSymbol("ReadClient", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
+
         //Cube functions
         public static readonly FunctionSymbol Die = new FunctionSymbol("Die", ImmutableArray.Create(new ParameterSymbol("exitCode", TypeSymbol.Int, 0)), TypeSymbol.Int);
+
+        //borger
+        public static readonly FunctionSymbol Borger = new FunctionSymbol("borger", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
 
         internal static IEnumerable<FunctionSymbol> GetAll()
             => typeof(BuiltinFunctions).GetFields(BindingFlags.Public | BindingFlags.Static)

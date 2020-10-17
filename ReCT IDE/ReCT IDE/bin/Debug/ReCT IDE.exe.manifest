@@ -98,7 +98,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>vlG9eXpPcp0x71h7bo+Eqv94V7Lx/SrkJmrzEb60F3M=</dsig:DigestValue>
+        <dsig:DigestValue>oPJzKktnWLR8Dov7gt1AKzYflf1B3+KGD2XOHqPcGzk=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -163,26 +163,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT IDE.exe" size="2991064">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT IDE.exe" size="3199960">
       <assemblyIdentity name="ReCT IDE" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>lioRC+j5XPdn+KQBPumDtieU7abU+7uiJ2FfyLM7UCg=</dsig:DigestValue>
+        <dsig:DigestValue>gwV6J7DTAGH84t049CEcIX6kQe+ypoQIKbSM/sH2GIY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT.dll" size="140288">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT.dll" size="144384">
       <assemblyIdentity name="ReCT" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>tHotHIMDZUGyeM3K8wOTK2GzDo0cUUPGwJiVIvKujWI=</dsig:DigestValue>
+        <dsig:DigestValue>4Igku54fOgIDyGZg22xB94C8QMgNN7htytkr6Qcf/Io=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

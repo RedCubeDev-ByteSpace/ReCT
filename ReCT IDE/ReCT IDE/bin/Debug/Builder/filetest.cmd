@@ -1,1 +1,0 @@
-dotnet exec "filetest.dll"
