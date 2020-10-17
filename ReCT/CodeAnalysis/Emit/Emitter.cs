@@ -69,7 +69,9 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _TCPListenerStartReference;
         private readonly MethodReference _TCPAcceptSocketReference;
         private readonly MethodReference _TCPClientGetStream;
+        private readonly MethodReference _TCPClientClose;
         private readonly MethodReference _TCPNetworkStreamCtor;
+        private readonly MethodReference _TCPSocketClose;
         private readonly MethodReference _IOStreamReaderCtor;
         private readonly MethodReference _IOReadLine;
         private readonly MethodReference _IOStreamWriterCtor;
@@ -302,7 +304,10 @@ namespace ReCT.CodeAnalysis.Emit
             _TCPAcceptSocketReference = ResolveMethod("System.Net.Sockets.TcpListener", "AcceptSocket", Array.Empty<string>());
 
             _TCPClientGetStream = ResolveMethod("System.Net.Sockets.TcpClient", "GetStream", Array.Empty<string>());
+            _TCPClientClose = ResolveMethod("System.Net.Sockets.TcpClient", "Close", Array.Empty<string>());
             _TCPNetworkStreamCtor = ResolveMethod("System.Net.Sockets.NetworkStream", ".ctor", new[] { "System.Net.Sockets.Socket" });
+
+            _TCPSocketClose = ResolveMethod("System.Net.Sockets.Socket", "Close", Array.Empty<string>());
 
             _IOStreamReaderCtor = ResolveMethod("System.IO.StreamReader", ".ctor", new[] { "System.IO.Stream" });
             _IOReadLine = ResolveMethod("System.IO.TextReader", "ReadLine", Array.Empty<string>());
@@ -912,6 +917,14 @@ namespace ReCT.CodeAnalysis.Emit
             else if (node.Call.Function == BuiltinFunctions.OpenSocket)
             {
                 ilProcessor.Emit(OpCodes.Callvirt, _TCPAcceptSocketReference);
+            }
+            else if (node.Call.Function == BuiltinFunctions.CloseClient)
+            {
+                ilProcessor.Emit(OpCodes.Callvirt, _TCPClientClose);
+            }
+            else if (node.Call.Function == BuiltinFunctions.CloseSocket)
+            {
+                ilProcessor.Emit(OpCodes.Callvirt, _TCPSocketClose);
             }
             else
             {

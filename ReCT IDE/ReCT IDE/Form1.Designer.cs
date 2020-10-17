@@ -95,7 +95,6 @@
             this.CodeBox.CharWidth = 8;
             this.CodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.CodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.CodeBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.CodeBox.ForeColor = System.Drawing.Color.White;
             this.CodeBox.IsReplaceMode = false;
             this.CodeBox.Location = new System.Drawing.Point(0, 65);
@@ -238,7 +237,7 @@
             this.buildToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.buildToolStripMenuItem.Name = "buildToolStripMenuItem";
             this.buildToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.buildToolStripMenuItem.Size = new System.Drawing.Size(180, 30);
+            this.buildToolStripMenuItem.Size = new System.Drawing.Size(177, 30);
             this.buildToolStripMenuItem.Text = "Run";
             this.buildToolStripMenuItem.Click += new System.EventHandler(this.buildToolStripMenuItem_Click);
             // 
@@ -258,7 +257,7 @@
             this.runToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.runToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.runToolStripMenuItem.Name = "runToolStripMenuItem";
-            this.runToolStripMenuItem.Size = new System.Drawing.Size(180, 30);
+            this.runToolStripMenuItem.Size = new System.Drawing.Size(177, 30);
             this.runToolStripMenuItem.Text = "Build";
             this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
             // 
@@ -267,7 +266,7 @@
             this.settingsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.settingsToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 30);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(177, 30);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
@@ -381,6 +380,8 @@
         "CreateDirectory",
         "GetFilesInDirectory",
         "GetDirsInDirectory",
+        "ConnectTCPClient",
+        "ListenOnTCPPort",
         "?",
         "any",
         "bool",
@@ -410,7 +411,7 @@
         "to",
         "while",
         "do",
-        "end",
+        "die",
         "from",
         "Write",
         "Sleep",
@@ -419,6 +420,11 @@
         "StartThread",
         "KillThread",
         "GetArrayLength",
+        "OpenSocket",
+        "WriteToSocket",
+        "ReadSocket",
+        "WriteToClient",
+        "ReadClient",
         "#attach"};
             this.ReCTAutoComplete.LeftPadding = 0;
             this.ReCTAutoComplete.MaximumSize = new System.Drawing.Size(200, 200);

@@ -66,9 +66,11 @@ namespace ReCT.CodeAnalysis.Symbols
 
         public static readonly FunctionSymbol WriteToSocket = new FunctionSymbol("WriteToSocket", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
         public static readonly FunctionSymbol ReadSocket = new FunctionSymbol("ReadSocket", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
+        public static readonly FunctionSymbol CloseSocket = new FunctionSymbol("CloseSocket", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
 
         public static readonly FunctionSymbol WriteToClient = new FunctionSymbol("WriteToClient", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
         public static readonly FunctionSymbol ReadClient = new FunctionSymbol("ReadClient", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
+        public static readonly FunctionSymbol CloseClient = new FunctionSymbol("CloseClient", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
 
         //Cube functions
         public static readonly FunctionSymbol Die = new FunctionSymbol("Die", ImmutableArray.Create(new ParameterSymbol("exitCode", TypeSymbol.Int, 0)), TypeSymbol.Int);

@@ -175,14 +175,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT.dll" size="144384">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT.dll" size="144896">
       <assemblyIdentity name="ReCT" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>4Igku54fOgIDyGZg22xB94C8QMgNN7htytkr6Qcf/Io=</dsig:DigestValue>
+        <dsig:DigestValue>FhMisxV+OU0Ph3FG8ysbVV/6+32g0UmhNjuBZgU9GLQ=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
