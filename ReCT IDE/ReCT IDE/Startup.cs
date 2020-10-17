@@ -19,18 +19,17 @@ namespace ReCT_IDE
 
         private void axWindowsMediaPlayer1_Enter(object sender, EventArgs e)
         {
-            //axWindowsMediaPlayer1.uiMode = "invisible";
+            
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            timer1.Enabled = false;
-            Show();
+            Close();
         }
 
         private void Startup_Load(object sender, EventArgs e)
         {
-            Hide();
+            
         }
     }
 }

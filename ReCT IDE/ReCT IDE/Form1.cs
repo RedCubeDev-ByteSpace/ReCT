@@ -53,7 +53,16 @@ namespace ReCT_IDE
 
         public Form1()
         {
+            Thread t = new Thread(new ThreadStart(SplashScreen));
+            t.Start();
+            Thread.Sleep(2000);
+
             InitializeComponent();
+        }
+
+        void SplashScreen()
+        {
+            Application.Run(new Startup());
         }
 
         private void fileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -68,6 +77,8 @@ namespace ReCT_IDE
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            Activate();
+
             Menu.Renderer = new MenuRenderer();
             standardMsg += ReCT.info.Version;
             errorBox = new Error();
