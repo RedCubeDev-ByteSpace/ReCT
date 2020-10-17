@@ -40,6 +40,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _consoleGetHeightReference;
         private readonly MethodReference _consoleGetWidthReference;
         private readonly MethodReference _consoleSetSizeReference;
+        private readonly MethodReference _consoleBeepReference;
         private readonly MethodReference _threadSlooopeReference;
         private readonly MethodReference _stringConcatReference;
         private readonly MethodReference _convertToBooleanReference;
@@ -70,8 +71,10 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _TCPAcceptSocketReference;
         private readonly MethodReference _TCPClientGetStream;
         private readonly MethodReference _TCPClientClose;
+        private readonly MethodReference _TCPClientConnected;
         private readonly MethodReference _TCPNetworkStreamCtor;
         private readonly MethodReference _TCPSocketClose;
+        private readonly MethodReference _TCPSocketConnected;
         private readonly MethodReference _IOStreamReaderCtor;
         private readonly MethodReference _IOReadLine;
         private readonly MethodReference _IOStreamWriterCtor;
@@ -260,6 +263,9 @@ namespace ReCT.CodeAnalysis.Emit
 
             _consoleSetSizeReference = ResolveMethod("System.Console", "SetWindowSize", new[] { "System.Int32", "System.Int32" });
 
+            _consoleBeepReference = ResolveMethod("System.Console", "Beep", new[] { "System.Int32", "System.Int32" });
+
+
             _threadSlooopeReference = ResolveMethod("System.Threading.Thread", "Sleep", new[] { "System.Int32"});
 
             _stringConcatReference = ResolveMethod("System.String", "Concat", new [] { "System.String", "System.String" });
@@ -305,9 +311,11 @@ namespace ReCT.CodeAnalysis.Emit
 
             _TCPClientGetStream = ResolveMethod("System.Net.Sockets.TcpClient", "GetStream", Array.Empty<string>());
             _TCPClientClose = ResolveMethod("System.Net.Sockets.TcpClient", "Close", Array.Empty<string>());
+            _TCPClientConnected = ResolveMethod("System.Net.Sockets.TcpClient", "get_Connected", Array.Empty<string>());
             _TCPNetworkStreamCtor = ResolveMethod("System.Net.Sockets.NetworkStream", ".ctor", new[] { "System.Net.Sockets.Socket" });
 
             _TCPSocketClose = ResolveMethod("System.Net.Sockets.Socket", "Close", Array.Empty<string>());
+            _TCPSocketConnected = ResolveMethod("System.Net.Sockets.Socket", "get_Connected", Array.Empty<string>());
 
             _IOStreamReaderCtor = ResolveMethod("System.IO.StreamReader", ".ctor", new[] { "System.IO.Stream" });
             _IOReadLine = ResolveMethod("System.IO.TextReader", "ReadLine", Array.Empty<string>());
@@ -926,6 +934,14 @@ namespace ReCT.CodeAnalysis.Emit
             {
                 ilProcessor.Emit(OpCodes.Callvirt, _TCPSocketClose);
             }
+            else if (node.Call.Function == BuiltinFunctions.IsClientConnected)
+            {
+                ilProcessor.Emit(OpCodes.Callvirt, _TCPClientConnected);
+            }
+            else if (node.Call.Function == BuiltinFunctions.IsSocketConnected)
+            {
+                ilProcessor.Emit(OpCodes.Callvirt, _TCPSocketConnected);
+            }
             else
             {
                 throw new Exception("Couldnt find TypeFunction: " + node.Call.Function.Name);
@@ -1070,6 +1086,8 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Ldstr, "borger");
                 ilProcessor.Emit(OpCodes.Call, _consoleWriteLineReference);
             }
+            else if (node.Function == BuiltinFunctions.Beep)
+                ilProcessor.Emit(OpCodes.Call, _consoleBeepReference);
             else
             {
                 var methodDefinition = _methods[node.Function];
