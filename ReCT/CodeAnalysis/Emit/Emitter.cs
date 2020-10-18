@@ -471,9 +471,49 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundNodeKind.ExpressionStatement:
                     EmitExpressionStatement(ilProcessor, (BoundExpressionStatement)node);
                     break;
+                case BoundNodeKind.TryCatchStatement:
+                    EmitTryCatchStatement(ilProcessor, (BoundTryCatchStatement)node);
+                    break;
                 default:
                     throw new Exception($"Unexpected node kind {node.Kind}");
             }
+        }
+
+        private void EmitTryCatchStatement(ILProcessor ilProcessor, BoundTryCatchStatement node)
+        {
+            var nooooooooop = ilProcessor.Create(OpCodes.Nop);
+            ilProcessor.Append(nooooooooop);
+
+
+            foreach (var statement in node.NormalStatement.Statements)
+                EmitStatement(ilProcessor, statement);
+
+            var nop = ilProcessor.Create(OpCodes.Nop);
+            var leave = ilProcessor.Create(OpCodes.Leave, nop);
+            ilProcessor.Append(leave);
+
+            var noOp = ilProcessor.Create(OpCodes.Nop);
+            ilProcessor.Append(noOp);
+
+            foreach (var statement in node.ExceptionStatement.Statements)
+                EmitStatement(ilProcessor, statement);
+
+            var leaf = ilProcessor.Create(OpCodes.Leave, nop);
+            ilProcessor.Append(leaf);
+
+            ilProcessor.Append(nop);
+
+
+            ExceptionHandler e = new ExceptionHandler(ExceptionHandlerType.Catch)
+            {
+                CatchType = _knownTypes[TypeSymbol.Any],
+                TryStart = nooooooooop,
+                TryEnd = noOp,
+                HandlerStart = noOp,
+                HandlerEnd = nop
+            };
+
+            ilProcessor.Body.ExceptionHandlers.Add(e);
         }
 
         private void EmitVariableDeclaration(ILProcessor ilProcessor, BoundVariableDeclaration node)
@@ -1088,6 +1128,17 @@ namespace ReCT.CodeAnalysis.Emit
             }
             else if (node.Function == BuiltinFunctions.Beep)
                 ilProcessor.Emit(OpCodes.Call, _consoleBeepReference);
+            else if (node.Function == BuiltinFunctions.Char)
+            {
+                VariableDefinition var0 = new VariableDefinition(_charRef);
+
+                ilProcessor.Body.Variables.Add(var0);
+
+                ilProcessor.Emit(OpCodes.Conv_U2);
+                ilProcessor.Emit(OpCodes.Stloc, var0);
+                ilProcessor.Emit(OpCodes.Ldloca_S, var0);
+                ilProcessor.Emit(OpCodes.Call, _charToString);
+            }
             else
             {
                 var methodDefinition = _methods[node.Function];

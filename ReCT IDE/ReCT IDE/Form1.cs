@@ -230,7 +230,7 @@ namespace ReCT_IDE
             e.ChangedRange.ClearStyle(SystemFunctionStyle);
 
             //system function highlighting
-            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bBeep\b|\bListenOnTCPPort\b|\bConnectTCPClient\b|\bGetDirsInDirectory\b|\bGetFilesInDirectory\b|\bGetCursorY\b|\bGetCursorX\b|\bCreateDirectory\b|\bDeleteDirectory\b|\bDeleteFile\b|\bDirectoryExists\b|\bFileExists\b|\bWriteFile\b|\bReadFile\b|\bFloor\b|\bCeil\b|\bInputAction\b|\bSetConsoleForeground\b|\bSetConsoleBackground\b|\bSetCursorVisible\b|\bThread\b|\bGetCursorVisible\b|\bPrint\b|\bInputKey\b|\bInput\b|\bRandom\b|\bVersion\b|\bClear\b|\bSetCursor\b|\bGetSizeX\b|\bGetSizeY\b|\bSetSize\b|\bWrite\b|\bSleep\b)");
+            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bChar\b|\bBeep\b|\bListenOnTCPPort\b|\bConnectTCPClient\b|\bGetDirsInDirectory\b|\bGetFilesInDirectory\b|\bGetCursorY\b|\bGetCursorX\b|\bCreateDirectory\b|\bDeleteDirectory\b|\bDeleteFile\b|\bDirectoryExists\b|\bFileExists\b|\bWriteFile\b|\bReadFile\b|\bFloor\b|\bCeil\b|\bInputAction\b|\bSetConsoleForeground\b|\bSetConsoleBackground\b|\bSetCursorVisible\b|\bThread\b|\bGetCursorVisible\b|\bPrint\b|\bInputKey\b|\bInput\b|\bRandom\b|\bVersion\b|\bClear\b|\bSetCursor\b|\bGetSizeX\b|\bGetSizeY\b|\bSetSize\b|\bWrite\b|\bSleep\b)");
 
             //types
             e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\btcpsocketArr\b|\btcplistenerArr\b|\btcpclientArr\b|\btcpsocket\b|\btcplistener\b|\btcpclient\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b|\bfloat\b|\bthread\b|\banyArr\b|\bboolArr\b|\bintArr\b|\bstringArr\b|\bfloatArr\b|\bthreadArr\b)");
@@ -251,7 +251,7 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(TypeFunctionStyle, @"(?<=\>>\s)(\w+)");
 
             //statements highlighting
-            e.ChangedRange.SetStyle(StatementStyle, @"(\bbreak\b|\bcontinue\b|\bfor\b|\breturn\b|\bto\b|\bwhile\b|\bdo\b|\bdie\b|\bfrom\b)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(StatementStyle, @"(\btry\b|\bcatch\b|\bbreak\b|\bcontinue\b|\bfor\b|\breturn\b|\bto\b|\bwhile\b|\bdo\b|\bdie\b|\bfrom\b)", RegexOptions.Singleline);
 
             //numbers
             e.ChangedRange.SetStyle(NumberStyle, @"(\b\d+\b)", RegexOptions.Multiline);
@@ -297,11 +297,11 @@ namespace ReCT_IDE
                     tabs[i].button.BackColor = Color.FromArgb(32, 32, 32);
                 }
                 tabs[currentTab].button.BackColor = Color.FromArgb(64, 41, 41);
+
+                presence.Details = "Working on " + tabs[currentTab].name + "...";
+                dc.client.SetPresence(presence);
             }
             catch { }
-
-            presence.Details = "Working on " + tabs[currentTab].name + "...";
-            dc.client.SetPresence(presence);
         }
 
         private void New_Click(object sender, EventArgs e)
@@ -635,7 +635,11 @@ namespace ReCT_IDE
             if (tabs.Count == 1)
                 return;
 
-            if(!tabs[currentTab].saved)
+            var cT = currentTab;
+
+            switchTab(0);
+
+            if (!tabs[cT].saved)
             {
                 var result = MessageBox.Show("WAIT!\nYou have some unsaved changes!\nDo you want to save them?", "Warning!", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning); https://pcpartpicker.com/user/RedCooooobe/saved/CdnKpg
                 if (result == DialogResult.Yes)
@@ -648,19 +652,20 @@ namespace ReCT_IDE
                 }
             }
 
-            int tabToDelete = currentTab;
+            Controls.Remove(tabs[cT].button);
+            tabs.RemoveAt(cT);
 
-            Controls.Remove(tabs[tabToDelete].button);
-            tabs.RemoveAt(tabToDelete);
-
-            switchTab(0);
             OrderTabs();
         }
 
         void switchTab(int tab)
         {
-            presence.Details = "Working on " + tabs[currentTab].name + "...";
-            dc.client.SetPresence(presence);
+            try
+            {
+                presence.Details = "Working on " + tabs[currentTab].name + "...";
+                dc.client.SetPresence(presence);
+            }
+            catch { }
 
             tabSwitch = true;
 

@@ -299,6 +299,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return BindReturnStatement((ReturnStatementSyntax)syntax);
                 case SyntaxKind.ExpressionStatement:
                     return BindExpressionStatement((ExpressionStatementSyntax)syntax);
+                case SyntaxKind.TryCatchStatement:
+                    return BindTryCatchStatement((TryCatchStatementSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -350,6 +352,13 @@ namespace ReCT.CodeAnalysis.Binding
             var thenStatement = BindStatement(syntax.ThenStatement);
             var elseStatement = syntax.ElseClause == null ? null : BindStatement(syntax.ElseClause.ElseStatement);
             return new BoundIfStatement(condition, thenStatement, elseStatement);
+        }
+
+        private BoundStatement BindTryCatchStatement(TryCatchStatementSyntax syntax)
+        {
+            var normalStatement = (BoundBlockStatement)BindBlockStatement(syntax.NormalStatement);
+            var exceptionStatement = (BoundBlockStatement)BindBlockStatement(syntax.ExceptionSyntax);
+            return new BoundTryCatchStatement(normalStatement, exceptionStatement);
         }
 
         private BoundStatement BindWhileStatement(WhileStatementSyntax syntax)

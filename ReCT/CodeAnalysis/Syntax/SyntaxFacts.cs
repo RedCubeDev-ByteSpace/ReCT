@@ -94,6 +94,10 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.MakeKeyword;
                 case "array":
                     return SyntaxKind.ArrayKeyword;
+                case "try":
+                    return SyntaxKind.TryKeyword;
+                case "catch":
+                    return SyntaxKind.CatchKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -209,6 +213,10 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "make";
                 case SyntaxKind.ArrayKeyword:
                     return "array";
+                case SyntaxKind.TryKeyword:
+                    return "try";
+                case SyntaxKind.CatchKeyword:
+                    return "catch";
                 case SyntaxKind.ThreadKeyword:
                     return "Thread";
                 default:

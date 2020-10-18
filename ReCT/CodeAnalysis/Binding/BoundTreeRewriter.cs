@@ -33,6 +33,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return RewriteReturnStatement((BoundReturnStatement)node);
                 case BoundNodeKind.ExpressionStatement:
                     return RewriteExpressionStatement((BoundExpressionStatement)node);
+                case BoundNodeKind.TryCatchStatement:
+                    return RewriteTryCatchStatement((BoundTryCatchStatement)node);
                 default:
                     throw new Exception($"Unexpected node: {node.Kind}");
             }
@@ -85,6 +87,16 @@ namespace ReCT.CodeAnalysis.Binding
                 return node;
 
             return new BoundIfStatement(condition, thenStatement, elseStatement);
+        }
+
+        protected virtual BoundStatement RewriteTryCatchStatement(BoundTryCatchStatement node)
+        {
+            var normalStatement = (BoundBlockStatement)RewriteBlockStatement(node.NormalStatement);
+            var exceptionStatement = (BoundBlockStatement)RewriteBlockStatement(node.ExceptionStatement);
+            if (normalStatement == node.NormalStatement && exceptionStatement == node.ExceptionStatement)
+                return node;
+
+            return new BoundTryCatchStatement(normalStatement, exceptionStatement);
         }
 
         protected virtual BoundStatement RewriteWhileStatement(BoundWhileStatement node)

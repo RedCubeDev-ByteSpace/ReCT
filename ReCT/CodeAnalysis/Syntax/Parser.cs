@@ -196,6 +196,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseContinueStatement();
                 case SyntaxKind.ReturnKeyword:
                     return ParseReturnStatement();
+                case SyntaxKind.TryKeyword:
+                    return ParseTryCatchStatement();
                 default:
                     return ParseExpressionStatement();
             }
@@ -258,6 +260,15 @@ namespace ReCT.CodeAnalysis.Syntax
             var statement = ParseStatement();
             var elseClause = ParseElseClause();
             return new IfStatementSyntax(_syntaxTree, keyword, condition, statement, elseClause);
+        }
+
+        private StatementSyntax ParseTryCatchStatement()
+        {
+            var trykeyword = MatchToken(SyntaxKind.TryKeyword);
+            var statement = ParseBlockStatement();
+            var catchKeyword = MatchToken(SyntaxKind.CatchKeyword);
+            var catchStatement = ParseBlockStatement();
+            return new TryCatchStatementSyntax(_syntaxTree, trykeyword, statement, catchKeyword, catchStatement);
         }
 
         private ElseClauseSyntax ParseElseClause()
