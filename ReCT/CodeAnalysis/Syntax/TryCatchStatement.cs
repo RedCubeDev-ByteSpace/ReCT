@@ -2,7 +2,7 @@
 {
     public sealed class TryCatchStatementSyntax : StatementSyntax
     {
-        public TryCatchStatementSyntax(SyntaxTree syntaxTree, SyntaxToken tryKeyword, BlockStatementSyntax normalStatement, SyntaxToken catchKeyword, BlockStatementSyntax exceptionSyntax)
+        public TryCatchStatementSyntax(SyntaxTree syntaxTree, SyntaxToken tryKeyword, StatementSyntax normalStatement, SyntaxToken catchKeyword, StatementSyntax exceptionSyntax)
             : base(syntaxTree)
         {
             TryKeyword = tryKeyword;
@@ -14,8 +14,8 @@
         public override SyntaxKind Kind => SyntaxKind.TryCatchStatement;
 
         public SyntaxToken TryKeyword { get; }
-        public BlockStatementSyntax NormalStatement { get; }
+        public StatementSyntax NormalStatement { get; }
         public SyntaxToken CatchKeyword { get; }
-        public BlockStatementSyntax ExceptionSyntax { get; }
+        public StatementSyntax ExceptionSyntax { get; }
     }
 }

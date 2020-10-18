@@ -637,7 +637,12 @@ namespace ReCT_IDE
 
             var cT = currentTab;
 
-            switchTab(0);
+            if (cT == 0)
+            {
+                switchTab(1);
+                currentTab = 0;
+            }
+            else switchTab(0);
 
             if (!tabs[cT].saved)
             {
@@ -814,13 +819,13 @@ namespace ReCT_IDE
         {
             bool res;
             int counter = 0;
+            errorBox.Hide();
             do
             {
-                errorBox.Hide();
                 await Task.Delay(10);
                 counter++;
 
-                if (counter > 10)
+                if (counter > 20)
                     break;
 
 
@@ -844,6 +849,8 @@ namespace ReCT_IDE
                 res = ReCT_Compiler.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(tabs[currentTab].path) + ".cmd", tabs[currentTab].path, errorBox);
                 if (!res) continue;
 
+                errorBox.Hide();
+
                 string strCmdText = $"/K cd \"{Path.GetFullPath($"Builder")}\" & cls & \"{Path.GetFileNameWithoutExtension(tabs[currentTab].path)}.cmd\"";
 
                 running = new Process();
@@ -857,6 +864,38 @@ namespace ReCT_IDE
 
                 return;
             } while (!res);
+        }
+
+        private void forceBuildToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            forceBuild();
+        }
+
+        async Task forceBuild()
+        {
+            Typechecker.Enabled = false;
+            errorBox.Hide();
+            saveFileDialog1.Filter = "Launcher (*.cmd)|*.cmd|All files (*.*)|*.*";
+            var res = saveFileDialog1.ShowDialog();
+
+            if (res != DialogResult.OK)
+                return;
+
+            if (fileChanged)
+                Save_Click(this, new EventArgs());
+
+            bool succ;
+            int counter = 0;
+            do
+            {
+                counter++;
+                succ = ReCT_Compiler.CompileRCTBC(saveFileDialog1.FileName, tabs[currentTab].path, errorBox);
+                await Task.Delay(15);
+            } while (!succ && counter < 20);
+
+            if(succ)
+                System.Diagnostics.Process.Start("explorer.exe", string.Format("/select,\"{0}\"", saveFileDialog1.FileName));
+            Typechecker.Enabled = true;
         }
     }
 

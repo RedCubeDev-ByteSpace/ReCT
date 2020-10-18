@@ -91,8 +91,8 @@ namespace ReCT.CodeAnalysis.Binding
 
         protected virtual BoundStatement RewriteTryCatchStatement(BoundTryCatchStatement node)
         {
-            var normalStatement = (BoundBlockStatement)RewriteBlockStatement(node.NormalStatement);
-            var exceptionStatement = (BoundBlockStatement)RewriteBlockStatement(node.ExceptionStatement);
+            var normalStatement = RewriteStatement(node.NormalStatement);
+            var exceptionStatement = RewriteStatement(node.ExceptionStatement);
             if (normalStatement == node.NormalStatement && exceptionStatement == node.ExceptionStatement)
                 return node;
 

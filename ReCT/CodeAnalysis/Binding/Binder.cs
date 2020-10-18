@@ -356,8 +356,8 @@ namespace ReCT.CodeAnalysis.Binding
 
         private BoundStatement BindTryCatchStatement(TryCatchStatementSyntax syntax)
         {
-            var normalStatement = (BoundBlockStatement)BindBlockStatement(syntax.NormalStatement);
-            var exceptionStatement = (BoundBlockStatement)BindBlockStatement(syntax.ExceptionSyntax);
+            var normalStatement = BindStatementInternal(syntax.NormalStatement);
+            var exceptionStatement = BindStatementInternal(syntax.ExceptionSyntax);
             return new BoundTryCatchStatement(normalStatement, exceptionStatement);
         }
 

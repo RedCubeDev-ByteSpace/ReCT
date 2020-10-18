@@ -265,9 +265,9 @@ namespace ReCT.CodeAnalysis.Syntax
         private StatementSyntax ParseTryCatchStatement()
         {
             var trykeyword = MatchToken(SyntaxKind.TryKeyword);
-            var statement = ParseBlockStatement();
+            var statement = ParseStatement();
             var catchKeyword = MatchToken(SyntaxKind.CatchKeyword);
-            var catchStatement = ParseBlockStatement();
+            var catchStatement = ParseStatement();
             return new TryCatchStatementSyntax(_syntaxTree, trykeyword, statement, catchKeyword, catchStatement);
         }
 

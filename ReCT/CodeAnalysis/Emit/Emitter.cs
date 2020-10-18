@@ -474,9 +474,18 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundNodeKind.TryCatchStatement:
                     EmitTryCatchStatement(ilProcessor, (BoundTryCatchStatement)node);
                     break;
+                case BoundNodeKind.BlockStatement:
+                    EmitBlockStatement(ilProcessor, (BoundBlockStatement)node);
+                    break;
                 default:
                     throw new Exception($"Unexpected node kind {node.Kind}");
             }
+        }
+
+        private void EmitBlockStatement(ILProcessor ilProcessor, BoundBlockStatement node)
+        {
+            foreach (BoundStatement s in node.Statements)
+                EmitStatement(ilProcessor, s);
         }
 
         private void EmitTryCatchStatement(ILProcessor ilProcessor, BoundTryCatchStatement node)
@@ -484,9 +493,8 @@ namespace ReCT.CodeAnalysis.Emit
             var nooooooooop = ilProcessor.Create(OpCodes.Nop);
             ilProcessor.Append(nooooooooop);
 
-
-            foreach (var statement in node.NormalStatement.Statements)
-                EmitStatement(ilProcessor, statement);
+            //foreach (var statement in node.NormalStatement.Statements)
+            EmitStatement(ilProcessor, node.NormalStatement);
 
             var nop = ilProcessor.Create(OpCodes.Nop);
             var leave = ilProcessor.Create(OpCodes.Leave, nop);
@@ -495,8 +503,8 @@ namespace ReCT.CodeAnalysis.Emit
             var noOp = ilProcessor.Create(OpCodes.Nop);
             ilProcessor.Append(noOp);
 
-            foreach (var statement in node.ExceptionStatement.Statements)
-                EmitStatement(ilProcessor, statement);
+            //foreach (var statement in node.ExceptionStatement.Statements)
+            EmitStatement(ilProcessor, node.ExceptionStatement);
 
             var leaf = ilProcessor.Create(OpCodes.Leave, nop);
             ilProcessor.Append(leaf);

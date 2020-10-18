@@ -2,14 +2,14 @@
 {
     internal sealed class BoundTryCatchStatement : BoundStatement
     {
-        public BoundTryCatchStatement(BoundBlockStatement normalStatement, BoundBlockStatement exceptionStatement)
+        public BoundTryCatchStatement(BoundStatement normalStatement, BoundStatement exceptionStatement)
         {
             NormalStatement = normalStatement;
             ExceptionStatement = exceptionStatement;
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.TryCatchStatement;
-        public BoundBlockStatement NormalStatement { get; }
-        public BoundBlockStatement ExceptionStatement { get; }
+        public BoundStatement NormalStatement { get; }
+        public BoundStatement ExceptionStatement { get; }
     }
 }
