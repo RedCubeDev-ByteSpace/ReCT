@@ -119,38 +119,42 @@ namespace ReCT_IDE
                 var lookingforfile = "";
                 try
                 {
-                    List<string> neededFiles = new List<string>();
-                    List<string> neededCode = new List<string>();
-                    var matches = Regex.Matches(code, @"(?<=#attach\(\" + "\"" + @")(.*)(?=\" + "\"" + @"\))");
-
-                    for (int i = 0; i < matches.Count; i++)
+                    while (true)
                     {
-                        neededFiles.Add(matches[i].Value);
-                    }
+                        if (!code.Contains("#attach"))
+                            break;
 
-                    foreach (string p in neededFiles)
-                    {
-                        var lp = p;
-                        if(!p.Contains(":"))
+                        List<string> neededFiles = new List<string>();
+                        List<string> neededCode = new List<string>();
+                        var matches = Regex.Matches(code, @"(?<=#attach\(\" + "\"" + @")(.*)(?=\" + "\"" + @"\))");
+
+                        for (int i = 0; i < matches.Count; i++)
                         {
-                            lp = Path.GetDirectoryName(inPath) + "\\" + p;
+                            neededFiles.Add(matches[i].Value);
                         }
 
-                        lookingforfile = lp;
-
-                        using (StreamReader sr = new StreamReader(new FileStream(lp, FileMode.Open)))
+                        foreach (string p in neededFiles)
                         {
-                            neededCode.Add(sr.ReadToEnd());
-                            sr.Close();
+                            var lp = p;
+                            if (!p.Contains(":"))
+                            {
+                                lp = Path.GetDirectoryName(inPath) + "\\" + p;
+                            }
+
+                            lookingforfile = lp;
+
+                            using (StreamReader sr = new StreamReader(new FileStream(lp, FileMode.Open)))
+                            {
+                                neededCode.Add(sr.ReadToEnd());
+                                sr.Close();
+                            }
+                        }
+
+                        for (int i = 0; i < neededFiles.Count; i++)
+                        {
+                            code = code.Replace($"#attach(\"{neededFiles[i]}\")", neededCode[i]);
                         }
                     }
-
-                    for (int i = 0; i < neededFiles.Count; i++)
-                    {
-                        code = code.Replace($"#attach(\"{neededFiles[i]}\")", neededCode[i]);
-                    }
-
-                    syntaxTree = SyntaxTree.Parse(code);
                 }
                 catch
                 {
@@ -159,6 +163,8 @@ namespace ReCT_IDE
                     errorBox.errorBox.Text = $"[L: ?, C: ?] Could not find attachment file '{lookingforfile}'!";
                     return false;
                 }
+
+                syntaxTree = SyntaxTree.Parse(code);
             }
 
             var sErrors = syntaxTree.Diagnostics;
