@@ -33,3 +33,12 @@ C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csproj.C
 C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.dll
 C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.pdb
 C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csprojAssemblyReference.cache
+E:\GitRepos\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.deps.json
+E:\GitRepos\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.dll
+E:\GitRepos\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.pdb
+E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfoInputs.cache
+E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfo.cs
+E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csproj.CoreCompileInputs.cache
+E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.dll
+E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.pdb
+E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csprojAssemblyReference.cache

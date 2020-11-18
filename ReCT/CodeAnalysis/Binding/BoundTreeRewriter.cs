@@ -7,6 +7,9 @@ namespace ReCT.CodeAnalysis.Binding
     {
         public virtual BoundStatement RewriteStatement(BoundStatement node)
         {
+            if (node == null)
+                return null;
+
             switch (node.Kind)
             {
                 case BoundNodeKind.BlockStatement:
@@ -294,7 +297,7 @@ namespace ReCT.CodeAnalysis.Binding
             if (builder == null)
                 return node;
 
-            return new BoundCallExpression(node.Function, builder.MoveToImmutable());
+            return new BoundCallExpression(node.Function, builder.MoveToImmutable(), node.Namespace);
         }
 
         protected virtual BoundExpression RewriteConversionExpression(BoundConversionExpression node)

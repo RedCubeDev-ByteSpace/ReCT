@@ -9,13 +9,18 @@ namespace ReCT.CodeAnalysis.Binding
                             ImmutableArray<Diagnostic> diagnostics,
                             FunctionSymbol mainFunction,
                             FunctionSymbol scriptFunction,
-                            ImmutableDictionary<FunctionSymbol, BoundBlockStatement> functions)
+                            ImmutableDictionary<FunctionSymbol, BoundBlockStatement> functions,
+                            ImmutableArray<Package.Package> packages,
+                            string _namespace, string _type)
         {
             Previous = previous;
             Diagnostics = diagnostics;
             MainFunction = mainFunction;
             ScriptFunction = scriptFunction;
             Functions = functions;
+            Packages = packages;
+            Namespace = _namespace;
+            Type = _type;
         }
 
         public BoundProgram Previous { get; }
@@ -23,5 +28,8 @@ namespace ReCT.CodeAnalysis.Binding
         public FunctionSymbol MainFunction { get; }
         public FunctionSymbol ScriptFunction { get; }
         public ImmutableDictionary<FunctionSymbol, BoundBlockStatement> Functions { get; }
+        public ImmutableArray<Package.Package> Packages { get; }
+        public string Namespace { get; }
+        public string Type { get; }
     }
 }

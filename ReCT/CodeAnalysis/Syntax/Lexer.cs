@@ -50,6 +50,12 @@ namespace ReCT.CodeAnalysis.Syntax
                     _kind = SyntaxKind.EndOfFileToken;
                     break;
 
+                case ':' when Lookahead == ':':
+                    _kind = SyntaxKind.NamespaceToken;
+                    _value = null;
+                    _position += 2;
+                    break;
+
                 case '<' when Lookahead == '-' && Peek(2) == '+':
                     _kind = SyntaxKind.EditVariableToken;
                     _value = SyntaxKind.PlusToken;

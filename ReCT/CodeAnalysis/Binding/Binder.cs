@@ -11,7 +11,7 @@ namespace ReCT.CodeAnalysis.Binding
 {
     internal sealed class Binder
     {
-        private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
+        private static DiagnosticBag _diagnostics = new DiagnosticBag();
         private readonly bool _isScript;
         private readonly FunctionSymbol _function;
 
@@ -19,11 +19,19 @@ namespace ReCT.CodeAnalysis.Binding
         private int _labelCounter;
         private BoundScope _scope;
 
+        static List<Package.Package> _packageNamespaces = new List<Package.Package>();
+        private static string _namespace = "";
+        private static string _type = "";
+
         public Binder(bool isScript, BoundScope parent, FunctionSymbol function)
         {
             _scope = new BoundScope(parent);
             _isScript = isScript;
             _function = function;
+            _namespace = "";
+            _type = "";
+
+            _diagnostics = new DiagnosticBag();
 
             if (function != null)
             {
@@ -128,6 +136,8 @@ namespace ReCT.CodeAnalysis.Binding
             var functionBodies = ImmutableDictionary.CreateBuilder<FunctionSymbol, BoundBlockStatement>();
             var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
 
+            _packageNamespaces = new List<Package.Package>();
+
             foreach (var function in globalScope.Functions)
             {
                 var binder = new Binder(isScript, parentScope, function);
@@ -135,9 +145,11 @@ namespace ReCT.CodeAnalysis.Binding
                 var loweredBody = Lowerer.Lower(function, body);
 
                 if (function.Type != TypeSymbol.Void && !ControlFlowGraph.AllPathsReturn(loweredBody))
-                    binder._diagnostics.ReportAllPathsMustReturn(function.Declaration.Identifier.Location);
+                    Binder._diagnostics.ReportAllPathsMustReturn(function.Declaration.Identifier.Location);
 
                 functionBodies.Add(function, loweredBody);
+
+                Console.WriteLine($"Added {_diagnostics.Count()} diagnostics to bag");
 
                 diagnostics.AddRange(binder.Diagnostics);
             }
@@ -170,7 +182,9 @@ namespace ReCT.CodeAnalysis.Binding
                                     diagnostics.ToImmutable(),
                                     globalScope.MainFunction,
                                     globalScope.ScriptFunction,
-                                    functionBodies.ToImmutable());
+                                    functionBodies.ToImmutable(),
+                                    _packageNamespaces.ToImmutableArray(),
+                                    _namespace, _type);
         }
 
         private void BindFunctionDeclaration(FunctionDeclarationSyntax syntax)
@@ -196,7 +210,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             var type = BindTypeClause(syntax.Type) ?? TypeSymbol.Void;
 
-            var function = new FunctionSymbol(syntax.Identifier.Text, parameters.ToImmutable(), type, syntax);
+            var function = new FunctionSymbol(syntax.Identifier.Text, parameters.ToImmutable(), type, syntax, syntax.IsPublic);
             if (function.Declaration.Identifier.Text != null &&
                 !_scope.TryDeclareFunction(function))
             {
@@ -264,7 +278,8 @@ namespace ReCT.CodeAnalysis.Binding
                 {
                     var isAllowedExpression = es.Expression.Kind == BoundNodeKind.ErrorExpression ||
                                               es.Expression.Kind == BoundNodeKind.AssignmentExpression ||
-                                              es.Expression.Kind == BoundNodeKind.CallExpression;
+                                              es.Expression.Kind == BoundNodeKind.CallExpression ||
+                                              es.Expression.Kind == BoundNodeKind.RemoteNameExpression;
                     if (!isAllowedExpression)
                         _diagnostics.ReportInvalidExpressionStatement(syntax.Location);
                 }
@@ -275,8 +290,16 @@ namespace ReCT.CodeAnalysis.Binding
 
         private BoundStatement BindStatementInternal(StatementSyntax syntax)
         {
+            Console.WriteLine("diagnostics: " + _diagnostics.Count());
+
             switch (syntax.Kind)
             {
+                case SyntaxKind.PackageStatement:
+                    return BindPackageStatement((PackageStatementSyntax)syntax);
+                case SyntaxKind.NamespaceStatement:
+                    return BindNamespaceStatement((NamespaceStatementSyntax)syntax);
+                case SyntaxKind.TypeStatement:
+                    return BindTypeStatement((TypeStatementSyntax)syntax);
                 case SyntaxKind.BlockStatement:
                     return BindBlockStatement((BlockStatementSyntax)syntax);
                 case SyntaxKind.VariableDeclaration:
@@ -304,6 +327,32 @@ namespace ReCT.CodeAnalysis.Binding
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
+        }
+
+        private BoundStatement BindTypeStatement(TypeStatementSyntax syntax)
+        {
+            _type = syntax.Name.Text;
+            return null;
+        }
+
+        private BoundStatement BindNamespaceStatement(NamespaceStatementSyntax syntax)
+        {
+            _namespace = syntax.Name.Text;
+            return null;
+        }
+
+        private BoundStatement BindPackageStatement(PackageStatementSyntax syntax)
+        {
+            var package = syntax.Package.Text;
+
+            if (!Package.Packager.systemPackages.ContainsKey(package))
+            {
+                _diagnostics.ReportUnknownPackage(package);
+                return BindErrorStatement();
+            }
+
+            _packageNamespaces.Add(Package.Packager.loadPackage(Package.Packager.systemPackages[package]));
+            return null;
         }
 
         private BoundStatement BindBlockStatement(BlockStatementSyntax syntax)
@@ -556,7 +605,7 @@ namespace ReCT.CodeAnalysis.Binding
             if (variable == null)
                 return new BoundErrorExpression();
 
-            if(syntax.isArray)
+            if (syntax.isArray)
             {
                 var index = BindExpressionInternal(syntax.Index);
                 return new BoundVariableExpression(variable, index, ArrayToType(variable.Type));
@@ -602,7 +651,7 @@ namespace ReCT.CodeAnalysis.Binding
             if (variable.IsReadOnly)
                 _diagnostics.ReportCannotAssign(syntax.EqualsToken.Location, name);
 
-            if(syntax.isArray)
+            if (syntax.isArray)
             {
                 var cExpression = BindConversion(syntax.Expression.Location, boundExpression, ArrayToType(variable.Type));
                 var boundIndex = BindExpression(syntax.Index);
@@ -671,8 +720,30 @@ namespace ReCT.CodeAnalysis.Binding
             return new BoundThreadCreateExpression(function);
         }
 
-            private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
+        private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
         {
+            if (syntax.Namespace != "")
+            {
+                bool found = false;
+
+                foreach (Package.Package p in _packageNamespaces)
+                {
+                    if (p.name == syntax.Namespace)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    Console.WriteLine("namespace not found!");
+                    _diagnostics.ReportNamespaceNotFound(syntax.Location, syntax.Namespace);
+                    return new BoundErrorExpression();
+                }
+            }
+
+
             if (syntax.Arguments.Count == 1 && LookupType(syntax.Identifier.Text) is TypeSymbol type)
                 return BindConversion(syntax.Arguments[0], type, allowExplicit: true);
 
@@ -728,7 +799,7 @@ namespace ReCT.CodeAnalysis.Binding
                 boundArguments[i] = BindConversion(argumentLocation, argument, parameter.Type);
             }
 
-            return new BoundCallExpression(function, boundArguments.ToImmutable());
+            return new BoundCallExpression(function, boundArguments.ToImmutable(), syntax.Namespace);
         }
 
         private BoundExpression BindConversion(ExpressionSyntax syntax, TypeSymbol type, bool allowExplicit = false)
@@ -765,7 +836,7 @@ namespace ReCT.CodeAnalysis.Binding
             var name = identifier.Text ?? "?";
             var declare = !identifier.IsMissing;
             var variable = syntax == SyntaxKind.SetKeyword
-                                ? (VariableSymbol) new GlobalVariableSymbol(name, isReadOnly, type)
+                                ? (VariableSymbol)new GlobalVariableSymbol(name, isReadOnly, type)
                                 : new LocalVariableSymbol(name, isReadOnly, type);
 
             if (declare && !_scope.TryDeclareVariable(variable))
@@ -792,7 +863,7 @@ namespace ReCT.CodeAnalysis.Binding
             }
         }
 
-        private TypeSymbol LookupType(string name)
+        public static TypeSymbol LookupType(string name)
         {
             switch (name)
             {

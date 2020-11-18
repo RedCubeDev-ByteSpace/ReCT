@@ -2,7 +2,7 @@ namespace ReCT.CodeAnalysis.Syntax
 {
     public sealed class FunctionDeclarationSyntax : MemberSyntax
     {
-        public FunctionDeclarationSyntax(SyntaxTree syntaxTree, SyntaxToken functionKeyword, SyntaxToken identifier, SyntaxToken openParenthesisToken, SeparatedSyntaxList<ParameterSyntax> parameters, SyntaxToken closeParenthesisToken, TypeClauseSyntax type, BlockStatementSyntax body)
+        public FunctionDeclarationSyntax(SyntaxTree syntaxTree, SyntaxToken functionKeyword, SyntaxToken identifier, SyntaxToken openParenthesisToken, SeparatedSyntaxList<ParameterSyntax> parameters, SyntaxToken closeParenthesisToken, TypeClauseSyntax type, BlockStatementSyntax body, bool isPublic)
             : base(syntaxTree)
         {
             FunctionKeyword = functionKeyword;
@@ -12,6 +12,7 @@ namespace ReCT.CodeAnalysis.Syntax
             CloseParenthesisToken = closeParenthesisToken;
             Type = type;
             Body = body;
+            IsPublic = isPublic;
         }
 
         public override SyntaxKind Kind => SyntaxKind.FunctionDeclaration;
@@ -23,5 +24,6 @@ namespace ReCT.CodeAnalysis.Syntax
         public SyntaxToken CloseParenthesisToken { get; }
         public TypeClauseSyntax Type { get; }
         public BlockStatementSyntax Body { get; }
+        public bool IsPublic { get; }
     }
 }

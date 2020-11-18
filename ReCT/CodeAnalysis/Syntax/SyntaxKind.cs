@@ -95,5 +95,12 @@ namespace ReCT.CodeAnalysis.Syntax
         TryKeyword,
         CatchKeyword,
         TryCatchStatement,
+        PackageKeyword,
+        PackageStatement,
+        NamespaceKeyword,
+        NamespaceStatement,
+        TypeKeyword,
+        TypeStatement,
+        NamespaceToken,
     }
 }

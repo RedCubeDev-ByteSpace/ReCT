@@ -5,7 +5,7 @@ using ReCT.CodeAnalysis.Symbols;
 
 namespace ReCT.CodeAnalysis.Binding
 {
-    internal sealed class BoundScope
+    public sealed class BoundScope
     {
         private Dictionary<string, Symbol> _symbols;
 

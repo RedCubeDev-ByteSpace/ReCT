@@ -98,6 +98,12 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.TryKeyword;
                 case "catch":
                     return SyntaxKind.CatchKeyword;
+                case "package":
+                    return SyntaxKind.PackageKeyword;
+                case "namespace":
+                    return SyntaxKind.NamespaceKeyword;
+                case "type":
+                    return SyntaxKind.TypeKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -179,6 +185,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "->";
                 case SyntaxKind.CommaToken:
                     return ",";
+                case SyntaxKind.NamespaceToken:
+                    return "::";
                 case SyntaxKind.BreakKeyword:
                     return "break";
                 case SyntaxKind.ContinueKeyword:
@@ -219,6 +227,12 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "catch";
                 case SyntaxKind.ThreadKeyword:
                     return "Thread";
+                case SyntaxKind.PackageKeyword:
+                    return "package";
+                case SyntaxKind.NamespaceKeyword:
+                    return "namespace";
+                case SyntaxKind.TypeKeyword:
+                    return "type";
                 default:
                     return null;
             }

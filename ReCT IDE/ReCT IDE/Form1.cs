@@ -204,6 +204,7 @@ namespace ReCT_IDE
         Style TypeFunctionStyle = new TextStyle(new SolidBrush(Color.FromArgb(159, 212, 85)), null, FontStyle.Regular);
         Style CommentStyle = new TextStyle(new SolidBrush(Color.FromArgb(100, 100, 100)), null, FontStyle.Regular);
         Style WhiteStyle = new TextStyle(Brushes.White, null, FontStyle.Regular);
+        Style SettingStyle = new TextStyle(new SolidBrush(Color.FromArgb(17, 191, 119)), null, FontStyle.Bold);
 
         public void ReloadHightlighting(TextChangedEventArgs e)
         {
@@ -237,6 +238,9 @@ namespace ReCT_IDE
 
             //function highlighting [DarkMode]
             e.ChangedRange.SetStyle(VarStyle, @"(\bvar\b|\bset\b|\bif\b|\belse\b|\bfunction\b|\btrue\b|\bfalse\b|\bmake\b|\barray\b)", RegexOptions.Singleline);
+
+            //settings
+            e.ChangedRange.SetStyle(SettingStyle, @"(\bpackage\b|\bnamespace\b|\btype\b)", RegexOptions.Singleline);
 
             //variables
             e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+<-))");

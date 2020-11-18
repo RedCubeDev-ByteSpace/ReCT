@@ -8,6 +8,8 @@ namespace ReCT.CodeAnalysis.Symbols
 {
     internal static class BuiltinFunctions
     {
+        //this all needs to go - (what a mess)
+
         //Console
         public static readonly FunctionSymbol Print = new FunctionSymbol("Print", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
         public static readonly FunctionSymbol Write = new FunctionSymbol("Write", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);

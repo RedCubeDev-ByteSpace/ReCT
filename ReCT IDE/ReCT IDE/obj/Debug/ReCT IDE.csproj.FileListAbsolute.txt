@@ -85,3 +85,51 @@ C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\DiscordRPC.pdb
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\DiscordRPC.xml
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Newtonsoft.Json.xml
 C:\Users\User\source\repos\ReCT\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Settings.resources
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT IDE.exe.config
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT IDE.exe.manifest
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT IDE.application
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT IDE.exe
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT IDE.pdb
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\DiscordRPC.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Mdb.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Pdb.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Rocks.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Newtonsoft.Json.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Buffers.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Collections.Immutable.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Memory.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Numerics.Vectors.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\DiscordRPC.pdb
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\DiscordRPC.xml
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.pdb
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Mdb.pdb
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Pdb.pdb
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Rocks.pdb
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Newtonsoft.Json.xml
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT.pdb
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Buffers.xml
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Collections.Immutable.xml
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Memory.xml
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Numerics.Vectors.xml
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Interop.WMPLib.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\AxInterop.WMPLib.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csprojAssemblyReference.cache
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\Interop.WMPLib.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\AxInterop.WMPLib.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.ResolveComReference.cache
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Error.resources
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Form1.resources
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Properties.Resources.resources
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Settings.resources
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Startup.resources
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.GenerateResource.cache
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.CoreCompileInputs.cache
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.exe.manifest
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.application
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.CopyComplete
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.exe
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.pdb

@@ -16,5 +16,7 @@ namespace ReCT.CodeAnalysis.Syntax
         public SyntaxToken OpenParenthesisToken { get; }
         public SeparatedSyntaxList<ExpressionSyntax> Arguments { get; }
         public SyntaxToken CloseParenthesisToken { get; }
+
+        public string Namespace = "";
     }
 }

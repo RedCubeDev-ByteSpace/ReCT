@@ -83,6 +83,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _envDie;
         private readonly AssemblyDefinition _assemblyDefinition;
         private readonly Dictionary<FunctionSymbol, MethodDefinition> _methods = new Dictionary<FunctionSymbol, MethodDefinition>();
+        private readonly Dictionary<string, Package.Package> _packages = new Dictionary<string, Package.Package>();
         private readonly Dictionary<string, MethodDefinition> str_methods = new Dictionary<string, MethodDefinition>();
         private readonly Dictionary<VariableSymbol, VariableDefinition> _locals = new Dictionary<VariableSymbol, VariableDefinition>();
         private readonly Dictionary<VariableSymbol, FieldDefinition> _globals = new Dictionary<VariableSymbol, FieldDefinition>();
@@ -389,8 +390,14 @@ namespace ReCT.CodeAnalysis.Emit
             if (_diagnostics.Any())
                 return _diagnostics.ToImmutableArray();
 
+            foreach (Package.Package p in program.Packages)
+            {
+                s_assemblies.Add(AssemblyDefinition.ReadAssembly(p.fullName));
+                _packages.Add(p.name, p);
+            }
+
             var objectType = _knownTypes[TypeSymbol.Any];
-            _typeDefinition = new TypeDefinition("", "Program", TypeAttributes.Abstract | TypeAttributes.Sealed, objectType);
+            _typeDefinition = new TypeDefinition(program.Namespace, program.Type == "" ? "Program" : program.Type, TypeAttributes.Abstract | TypeAttributes.Sealed, objectType);
             _assemblyDefinition.MainModule.Types.Add(_typeDefinition);
 
             foreach (var functionWithBody in program.Functions)
@@ -410,7 +417,7 @@ namespace ReCT.CodeAnalysis.Emit
         private void EmitFunctionDeclaration(FunctionSymbol function)
         {
             var functionType = _knownTypes[function.Type];
-            var method = new MethodDefinition(function.Name, MethodAttributes.Static | MethodAttributes.Private, functionType);
+            var method = new MethodDefinition(function.Name, MethodAttributes.Static | (function.IsPublic ? MethodAttributes.Public : MethodAttributes.Private), functionType);
 
             foreach (var parameter in function.Parameters)
             {
@@ -451,6 +458,9 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitStatement(ILProcessor ilProcessor, BoundStatement node)
         {
+            if (node == null)
+                return;
+
             switch (node.Kind)
             {
                 case BoundNodeKind.VariableDeclaration:
@@ -1149,6 +1159,25 @@ namespace ReCT.CodeAnalysis.Emit
             }
             else
             {
+                if (node.Function.Package != "")
+                {
+                    List<string> args = new List<string>();
+
+                    foreach(FunctionSymbol f in _packages[node.Function.Package].scope.GetDeclaredFunctions())
+                    {
+                        if (f.Name == node.Function.Name)
+                        {
+                            foreach (ParameterSymbol p in f.Parameters)
+                            {
+                                args.Add(_knownTypes[p.Type].Name);
+                            }
+                        }
+                    }
+
+                    var method = ResolveMethodPublic(node.Function.Package, node.Function.Name, args.ToArray());
+                    ilProcessor.Emit(OpCodes.Call, method);
+                }
+
                 var methodDefinition = _methods[node.Function];
                 ilProcessor.Emit(OpCodes.Call, methodDefinition);
             }

@@ -225,5 +225,15 @@ namespace ReCT.CodeAnalysis
         {
             Report(default, text);
         }
+
+        internal void ReportUnknownPackage(string package)
+        {
+            Report(default, $"Couldnt find Package '{package}'!");
+        }
+
+        internal void ReportNamespaceNotFound(TextLocation location, string @namespace)
+        {
+            Report(location, $"Couldnt find Namespace / Package '{@namespace}'! Are you missing a Package?");
+        }
     }
 }

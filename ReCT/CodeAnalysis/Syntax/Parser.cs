@@ -95,13 +95,19 @@ namespace ReCT.CodeAnalysis.Syntax
         private MemberSyntax ParseMember()
         {
             if (Current.Kind == SyntaxKind.FunctionKeyword)
-                return ParseFunctionDeclaration();
+                return ParseFunctionDeclaration(false);
+
+            if (Current.Kind == SyntaxKind.SetKeyword && Peek(1).Kind == SyntaxKind.FunctionKeyword)
+                return ParseFunctionDeclaration(true);
 
             return ParseGlobalStatement();
         }
 
-        private MemberSyntax ParseFunctionDeclaration()
+        private MemberSyntax ParseFunctionDeclaration(bool isPublic)
         {
+            if (isPublic)
+                MatchToken(SyntaxKind.SetKeyword);
+
             var functionKeyword = MatchToken(SyntaxKind.FunctionKeyword);
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
             var openParenthesisToken = MatchToken(SyntaxKind.OpenParenthesisToken);
@@ -109,7 +115,7 @@ namespace ReCT.CodeAnalysis.Syntax
             var closeParenthesisToken = MatchToken(SyntaxKind.CloseParenthesisToken);
             var type = ParseOptionalTypeClause();
             var body = ParseBlockStatement();
-            return new FunctionDeclarationSyntax(_syntaxTree, functionKeyword, identifier, openParenthesisToken, parameters, closeParenthesisToken, type, body);
+            return new FunctionDeclarationSyntax(_syntaxTree, functionKeyword, identifier, openParenthesisToken, parameters, closeParenthesisToken, type, body, isPublic);
         }
 
         private ExpressionSyntax ParseThreadCreation()
@@ -175,6 +181,12 @@ namespace ReCT.CodeAnalysis.Syntax
         {
             switch (Current.Kind)
             {
+                case SyntaxKind.PackageKeyword:
+                    return ParsePackageStatement();
+                case SyntaxKind.NamespaceKeyword:
+                    return ParseNamespaceStatement();
+                case SyntaxKind.TypeKeyword:
+                    return ParseTypeStatement();
                 case SyntaxKind.OpenBraceToken:
                     return ParseBlockStatement();
                 case SyntaxKind.SetKeyword:
@@ -201,6 +213,21 @@ namespace ReCT.CodeAnalysis.Syntax
                 default:
                     return ParseExpressionStatement();
             }
+        }
+
+        private StatementSyntax ParseNamespaceStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.NamespaceKeyword);
+            var name = NextToken();
+
+            return new NamespaceStatementSyntax(_syntaxTree, keyword, name);
+        }
+        private StatementSyntax ParseTypeStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.TypeKeyword);
+            var name = NextToken();
+
+            return new TypeStatementSyntax(_syntaxTree, keyword, name);
         }
 
         private BlockStatementSyntax ParseBlockStatement()
@@ -260,6 +287,13 @@ namespace ReCT.CodeAnalysis.Syntax
             var statement = ParseStatement();
             var elseClause = ParseElseClause();
             return new IfStatementSyntax(_syntaxTree, keyword, condition, statement, elseClause);
+        }
+
+        private StatementSyntax ParsePackageStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.PackageKeyword);
+            var package = NextToken();
+            return new PackageStatementSyntax(_syntaxTree, keyword, package);
         }
 
         private StatementSyntax ParseTryCatchStatement()
@@ -500,6 +534,15 @@ namespace ReCT.CodeAnalysis.Syntax
             if (Peek(0).Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.OpenParenthesisToken)
                 return ParseCallExpression();
 
+            if (Current.Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.NamespaceToken)
+            {
+                var namespc = NextToken();
+                MatchToken(SyntaxKind.NamespaceToken);
+                var call = (CallExpressionSyntax)ParseCallExpression();
+                call.Namespace = namespc.Text;
+                return call;
+            }
+
             return ParseNameExpression();
         }
 
@@ -542,7 +585,7 @@ namespace ReCT.CodeAnalysis.Syntax
         {
             var identifierToken = MatchToken(SyntaxKind.IdentifierToken);
 
-            if (Peek(0).Kind == SyntaxKind.AccessToken)
+            if (Current.Kind == SyntaxKind.AccessToken)
             {
                 MatchToken(SyntaxKind.AccessToken);
                 var internalToken = ParseCallExpression();
