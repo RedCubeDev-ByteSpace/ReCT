@@ -28,8 +28,6 @@ namespace ReCT.CodeAnalysis.Binding
             _scope = new BoundScope(parent);
             _isScript = isScript;
             _function = function;
-            _namespace = "";
-            _type = "";
 
             if (function != null)
             {

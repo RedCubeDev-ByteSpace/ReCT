@@ -350,6 +350,7 @@
             // 
             // Typechecker
             // 
+            this.Typechecker.Enabled = true;
             this.Typechecker.Interval = 5000D;
             this.Typechecker.SynchronizingObject = this;
             this.Typechecker.Elapsed += new System.Timers.ElapsedEventHandler(this.timer1_Elapsed);

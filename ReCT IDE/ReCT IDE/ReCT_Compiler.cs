@@ -189,7 +189,7 @@ namespace ReCT_IDE
 
             ImmutableArray<Diagnostic> errors = ImmutableArray<Diagnostic>.Empty;
 
-            try
+            //try
             {
                 var compilation = Compilation.Create(syntaxTree);
                 errors = compilation.Emit(Path.GetFileNameWithoutExtension(fileOut), new string[] { @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Net.Sockets.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.IO.FileSystem.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Console.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Threading.Thread.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Threading.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.Extensions.dll" }, Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
@@ -223,34 +223,34 @@ namespace ReCT_IDE
                     sw.Write($"dotnet exec \"{Path.GetFileNameWithoutExtension(fileOut)}.dll\"");
                 }
             }
-            catch (Exception e)
-            {
-                errorBox.Show();
-                errorBox.errorBox.Clear();
+            //catch (Exception e)
+            //{
+            //    errorBox.Show();
+            //    errorBox.errorBox.Clear();
 
-                if (errors.Any())
-                {
-                    errorBox.Show();
-                    errorBox.errorBox.Clear();
-                    foreach (Diagnostic d in errors)
-                    {
-                        if (d.Location.Text != null)
-                        {
-                            errorBox.errorBox.Text += $"[L: {d.Location.StartLine}, C: {d.Location.StartCharacter}] {d.Message}\n";
-                        }
-                        else
-                            errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
-                    }
-                    errorBox.version.Text = ReCT.info.Version;
-                    return false;
-                }
-                else
-                {
-                    errorBox.errorBox.Text = "THIS ERROR MIGHT BE INTERNAL! Please try again in a few seconds. (ReCT is unstable sometimes so you might have to try multiple times) \n" + errorBox.errorBox.Text;
-                    errorBox.errorBox.Text += e.Source + ": " + e.Message + "\n" + e.StackTrace;
-                    return false;
-                }
-            }
+            //    if (errors.Any())
+            //    {
+            //        errorBox.Show();
+            //        errorBox.errorBox.Clear();
+            //        foreach (Diagnostic d in errors)
+            //        {
+            //            if (d.Location.Text != null)
+            //            {
+            //                errorBox.errorBox.Text += $"[L: {d.Location.StartLine}, C: {d.Location.StartCharacter}] {d.Message}\n";
+            //            }
+            //            else
+            //                errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
+            //        }
+            //        errorBox.version.Text = ReCT.info.Version;
+            //        return false;
+            //    }
+            //    else
+            //    {
+            //        errorBox.errorBox.Text = "THIS ERROR MIGHT BE INTERNAL! Please try again in a few seconds. (ReCT is unstable sometimes so you might have to try multiple times) \n" + errorBox.errorBox.Text;
+            //        errorBox.errorBox.Text += e.Source + ": " + e.Message + "\n" + e.StackTrace;
+            //        return false;
+            //    }
+            //}
             return true;
         }
         public void CompileDNCLI(string fileName, string outName)
