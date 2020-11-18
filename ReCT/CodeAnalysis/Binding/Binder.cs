@@ -31,8 +31,6 @@ namespace ReCT.CodeAnalysis.Binding
             _namespace = "";
             _type = "";
 
-            _diagnostics = new DiagnosticBag();
-
             if (function != null)
             {
                 foreach (var p in function.Parameters)
@@ -149,10 +147,12 @@ namespace ReCT.CodeAnalysis.Binding
 
                 functionBodies.Add(function, loweredBody);
 
-                Console.WriteLine($"Added {_diagnostics.Count()} diagnostics to bag");
-
-                diagnostics.AddRange(binder.Diagnostics);
             }
+
+            Console.WriteLine($"Added {Binder._diagnostics.Count()} diagnostics to bag");
+            diagnostics.AddRange(Binder._diagnostics);
+
+            Binder._diagnostics = new DiagnosticBag();
 
             if (globalScope.MainFunction != null && globalScope.Statements.Any())
             {
