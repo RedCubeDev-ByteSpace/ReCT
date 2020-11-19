@@ -19,9 +19,9 @@ namespace ReCT.CodeAnalysis.Binding
         private int _labelCounter;
         private BoundScope _scope;
 
-        static List<Package.Package> _packageNamespaces = new List<Package.Package>();
-        private static string _namespace = "";
-        private static string _type = "";
+        public static List<Package.Package> _packageNamespaces = new List<Package.Package>();
+        public static string _namespace = "";
+        public static string _type = "";
 
         public Binder(bool isScript, BoundScope parent, FunctionSymbol function)
         {
@@ -132,7 +132,7 @@ namespace ReCT.CodeAnalysis.Binding
             var functionBodies = ImmutableDictionary.CreateBuilder<FunctionSymbol, BoundBlockStatement>();
             var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
 
-            _packageNamespaces = new List<Package.Package>();
+            //_packageNamespaces = new List<Package.Package>();
 
             foreach (var function in globalScope.Functions)
             {
@@ -350,6 +350,7 @@ namespace ReCT.CodeAnalysis.Binding
             }
 
             _packageNamespaces.Add(Package.Packager.loadPackage(Package.Packager.systemPackages[package]));
+            Console.WriteLine(_packageNamespaces.Last().name);
             return null;
         }
 
@@ -753,7 +754,7 @@ namespace ReCT.CodeAnalysis.Binding
                 boundArguments.Add(boundArgument);
             }
 
-            var symbol = _scope.TryLookupSymbol(syntax.Identifier.Text);
+            var symbol = (syntax.Namespace == "" ? _scope : _packageNamespaces.FirstOrDefault(x => x.name == syntax.Namespace).scope).TryLookupSymbol(syntax.Identifier.Text);
             if (symbol == null)
             {
                 _diagnostics.ReportUndefinedFunction(syntax.Identifier.Location, syntax.Identifier.Text);
@@ -865,6 +866,9 @@ namespace ReCT.CodeAnalysis.Binding
         {
             switch (name)
             {
+                case "void":
+                    return TypeSymbol.Void;
+
                 case "any":
                     return TypeSymbol.Any;
                 case "bool":

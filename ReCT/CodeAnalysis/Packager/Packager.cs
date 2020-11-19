@@ -3,9 +3,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
-using System.Reflection;
 using System.Collections.Immutable;
 using System.Linq;
+using Mono.Cecil;
 
 namespace ReCT.CodeAnalysis.Package
 {
@@ -20,72 +20,77 @@ namespace ReCT.CodeAnalysis.Package
         public static Package loadPackage(string sysPack)
         {
             var scope = new Binding.BoundScope(null);
+            var key = systemPackages.FirstOrDefault(x => x.Value == sysPack).Key;
 
-            sysPack = "Packages\\" + sysPack;
+            sysPack = "Packages/" + sysPack;
 
-            Assembly Asm = Assembly.LoadFrom(@"C:\Users\Salami\source\repos\DNTest\DNTest\bin\Debug\netcoreapp3.1\Packages\ReCT.sys.pack");
+            if (!File.Exists(sysPack))
+                Console.WriteLine($"Couldnt find file '{sysPack}'!");
 
-            var Asmtype = Asm.GetTypes();
+            AssemblyDefinition Asm = AssemblyDefinition.ReadAssembly(sysPack);
+            TypeDefinition AsmType = Asm.MainModule.Types.FirstOrDefault(x => x.Name == key);
 
-            foreach (Type t in Asmtype)
+            Console.WriteLine($"Loading Package '{sysPack} [{AsmType.Namespace}]'...");
+
+            var methods = AsmType.Methods;//Asmtype.GetMethods(BindingFlags.Public | BindingFlags.Static);
+
+            foreach (MethodDefinition m in methods)
             {
-                Console.WriteLine(t.Name);
+                if (!m.IsPublic)
+                    continue;
 
-                var methods = t.GetMembers(BindingFlags.Public | BindingFlags.Static);
+                var parameters = ImmutableArray.CreateBuilder<Symbols.ParameterSymbol>();
 
-                foreach (MemberInfo m in methods)
+                foreach (ParameterDefinition p in m.Parameters)
                 {
-                    Console.WriteLine("-> " + m.Name);
+                    var parameterName = p.Name;
+                    var parameterType = Binding.Binder.LookupType(netTypeLookup(p.ParameterType.Name.ToLower()));
+                    Console.WriteLine($"TYPES: '{p.ParameterType.Name}' and '{parameterType.Name}'");
+
+                    var parameter = new Symbols.ParameterSymbol(parameterName, parameterType, parameters.Count);
+                    parameters.Add(parameter);
                 }
+
+                var returnType = netTypeLookup(m.MethodReturnType.Name.ToLower());
+                var methodType = Binding.Binder.LookupType(returnType);
+                Console.WriteLine($"MTYPE: '{m.MethodReturnType.Name}' and '{methodType.Name}'");
+
+                scope.TryDeclareFunction(new Symbols.FunctionSymbol(m.Name, parameters.ToImmutable(), methodType, package: key));
             }
 
-            //if (!File.Exists(sysPack))
-            //    Console.WriteLine($"Couldnt find file '{sysPack}'!");
+            return new Package(key, sysPack, scope);
+        }
 
-            //Assembly Asm;
-            //Type[] AsmTypes;
-            //Type Asmtype = null;
-
-            //try
-            //{
-            //    Asm = Assembly.LoadFrom(Path.GetFullPath(sysPack));
-            //    AsmTypes = Asm.GetTypes();
-            //    Asmtype = AsmTypes[0];
-            //}
-            //catch (Exception ex)
-            //{
-            //    if (ex is System.Reflection.ReflectionTypeLoadException)
-            //    {
-            //        var typeLoadException = ex as ReflectionTypeLoadException;
-
-            //        foreach(Exception e in typeLoadException.LoaderExceptions)
-            //        {
-            //            Console.WriteLine(e);
-            //        }
-            //    }
-            //}
-
-            //Console.WriteLine($"Loading Package '{sysPack} [{Asmtype}]'...");
-
-            //var methods = Asmtype.GetMethods(BindingFlags.Public | BindingFlags.Static);
-
-            //foreach (MethodInfo m in methods)
-            //{
-            //    var parameters = ImmutableArray.CreateBuilder<Symbols.ParameterSymbol>();
-
-            //    foreach (ParameterInfo p in m.GetParameters())
-            //    {
-            //        var parameterName = p.Name;
-            //        var parameterType = Binding.Binder.LookupType(p.GetType().Name);
-
-            //        var parameter = new Symbols.ParameterSymbol(parameterName, parameterType, parameters.Count);
-            //        parameters.Add(parameter);
-            //    }
-
-            //    scope.TryDeclareFunction(new Symbols.FunctionSymbol(m.Name, parameters.ToImmutable(), Binding.Binder.LookupType(m.GetType().Name), package: sysPack));
-            //}
-
-            return new Package(systemPackages.FirstOrDefault(x => x.Value == sysPack).Key, sysPack, scope);
+        static string netTypeLookup(string netversion)
+        {
+            switch (netversion)
+            {
+                case "object":
+                    return "any";
+                case "boolean":
+                    return "bool";
+                case "int32":
+                    return "int";
+                case "single":
+                    return "float";
+                case "byte":
+                    return "byte";
+                case "string":
+                    return "string";
+                case "void":
+                case "":
+                    return "void";
+                case "threading.thread":
+                    return "thread";
+                case "net.sockets.tcpclient":
+                    return "tcpclient";
+                case "net.sockets.tcplistener":
+                    return "tcplistener";
+                case "net.sockets.socket":
+                    return "tcpscoket";
+                default:
+                    throw new Exception($"Couldnt find .Net type '{netversion}'");
+            }
         }
     }
     public class Package

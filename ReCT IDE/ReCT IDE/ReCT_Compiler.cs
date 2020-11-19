@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using ReCT;
 using ReCT.CodeAnalysis;
+using ReCT.CodeAnalysis.Package;
 using ReCT.CodeAnalysis.Symbols;
 using ReCT.CodeAnalysis.Syntax;
 using System.Diagnostics;
@@ -20,18 +21,28 @@ namespace ReCT_IDE
     {
         public string Variables = "";
         public string Functions = "";
+        public string Namespaces = "";
+        public string NamespaceFunctions = "";
         public VariableSymbol[] variables;
         public FunctionSymbol[] functions;
+        public Package[] packages;
         public Diagnostic[] errors = new Diagnostic[0];
+        public static bool inUse = false;
 
         public void Check(string code, Form1 form, string inPath)
         {
+            if (inUse)
+                return;
+
+            inUse = true;
+
+            Compilation.resetBinder();
+
             form.startAllowed(false);
             var syntaxTree = SyntaxTree.Parse(code);
 
             if (code.Contains("#attach"))
             {
-                var lookingforfile = "";
                 try
                 {
                     List<string> neededFiles = new List<string>();
@@ -51,8 +62,6 @@ namespace ReCT_IDE
                             lp = Path.GetDirectoryName(inPath) + "\\" + p;
                         }
 
-                        lookingforfile = lp;
-
                         using (StreamReader sr = new StreamReader(new FileStream(lp, FileMode.Open)))
                         {
                             neededCode.Add(sr.ReadToEnd());
@@ -69,6 +78,7 @@ namespace ReCT_IDE
                 }
                 catch
                 {
+                    inUse = false;
                     return;
                 }
             }
@@ -78,6 +88,8 @@ namespace ReCT_IDE
 
             Variables = "";
             Functions = "";
+            Namespaces = "";
+            NamespaceFunctions = "";
 
             var vars = compilation.Variables.ToArray();
             variables = vars;
@@ -101,10 +113,41 @@ namespace ReCT_IDE
                 Functions = Functions.Substring(0, Functions.Length - 1);
                 Functions = "(" + Functions + ")";
             }
+            var nspc = Compilation.GetPackages();
+            packages = nspc;
+            foreach (ReCT.CodeAnalysis.Package.Package p in nspc)
+            {
+                Namespaces += "\\b" + p.name + "\\b" + "|";
+
+                var funcs = p.scope.GetDeclaredFunctions();
+
+                foreach (FunctionSymbol f in funcs)
+                {
+                    NamespaceFunctions += "\\b" + f.Name + "\\b" + "|";
+                }
+            }
+            if (Namespaces != "")
+            {
+                Namespaces = Namespaces.Substring(0, Namespaces.Length - 1);
+                Namespaces = "(" + Namespaces + ")";
+            }
+            if (NamespaceFunctions != "")
+            {
+                NamespaceFunctions = NamespaceFunctions.Substring(0, NamespaceFunctions.Length - 1);
+                NamespaceFunctions = "(" + NamespaceFunctions + ")";
+            }
             form.startAllowed(true);
+            inUse = false;
         }
         public static bool CompileRCTBC(string fileOut, string inPath, Error errorBox)
         {
+            if (inUse)
+                return false;
+
+            inUse = true;
+
+            Compilation.resetBinder();
+
             string code = "";
             using (StreamReader sr = new StreamReader(new FileStream(inPath, FileMode.Open)))
             {
@@ -161,6 +204,7 @@ namespace ReCT_IDE
                     errorBox.Show();
                     errorBox.errorBox.Clear();
                     errorBox.errorBox.Text = $"[L: ?, C: ?] Could not find attachment file '{lookingforfile}'!";
+                    inUse = false;
                     return false;
                 }
 
@@ -184,12 +228,13 @@ namespace ReCT_IDE
                         errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
                 }
                 errorBox.version.Text = ReCT.info.Version;
+                inUse = false;
                 return false;
             }
 
             ImmutableArray<Diagnostic> errors = ImmutableArray<Diagnostic>.Empty;
 
-            //try
+            try
             {
                 var compilation = Compilation.Create(syntaxTree);
                 errors = compilation.Emit(Path.GetFileNameWithoutExtension(fileOut), new string[] { @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Net.Sockets.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.IO.FileSystem.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Console.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Threading.Thread.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Threading.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.Extensions.dll" }, Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
@@ -210,47 +255,60 @@ namespace ReCT_IDE
                             errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
                     }
                     errorBox.version.Text = ReCT.info.Version;
+                    inUse = false;
                     return false;
                 }
 
                 //generate runtimeconfig
-                using (StreamWriter sw = new StreamWriter(new FileStream(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".runtimeconfig.json", FileMode.Create)))
+                var ext = Path.GetExtension(fileOut);
+                if (ext == ".cmd")
                 {
-                    sw.Write("{\"runtimeOptions\": {\"tfm\": \"netcoreapp3.1\",\"framework\": {\"name\": \"Microsoft.NETCore.App\",\"version\": \"3.1.0\"}}}");
-                }
-                using (StreamWriter sw = new StreamWriter(new FileStream(fileOut, FileMode.Create)))
-                {
-                    sw.Write($"dotnet exec \"{Path.GetFileNameWithoutExtension(fileOut)}.dll\"");
+                    using (StreamWriter sw = new StreamWriter(new FileStream(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".runtimeconfig.json", FileMode.Create)))
+                    {
+                        sw.Write("{\"runtimeOptions\": {\"tfm\": \"netcoreapp3.1\",\"framework\": {\"name\": \"Microsoft.NETCore.App\",\"version\": \"3.1.0\"}}}");
+                    }
+                    using (StreamWriter sw = new StreamWriter(new FileStream(fileOut, FileMode.Create)))
+                    {
+                        sw.Write($"dotnet exec \"{Path.GetFileNameWithoutExtension(fileOut)}.dll\"");
+                    }
+
+                    foreach (ReCT.CodeAnalysis.Package.Package p in Compilation.GetPackages())
+                    {
+                        File.Copy(p.fullName, Path.GetDirectoryName(fileOut) + "/" + p.name + "lib.dll");
+                    }
                 }
             }
-            //catch (Exception e)
-            //{
-            //    errorBox.Show();
-            //    errorBox.errorBox.Clear();
+            catch (Exception e)
+            {
+                errorBox.Show();
+                errorBox.errorBox.Clear();
 
-            //    if (errors.Any())
-            //    {
-            //        errorBox.Show();
-            //        errorBox.errorBox.Clear();
-            //        foreach (Diagnostic d in errors)
-            //        {
-            //            if (d.Location.Text != null)
-            //            {
-            //                errorBox.errorBox.Text += $"[L: {d.Location.StartLine}, C: {d.Location.StartCharacter}] {d.Message}\n";
-            //            }
-            //            else
-            //                errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
-            //        }
-            //        errorBox.version.Text = ReCT.info.Version;
-            //        return false;
-            //    }
-            //    else
-            //    {
-            //        errorBox.errorBox.Text = "THIS ERROR MIGHT BE INTERNAL! Please try again in a few seconds. (ReCT is unstable sometimes so you might have to try multiple times) \n" + errorBox.errorBox.Text;
-            //        errorBox.errorBox.Text += e.Source + ": " + e.Message + "\n" + e.StackTrace;
-            //        return false;
-            //    }
-            //}
+                inUse = false;
+
+                if (errors.Any())
+                {
+                    errorBox.Show();
+                    errorBox.errorBox.Clear();
+                    foreach (Diagnostic d in errors)
+                    {
+                        if (d.Location.Text != null)
+                        {
+                            errorBox.errorBox.Text += $"[L: {d.Location.StartLine}, C: {d.Location.StartCharacter}] {d.Message}\n";
+                        }
+                        else
+                            errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
+                    }
+                    errorBox.version.Text = ReCT.info.Version;
+                    return false;
+                }
+                else
+                {
+                    errorBox.errorBox.Text = "THIS ERROR MIGHT BE INTERNAL! Please try again in a few seconds. (ReCT is unstable sometimes so you might have to try multiple times) \n" + errorBox.errorBox.Text;
+                    errorBox.errorBox.Text += e.Source + ": " + e.Message + "\n" + e.StackTrace;
+                    return false;
+                }
+            }
+            inUse = false;
             return true;
         }
         public void CompileDNCLI(string fileName, string outName)

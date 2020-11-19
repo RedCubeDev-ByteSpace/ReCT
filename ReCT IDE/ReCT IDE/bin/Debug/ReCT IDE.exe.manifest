@@ -163,26 +163,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT IDE.exe" size="3217368">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT IDE.exe" size="3219416">
       <assemblyIdentity name="ReCT IDE" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>hhTcVVCs0ObTcCDmvYBus+8jwHSHgCgV0bsgBRpEB0s=</dsig:DigestValue>
+        <dsig:DigestValue>3Oe6teSO4HUj+mHCh6v5a0S5ZtlBQI6X+sYkyM1fKUY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT.dll" size="154624">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT.dll" size="156672">
       <assemblyIdentity name="ReCT" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>7g+LNegR71v9CFUREiQ7fPH4dIw3AajL2Ys43Szyy4Y=</dsig:DigestValue>
+        <dsig:DigestValue>vzXStXhV1E7swfUSAUM2B9ofMD5ODOWMsFP1LY4qFMc=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

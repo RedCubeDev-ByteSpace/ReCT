@@ -35,6 +35,17 @@ namespace ReCT.CodeAnalysis
             return new Compilation(isScript: true, previous, syntaxTrees);
         }
 
+        public static void resetBinder()
+        {
+            Binder._packageNamespaces.Clear();
+            Binder._namespace = "";
+            Binder._type = "";
+        }
+        public static Package.Package[] GetPackages()
+        {
+            return Binder._packageNamespaces.ToArray();
+        }
+
         public bool IsScript { get; }
         public Compilation Previous { get; }
         public ImmutableArray<SyntaxTree> SyntaxTrees { get; }

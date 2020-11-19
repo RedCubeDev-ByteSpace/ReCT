@@ -397,7 +397,7 @@ namespace ReCT.CodeAnalysis.Emit
             }
 
             var objectType = _knownTypes[TypeSymbol.Any];
-            _typeDefinition = new TypeDefinition(program.Namespace, program.Type == "" ? "Program" : program.Type, TypeAttributes.Abstract | TypeAttributes.Sealed, objectType);
+            _typeDefinition = new TypeDefinition(program.Namespace, program.Type == "" ? "Program" : program.Type, TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.Public, objectType);
             _assemblyDefinition.MainModule.Types.Add(_typeDefinition);
 
             foreach (var functionWithBody in program.Functions)
@@ -603,7 +603,14 @@ namespace ReCT.CodeAnalysis.Emit
             EmitExpression(ilProcessor, node.Expression);
 
             if (node.Expression.Type != TypeSymbol.Void && !(node.Expression is BoundAssignmentExpression))
-                ilProcessor.Emit(OpCodes.Pop);
+            {
+                var varDef = new VariableDefinition(_knownTypes[node.Expression.Type]);
+
+                ilProcessor.Body.Variables.Add(varDef);
+
+                ilProcessor.Emit(OpCodes.Stloc, varDef);
+                ilProcessor.Emit(OpCodes.Ldloc, varDef);
+            }
         }
 
         private void EmitExpression(ILProcessor ilProcessor, BoundExpression node)
@@ -1174,8 +1181,9 @@ namespace ReCT.CodeAnalysis.Emit
                         }
                     }
 
-                    var method = ResolveMethodPublic(node.Function.Package, node.Function.Name, args.ToArray());
+                    var method = ResolveMethodPublic(node.Function.Package + "." + node.Function.Package, node.Function.Name, args.ToArray());
                     ilProcessor.Emit(OpCodes.Call, method);
+                    return;
                 }
 
                 var methodDefinition = _methods[node.Function];

@@ -205,6 +205,7 @@ namespace ReCT_IDE
         Style CommentStyle = new TextStyle(new SolidBrush(Color.FromArgb(100, 100, 100)), null, FontStyle.Regular);
         Style WhiteStyle = new TextStyle(Brushes.White, null, FontStyle.Regular);
         Style SettingStyle = new TextStyle(new SolidBrush(Color.FromArgb(17, 191, 119)), null, FontStyle.Bold);
+        Style PackageStyle = new TextStyle(new SolidBrush(Color.FromArgb(252, 186, 3)), null, FontStyle.Regular);
 
         public void ReloadHightlighting(TextChangedEventArgs e)
         {
@@ -236,7 +237,7 @@ namespace ReCT_IDE
             //types
             e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\btcpsocketArr\b|\btcplistenerArr\b|\btcpclientArr\b|\btcpsocket\b|\btcplistener\b|\btcpclient\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b|\bfloat\b|\bthread\b|\banyArr\b|\bboolArr\b|\bintArr\b|\bstringArr\b|\bfloatArr\b|\bthreadArr\b)");
 
-            //function highlighting [DarkMode]
+            //statementHighlingting
             e.ChangedRange.SetStyle(VarStyle, @"(\bvar\b|\bset\b|\bif\b|\belse\b|\bfunction\b|\btrue\b|\bfalse\b|\bmake\b|\barray\b)", RegexOptions.Singleline);
 
             //settings
@@ -250,6 +251,12 @@ namespace ReCT_IDE
             //functions
             e.ChangedRange.SetStyle(UserFunctionStyle, @"(?<=\bfunction\s)(\w+)");
             e.ChangedRange.SetStyle(UserFunctionStyle, rectCompCheck.Functions);
+
+            //packages
+            e.ChangedRange.SetStyle(PackageStyle, rectCompCheck.Namespaces);
+
+            //package functions
+            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\w*(?<=::)" + rectCompCheck.NamespaceFunctions + ")");
 
             //type functions
             e.ChangedRange.SetStyle(TypeFunctionStyle, @"(?<=\>>\s)(\w+)");
@@ -462,6 +469,14 @@ namespace ReCT_IDE
                         ACItems.Add(v.Name);
                     }
 
+                    foreach (ReCT.CodeAnalysis.Package.Package p in rectCompCheck.packages)
+                    {
+                        foreach (ReCT.CodeAnalysis.Symbols.FunctionSymbol f in p.scope.GetDeclaredFunctions())
+                        {
+                            ACItems.Add(p.name + "::" + f.Name);
+                        }
+                    }
+
                     ReCTAutoComplete.Items = ACItems.ToArray();
                 }
             }
@@ -480,7 +495,7 @@ namespace ReCT_IDE
         {
             Typechecker.Enabled = false;
             errorBox.Hide();
-            saveFileDialog1.Filter = "Launcher (*.cmd)|*.cmd|All files (*.*)|*.*";
+            saveFileDialog1.Filter = "Launcher (*.cmd)|*.cmd|Assembly (*.dll)|*.dll|All files (*.*)|*.*";
             var res = saveFileDialog1.ShowDialog();
 
             if (res != DialogResult.OK)
