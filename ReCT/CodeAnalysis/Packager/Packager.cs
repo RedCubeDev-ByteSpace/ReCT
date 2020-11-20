@@ -32,7 +32,7 @@ namespace ReCT.CodeAnalysis.Package
 
             Console.WriteLine($"Loading Package '{sysPack} [{AsmType.Namespace}]'...");
 
-            var methods = AsmType.Methods;//Asmtype.GetMethods(BindingFlags.Public | BindingFlags.Static);
+            var methods = AsmType.Methods;
 
             foreach (MethodDefinition m in methods)
             {
@@ -45,15 +45,16 @@ namespace ReCT.CodeAnalysis.Package
                 {
                     var parameterName = p.Name;
                     var parameterType = Binding.Binder.LookupType(netTypeLookup(p.ParameterType.Name.ToLower()));
-                    Console.WriteLine($"TYPES: '{p.ParameterType.Name}' and '{parameterType.Name}'");
 
                     var parameter = new Symbols.ParameterSymbol(parameterName, parameterType, parameters.Count);
                     parameters.Add(parameter);
                 }
 
-                var returnType = netTypeLookup(m.MethodReturnType.Name.ToLower());
+                var returnType = netTypeLookup(m.ReturnType.Name.ToLower());
+
+                //Console.WriteLine("FUNCTON: " + m.Name + "; TYPE: " + m.MethodReturnType.Name + "; RTYPE: " + m.ReturnType.Name);
+
                 var methodType = Binding.Binder.LookupType(returnType);
-                Console.WriteLine($"MTYPE: '{m.MethodReturnType.Name}' and '{methodType.Name}'");
 
                 scope.TryDeclareFunction(new Symbols.FunctionSymbol(m.Name, parameters.ToImmutable(), methodType, package: key));
             }

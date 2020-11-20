@@ -604,12 +604,7 @@ namespace ReCT.CodeAnalysis.Emit
 
             if (node.Expression.Type != TypeSymbol.Void && !(node.Expression is BoundAssignmentExpression))
             {
-                var varDef = new VariableDefinition(_knownTypes[node.Expression.Type]);
-
-                ilProcessor.Body.Variables.Add(varDef);
-
-                ilProcessor.Emit(OpCodes.Stloc, varDef);
-                ilProcessor.Emit(OpCodes.Ldloc, varDef);
+                ilProcessor.Emit(OpCodes.Pop);
             }
         }
 
@@ -1176,7 +1171,7 @@ namespace ReCT.CodeAnalysis.Emit
                         {
                             foreach (ParameterSymbol p in f.Parameters)
                             {
-                                args.Add(_knownTypes[p.Type].Name);
+                                args.Add(_knownTypes[p.Type].FullName);
                             }
                         }
                     }

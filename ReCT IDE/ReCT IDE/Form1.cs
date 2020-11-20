@@ -482,6 +482,7 @@ namespace ReCT_IDE
             }
             catch(Exception ee)
             {
+                ReCT_Compiler.inUse = false;
                 //Console.WriteLine(ee);
             }
         }

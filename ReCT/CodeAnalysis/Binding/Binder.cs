@@ -147,7 +147,6 @@ namespace ReCT.CodeAnalysis.Binding
 
             }
 
-            Console.WriteLine($"Added {Binder._diagnostics.Count()} diagnostics to bag");
             diagnostics.AddRange(Binder._diagnostics);
 
             Binder._diagnostics = new DiagnosticBag();
@@ -288,7 +287,6 @@ namespace ReCT.CodeAnalysis.Binding
 
         private BoundStatement BindStatementInternal(StatementSyntax syntax)
         {
-            Console.WriteLine("diagnostics: " + _diagnostics.Count());
 
             switch (syntax.Kind)
             {
@@ -544,6 +542,7 @@ namespace ReCT.CodeAnalysis.Binding
             if (!canBeVoid && result.Type == TypeSymbol.Void)
             {
                 _diagnostics.ReportExpressionMustHaveValue(syntax.Location);
+                throw new Exception("no.");
                 return new BoundErrorExpression();
             }
 
