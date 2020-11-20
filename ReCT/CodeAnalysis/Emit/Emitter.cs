@@ -1027,69 +1027,8 @@ namespace ReCT.CodeAnalysis.Emit
             foreach (var argument in node.Arguments)
                 EmitExpression(ilProcessor, argument);
 
-            if (node.Function == BuiltinFunctions.Input)
-                ilProcessor.Emit(OpCodes.Call, _consoleReadLineReference);
-            else if (node.Function == BuiltinFunctions.Print)
-                ilProcessor.Emit(OpCodes.Call, _consoleWriteLineReference);
-            else if (node.Function == BuiltinFunctions.Write)
-                ilProcessor.Emit(OpCodes.Call, _consoleWriteReference);
-            else if (node.Function == BuiltinFunctions.Version)
-                ilProcessor.Emit(OpCodes.Ldstr, info.Version);
-            else if (node.Function == BuiltinFunctions.Clear)
-                ilProcessor.Emit(OpCodes.Call, _consoleClearReference);
-            else if (node.Function == BuiltinFunctions.SetCursor)
-                ilProcessor.Emit(OpCodes.Call, _consoleSetCoursorReference);
-            else if (node.Function == BuiltinFunctions.GetSizeX)
-                ilProcessor.Emit(OpCodes.Call, _consoleGetWidthReference);
-            else if (node.Function == BuiltinFunctions.GetSizeY)
-                ilProcessor.Emit(OpCodes.Call, _consoleGetHeightReference);
-            else if (node.Function == BuiltinFunctions.SetSize)
-                ilProcessor.Emit(OpCodes.Call, _consoleSetSizeReference);
-            else if (node.Function == BuiltinFunctions.Sleep)
-                ilProcessor.Emit(OpCodes.Call, _threadSlooopeReference);
-            else if (node.Function == BuiltinFunctions.InputKey)
-            {
-                var var0 = new VariableDefinition(_consoleKeyInfoRef);
-                var var1 = new VariableDefinition(_charRef);
-
-                ilProcessor.Body.Variables.Add(var0);
-                ilProcessor.Body.Variables.Add(var1);
-
-                ilProcessor.Emit(OpCodes.Call, _consoleReadKeyReference);
-                ilProcessor.Emit(OpCodes.Stloc, var0);
-                ilProcessor.Emit(OpCodes.Ldloca, var0);
-                ilProcessor.Emit(OpCodes.Call, _consoleKeyInfoGetKeyChar);
-                ilProcessor.Emit(OpCodes.Stloc, var1);
-                ilProcessor.Emit(OpCodes.Ldloca, var1);
-                ilProcessor.Emit(OpCodes.Call, _charToString);
-            }
-            else if (node.Function == BuiltinFunctions.InputAction)
-            {
-                var var0 = new VariableDefinition(_consoleKeyInfoRef);
-                var var1 = new VariableDefinition(_charRef);
-
-                ilProcessor.Body.Variables.Add(var0);
-                ilProcessor.Body.Variables.Add(var1);
-
-                ilProcessor.Emit(OpCodes.Ldc_I4_1);
-                ilProcessor.Emit(OpCodes.Call, _consoleGetKeyReference);
-                ilProcessor.Emit(OpCodes.Stloc, var0);
-                ilProcessor.Emit(OpCodes.Ldloca, var0);
-                ilProcessor.Emit(OpCodes.Call, _consoleKeyInfoGetKeyChar);
-                ilProcessor.Emit(OpCodes.Stloc, var1);
-                ilProcessor.Emit(OpCodes.Ldloca, var1);
-                ilProcessor.Emit(OpCodes.Call, _charToString);
-            }
-            else if (node.Function == BuiltinFunctions.SetCursorVisible)
-                ilProcessor.Emit(OpCodes.Call, _setVisableCursorRef);
-            else if (node.Function == BuiltinFunctions.GetCursorVisible)
-                ilProcessor.Emit(OpCodes.Call, _getVisableCursorRef);
-            else if (node.Function == BuiltinFunctions.Die)
+            if (node.Function == BuiltinFunctions.Die)
                 ilProcessor.Emit(OpCodes.Call, _envDie);
-            else if (node.Function == BuiltinFunctions.ConsoleColorBG)
-                ilProcessor.Emit(OpCodes.Call, _setConsoleBG);
-            else if (node.Function == BuiltinFunctions.ConsoleColorFG)
-                ilProcessor.Emit(OpCodes.Call, _setConsoleFG);
             else if (node.Function == BuiltinFunctions.Floor)
             {
                 ilProcessor.Emit(OpCodes.Conv_R8);
@@ -1119,10 +1058,6 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Call, _IODirCreateReference);
                 ilProcessor.Emit(OpCodes.Pop);
             }
-            else if (node.Function == BuiltinFunctions.GetCursorX)
-                ilProcessor.Emit(OpCodes.Call, _getCursorXReference);
-            else if (node.Function == BuiltinFunctions.GetCursorY)
-                ilProcessor.Emit(OpCodes.Call, _getCursorYReference);
             else if (node.Function == BuiltinFunctions.GetFilesInDir)
                 ilProcessor.Emit(OpCodes.Call, _IOGetFilesInDirReference);
             else if (node.Function == BuiltinFunctions.GetDirectoriesInDir)
@@ -1145,19 +1080,6 @@ namespace ReCT.CodeAnalysis.Emit
             {
                 ilProcessor.Emit(OpCodes.Ldstr, "borger");
                 ilProcessor.Emit(OpCodes.Call, _consoleWriteLineReference);
-            }
-            else if (node.Function == BuiltinFunctions.Beep)
-                ilProcessor.Emit(OpCodes.Call, _consoleBeepReference);
-            else if (node.Function == BuiltinFunctions.Char)
-            {
-                VariableDefinition var0 = new VariableDefinition(_charRef);
-
-                ilProcessor.Body.Variables.Add(var0);
-
-                ilProcessor.Emit(OpCodes.Conv_U2);
-                ilProcessor.Emit(OpCodes.Stloc, var0);
-                ilProcessor.Emit(OpCodes.Ldloca_S, var0);
-                ilProcessor.Emit(OpCodes.Call, _charToString);
             }
             else
             {

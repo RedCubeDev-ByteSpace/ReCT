@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace ReCT_IDE
@@ -29,7 +23,14 @@ namespace ReCT_IDE
 
         private void Startup_Load(object sender, EventArgs e)
         {
-            
+            for (float i = 1; i < 100; i += 2)
+            {
+                Thread.Sleep(1);
+                Opacity = i / 100;
+                Update();
+            }
+            Opacity = 1;
+            Update();
         }
     }
 }

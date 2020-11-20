@@ -15,6 +15,7 @@ namespace ReCT.CodeAnalysis.Package
         {
             {"sys","ReCT.sys.pack"},
             {"math","ReCT.math.pack"},
+            {"salami","ReCT.salami.pack"},
         };
 
         public static Package loadPackage(string sysPack)

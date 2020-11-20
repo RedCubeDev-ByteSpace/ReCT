@@ -23,6 +23,7 @@ namespace ReCT_IDE
         public string Functions = "";
         public string Namespaces = "";
         public string NamespaceFunctions = "";
+        public string ImportedFunctions = "";
         public VariableSymbol[] variables;
         public FunctionSymbol[] functions;
         public Package[] packages;
@@ -90,6 +91,7 @@ namespace ReCT_IDE
             Functions = "";
             Namespaces = "";
             NamespaceFunctions = "";
+            ImportedFunctions = "";
 
             var vars = compilation.Variables.ToArray();
             variables = vars;
@@ -113,7 +115,7 @@ namespace ReCT_IDE
                 Functions = Functions.Substring(0, Functions.Length - 1);
                 Functions = "(" + Functions + ")";
             }
-            var nspc = Compilation.GetPackages();
+            var nspc = compilation.Packages.ToArray();
             packages = nspc;
             foreach (ReCT.CodeAnalysis.Package.Package p in nspc)
             {
@@ -135,6 +137,26 @@ namespace ReCT_IDE
             {
                 NamespaceFunctions = NamespaceFunctions.Substring(0, NamespaceFunctions.Length - 1);
                 NamespaceFunctions = "(" + NamespaceFunctions + ")";
+            }
+            var used = compilation.UsingPackages.ToArray();
+            foreach (Package p in nspc)
+            {
+                foreach (string s in used)
+                {
+                    if (p.name == s)
+                    {
+                        foreach (FunctionSymbol f in p.scope.GetDeclaredFunctions())
+                        {
+                            ImportedFunctions += "\\b" + f.Name + "\\b" + "|";
+                            functions.Append(f);
+                        }
+                    }
+                }
+            }
+            if (ImportedFunctions != "")
+            {
+                ImportedFunctions = ImportedFunctions.Substring(0, ImportedFunctions.Length - 1);
+                ImportedFunctions = "(" + ImportedFunctions + ")";
             }
             form.startAllowed(true);
             inUse = false;
@@ -272,7 +294,7 @@ namespace ReCT_IDE
                         sw.Write($"dotnet exec \"{Path.GetFileNameWithoutExtension(fileOut)}.dll\"");
                     }
 
-                    foreach (ReCT.CodeAnalysis.Package.Package p in Compilation.GetPackages())
+                    foreach (ReCT.CodeAnalysis.Package.Package p in compilation.Packages)
                     {
                         File.Copy(p.fullName, Path.GetDirectoryName(fileOut) + "/" + p.name + "lib.dll");
                     }

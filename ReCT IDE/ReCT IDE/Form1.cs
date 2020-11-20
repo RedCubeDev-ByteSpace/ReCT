@@ -46,7 +46,7 @@ namespace ReCT_IDE
         public static extern bool ShowWindow(System.IntPtr hWnd, int cmdShow);
 
 
-        string standardMsg = "//ReCT IDE ";
+        string standardMsg = "//ReCT Compiler and IDE ";
 
         List<Tab> tabs = new List<Tab>();
         int currentTab = 0;
@@ -55,7 +55,7 @@ namespace ReCT_IDE
         {
             Thread t = new Thread(new ThreadStart(SplashScreen));
             t.Start();
-            Thread.Sleep(2000);
+            Thread.Sleep(1900);
 
             InitializeComponent();
         }
@@ -80,7 +80,10 @@ namespace ReCT_IDE
             Activate();
 
             Menu.Renderer = new MenuRenderer();
+
             standardMsg += ReCT.info.Version;
+            standardMsg += "\r\npackage sys;";
+
             errorBox = new Error();
             SetCodeBoxColors();
             fileChanged = false;
@@ -232,7 +235,8 @@ namespace ReCT_IDE
             e.ChangedRange.ClearStyle(SystemFunctionStyle);
 
             //system function highlighting
-            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bChar\b|\bBeep\b|\bListenOnTCPPort\b|\bConnectTCPClient\b|\bGetDirsInDirectory\b|\bGetFilesInDirectory\b|\bGetCursorY\b|\bGetCursorX\b|\bCreateDirectory\b|\bDeleteDirectory\b|\bDeleteFile\b|\bDirectoryExists\b|\bFileExists\b|\bWriteFile\b|\bReadFile\b|\bFloor\b|\bCeil\b|\bInputAction\b|\bSetConsoleForeground\b|\bSetConsoleBackground\b|\bSetCursorVisible\b|\bThread\b|\bGetCursorVisible\b|\bPrint\b|\bInputKey\b|\bInput\b|\bRandom\b|\bVersion\b|\bClear\b|\bSetCursor\b|\bGetSizeX\b|\bGetSizeY\b|\bSetSize\b|\bWrite\b|\bSleep\b)");
+            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bListenOnTCPPort\b|\bConnectTCPClient\b|\bGetDirsInDirectory\b|\bGetFilesInDirectory\b|\bCreateDirectory\b|\bDeleteDirectory\b|\bDeleteFile\b|\bDirectoryExists\b|\bFileExists\b|\bWriteFile\b|\bReadFile\b|\bFloor\b|\bCeil\b|\bThread\b|\bRandom\b|\bVersion\b)");
+            e.ChangedRange.SetStyle(SystemFunctionStyle, rectCompCheck.ImportedFunctions);
 
             //types
             e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\btcpsocketArr\b|\btcplistenerArr\b|\btcpclientArr\b|\btcpsocket\b|\btcplistener\b|\btcpclient\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b|\bfloat\b|\bthread\b|\banyArr\b|\bboolArr\b|\bintArr\b|\bstringArr\b|\bfloatArr\b|\bthreadArr\b)");
@@ -241,7 +245,7 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(VarStyle, @"(\bvar\b|\bset\b|\bif\b|\belse\b|\bfunction\b|\btrue\b|\bfalse\b|\bmake\b|\barray\b)", RegexOptions.Singleline);
 
             //settings
-            e.ChangedRange.SetStyle(SettingStyle, @"(\bpackage\b|\bnamespace\b|\btype\b)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(SettingStyle, @"(\bpackage\b|\bnamespace\b|\btype\b|\buse\b)", RegexOptions.Singleline);
 
             //variables
             e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+<-))");
@@ -509,6 +513,7 @@ namespace ReCT_IDE
 
             System.Diagnostics.Process.Start("explorer.exe", string.Format("/select,\"{0}\"", saveFileDialog1.FileName));
             Typechecker.Enabled = true;
+            Compilation.resetBinder();
         }
 
         private void CodeBox_Chnaged(object sender, TextChangedEventArgs e)
@@ -551,6 +556,7 @@ namespace ReCT_IDE
                 running.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
 
             running.Start();
+            Compilation.resetBinder();
         }
 
         private void Stop_Click(object sender, EventArgs e)

@@ -22,6 +22,7 @@ namespace ReCT.CodeAnalysis.Binding
         public static List<Package.Package> _packageNamespaces = new List<Package.Package>();
         public static string _namespace = "";
         public static string _type = "";
+        public static List<string> _usingPackages = new List<string>();
 
         public Binder(bool isScript, BoundScope parent, FunctionSymbol function)
         {
@@ -296,6 +297,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return BindNamespaceStatement((NamespaceStatementSyntax)syntax);
                 case SyntaxKind.TypeStatement:
                     return BindTypeStatement((TypeStatementSyntax)syntax);
+                case SyntaxKind.UseStatement:
+                    return BindUseStatement((UseStatementSyntax)syntax);
                 case SyntaxKind.BlockStatement:
                     return BindBlockStatement((BlockStatementSyntax)syntax);
                 case SyntaxKind.VariableDeclaration:
@@ -325,6 +328,39 @@ namespace ReCT.CodeAnalysis.Binding
             }
         }
 
+        private BoundStatement BindUseStatement(UseStatementSyntax syntax)
+        {
+            bool found = false;
+            bool alreadyFound = false;
+
+            foreach(Package.Package p in _packageNamespaces)
+            {
+                if (p.name == syntax.Name.Text)
+                    found = true;
+            }
+            foreach(string s in _usingPackages)
+            {
+                if (s == syntax.Name.Text)
+                    alreadyFound = true;
+            }
+
+            if (!found)
+            {
+                _diagnostics.ReportNamespaceNotFound(syntax.Location, syntax.Name.Text);
+                return BindErrorStatement();
+            }
+
+            if (alreadyFound)
+            {
+                _diagnostics.NamespaceCantBeUsedTwice(syntax.Location, syntax.Name.Text);
+                return BindErrorStatement();
+            }
+
+            _usingPackages.Add(syntax.Name.Text);
+            Console.WriteLine("ADDED: " + syntax.Name.Text);
+            return null;
+        }
+
         private BoundStatement BindTypeStatement(TypeStatementSyntax syntax)
         {
             _type = syntax.Name.Text;
@@ -348,7 +384,6 @@ namespace ReCT.CodeAnalysis.Binding
             }
 
             _packageNamespaces.Add(Package.Packager.loadPackage(Package.Packager.systemPackages[package]));
-            Console.WriteLine(_packageNamespaces.Last().name);
             return null;
         }
 
@@ -542,7 +577,6 @@ namespace ReCT.CodeAnalysis.Binding
             if (!canBeVoid && result.Type == TypeSymbol.Void)
             {
                 _diagnostics.ReportExpressionMustHaveValue(syntax.Location);
-                throw new Exception("no.");
                 return new BoundErrorExpression();
             }
 
@@ -720,6 +754,30 @@ namespace ReCT.CodeAnalysis.Binding
 
         private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
         {
+            var _symbol = _scope.TryLookupSymbol(syntax.Identifier.Text);
+            if (_symbol == null)
+            {
+                foreach (string s in _usingPackages)
+                {
+                    foreach (Package.Package p in _packageNamespaces)
+                    {
+                        if (s == p.name)
+                        {
+                            foreach (FunctionSymbol f in p.scope.GetDeclaredFunctions())
+                            {
+                                if (f.Name == syntax.Identifier.Text)
+                                {
+                                    syntax.Namespace = s;
+                                    goto Shut;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Shut:
+
             if (syntax.Namespace != "")
             {
                 bool found = false;

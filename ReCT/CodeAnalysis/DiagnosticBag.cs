@@ -235,5 +235,10 @@ namespace ReCT.CodeAnalysis
         {
             Report(location, $"Couldnt find Namespace / Package '{@namespace}'! Are you missing a Package?");
         }
+
+        internal void NamespaceCantBeUsedTwice(TextLocation location, string text)
+        {
+            Report(location, $"Cant 'use' Namespace '{text}' multiple times!");
+        }
     }
 }

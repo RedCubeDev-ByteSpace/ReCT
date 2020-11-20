@@ -187,6 +187,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseNamespaceStatement();
                 case SyntaxKind.TypeKeyword:
                     return ParseTypeStatement();
+                case SyntaxKind.UseKeyword:
+                    return ParseUseStatement();
                 case SyntaxKind.OpenBraceToken:
                     return ParseBlockStatement();
                 case SyntaxKind.SetKeyword:
@@ -213,6 +215,14 @@ namespace ReCT.CodeAnalysis.Syntax
                 default:
                     return ParseExpressionStatement();
             }
+        }
+
+        private StatementSyntax ParseUseStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.UseKeyword);
+            var name = NextToken();
+
+            return new UseStatementSyntax(_syntaxTree, keyword, name);
         }
 
         private StatementSyntax ParseNamespaceStatement()

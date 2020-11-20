@@ -246,17 +246,7 @@ namespace ReCT.CodeAnalysis
 
         private object EvaluateCallExpression(BoundCallExpression node)
         {
-            if (node.Function == BuiltinFunctions.Input)
-            {
-                return Console.ReadLine();
-            }
-            else if (node.Function == BuiltinFunctions.Print)
-            {
-                var message = (string)EvaluateExpression(node.Arguments[0]);
-                Console.WriteLine(message);
-                return null;
-            }
-            else if (node.Function == BuiltinFunctions.Random)
+            if (node.Function == BuiltinFunctions.Random)
             {
                 var max = (int)EvaluateExpression(node.Arguments[0]);
                 if (_random == null)

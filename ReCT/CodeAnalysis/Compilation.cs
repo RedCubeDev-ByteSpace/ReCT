@@ -38,12 +38,9 @@ namespace ReCT.CodeAnalysis
         public static void resetBinder()
         {
             Binder._packageNamespaces.Clear();
+            Binder._usingPackages.Clear();
             Binder._namespace = "";
             Binder._type = "";
-        }
-        public static Package.Package[] GetPackages()
-        {
-            return Binder._packageNamespaces.ToArray();
         }
 
         public bool IsScript { get; }
@@ -52,6 +49,8 @@ namespace ReCT.CodeAnalysis
         public FunctionSymbol MainFunction => GlobalScope.MainFunction;
         public ImmutableArray<FunctionSymbol> Functions => GlobalScope.Functions;
         public ImmutableArray<VariableSymbol> Variables => GlobalScope.Variables;
+        public ImmutableArray<Package.Package> Packages => Binder._packageNamespaces.ToImmutableArray();
+        public ImmutableArray<string> UsingPackages => Binder._usingPackages.ToImmutableArray();
 
         internal BoundGlobalScope GlobalScope
         {

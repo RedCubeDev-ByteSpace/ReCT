@@ -9,26 +9,7 @@ namespace ReCT.CodeAnalysis.Symbols
     internal static class BuiltinFunctions
     {
         //this all needs to go - (what a mess)
-
-        //Console
-        public static readonly FunctionSymbol Print = new FunctionSymbol("Print", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol Write = new FunctionSymbol("Write", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol Input = new FunctionSymbol("Input", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
-        public static readonly FunctionSymbol InputKey = new FunctionSymbol("InputKey", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
-        public static readonly FunctionSymbol InputAction = new FunctionSymbol("InputAction", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
-        public static readonly FunctionSymbol Clear = new FunctionSymbol("Clear", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
-        public static readonly FunctionSymbol SetCursor = new FunctionSymbol("SetCursor", ImmutableArray.Create(new ParameterSymbol("xCoord", TypeSymbol.Int, 0), new ParameterSymbol("yCoord", TypeSymbol.Int, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol GetCursorX = new FunctionSymbol("GetCursorX", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
-        public static readonly FunctionSymbol GetCursorY = new FunctionSymbol("GetCursorY", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
-        public static readonly FunctionSymbol GetSizeX = new FunctionSymbol("GetSizeX", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
-        public static readonly FunctionSymbol GetSizeY = new FunctionSymbol("GetSizeY", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
-        public static readonly FunctionSymbol SetSize = new FunctionSymbol("SetSize", ImmutableArray.Create(new ParameterSymbol("X", TypeSymbol.Int, 0), new ParameterSymbol("Y", TypeSymbol.Int, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol SetCursorVisible = new FunctionSymbol("SetCursorVisible", ImmutableArray.Create(new ParameterSymbol("bool", TypeSymbol.Bool, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol GetCursorVisible = new FunctionSymbol("GetCursorVisible", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Bool);
-        public static readonly FunctionSymbol ConsoleColorBG = new FunctionSymbol("SetConsoleBackground", ImmutableArray.Create(new ParameterSymbol("num", TypeSymbol.Int, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol ConsoleColorFG = new FunctionSymbol("SetConsoleForeground", ImmutableArray.Create(new ParameterSymbol("num", TypeSymbol.Int, 0)), TypeSymbol.Void);
-        
-        public static readonly FunctionSymbol Beep = new FunctionSymbol("Beep", ImmutableArray.Create(new ParameterSymbol("freq", TypeSymbol.Int, 0), new ParameterSymbol("dur", TypeSymbol.Int, 0)), TypeSymbol.Void);
+        //sys is gon
 
         //Networking
         public static readonly FunctionSymbol ConnectTCPClient = new FunctionSymbol("ConnectTCPClient", ImmutableArray.Create(new ParameterSymbol("address", TypeSymbol.String, 0), new ParameterSymbol("port", TypeSymbol.Int, 0)), TypeSymbol.TCPClient);
@@ -52,8 +33,8 @@ namespace ReCT.CodeAnalysis.Symbols
 
         //Other stuff
         public static readonly FunctionSymbol Version = new FunctionSymbol("Version", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
-        public static readonly FunctionSymbol Sleep = new FunctionSymbol("Sleep", ImmutableArray.Create(new ParameterSymbol("int", TypeSymbol.Int, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol Char = new FunctionSymbol("Char", ImmutableArray.Create(new ParameterSymbol("int", TypeSymbol.Int, 0)), TypeSymbol.String);
+        //public static readonly FunctionSymbol Sleep = new FunctionSymbol("Sleep", ImmutableArray.Create(new ParameterSymbol("int", TypeSymbol.Int, 0)), TypeSymbol.Void);   |in sys package now
+        //public static readonly FunctionSymbol Char = new FunctionSymbol("Char", ImmutableArray.Create(new ParameterSymbol("int", TypeSymbol.Int, 0)), TypeSymbol.String);   |
 
         //String funcs
         public static readonly FunctionSymbol GetLength = new FunctionSymbol("GetLength", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
