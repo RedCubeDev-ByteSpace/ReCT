@@ -7,5 +7,6 @@ namespace ReCT.CodeAnalysis.Symbols
         LocalVariable,
         Parameter,
         Type,
+        Class,
     }
 }

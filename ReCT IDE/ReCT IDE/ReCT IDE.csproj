@@ -127,6 +127,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BoltUpdater.cs" />
     <Compile Include="ControlFactory.cs" />
     <Compile Include="Discord.cs" />
     <Compile Include="Error.cs">

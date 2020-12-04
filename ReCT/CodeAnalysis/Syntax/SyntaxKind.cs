@@ -104,5 +104,7 @@ namespace ReCT.CodeAnalysis.Syntax
         NamespaceToken,
         UseKeyword,
         UseStatement,
+        ClassDeclaration,
+        ClassKeyword,
     }
 }

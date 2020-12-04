@@ -11,7 +11,8 @@ namespace ReCT.CodeAnalysis.Binding
                                 FunctionSymbol scriptFunction,
                                 ImmutableArray<FunctionSymbol> functions,
                                 ImmutableArray<VariableSymbol> variables,
-                                ImmutableArray<BoundStatement> statements)
+                                ImmutableArray<BoundStatement> statements,
+                                ImmutableArray<BoundGlobalScope> classes)
         {
             Previous = previous;
             Diagnostics = diagnostics;

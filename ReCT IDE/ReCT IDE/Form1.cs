@@ -28,6 +28,7 @@ namespace ReCT_IDE
         public Error errorBox;
         public Process running;
         string[] standardAC;
+        BoltUpdater boltUpdater;
 
         Discord dc;
         RichPresence presence;
@@ -55,7 +56,27 @@ namespace ReCT_IDE
         {
             Thread t = new Thread(new ThreadStart(SplashScreen));
             t.Start();
-            Thread.Sleep(1900);
+
+            boltUpdater = new BoltUpdater();
+            if (boltUpdater.isUpdateAvailable(ReCT.info.Version))
+            {
+                var version = boltUpdater.getUpdateVersion();
+                Focus();
+                var result = MessageBox.Show($"There is a newer Version of ReCT available!\nYour Version: {ReCT.info.Version}  New Version: {version}\n\nWould you like to update?", "ReCT Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                {
+                    running = new Process();
+                    running.StartInfo.FileName = "CMD.exe";
+                    running.StartInfo.Arguments = "/K cd Bolt & update.cmd";
+
+                    running.Start();
+
+                    Environment.Exit(0);
+                    return;
+                }
+            }
+
+            Thread.Sleep(1500);
 
             InitializeComponent();
         }
@@ -78,6 +99,7 @@ namespace ReCT_IDE
         private void Form1_Load(object sender, EventArgs e)
         {
             Activate();
+            CenterToScreen();
 
             Menu.Renderer = new MenuRenderer();
 
@@ -509,11 +531,12 @@ namespace ReCT_IDE
             if (fileChanged)
                 Save_Click(this, new EventArgs());
 
+            Compilation.resetBinder();
+
             ReCT_Compiler.CompileRCTBC (saveFileDialog1.FileName, tabs[currentTab].path, errorBox);
 
             System.Diagnostics.Process.Start("explorer.exe", string.Format("/select,\"{0}\"", saveFileDialog1.FileName));
             Typechecker.Enabled = true;
-            Compilation.resetBinder();
         }
 
         private void CodeBox_Chnaged(object sender, TextChangedEventArgs e)
@@ -544,6 +567,8 @@ namespace ReCT_IDE
             if (!Directory.Exists("Builder"))
                 Directory.CreateDirectory("Builder");
 
+            Compilation.resetBinder();
+
             if (!ReCT_Compiler.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(tabs[currentTab].path) + ".cmd", tabs[currentTab].path, errorBox)) return;
 
             string strCmdText = $"/K cd \"{Path.GetFullPath($"Builder")}\" & cls & \"{Path.GetFileNameWithoutExtension(tabs[currentTab].path)}.cmd\"";
@@ -556,7 +581,6 @@ namespace ReCT_IDE
                 running.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
 
             running.Start();
-            Compilation.resetBinder();
         }
 
         private void Stop_Click(object sender, EventArgs e)

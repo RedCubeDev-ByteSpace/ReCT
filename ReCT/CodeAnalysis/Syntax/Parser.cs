@@ -91,6 +91,23 @@ namespace ReCT.CodeAnalysis.Syntax
 
             return members.ToImmutable();
         }
+        private ImmutableArray<MemberSyntax> ParseMembersInternal()
+        {
+            var members = ImmutableArray.CreateBuilder<MemberSyntax>();
+
+            while (Current.Kind != SyntaxKind.EndOfFileToken)
+            {
+                var startToken = Current;
+
+                var member = ParseMember();
+                members.Add(member);
+
+                if (Current == startToken)
+                    NextToken();
+            }
+
+            return members.ToImmutable();
+        }
 
         private MemberSyntax ParseMember()
         {
@@ -99,6 +116,9 @@ namespace ReCT.CodeAnalysis.Syntax
 
             if (Current.Kind == SyntaxKind.SetKeyword && Peek(1).Kind == SyntaxKind.FunctionKeyword)
                 return ParseFunctionDeclaration(true);
+
+            if (Current.Kind == SyntaxKind.ClassKeyword)
+                return ParseClassDeclaration(false);
 
             return ParseGlobalStatement();
         }
@@ -116,6 +136,17 @@ namespace ReCT.CodeAnalysis.Syntax
             var type = ParseOptionalTypeClause();
             var body = ParseBlockStatement();
             return new FunctionDeclarationSyntax(_syntaxTree, functionKeyword, identifier, openParenthesisToken, parameters, closeParenthesisToken, type, body, isPublic);
+        }
+
+        private MemberSyntax ParseClassDeclaration(bool isStatic)
+        {
+            if (isStatic)
+                MatchToken(SyntaxKind.SetKeyword);
+
+            var classKeyword = MatchToken(SyntaxKind.ClassKeyword);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            var body = ParseBlockStatement();
+            return new ClassDeclarationSyntax(_syntaxTree, classKeyword, identifier, body, isStatic);
         }
 
         private ExpressionSyntax ParseThreadCreation()

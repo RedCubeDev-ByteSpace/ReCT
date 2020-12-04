@@ -13,9 +13,9 @@ namespace ReCT.CodeAnalysis.Package
     {
         public static IDictionary<string, string> systemPackages = new Dictionary<string, string>()
         {
-            {"sys","ReCT.sys.pack"},
+            {"sys", "ReCT.sys.pack" },
             {"math","ReCT.math.pack"},
-            {"salami","ReCT.salami.pack"},
+            {"winf","ReCT.winf.pack"},
         };
 
         public static Package loadPackage(string sysPack)

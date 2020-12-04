@@ -22,6 +22,9 @@ namespace ReCT.CodeAnalysis.Binding
         public bool TryDeclareFunction(FunctionSymbol function)
             => TryDeclareSymbol(function);
 
+        public bool TryDeclareClass(ClassSymbol _class)
+            => TryDeclareSymbol(_class);
+
         private bool TryDeclareSymbol<TSymbol>(TSymbol symbol)
             where TSymbol : Symbol
         {

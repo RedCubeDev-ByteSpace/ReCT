@@ -45,8 +45,16 @@ namespace ReCT.CodeAnalysis.Binding
             var functionDeclarations = syntaxTrees.SelectMany(st => st.Root.Members)
                                                   .OfType<FunctionDeclarationSyntax>();
 
+            var classDeclarations = syntaxTrees.SelectMany(st => st.Root.Members)
+                                                  .OfType<ClassDeclarationSyntax>();
+
+            var classes = new List<BoundGlobalScope>();
+
             foreach (var function in functionDeclarations)
                 binder.BindFunctionDeclaration(function);
+
+            foreach (var _class in classDeclarations)
+                binder.BindClassDeclaration(_class);
 
             var globalStatements = syntaxTrees.SelectMany(st => st.Root.Members)
                                               .OfType<GlobalStatementSyntax>();
@@ -123,7 +131,7 @@ namespace ReCT.CodeAnalysis.Binding
             if (previous != null)
                 diagnostics = diagnostics.InsertRange(0, previous.Diagnostics);
 
-            return new BoundGlobalScope(previous, diagnostics, mainFunction, scriptFunction, functions, variables, statements.ToImmutable());
+            return new BoundGlobalScope(previous, diagnostics, mainFunction, scriptFunction, functions, variables, statements.ToImmutable(), classes.ToImmutableArray());
         }
 
         public static BoundProgram BindProgram(bool isScript, BoundProgram previous, BoundGlobalScope globalScope)
@@ -213,6 +221,16 @@ namespace ReCT.CodeAnalysis.Binding
                 !_scope.TryDeclareFunction(function))
             {
                 _diagnostics.ReportSymbolAlreadyDeclared(syntax.Identifier.Location, function.Name);
+            }
+        }
+
+        private void BindClassDeclaration(ClassDeclarationSyntax syntax)
+        {
+            var classSymbol = new ClassSymbol(syntax.Identifier.Text, syntax, syntax.isStatic);
+            if (classSymbol.Declaration.Identifier.Text != null &&
+                !_scope.TryDeclareClass(classSymbol))
+            {
+                _diagnostics.ReportSymbolAlreadyDeclared(syntax.Identifier.Location, classSymbol.Name);
             }
         }
 

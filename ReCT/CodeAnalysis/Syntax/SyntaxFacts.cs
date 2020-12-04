@@ -106,6 +106,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.TypeKeyword;
                 case "use":
                     return SyntaxKind.UseKeyword;
+                case "class":
+                    return SyntaxKind.ClassKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -237,6 +239,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "type";
                 case SyntaxKind.UseKeyword:
                     return "use";
+                case SyntaxKind.ClassKeyword:
+                    return "class";
                 default:
                     return null;
             }
