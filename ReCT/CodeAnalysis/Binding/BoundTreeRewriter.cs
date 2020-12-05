@@ -192,8 +192,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return RewriteLiteralExpression((BoundLiteralExpression)node);
                 case BoundNodeKind.VariableExpression:
                     return RewriteVariableExpression((BoundVariableExpression)node);
-                case BoundNodeKind.RemoteNameExpression:
-                    return RewriteRemoteNameExpression((BoundRemoteNameExpression)node);
+                case BoundNodeKind.ObjectAccessExpression:
+                    return RewriteRemoteNameExpression((BoundObjectAccessExpression)node);
                 case BoundNodeKind.AssignmentExpression:
                     return RewriteAssignmentExpression((BoundAssignmentExpression)node);
                 case BoundNodeKind.UnaryExpression:
@@ -208,9 +208,16 @@ namespace ReCT.CodeAnalysis.Binding
                     return RewriteThreadCreateExpression((BoundThreadCreateExpression)node);
                 case BoundNodeKind.ArrayCreationExpression:
                     return RewriteArrayCreateExpression((BoundArrayCreationExpression)node);
+                case BoundNodeKind.ObjectCreationExpression:
+                    return RewriteObjectCreateExpression((BoundObjectCreationExpression)node);
                 default:
                     throw new Exception($"Unexpected node: {node.Kind}");
             }
+        }
+
+        private BoundExpression RewriteObjectCreateExpression(BoundObjectCreationExpression node)
+        {
+            return node;
         }
 
         private BoundExpression RewriteArrayCreateExpression(BoundArrayCreationExpression node)
@@ -223,7 +230,7 @@ namespace ReCT.CodeAnalysis.Binding
             return node;
         }
 
-        private BoundExpression RewriteRemoteNameExpression(BoundRemoteNameExpression node)
+        private BoundExpression RewriteRemoteNameExpression(BoundObjectAccessExpression node)
         {
             return node;
         }

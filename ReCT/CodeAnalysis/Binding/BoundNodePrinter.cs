@@ -66,8 +66,8 @@ namespace ReCT.CodeAnalysis.Binding
                 case BoundNodeKind.VariableExpression:
                     WriteVariableExpression((BoundVariableExpression)node, writer);
                     break;
-                case BoundNodeKind.RemoteNameExpression:
-                    WriteRemoteNameExpression((BoundRemoteNameExpression)node, writer);
+                case BoundNodeKind.ObjectAccessExpression:
+                    WriteRemoteNameExpression((BoundObjectAccessExpression)node, writer);
                     break;
                 case BoundNodeKind.AssignmentExpression:
                     WriteAssignmentExpression((BoundAssignmentExpression)node, writer);
@@ -89,16 +89,17 @@ namespace ReCT.CodeAnalysis.Binding
             }
         }
 
-        private static void WriteRemoteNameExpression(BoundRemoteNameExpression node, IndentedTextWriter writer)
+        private static void WriteRemoteNameExpression(BoundObjectAccessExpression node, IndentedTextWriter writer)
         {
             writer.WriteIdentifier(node.Variable.Name);
             writer.WriteKeyword(SyntaxKind.AccessToken);
-            writer.WriteIdentifier(node.Call.Function.Name);
+            writer.WriteKeyword(SyntaxKind.CallKeyword);
+            writer.WriteIdentifier(node.Function.Name);
 
             writer.WritePunctuation(SyntaxKind.OpenParenthesisToken);
 
             var isFirst = true;
-            foreach (var argument in node.Call.Arguments)
+            foreach (var argument in node.Arguments)
             {
                 if (isFirst)
                 {

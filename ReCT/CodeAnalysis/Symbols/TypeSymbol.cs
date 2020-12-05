@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace ReCT.CodeAnalysis.Symbols
 {
     public sealed class TypeSymbol  : Symbol
@@ -29,11 +31,14 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly TypeSymbol TCPListenerArr = new TypeSymbol("tcplistenerArr");
         public static readonly TypeSymbol TCPSocketArr = new TypeSymbol("tcpsocketArr");
 
-        private TypeSymbol(string name)
+        public static Dictionary<ClassSymbol, TypeSymbol> Class;
+
+        public TypeSymbol(string name)
             : base(name)
         {
         }
 
+        public bool isClass;
         public override SymbolKind Kind => SymbolKind.Type;
     }
 }

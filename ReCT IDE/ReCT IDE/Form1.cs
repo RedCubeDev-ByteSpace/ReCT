@@ -58,7 +58,7 @@ namespace ReCT_IDE
             t.Start();
 
             boltUpdater = new BoltUpdater();
-            if (boltUpdater.isUpdateAvailable(ReCT.info.Version))
+            if (boltUpdater.isUpdateAvailable(ReCT.info.Version) && false) //disabling for dev
             {
                 var version = boltUpdater.getUpdateVersion();
                 Focus();
@@ -231,6 +231,10 @@ namespace ReCT_IDE
         Style WhiteStyle = new TextStyle(Brushes.White, null, FontStyle.Regular);
         Style SettingStyle = new TextStyle(new SolidBrush(Color.FromArgb(17, 191, 119)), null, FontStyle.Bold);
         Style PackageStyle = new TextStyle(new SolidBrush(Color.FromArgb(252, 186, 3)), null, FontStyle.Regular);
+        Style ClassStyle = new TextStyle(new SolidBrush(Color.FromArgb(0, 186, 171)), null, FontStyle.Regular);
+
+
+        Style DebugStyle = new TextStyle(new SolidBrush(Color.FromArgb(125, 125, 125)), null, FontStyle.Regular);
 
         public void ReloadHightlighting(TextChangedEventArgs e)
         {
@@ -264,7 +268,7 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\btcpsocketArr\b|\btcplistenerArr\b|\btcpclientArr\b|\btcpsocket\b|\btcplistener\b|\btcpclient\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b|\bfloat\b|\bthread\b|\banyArr\b|\bboolArr\b|\bintArr\b|\bstringArr\b|\bfloatArr\b|\bthreadArr\b)");
 
             //statementHighlingting
-            e.ChangedRange.SetStyle(VarStyle, @"(\bvar\b|\bset\b|\bif\b|\belse\b|\bfunction\b|\btrue\b|\bfalse\b|\bmake\b|\barray\b)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(VarStyle, @"(\bvar\b|\bset\b|\bif\b|\belse\b|\bfunction\b|\bclass\b|\btrue\b|\bfalse\b|\bmake\b|\barray\b|\bobject\b)", RegexOptions.Singleline);
 
             //settings
             e.ChangedRange.SetStyle(SettingStyle, @"(\bpackage\b|\bnamespace\b|\btype\b|\buse\b)", RegexOptions.Singleline);
@@ -278,11 +282,17 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(UserFunctionStyle, @"(?<=\bfunction\s)(\w+)");
             e.ChangedRange.SetStyle(UserFunctionStyle, rectCompCheck.Functions);
 
+            //classes
+            e.ChangedRange.SetStyle(ClassStyle, rectCompCheck.Classes);
+
             //packages
             e.ChangedRange.SetStyle(PackageStyle, rectCompCheck.Namespaces);
 
             //package functions
             e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\w*(?<=::)" + rectCompCheck.NamespaceFunctions + ")");
+
+            //debug options
+            e.ChangedRange.SetStyle(DebugStyle, @"(?<=\>>\s)(\w+)");
 
             //type functions
             e.ChangedRange.SetStyle(TypeFunctionStyle, @"(?<=\>>\s)(\w+)");
@@ -476,6 +486,7 @@ namespace ReCT_IDE
                 rectCompCheck.Variables = "";
                 if (CodeBox.Text != "")
                 {
+                    ReCT.CodeAnalysis.Compilation.resetBinder();
                     rectCompCheck.Check(CodeBox.Text, this, tabs[currentTab].path);
                     CodeBox.ClearStylesBuffer();
                     ReloadHightlighting(new TextChangedEventArgs(CodeBox.Range));
@@ -504,11 +515,13 @@ namespace ReCT_IDE
                     }
 
                     ReCTAutoComplete.Items = ACItems.ToArray();
+                    ReCT.CodeAnalysis.Compilation.resetBinder();
                 }
             }
             catch(Exception ee)
             {
                 ReCT_Compiler.inUse = false;
+                ReCT.CodeAnalysis.Compilation.resetBinder();
                 //Console.WriteLine(ee);
             }
         }
@@ -568,6 +581,8 @@ namespace ReCT_IDE
                 Directory.CreateDirectory("Builder");
 
             Compilation.resetBinder();
+
+            Console.WriteLine("----------------------------------------------------");
 
             if (!ReCT_Compiler.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(tabs[currentTab].path) + ".cmd", tabs[currentTab].path, errorBox)) return;
 

@@ -24,6 +24,7 @@ namespace ReCT_IDE
         public string Namespaces = "";
         public string NamespaceFunctions = "";
         public string ImportedFunctions = "";
+        public string Classes = "";
         public VariableSymbol[] variables;
         public FunctionSymbol[] functions;
         public Package[] packages;
@@ -92,6 +93,7 @@ namespace ReCT_IDE
             Namespaces = "";
             NamespaceFunctions = "";
             ImportedFunctions = "";
+            Classes = "";
 
             var vars = compilation.Variables.ToArray();
             variables = vars;
@@ -114,6 +116,16 @@ namespace ReCT_IDE
             {
                 Functions = Functions.Substring(0, Functions.Length - 1);
                 Functions = "(" + Functions + ")";
+            }
+            var cls = compilation.Classes.ToArray();
+            foreach (ClassSymbol cs in cls)
+            {
+                Classes += "\\b" + cs.Name + "\\b" + "|";
+            }
+            if (Classes != "")
+            {
+                Classes = Classes.Substring(0, Classes.Length - 1);
+                Classes = "(" + Classes + ")";
             }
             var nspc = compilation.Packages.ToArray();
             packages = nspc;

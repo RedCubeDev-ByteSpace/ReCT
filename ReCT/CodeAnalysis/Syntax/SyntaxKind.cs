@@ -84,7 +84,7 @@ namespace ReCT.CodeAnalysis.Syntax
         FromKeyword,
         FromToStatement,
         AccessToken,
-        RemoteNameExpression,
+        ObjectAccessExpression,
         ThreadKeyword,
         ThreadCreateExpression,
         MakeKeyword,
@@ -106,5 +106,9 @@ namespace ReCT.CodeAnalysis.Syntax
         UseStatement,
         ClassDeclaration,
         ClassKeyword,
+        ObjectKeyword,
+        ObjectCreateExpression,
+        CallKeyword,
+        GetKeyword,
     }
 }

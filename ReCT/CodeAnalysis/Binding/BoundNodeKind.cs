@@ -25,9 +25,10 @@ namespace ReCT.CodeAnalysis.Binding
         CallExpression,
         ConversionExpression,
         FromToStatement,
-        RemoteNameExpression,
+        ObjectAccessExpression,
         ThreadCreateExpression,
         ArrayCreationExpression,
         TryCatchStatement,
+        ObjectCreationExpression,
     }
 }

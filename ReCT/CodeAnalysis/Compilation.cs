@@ -49,6 +49,7 @@ namespace ReCT.CodeAnalysis
         public FunctionSymbol MainFunction => GlobalScope.MainFunction;
         public ImmutableArray<FunctionSymbol> Functions => GlobalScope.Functions;
         public ImmutableArray<VariableSymbol> Variables => GlobalScope.Variables;
+        public ImmutableArray<ClassSymbol> Classes => GlobalScope.Classes;
         public ImmutableArray<Package.Package> Packages => Binder._packageNamespaces.ToImmutableArray();
         public ImmutableArray<string> UsingPackages => Binder._usingPackages.ToImmutableArray();
 

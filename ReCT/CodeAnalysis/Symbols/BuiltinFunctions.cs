@@ -62,7 +62,7 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly FunctionSymbol IsClientConnected = new FunctionSymbol("IsClientConnected", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Bool);
 
         //Cube functions
-        public static readonly FunctionSymbol Die = new FunctionSymbol("Die", ImmutableArray.Create(new ParameterSymbol("exitCode", TypeSymbol.Int, 0)), TypeSymbol.Int);
+        public static readonly FunctionSymbol Die = new FunctionSymbol("die", ImmutableArray.Create(new ParameterSymbol("exitCode", TypeSymbol.Int, 0)), TypeSymbol.Void);
 
         //borger
         public static readonly FunctionSymbol Borger = new FunctionSymbol("borger", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);

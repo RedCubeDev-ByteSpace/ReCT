@@ -12,7 +12,7 @@ namespace ReCT.CodeAnalysis.Binding
                                 ImmutableArray<FunctionSymbol> functions,
                                 ImmutableArray<VariableSymbol> variables,
                                 ImmutableArray<BoundStatement> statements,
-                                ImmutableArray<BoundGlobalScope> classes)
+                                ImmutableArray<ClassSymbol> classes)
         {
             Previous = previous;
             Diagnostics = diagnostics;
@@ -21,6 +21,7 @@ namespace ReCT.CodeAnalysis.Binding
             Functions = functions;
             Variables = variables;
             Statements = statements;
+            Classes = classes;
         }
 
         public BoundGlobalScope Previous { get; }
@@ -30,5 +31,6 @@ namespace ReCT.CodeAnalysis.Binding
         public ImmutableArray<FunctionSymbol> Functions { get; }
         public ImmutableArray<VariableSymbol> Variables { get; }
         public ImmutableArray<BoundStatement> Statements { get; }
+        public ImmutableArray<ClassSymbol> Classes { get; }
     }
 }

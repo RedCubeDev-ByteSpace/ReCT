@@ -22,10 +22,28 @@ namespace ReCT.CodeAnalysis
             _diagnostics.AddRange(diagnostics._diagnostics);
         }
 
-        private void Report(TextLocation location, string message)
+        public void Report(TextLocation location, string message)
         {
             var diagnostic = new Diagnostic(location, message);
             _diagnostics.Add(diagnostic);
+        }
+
+        public void removeRangeBefore(string message)
+        {
+            var remove = new Queue<Diagnostic>();
+            
+            for (int i = _diagnostics.Count - 1; i >= 0; i--)
+            {
+                remove.Enqueue(_diagnostics[i]);
+
+                if (_diagnostics[i].Message == message)
+                    break;
+            }
+
+            while (remove.Count > 0)
+            {
+                _diagnostics.Remove(remove.Dequeue());
+            }
         }
 
         public void ReportInvalidNumber(TextLocation location, string text, TypeSymbol type)
@@ -239,6 +257,31 @@ namespace ReCT.CodeAnalysis
         internal void NamespaceCantBeUsedTwice(TextLocation location, string text)
         {
             Report(location, $"Cant 'use' Namespace '{text}' multiple times!");
+        }
+
+        internal void ReportClassNotFound(TextLocation location, string text)
+        {
+            Report(location, $"Class '{text}' doesnt exist!");
+        }
+
+        internal void ReportWrongNumberOfConstructorArgs(TextLocation location, string text, int exp, int count)
+        {
+            Report(location, $"Constructor of Class '{text}' exprected {exp} parameters but got {count}!");
+        }
+
+        internal void ReportFunctionNotFoundInObject(TextLocation location, string text, string name)
+        {
+            Report(location, $"Function '{text}' couldnt be found in Class '{name}'!");
+        }
+
+        internal void ReportFunctionInObjectHasDifferentParams(TextLocation location, string text, string name, int count)
+        {
+            Report(location, $"Function '{text}' in Class '{name}' does not take {count} Arguments!");
+        }
+
+        internal void ReportVariableNotFoundInObject(TextLocation location, string text, string name)
+        {
+            Report(location, $"Class '{name}' doesnt have a Variable called '{text}'! (Maybe its not accessable)");
         }
     }
 }

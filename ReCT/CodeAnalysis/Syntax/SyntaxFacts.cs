@@ -108,6 +108,12 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.UseKeyword;
                 case "class":
                     return SyntaxKind.ClassKeyword;
+                case "object":
+                    return SyntaxKind.ObjectKeyword;
+                case "call":
+                    return SyntaxKind.CallKeyword;
+                case "get":
+                    return SyntaxKind.GetKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -241,6 +247,12 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "use";
                 case SyntaxKind.ClassKeyword:
                     return "class";
+                case SyntaxKind.ObjectKeyword:
+                    return "object";
+                case SyntaxKind.CallKeyword:
+                    return "call";
+                case SyntaxKind.GetKeyword:
+                    return "get";
                 default:
                     return null;
             }

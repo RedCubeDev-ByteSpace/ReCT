@@ -25,13 +25,8 @@ namespace ReCT.CodeAnalysis.Package
 
             sysPack = "Packages/" + sysPack;
 
-            if (!File.Exists(sysPack))
-                Console.WriteLine($"Couldnt find file '{sysPack}'!");
-
             AssemblyDefinition Asm = AssemblyDefinition.ReadAssembly(sysPack);
             TypeDefinition AsmType = Asm.MainModule.Types.FirstOrDefault(x => x.Name == key);
-
-            Console.WriteLine($"Loading Package '{sysPack} [{AsmType.Namespace}]'...");
 
             var methods = AsmType.Methods;
 

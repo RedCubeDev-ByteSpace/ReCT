@@ -1,13 +1,15 @@
-﻿namespace ReCT.CodeAnalysis.Syntax
+﻿using System.Collections.Immutable;
+
+namespace ReCT.CodeAnalysis.Syntax
 {
     public sealed class ClassDeclarationSyntax : MemberSyntax
     {
-        public ClassDeclarationSyntax(SyntaxTree syntaxTree, SyntaxToken classKeyword, SyntaxToken identifier, BlockStatementSyntax body, bool _static)
+        public ClassDeclarationSyntax(SyntaxTree syntaxTree, SyntaxToken classKeyword, SyntaxToken identifier, ImmutableArray<MemberSyntax> members, bool _static)
             : base(syntaxTree)
         {
             ClassKeyword = classKeyword;
             Identifier = identifier;
-            Body = body;
+            Members = members;
             isStatic = _static;
         }
 
@@ -15,7 +17,7 @@
 
         public SyntaxToken ClassKeyword { get; }
         public SyntaxToken Identifier { get; }
-        public BlockStatementSyntax Body { get; }
+        public ImmutableArray<MemberSyntax> Members { get; }
         public bool isStatic { get; }
     }
 }

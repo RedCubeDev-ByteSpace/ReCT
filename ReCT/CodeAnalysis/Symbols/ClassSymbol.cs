@@ -1,4 +1,5 @@
-﻿using ReCT.CodeAnalysis.Syntax;
+﻿using ReCT.CodeAnalysis.Binding;
+using ReCT.CodeAnalysis.Syntax;
 
 namespace ReCT.CodeAnalysis.Symbols
 {
@@ -13,6 +14,8 @@ namespace ReCT.CodeAnalysis.Symbols
 
         public ClassDeclarationSyntax Declaration { get; }
         public bool IsStatic { get; }
+        public object[] Statements;
+        public Binding.BoundScope Scope;
 
         public override SymbolKind Kind => SymbolKind.Class;
     }

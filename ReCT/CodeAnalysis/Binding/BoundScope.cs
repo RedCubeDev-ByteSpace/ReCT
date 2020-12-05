@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -8,10 +9,16 @@ namespace ReCT.CodeAnalysis.Binding
     public sealed class BoundScope
     {
         private Dictionary<string, Symbol> _symbols;
+        public string Name;
 
         public BoundScope(BoundScope parent)
         {
             Parent = parent;
+        }
+        public BoundScope(BoundScope parent, string name)
+        {
+            Parent = parent;
+            Name = name;
         }
 
         public BoundScope Parent { get; }
@@ -48,6 +55,9 @@ namespace ReCT.CodeAnalysis.Binding
         public ImmutableArray<VariableSymbol> GetDeclaredVariables()
             => GetDeclaredSymbols<VariableSymbol>();
 
+        public ImmutableArray<ClassSymbol> GetDeclaredClasses()
+            => GetDeclaredSymbols<ClassSymbol>();
+
         public ImmutableArray<FunctionSymbol> GetDeclaredFunctions()
             => GetDeclaredSymbols<FunctionSymbol>();
 
@@ -58,6 +68,22 @@ namespace ReCT.CodeAnalysis.Binding
                 return ImmutableArray<TSymbol>.Empty;
 
             return _symbols.Values.OfType<TSymbol>().ToImmutableArray();
+        }
+
+        internal void ClearVariables()
+        {
+            Queue<KeyValuePair<string, Symbol>> symsToDed = new Queue<KeyValuePair<string, Symbol>>();
+
+            foreach (var sym in _symbols)
+            {
+                if (sym.Value is VariableSymbol)
+                    symsToDed.Enqueue(sym);
+            }
+
+            while (symsToDed.Count > 0)
+            {
+                _symbols.Remove(symsToDed.Dequeue().Key);
+            }
         }
     }
 }
