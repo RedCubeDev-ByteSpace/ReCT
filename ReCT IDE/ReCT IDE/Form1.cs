@@ -226,12 +226,12 @@ namespace ReCT_IDE
         Style SystemFunctionStyle = new TextStyle(new SolidBrush(Color.FromArgb(255, 131, 7)), null, FontStyle.Regular);
         Style UserFunctionStyle = new TextStyle(new SolidBrush(Color.FromArgb(25, 189, 93)), null, FontStyle.Regular);
         Style VariableStyle = new TextStyle(new SolidBrush(Color.FromArgb(255, 212, 125)), null, FontStyle.Regular);
-        Style TypeFunctionStyle = new TextStyle(new SolidBrush(Color.FromArgb(159, 212, 85)), null, FontStyle.Regular);
+        Style TypeFunctionStyle = new TextStyle(new SolidBrush(Color.FromArgb(230, 115, 83)), null, FontStyle.Regular);
         Style CommentStyle = new TextStyle(new SolidBrush(Color.FromArgb(100, 100, 100)), null, FontStyle.Regular);
         Style WhiteStyle = new TextStyle(Brushes.White, null, FontStyle.Regular);
         Style SettingStyle = new TextStyle(new SolidBrush(Color.FromArgb(17, 191, 119)), null, FontStyle.Bold);
         Style PackageStyle = new TextStyle(new SolidBrush(Color.FromArgb(252, 186, 3)), null, FontStyle.Regular);
-        Style ClassStyle = new TextStyle(new SolidBrush(Color.FromArgb(0, 186, 171)), null, FontStyle.Regular);
+        Style ClassStyle = new TextStyle(new SolidBrush(Color.FromArgb(83, 230, 159)), null, FontStyle.Bold);
 
 
         Style DebugStyle = new TextStyle(new SolidBrush(Color.FromArgb(125, 125, 125)), null, FontStyle.Regular);
@@ -283,16 +283,13 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(UserFunctionStyle, rectCompCheck.Functions);
 
             //classes
-            e.ChangedRange.SetStyle(ClassStyle, rectCompCheck.Classes);
+            e.ChangedRange.SetStyle(SettingStyle, rectCompCheck.Classes);
 
             //packages
             e.ChangedRange.SetStyle(PackageStyle, rectCompCheck.Namespaces);
 
             //package functions
             e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\w*(?<=::)" + rectCompCheck.NamespaceFunctions + ")");
-
-            //debug options
-            e.ChangedRange.SetStyle(DebugStyle, @"(?<=\>>\s)(\w+)");
 
             //type functions
             e.ChangedRange.SetStyle(TypeFunctionStyle, @"(?<=\>>\s)(\w+)");

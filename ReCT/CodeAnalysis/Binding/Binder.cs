@@ -19,6 +19,7 @@ namespace ReCT.CodeAnalysis.Binding
         private int _labelCounter;
         private BoundScope _scope;
         private ClassSymbol inClass = null;
+        static BoundScope ParentScope;
 
         public static List<Package.Package> _packageNamespaces = new List<Package.Package>();
         public static string _namespace = "";
@@ -45,6 +46,7 @@ namespace ReCT.CodeAnalysis.Binding
             var parentScope = CreateParentScope(previous);
             parentScope.Name = "ProgramScope";
             var binder = new Binder(isScript, parentScope, function: null);
+            ParentScope = binder._scope;
 
             var functionDeclarations = syntaxTrees.SelectMany(st => st.Root.Members)
                                                   .OfType<FunctionDeclarationSyntax>();
@@ -57,6 +59,9 @@ namespace ReCT.CodeAnalysis.Binding
 
             foreach (var _class in classDeclarations)
                 binder.BindClassDeclaration(_class);
+
+            foreach (var _class in binder._scope.GetDeclaredClasses())
+                binder.BindClassFunctionDeclaration(_class.Declaration, _class);
 
             var globalStatements = syntaxTrees.SelectMany(st => st.Root.Members)
                                               .OfType<GlobalStatementSyntax>();
@@ -150,6 +155,7 @@ namespace ReCT.CodeAnalysis.Binding
             foreach (var _class in globalScope.Classes)
             {
                 var cFunctionBodies = ImmutableDictionary.CreateBuilder<FunctionSymbol, BoundBlockStatement>();
+                _class.Scope.ClearVariables();
                 Console.WriteLine("CLASS SCOPE: " + _class.Name);
 
                 var symbol = _class.Scope.TryLookupSymbol("Constructor");
@@ -192,7 +198,6 @@ namespace ReCT.CodeAnalysis.Binding
                     Binder._diagnostics.ReportAllPathsMustReturn(function.Declaration.Identifier.Location);
 
                 functionBodies.Add(function, loweredBody);
-
             }
 
             diagnostics.AddRange(Binder._diagnostics);
@@ -284,6 +289,24 @@ namespace ReCT.CodeAnalysis.Binding
             var classSymbol = new ClassSymbol(syntax.Identifier.Text, syntax, syntax.isStatic);
             classSymbol.Scope = new BoundScope(CreateRootScope(), syntax.Identifier.Text);
 
+            if (classSymbol.Declaration.Identifier.Text != null &&
+                !_scope.TryDeclareClass(classSymbol))
+            {
+                _diagnostics.ReportSymbolAlreadyDeclared(syntax.Identifier.Location, classSymbol.Name);
+            }
+
+            if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
+
+            if (!TypeSymbol.Class.ContainsKey(classSymbol))
+            {
+                var classTypeSymbol = new TypeSymbol(classSymbol.Name);
+                classTypeSymbol.isClass = true;
+                TypeSymbol.Class.Add(classSymbol, classTypeSymbol);
+            }
+        }
+
+        private void BindClassFunctionDeclaration(ClassDeclarationSyntax syntax, ClassSymbol _class)
+        {
             foreach (MemberSyntax m in syntax.Members)
             {
                 if (m is FunctionDeclarationSyntax fsyntax)
@@ -311,26 +334,20 @@ namespace ReCT.CodeAnalysis.Binding
 
                     var function = new FunctionSymbol(fsyntax.Identifier.Text, parameters.ToImmutable(), type, fsyntax, fsyntax.IsPublic);
                     if (function.Declaration.Identifier.Text != null &&
-                        !classSymbol.Scope.TryDeclareFunction(function))
+                        !_class.Scope.TryDeclareFunction(function))
                     {
                         _diagnostics.ReportSymbolAlreadyDeclared(fsyntax.Identifier.Location, function.Name);
                     }
+
+                    if (function.Name == "Constructor")
+                    {
+                        _diagnostics.Report(default, "BINDING CONSTRUCTOR");
+                        var binder = new Binder(false, _class.Scope, function, _class);
+                        binder.BindStatement(function.Declaration.Body);
+
+                        _diagnostics.removeRangeBefore("BINDING CONSTRUCTOR");
+                    }
                 }
-            }
-
-            if (classSymbol.Declaration.Identifier.Text != null &&
-                !_scope.TryDeclareClass(classSymbol))
-            {
-                _diagnostics.ReportSymbolAlreadyDeclared(syntax.Identifier.Location, classSymbol.Name);
-            }
-
-            if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
-
-            if (!TypeSymbol.Class.ContainsKey(classSymbol))
-            {
-                var classTypeSymbol = new TypeSymbol(classSymbol.Name);
-                classTypeSymbol.isClass = true;
-                TypeSymbol.Class.Add(classSymbol, classTypeSymbol);
             }
         }
 
@@ -740,7 +757,7 @@ namespace ReCT.CodeAnalysis.Binding
             var found = false;
             ClassSymbol _class = null;
 
-            foreach (ClassSymbol c in _scope.GetDeclaredClasses())
+            foreach (ClassSymbol c in ParentScope.GetDeclaredClasses())
             {
                 if (c.Name == syntax.Type.Text)
                 {
@@ -833,7 +850,12 @@ namespace ReCT.CodeAnalysis.Binding
             TypeSymbol type = TypeSymbol.Any;
             BoundExpression value = null;
 
-            var _class = _scope.GetDeclaredClasses().FirstOrDefault(x => x.Name == variable.Type.Name);
+            var _class = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == variable.Type.Name);
+
+            if (_class == null)
+            {
+                return new BoundErrorExpression();
+            }
 
             if (syntax.Type == ObjectAccessExpression.AccessType.Call)
             {
@@ -877,6 +899,23 @@ namespace ReCT.CodeAnalysis.Binding
 
                 property = symbol as VariableSymbol;
                 type = property.Type;
+            }
+
+            if (syntax.Type == ObjectAccessExpression.AccessType.Set)
+            {
+                var symbol = _class.Scope.TryLookupSymbol(syntax.LookingFor.Text);
+
+                if (symbol == null || !(symbol is VariableSymbol))
+                {
+                    _diagnostics.ReportVariableNotFoundInObject(syntax.LookingFor.Location, syntax.LookingFor.Text, _class.Name);
+                    return new BoundErrorExpression();
+                }
+
+                property = symbol as VariableSymbol;
+                type = property.Type;
+                value = BindExpression(syntax.Value);
+                value = BindConversion(syntax.Value.Location, value, type);
+                type = TypeSymbol.Void;
             }
 
             return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property, type, value);
@@ -1081,7 +1120,7 @@ namespace ReCT.CodeAnalysis.Binding
         private BoundExpression BindConversion(ExpressionSyntax syntax, TypeSymbol type, bool allowExplicit = false)
         {
             var expression = BindExpression(syntax);
-            return BindConversion(syntax.Location, expression, type, allowExplicit);
+             return BindConversion(syntax.Location, expression, type, allowExplicit);
         }
 
         private BoundExpression BindConversion(TextLocation diagnosticLocation, BoundExpression expression, TypeSymbol type, bool allowExplicit = false)
@@ -1115,7 +1154,7 @@ namespace ReCT.CodeAnalysis.Binding
                                 ? (VariableSymbol)new GlobalVariableSymbol(name, isReadOnly, type)
                                 : new LocalVariableSymbol(name, isReadOnly, type);
 
-            Console.WriteLine($"VAR: {name} | {declare} | {variable} | {_scope.Name}");
+            Console.WriteLine($"VAR: {name} | {declare} | {variable} | {(variable.IsGlobal ? getClassScope() : _scope).Name}");
 
             if (declare && variable.IsGlobal ? !getClassScope().TryDeclareVariable(variable) : !_scope.TryDeclareVariable(variable))
                 _diagnostics.ReportSymbolAlreadyDeclared(identifier.Location, name);

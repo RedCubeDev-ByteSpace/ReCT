@@ -93,28 +93,35 @@ namespace ReCT.CodeAnalysis.Binding
         {
             writer.WriteIdentifier(node.Variable.Name);
             writer.WriteKeyword(SyntaxKind.AccessToken);
-            writer.WriteKeyword(SyntaxKind.CallKeyword);
-            writer.WriteIdentifier(node.Function.Name);
+            writer.WriteIdentifier(node.Function == null ? node.Property.Name : node.Function.Name);
 
-            writer.WritePunctuation(SyntaxKind.OpenParenthesisToken);
-
-            var isFirst = true;
-            foreach (var argument in node.Arguments)
+            if (node.AccessType == ObjectAccessExpression.AccessType.Call)
             {
-                if (isFirst)
+                writer.WritePunctuation(SyntaxKind.OpenParenthesisToken);
+
+                var isFirst = true;
+                foreach (var argument in node.Arguments)
                 {
-                    isFirst = false;
-                }
-                else
-                {
-                    writer.WritePunctuation(SyntaxKind.CommaToken);
-                    writer.WriteSpace();
+                    if (isFirst)
+                    {
+                        isFirst = false;
+                    }
+                    else
+                    {
+                        writer.WritePunctuation(SyntaxKind.CommaToken);
+                        writer.WriteSpace();
+                    }
+
+                    argument.WriteTo(writer);
                 }
 
-                argument.WriteTo(writer);
+                writer.WritePunctuation(SyntaxKind.CloseParenthesisToken);
             }
-
-            writer.WritePunctuation(SyntaxKind.CloseParenthesisToken);
+            else if (node.AccessType == ObjectAccessExpression.AccessType.Set)
+            {
+                writer.WriteKeyword(SyntaxKind.AssignToken);
+                writer.WriteNestedExpression(0, node.Value);
+            }
         }
 
         private static void WriteNestedStatement(this IndentedTextWriter writer, BoundStatement node)

@@ -662,15 +662,20 @@ namespace ReCT.CodeAnalysis.Syntax
             var identifierToken = MatchToken(SyntaxKind.IdentifierToken);
             MatchToken(SyntaxKind.AccessToken);
 
-            if (Current.Kind == SyntaxKind.CallKeyword)
+            if (Peek(1).Kind == SyntaxKind.OpenParenthesisToken)
             {
-                MatchToken(SyntaxKind.CallKeyword);
                 var call = ParseCallExpression();
                 return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Call, (CallExpressionSyntax)call, null, null);
             }
-            if (Current.Kind == SyntaxKind.GetKeyword)
+            if (Peek(1).Kind == SyntaxKind.AssignToken)
             {
-                MatchToken(SyntaxKind.GetKeyword);
+                var propIdentifier = NextToken();
+                MatchToken(SyntaxKind.AssignToken);
+                var value = ParseExpression();
+                return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Set, null, propIdentifier, value);
+            }
+            else if (Current.Kind == SyntaxKind.IdentifierToken)
+            {
                 var propIdentifier = NextToken();
                 return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Get, null, propIdentifier, null);
             }

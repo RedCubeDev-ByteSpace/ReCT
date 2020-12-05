@@ -72,6 +72,8 @@ namespace ReCT.CodeAnalysis.Binding
 
         internal void ClearVariables()
         {
+            if (_symbols == null) return;
+
             Queue<KeyValuePair<string, Symbol>> symsToDed = new Queue<KeyValuePair<string, Symbol>>();
 
             foreach (var sym in _symbols)

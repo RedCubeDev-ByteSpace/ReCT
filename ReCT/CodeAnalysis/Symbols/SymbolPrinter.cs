@@ -66,7 +66,7 @@ namespace ReCT.CodeAnalysis.Symbols
             writer.WriteIdentifier(symbol.Name);
             writer.WritePunctuation(SyntaxKind.TypeToken);
             writer.WriteSpace();
-            symbol.Type.WriteTo(writer);
+          symbol.Type.WriteTo(writer);
         }
 
         private static void WriteLocalVariableTo(LocalVariableSymbol symbol, TextWriter writer)

@@ -410,6 +410,8 @@ namespace ReCT.CodeAnalysis.Emit
             _assemblyDefinition.MainModule.Types.Add(_typeDefinition);
 
             //classes
+            var classDefinitions = new Dictionary<KeyValuePair<ClassSymbol, ImmutableDictionary<FunctionSymbol, BoundBlockStatement>>, TypeDefinition>();
+
             isConstructor = true;
             foreach (var _class in program.Classes)
             {
@@ -420,10 +422,8 @@ namespace ReCT.CodeAnalysis.Emit
 
                 inType = classDefinition;
                 _classGlobals.Add(classDefinition, new Dictionary<VariableSymbol, FieldDefinition>());
-
-                var hasContructor = false;
+                _knownTypes.Add(TypeSymbol.Class[_class.Key], classDefinition);
                 _classMethods.Add(_class.Key, new Dictionary<FunctionSymbol, MethodDefinition>());
-                //Dictionary<FunctionSymbol, MethodDefinition> classMethods = new Dictionary<FunctionSymbol, MethodDefinition>();
 
                 foreach (var functionSB in _class.Value)
                 {
@@ -436,7 +436,6 @@ namespace ReCT.CodeAnalysis.Emit
 
                     if (function.Name == "Constructor")
                     {
-                        hasContructor = true;
                         method = new MethodDefinition(".ctor", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, _knownTypes[TypeSymbol.Void]);
                     }
 
@@ -452,12 +451,24 @@ namespace ReCT.CodeAnalysis.Emit
                     _classMethods[_class.Key].Add(function, method);
                 }
 
+                classDefinitions.Add(_class, classDefinition);
+            }
+
+            foreach (var _classDef in classDefinitions)
+            {
+                var hasContructor = false;
+                var _class = _classDef.Key;
+                var classDefinition = _classDef.Value;
+                //Dictionary<FunctionSymbol, MethodDefinition> classMethods = new Dictionary<FunctionSymbol, MethodDefinition>();
+
                 if (_class.Value.FirstOrDefault(x => x.Key.Name == "Constructor").Value != null)
                 {
                     var pair = _class.Value.FirstOrDefault(x => x.Key.Name == "Constructor");
                     var function = pair.Key;
                     var body = pair.Value;
                     var method = _classMethods[_class.Key][function];
+
+                    if (function.Name == "Constructor")
 
                     //body
                     _locals.Clear();
@@ -536,9 +547,6 @@ namespace ReCT.CodeAnalysis.Emit
 
                     method.Body.OptimizeMacros();
                 }
-
-                
-                _knownTypes.Add(TypeSymbol.Class[_class.Key], classDefinition);
             }
 
             isConstructor = false;
@@ -858,7 +866,12 @@ namespace ReCT.CodeAnalysis.Emit
             }
             if (node.AccessType == ObjectAccessExpression.AccessType.Get)
             {
-                ilProcessor.Emit(OpCodes.Ldfld, _classGlobals[_classes[classSymbol]][node.Variable]);
+                ilProcessor.Emit(OpCodes.Ldfld, _classGlobals[_classes[classSymbol]].FirstOrDefault(x => x.Key.Name == node.Property.Name && x.Key.Type == node.Property.Type).Value);
+            }
+            if (node.AccessType == ObjectAccessExpression.AccessType.Set)
+            {
+                EmitExpression(ilProcessor, node.Value);
+                ilProcessor.Emit(OpCodes.Stfld, _classGlobals[_classes[classSymbol]].FirstOrDefault(x => x.Key.Name == node.Property.Name && x.Key.Type == node.Property.Type).Value);
             }
         }
 

@@ -108,7 +108,5 @@ namespace ReCT.CodeAnalysis.Syntax
         ClassKeyword,
         ObjectKeyword,
         ObjectCreateExpression,
-        CallKeyword,
-        GetKeyword,
     }
 }
