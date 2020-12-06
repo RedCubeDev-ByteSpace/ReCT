@@ -474,13 +474,24 @@ namespace ReCT.CodeAnalysis.Emit
                 _knownTypes.Add(TypeSymbol.Class[_class.Key], classDefinition);
                 _classMethods.Add(_class.Key, new Dictionary<FunctionSymbol, MethodDefinition>());
 
+                classDefinitions.Add(_class, classDefinition);
+            }
+
+            foreach (var _classDef in classDefinitions)
+            {
+                var _class = _classDef.Key;
+                var classDefinition = _classDef.Value;
+
+                inType = classDefinition;
+                inClass = _class.Key;
+
                 foreach (var functionSB in _class.Value)
                 {
                     var function = functionSB.Key;
                     var body = functionSB.Value;
 
                     //decleration
-                    var functionType = _knownTypes[function.Type];
+                    var functionType = _knownTypes[function.Type.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == function.Type.Name) : function.Type];
                     var method = new MethodDefinition(function.Name, (_class.Key.IsStatic ? MethodAttributes.Static : 0) | (function.IsPublic ? MethodAttributes.Public : MethodAttributes.Private), functionType);
 
                     if (function.Name == "Constructor")
@@ -490,7 +501,7 @@ namespace ReCT.CodeAnalysis.Emit
 
                     foreach (var parameter in function.Parameters)
                     {
-                        var parameterType = _knownTypes[parameter.Type];
+                        var parameterType = _knownTypes[parameter.Type.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == parameter.Type.Name) : parameter.Type];
                         var parameterAttributes = ParameterAttributes.None;
                         var parameterDefinition = new ParameterDefinition(parameter.Name, parameterAttributes, parameterType);
                         method.Parameters.Add(parameterDefinition);
@@ -499,8 +510,6 @@ namespace ReCT.CodeAnalysis.Emit
                     classDefinition.Methods.Add(method);
                     _classMethods[_class.Key].Add(function, method);
                 }
-
-                classDefinitions.Add(_class, classDefinition);
             }
 
             foreach (var _classDef in classDefinitions)
@@ -508,6 +517,9 @@ namespace ReCT.CodeAnalysis.Emit
                 var hasContructor = false;
                 var _class = _classDef.Key;
                 var classDefinition = _classDef.Value;
+
+                inType = classDefinition;
+                inClass = _class.Key;
                 //Dictionary<FunctionSymbol, MethodDefinition> classMethods = new Dictionary<FunctionSymbol, MethodDefinition>();
 
                 if (_class.Value.FirstOrDefault(x => x.Key.Name == "Constructor").Value != null)
@@ -618,12 +630,12 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitFunctionDeclaration(FunctionSymbol function)
         {
-            var functionType = _knownTypes[function.Type];
+            var functionType = _knownTypes[function.Type.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == function.Type.Name) : function.Type];
             var method = new MethodDefinition(function.Name, MethodAttributes.Static | (function.IsPublic ? MethodAttributes.Public : MethodAttributes.Private), functionType);
 
             foreach (var parameter in function.Parameters)
             {
-                var parameterType = _knownTypes[parameter.Type];
+                var parameterType = _knownTypes[parameter.Type.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == parameter.Type.Name) : parameter.Type];
                 var parameterAttributes = ParameterAttributes.None;
                 var parameterDefinition = new ParameterDefinition(parameter.Name, parameterAttributes, parameterType);
                 method.Parameters.Add(parameterDefinition);
@@ -738,7 +750,7 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitVariableDeclaration(ILProcessor ilProcessor, BoundVariableDeclaration node)
         {
-            var typeReference = _knownTypes[node.Variable.Type];
+            var typeReference = _knownTypes[node.Variable.Type.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.Variable.Type.Name) : node.Variable.Type];
             var variableDefinition = new VariableDefinition(typeReference);
             FieldDefinition field = null;
 
@@ -753,9 +765,28 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Body.Variables.Add(variableDefinition);
             }
 
+            if (inType != null && !inClass.IsStatic)
+                ilProcessor.Emit(OpCodes.Ldarg_0);
+
             EmitExpression(ilProcessor, node.Initializer);
 
-            if(node.Variable.IsGlobal)
+            if (inType != null)
+            {
+                if (!node.Variable.IsGlobal)
+                {
+                    ilProcessor.Emit(OpCodes.Stloc, variableDefinition);
+                    return;
+                }
+
+                if (inClass.IsStatic)
+                    ilProcessor.Emit(OpCodes.Stsfld, field);
+                else
+                    ilProcessor.Emit(OpCodes.Stfld, field);
+
+                return;
+            }
+
+            if (node.Variable.IsGlobal)
                 ilProcessor.Emit(OpCodes.Stsfld, field);
             else
                 ilProcessor.Emit(OpCodes.Stloc, variableDefinition);
@@ -895,7 +926,7 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitObjectAccessExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
         {
-            if (!node.Class.IsStatic)
+            if (node.Class == null || !node.Class.IsStatic)
             {
                 if (node.Variable is ParameterSymbol parameter)
                 {
@@ -910,11 +941,14 @@ namespace ReCT.CodeAnalysis.Emit
                 {
                     var variableDefinition = _locals[node.Variable];
                     ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
-
                 }
             }
 
-            //EmitTypeCallExpression(ilProcessor, node);
+            if (node.TypeCall != null)
+            {
+                EmitTypeCallExpression(ilProcessor, node);
+                return;
+            }
 
             var classSymbol = node.Class;
 
@@ -990,7 +1024,9 @@ namespace ReCT.CodeAnalysis.Emit
                 else if (node.Variable.IsGlobal)
                 {
                     var fieldDefinition = (inType == null ? _globals : _classGlobals[inType])[node.Variable];
-                    ilProcessor.Emit(OpCodes.Ldsfld, fieldDefinition);
+
+                    if (inType != null && !inClass.IsStatic && (ilProcessor.Body.Instructions.Count > 0 ? ilProcessor.Body.Instructions.Last().OpCode != OpCodes.Ldarg_0 : true)) ilProcessor.Emit(OpCodes.Ldarg_0);
+                    ilProcessor.Emit(inType == null ? OpCodes.Ldsfld : inClass.IsStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, fieldDefinition);
                 }
                 else
                 {
@@ -1034,8 +1070,27 @@ namespace ReCT.CodeAnalysis.Emit
                 return;
             }
 
+            if (inType != null && !inClass.IsStatic)
+                ilProcessor.Emit(OpCodes.Ldarg_0);
+
             EmitExpression(ilProcessor, node.Expression);
             //ilProcessor.Emit(OpCodes.Dup);
+
+            if (inType != null)
+            {
+                if (!node.Variable.IsGlobal)
+                {
+                    ilProcessor.Emit(OpCodes.Stloc, variableDefinition);
+                    return;
+                }
+
+                if (inClass.IsStatic)
+                    ilProcessor.Emit(OpCodes.Stsfld, fieldDefinition);
+                else
+                    ilProcessor.Emit(OpCodes.Stfld, fieldDefinition);
+
+                return;
+            }
 
             if (node.Variable.IsGlobal)
                 ilProcessor.Emit(OpCodes.Stsfld, fieldDefinition);
@@ -1172,124 +1227,110 @@ namespace ReCT.CodeAnalysis.Emit
             }
         }
 
-        //private void EmitTypeCallExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
-        //{
-        //    if (node.Call.Function == BuiltinFunctions.WriteToClient)
-        //    {
-        //        VariableDefinition var0 = new VariableDefinition(_StreamWriterRef);
-
-        //        ilProcessor.Body.Variables.Add(var0);
-
-        //        ilProcessor.Emit(OpCodes.Callvirt, _TCPClientGetStream);
-        //        ilProcessor.Emit(OpCodes.Newobj, _IOStreamWriterCtor);
-        //        ilProcessor.Emit(OpCodes.Stloc, var0);
-        //        ilProcessor.Emit(OpCodes.Ldloc, var0);
-        //        EmitExpression(ilProcessor, node.Call.Arguments[0]);
-        //        ilProcessor.Emit(OpCodes.Callvirt, _IOWriteLine);
-        //        ilProcessor.Emit(OpCodes.Ldloc, var0);
-        //        ilProcessor.Emit(OpCodes.Callvirt, _IOFlush);
-        //        return;
-        //    }
-        //    else if (node.Call.Function == BuiltinFunctions.ReadClient)
-        //    {
-        //        ilProcessor.Emit(OpCodes.Callvirt, _TCPClientGetStream);
-        //        ilProcessor.Emit(OpCodes.Newobj, _IOStreamReaderCtor);
-        //        ilProcessor.Emit(OpCodes.Callvirt, _IOReadLine);
-        //        return;
-        //    }
-        //    else if (node.Call.Function == BuiltinFunctions.WriteToSocket)
-        //    {
-        //        VariableDefinition var0 = new VariableDefinition(_StreamWriterRef);
-
-        //        ilProcessor.Body.Variables.Add(var0);
-
-        //        ilProcessor.Emit(OpCodes.Newobj, _TCPNetworkStreamCtor);
-        //        ilProcessor.Emit(OpCodes.Newobj, _IOStreamWriterCtor);
-        //        ilProcessor.Emit(OpCodes.Stloc, var0);
-        //        ilProcessor.Emit(OpCodes.Ldloc, var0);
-        //        EmitExpression(ilProcessor, node.Call.Arguments[0]);
-        //        ilProcessor.Emit(OpCodes.Callvirt, _IOWriteLine);
-        //        ilProcessor.Emit(OpCodes.Ldloc, var0);
-        //        ilProcessor.Emit(OpCodes.Callvirt, _IOFlush);
-        //        return;
-        //    }
-        //    else if (node.Call.Function == BuiltinFunctions.ReadSocket)
-        //    {
-        //        ilProcessor.Emit(OpCodes.Newobj, _TCPNetworkStreamCtor);
-        //        ilProcessor.Emit(OpCodes.Newobj, _IOStreamReaderCtor);
-        //        ilProcessor.Emit(OpCodes.Callvirt, _IOReadLine);
-        //        return;
-        //    }
-
-        //    foreach (var argument in node.Call.Arguments)
-        //        EmitExpression(ilProcessor, argument);
-
-        //    if (node.Call.Function == BuiltinFunctions.GetLength)
-        //    {
-        //        var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "get_Length", Array.Empty<string>());
-        //        ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
-        //    }
-        //    else if (node.Call.Function == BuiltinFunctions.Substring)
-        //    {
-        //        var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Substring", new[] { "System.Int32", "System.Int32" });
-        //        ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
-        //    }
-        //    else if (node.Call.Function == BuiltinFunctions.StartThread)
-        //    {
-        //        var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Start", Array.Empty<string>());
-        //        ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
-        //    }
-        //    else if (node.Call.Function == BuiltinFunctions.KillThread)
-        //    {
-        //        var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Interrupt", Array.Empty<string>());
-        //        ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
-        //    }
-        //    else if (node.Call.Function == BuiltinFunctions.GetArrayLength)
-        //    {
-        //        ilProcessor.Emit(OpCodes.Ldlen);
-        //    }
-        //    else if (node.Call.Function == BuiltinFunctions.OpenSocket)
-        //    {
-        //        ilProcessor.Emit(OpCodes.Callvirt, _TCPAcceptSocketReference);
-        //    }
-        //    else if (node.Call.Function == BuiltinFunctions.CloseClient)
-        //    {
-        //        ilProcessor.Emit(OpCodes.Callvirt, _TCPClientClose);
-        //    }
-        //    else if (node.Call.Function == BuiltinFunctions.CloseSocket)
-        //    {
-        //        ilProcessor.Emit(OpCodes.Callvirt, _TCPSocketClose);
-        //    }
-        //    else if (node.Call.Function == BuiltinFunctions.IsClientConnected)
-        //    {
-        //        ilProcessor.Emit(OpCodes.Callvirt, _TCPClientConnected);
-        //    }
-        //    else if (node.Call.Function == BuiltinFunctions.IsSocketConnected)
-        //    {
-        //        ilProcessor.Emit(OpCodes.Callvirt, _TCPSocketConnected);
-        //    }
-        //    else
-        //    {
-        //        throw new Exception("Couldnt find TypeFunction: " + node.Call.Function.Name);
-        //    }
-        //}
-
-        private void EmitCallExpression(ILProcessor ilProcessor, BoundCallExpression node)
+        private void EmitTypeCallExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
         {
-            if (node.Function == BuiltinFunctions.Random)
+            if (node.TypeCall.Function == BuiltinFunctions.WriteToClient)
             {
-                if (_randomFieldDefinition == null)
-                    EmitRandomField();
+                VariableDefinition var0 = new VariableDefinition(_StreamWriterRef);
 
-                ilProcessor.Emit(OpCodes.Ldsfld, _randomFieldDefinition);
+                ilProcessor.Body.Variables.Add(var0);
 
-                foreach (var argument in node.Arguments)
-                    EmitExpression(ilProcessor, argument);
+                ilProcessor.Emit(OpCodes.Callvirt, _TCPClientGetStream);
+                ilProcessor.Emit(OpCodes.Newobj, _IOStreamWriterCtor);
+                ilProcessor.Emit(OpCodes.Stloc, var0);
+                ilProcessor.Emit(OpCodes.Ldloc, var0);
+                EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
+                ilProcessor.Emit(OpCodes.Callvirt, _IOWriteLine);
+                ilProcessor.Emit(OpCodes.Ldloc, var0);
+                ilProcessor.Emit(OpCodes.Callvirt, _IOFlush);
+                return;
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.ReadClient)
+            {
+                ilProcessor.Emit(OpCodes.Callvirt, _TCPClientGetStream);
+                ilProcessor.Emit(OpCodes.Newobj, _IOStreamReaderCtor);
+                ilProcessor.Emit(OpCodes.Callvirt, _IOReadLine);
+                return;
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.WriteToSocket)
+            {
+                VariableDefinition var0 = new VariableDefinition(_StreamWriterRef);
 
-                ilProcessor.Emit(OpCodes.Callvirt, _randomNextReference);
+                ilProcessor.Body.Variables.Add(var0);
+
+                ilProcessor.Emit(OpCodes.Newobj, _TCPNetworkStreamCtor);
+                ilProcessor.Emit(OpCodes.Newobj, _IOStreamWriterCtor);
+                ilProcessor.Emit(OpCodes.Stloc, var0);
+                ilProcessor.Emit(OpCodes.Ldloc, var0);
+                EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
+                ilProcessor.Emit(OpCodes.Callvirt, _IOWriteLine);
+                ilProcessor.Emit(OpCodes.Ldloc, var0);
+                ilProcessor.Emit(OpCodes.Callvirt, _IOFlush);
+                return;
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.ReadSocket)
+            {
+                ilProcessor.Emit(OpCodes.Newobj, _TCPNetworkStreamCtor);
+                ilProcessor.Emit(OpCodes.Newobj, _IOStreamReaderCtor);
+                ilProcessor.Emit(OpCodes.Callvirt, _IOReadLine);
                 return;
             }
 
+            foreach (var argument in node.TypeCall.Arguments)
+                EmitExpression(ilProcessor, argument);
+
+            if (node.TypeCall.Function == BuiltinFunctions.GetLength)
+            {
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "get_Length", Array.Empty<string>());
+                ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.Substring)
+            {
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Substring", new[] { "System.Int32", "System.Int32" });
+                ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.StartThread)
+            {
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Start", Array.Empty<string>());
+                ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.KillThread)
+            {
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Interrupt", Array.Empty<string>());
+                ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.GetArrayLength)
+            {
+                ilProcessor.Emit(OpCodes.Ldlen);
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.OpenSocket)
+            {
+                ilProcessor.Emit(OpCodes.Callvirt, _TCPAcceptSocketReference);
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.CloseClient)
+            {
+                ilProcessor.Emit(OpCodes.Callvirt, _TCPClientClose);
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.CloseSocket)
+            {
+                ilProcessor.Emit(OpCodes.Callvirt, _TCPSocketClose);
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.IsClientConnected)
+            {
+                ilProcessor.Emit(OpCodes.Callvirt, _TCPClientConnected);
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.IsSocketConnected)
+            {
+                ilProcessor.Emit(OpCodes.Callvirt, _TCPSocketConnected);
+            }
+            else
+            {
+                throw new Exception("Couldnt find TypeFunction: " + node.TypeCall.Function.Name);
+            }
+        }
+
+        private void EmitCallExpression(ILProcessor ilProcessor, BoundCallExpression node)
+        {
             if (inType != null && _classMethods[_classes.FirstOrDefault(x => x.Value == inType).Key].ContainsKey(node.Function))
             {
                 ilProcessor.Emit(OpCodes.Ldarg_0);
@@ -1300,53 +1341,6 @@ namespace ReCT.CodeAnalysis.Emit
 
             if (node.Function == BuiltinFunctions.Die)
                 ilProcessor.Emit(OpCodes.Call, _envDie);
-            else if (node.Function == BuiltinFunctions.Floor)
-            {
-                ilProcessor.Emit(OpCodes.Conv_R8);
-                ilProcessor.Emit(OpCodes.Call, _mathCeilReference);
-                ilProcessor.Emit(OpCodes.Conv_I4);
-            }
-            else if (node.Function == BuiltinFunctions.Ceil)
-            {
-                ilProcessor.Emit(OpCodes.Conv_R8);
-                ilProcessor.Emit(OpCodes.Call, _mathCeilReference);
-                ilProcessor.Emit(OpCodes.Conv_I4);
-            }
-            else if (node.Function == BuiltinFunctions.ReadFile)
-                ilProcessor.Emit(OpCodes.Call, _IOReadAllTextReference);
-            else if (node.Function == BuiltinFunctions.WriteFile)
-                ilProcessor.Emit(OpCodes.Call, _IOWriteAllTextReference);
-            else if (node.Function == BuiltinFunctions.FileExists)
-                ilProcessor.Emit(OpCodes.Call, _IOFileExistsReference);
-            else if (node.Function == BuiltinFunctions.DirectoryExists)
-                ilProcessor.Emit(OpCodes.Call, _IODirExistsReference);
-            else if (node.Function == BuiltinFunctions.DeleteFile)
-                ilProcessor.Emit(OpCodes.Call, _IOFileDeleteReference);
-            else if (node.Function == BuiltinFunctions.DeleteDirectory)
-                ilProcessor.Emit(OpCodes.Call, _IODirDeleteReference);
-            else if (node.Function == BuiltinFunctions.CreateDirectory)
-            {
-                ilProcessor.Emit(OpCodes.Call, _IODirCreateReference);
-                ilProcessor.Emit(OpCodes.Pop);
-            }
-            else if (node.Function == BuiltinFunctions.GetFilesInDir)
-                ilProcessor.Emit(OpCodes.Call, _IOGetFilesInDirReference);
-            else if (node.Function == BuiltinFunctions.GetDirectoriesInDir)
-                ilProcessor.Emit(OpCodes.Call, _IOGetDirsInDirReference);
-            else if (node.Function == BuiltinFunctions.ConnectTCPClient)
-                ilProcessor.Emit(OpCodes.Newobj, _TCPClientCtorReference);
-            else if (node.Function == BuiltinFunctions.ListenOnTCPPort)
-            {
-                VariableDefinition var0 = new VariableDefinition(_knownTypes[TypeSymbol.TCPListener]);
-
-                ilProcessor.Body.Variables.Add(var0);
-
-                ilProcessor.Emit(OpCodes.Newobj, _TCPListenerCtorReference);
-                ilProcessor.Emit(OpCodes.Stloc, var0);
-                ilProcessor.Emit(OpCodes.Ldloc, var0);
-                ilProcessor.Emit(OpCodes.Callvirt, _TCPListenerStartReference);
-                ilProcessor.Emit(OpCodes.Ldloc, var0);
-            }
             else if (node.Function == BuiltinFunctions.Borger)
             {
                 ilProcessor.Emit(OpCodes.Ldstr, "borger");
@@ -1410,7 +1404,8 @@ namespace ReCT.CodeAnalysis.Emit
                               node.Expression.Type == TypeSymbol.ThreadArr ||
                               node.Expression.Type == TypeSymbol.TCPClientArr ||
                               node.Expression.Type == TypeSymbol.TCPListenerArr ||
-                              node.Expression.Type == TypeSymbol.TCPSocketArr;
+                              node.Expression.Type == TypeSymbol.TCPSocketArr ||
+                              node.Expression.Type.isClass;
             if (needsBoxing)
                 ilProcessor.Emit(OpCodes.Box, _knownTypes[node.Expression.Type]);
 
@@ -1485,6 +1480,10 @@ namespace ReCT.CodeAnalysis.Emit
             else if (node.Type == TypeSymbol.TCPSocketArr)
             {
                 ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.TCPSocketArr]);
+            }
+            else if (node.Type.isClass)
+            {
+                ilProcessor.Emit(OpCodes.Castclass, _knownTypes.FirstOrDefault(x => x.Key.Name == node.Type.Name).Value);
             }
             else
             {

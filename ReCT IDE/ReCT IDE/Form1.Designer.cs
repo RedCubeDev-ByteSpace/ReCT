@@ -96,6 +96,7 @@
             this.CodeBox.CharWidth = 8;
             this.CodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.CodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.CodeBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.CodeBox.ForeColor = System.Drawing.Color.White;
             this.CodeBox.IsReplaceMode = false;
             this.CodeBox.Location = new System.Drawing.Point(0, 65);
@@ -367,39 +368,7 @@
             this.ReCTAutoComplete.Font = new System.Drawing.Font("Liberation Mono", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ReCTAutoComplete.ImageList = null;
             this.ReCTAutoComplete.Items = new string[] {
-        "Print",
-        "Input",
-        "InputKey",
-        "InputAction",
-        "Random",
-        "Version",
-        "Clear",
-        "SetCursor",
-        "GetCursorX",
-        "GetCursorY",
-        "GetSizeX",
-        "GetSizeY",
-        "SetSize",
-        "SetCursorVisible",
-        "GetCursorVisible",
         "Thread",
-        "SetConsoleBackground",
-        "SetConsoleForeground",
-        "Floor",
-        "Ceil",
-        "ReadFile",
-        "WriteFile",
-        "FileExists",
-        "DirectoryExists",
-        "DeleteFile",
-        "DeleteDirectory",
-        "CreateDirectory",
-        "GetFilesInDirectory",
-        "GetDirsInDirectory",
-        "ConnectTCPClient",
-        "ListenOnTCPPort",
-        "Beep",
-        "Char",
         "?",
         "any",
         "bool",
@@ -425,6 +394,7 @@
         "if",
         "else",
         "function",
+        "class",
         "true",
         "false",
         "set",
@@ -437,8 +407,7 @@
         "do",
         "die",
         "from",
-        "Write",
-        "Sleep",
+        "Constructor",
         "GetLength",
         "Substring",
         "StartThread",
@@ -453,7 +422,8 @@
         "IsSocketConnected",
         "CloseClient",
         "IsClientConnected",
-        "#attach"};
+        "#attach",
+        "#copy"};
             this.ReCTAutoComplete.LeftPadding = 0;
             this.ReCTAutoComplete.MaximumSize = new System.Drawing.Size(200, 200);
             this.ReCTAutoComplete.TargetControlWrapper = null;

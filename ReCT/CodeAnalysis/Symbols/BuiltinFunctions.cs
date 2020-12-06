@@ -10,26 +10,27 @@ namespace ReCT.CodeAnalysis.Symbols
     {
         //this all needs to go - (what a mess)
         //sys is gon
+        //net is next
 
         //Networking
-        public static readonly FunctionSymbol ConnectTCPClient = new FunctionSymbol("ConnectTCPClient", ImmutableArray.Create(new ParameterSymbol("address", TypeSymbol.String, 0), new ParameterSymbol("port", TypeSymbol.Int, 0)), TypeSymbol.TCPClient);
-        public static readonly FunctionSymbol ListenOnTCPPort = new FunctionSymbol("ListenOnTCPPort", ImmutableArray.Create(new ParameterSymbol("port", TypeSymbol.Int, 0)), TypeSymbol.TCPListener);
+        //public static readonly FunctionSymbol ConnectTCPClient = new FunctionSymbol("ConnectTCPClient", ImmutableArray.Create(new ParameterSymbol("address", TypeSymbol.String, 0), new ParameterSymbol("port", TypeSymbol.Int, 0)), TypeSymbol.TCPClient);
+        //public static readonly FunctionSymbol ListenOnTCPPort = new FunctionSymbol("ListenOnTCPPort", ImmutableArray.Create(new ParameterSymbol("port", TypeSymbol.Int, 0)), TypeSymbol.TCPListener);
 
-        //Math
-        public static readonly FunctionSymbol Random = new FunctionSymbol("Random", ImmutableArray.Create(new ParameterSymbol("max", TypeSymbol.Int, 0)), TypeSymbol.Int);
-        public static readonly FunctionSymbol Floor = new FunctionSymbol("Floor", ImmutableArray.Create(new ParameterSymbol("num", TypeSymbol.Float, 0)), TypeSymbol.Int);
-        public static readonly FunctionSymbol Ceil = new FunctionSymbol("Ceil", ImmutableArray.Create(new ParameterSymbol("num", TypeSymbol.Float, 0)), TypeSymbol.Int);
+        ////Math
+        //public static readonly FunctionSymbol Random = new FunctionSymbol("Random", ImmutableArray.Create(new ParameterSymbol("max", TypeSymbol.Int, 0)), TypeSymbol.Int);
+        //public static readonly FunctionSymbol Floor = new FunctionSymbol("Floor", ImmutableArray.Create(new ParameterSymbol("num", TypeSymbol.Float, 0)), TypeSymbol.Int);
+        //public static readonly FunctionSymbol Ceil = new FunctionSymbol("Ceil", ImmutableArray.Create(new ParameterSymbol("num", TypeSymbol.Float, 0)), TypeSymbol.Int);
 
         //IO
-        public static readonly FunctionSymbol ReadFile = new FunctionSymbol("ReadFile", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.String);
-        public static readonly FunctionSymbol WriteFile = new FunctionSymbol("WriteFile", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0), new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol FileExists = new FunctionSymbol("FileExists", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Bool);
-        public static readonly FunctionSymbol DirectoryExists = new FunctionSymbol("DirectoryExists", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Bool);
-        public static readonly FunctionSymbol DeleteFile = new FunctionSymbol("DeleteFile", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol DeleteDirectory = new FunctionSymbol("DeleteDirectory", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol CreateDirectory = new FunctionSymbol("CreateDirectory", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol GetFilesInDir = new FunctionSymbol("GetFilesInDirectory", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.StringArr);
-        public static readonly FunctionSymbol GetDirectoriesInDir = new FunctionSymbol("GetDirsInDirectory", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.StringArr);
+        //public static readonly FunctionSymbol ReadFile = new FunctionSymbol("ReadFile", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.String);
+        //public static readonly FunctionSymbol WriteFile = new FunctionSymbol("WriteFile", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0), new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
+        //public static readonly FunctionSymbol FileExists = new FunctionSymbol("FileExists", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Bool);
+        //public static readonly FunctionSymbol DirectoryExists = new FunctionSymbol("DirectoryExists", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Bool);
+        //public static readonly FunctionSymbol DeleteFile = new FunctionSymbol("DeleteFile", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Void);
+        //public static readonly FunctionSymbol DeleteDirectory = new FunctionSymbol("DeleteDirectory", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Void);
+        //public static readonly FunctionSymbol CreateDirectory = new FunctionSymbol("CreateDirectory", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Void);
+        //public static readonly FunctionSymbol GetFilesInDir = new FunctionSymbol("GetFilesInDirectory", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.StringArr);
+        //public static readonly FunctionSymbol GetDirectoriesInDir = new FunctionSymbol("GetDirsInDirectory", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.StringArr);
 
         //Other stuff
         public static readonly FunctionSymbol Version = new FunctionSymbol("Version", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);

@@ -104,7 +104,7 @@ namespace ReCT.CodeAnalysis.Syntax
                     _kind = SyntaxKind.StarToken;
                     _position++;
                     break;
-                case '/' when Lookahead != '/':
+                case '/' when Lookahead != '/' && Lookahead != '*':
                     _kind = SyntaxKind.SlashToken;
                     _position++;
                     break;
@@ -207,6 +207,9 @@ namespace ReCT.CodeAnalysis.Syntax
                 case '/' when Lookahead == '/':
                     ReadComment();
                     break;
+                case '/' when Lookahead == '*':
+                    ReadMLComment();
+                    break;
                 case '0': case '1': case '2': case '3': case '4':
                 case '5': case '6': case '7': case '8': case '9':
                     ReadNumber();
@@ -301,6 +304,15 @@ namespace ReCT.CodeAnalysis.Syntax
             while (Current != '\n' && Current != '\0')
                 _position++;
 
+            _kind = SyntaxKind.WhitespaceToken;
+        }
+
+        private void ReadMLComment()
+        {
+            while (!(Current == '*' && Peek(1) == '/') && Current != '\0')
+                _position++;
+
+            _position+=2;
             _kind = SyntaxKind.WhitespaceToken;
         }
 

@@ -58,11 +58,11 @@ namespace ReCT_IDE
             t.Start();
 
             boltUpdater = new BoltUpdater();
-            if (boltUpdater.isUpdateAvailable(ReCT.info.Version) && false) //disabling for dev
+            if (boltUpdater.isUpdateAvailable(ReCT.info.Version) /*false*/) //disabling for dev
             {
                 var version = boltUpdater.getUpdateVersion();
                 Focus();
-                var result = MessageBox.Show($"There is a newer Version of ReCT available!\nYour Version: {ReCT.info.Version}  New Version: {version}\n\nWould you like to update?", "ReCT Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                var result = MessageBox.Show($"There is a newer Version of ReCT available!\nYour Version: {ReCT.info.Version}  New Version: {version}\n\nWould you like to update?", "ReCT Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                 if (result == DialogResult.Yes)
                 {
                     running = new Process();
@@ -248,12 +248,12 @@ namespace ReCT_IDE
 
             //clear style of range [DarkMode]
             e.ChangedRange.ClearStyle(CommentStyle);
-
             //quotes
             e.ChangedRange.SetStyle(StringStyle, "\\\"(.*?)\\\"", RegexOptions.Singleline);
 
             //comment highlighting [DarkMode]
             e.ChangedRange.SetStyle(CommentStyle, @"//.*$", RegexOptions.Multiline);
+            e.ChangedRange.SetStyle(CommentStyle, @"/\*(.*?)\*/", RegexOptions.Singleline);
 
             e.ChangedRange.SetStyle(AttachStyle, @"(#attach\b|#copy\b)", RegexOptions.Singleline);
 

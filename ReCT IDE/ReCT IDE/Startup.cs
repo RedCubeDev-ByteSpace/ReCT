@@ -23,7 +23,7 @@ namespace ReCT_IDE
 
         private void Startup_Load(object sender, EventArgs e)
         {
-            var steps = 25;
+            var steps = 35;
             var stepsize = 100f / steps;
 
             for (float i = 0; i < steps; i ++)

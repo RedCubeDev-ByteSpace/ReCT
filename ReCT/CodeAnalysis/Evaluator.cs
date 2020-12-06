@@ -12,7 +12,6 @@ namespace ReCT.CodeAnalysis
         private readonly Dictionary<VariableSymbol, object> _globals;
         private readonly Dictionary<FunctionSymbol, BoundBlockStatement> _functions = new Dictionary<FunctionSymbol, BoundBlockStatement>();
         private readonly Stack<Dictionary<VariableSymbol, object>> _locals = new Stack<Dictionary<VariableSymbol, object>>();
-        private Random _random;
 
         private object _lastValue;
 
@@ -246,15 +245,7 @@ namespace ReCT.CodeAnalysis
 
         private object EvaluateCallExpression(BoundCallExpression node)
         {
-            if (node.Function == BuiltinFunctions.Random)
-            {
-                var max = (int)EvaluateExpression(node.Arguments[0]);
-                if (_random == null)
-                    _random = new Random();
-
-                return _random.Next(max);
-            }
-            else if (node.Function == BuiltinFunctions.Version)
+            if (node.Function == BuiltinFunctions.Version)
             {
                 Console.WriteLine(info.Version);
                 return null;

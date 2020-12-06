@@ -17,7 +17,8 @@ namespace ReCT.CodeAnalysis.Package
         {
             {"sys", "ReCT.sys.pack" },
             {"math","ReCT.math.pack"},
-            {"winf","ReCT.winf.pack"},
+            {"net","ReCT.net.pack"},
+            {"io","ReCT.io.pack"},
         };
 
         public static Package loadPackage(string sysPack, bool isDLL)
@@ -128,15 +129,18 @@ namespace ReCT.CodeAnalysis.Package
                 case "void":
                 case "":
                     return "void";
-                case "threading.thread":
+                case "thread":
                     return "thread";
-                case "net.sockets.tcpclient":
+                case "tcpclient":
                     return "tcpclient";
-                case "net.sockets.tcplistener":
+                case "tcplistener":
                     return "tcplistener";
-                case "net.sockets.socket":
+                case "socket":
                     return "tcpscoket";
                 default:
+                    if (netversion.EndsWith("[]"))
+                        return netTypeLookup(netversion.Replace("[]", "")) + "Arr";
+
                     throw new Exception($"Couldnt find .Net type '{netversion}'");
             }
         }

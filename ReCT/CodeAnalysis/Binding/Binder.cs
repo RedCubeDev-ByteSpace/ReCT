@@ -856,8 +856,12 @@ namespace ReCT.CodeAnalysis.Binding
 
         private BoundExpression BindObjectAccessExpression(ObjectAccessExpression syntax)
         {
+            if (syntax.IdentifierToken.Text == null)
+                return new BoundErrorExpression();
+
             var staticClass = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
             FunctionSymbol function = null;
+            BoundCallExpression typeCall = null;
             ImmutableArray<BoundExpression> arguments = new ImmutableArray<BoundExpression>();
             VariableSymbol property = null;
             TypeSymbol type = TypeSymbol.Any;
@@ -900,6 +904,20 @@ namespace ReCT.CodeAnalysis.Binding
             if (staticClass == null)
             {
                 variable = BindVariableReference(syntax.IdentifierToken);
+
+                if (variable == null)
+                {
+                    _diagnostics.ReportUndefinedVariable(syntax.IdentifierToken.Location, syntax.IdentifierToken.Text);
+                    return new BoundErrorExpression();
+                }
+
+                if (!variable.Type.isClass)
+                {
+                    typeCall = (BoundCallExpression)BindCallExpression(syntax.Call);
+                    type = typeCall.Type;
+                    return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property, type, value, package, _class, typeCall);
+                }
+
                 _class = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == variable.Type.Name);
             }
             else
@@ -979,7 +997,7 @@ namespace ReCT.CodeAnalysis.Binding
                 type = TypeSymbol.Void;
             }
 
-            return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property, type, value, package, _class);
+            return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property, type, value, package, _class, typeCall);
         }
 
         private BoundExpression BindArrayCreationExpression(ArrayCreationSyntax syntax)
@@ -1074,6 +1092,9 @@ namespace ReCT.CodeAnalysis.Binding
 
         private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
         {
+            if (syntax == null)
+                return new BoundErrorExpression();
+
             var _symbol = _scope.TryLookupSymbol(syntax.Identifier.Text);
             if (_symbol == null)
             {
@@ -1157,13 +1178,17 @@ namespace ReCT.CodeAnalysis.Binding
                 return new BoundErrorExpression();
             }
 
-            for (var i = 0; i < syntax.Arguments.Count; i++)
+            try
             {
-                var argumentLocation = syntax.Arguments[i].Location;
-                var argument = boundArguments[i];
-                var parameter = function.Parameters[i];
-                boundArguments[i] = BindConversion(argumentLocation, argument, parameter.Type);
+                for (var i = 0; i < syntax.Arguments.Count; i++)
+                {
+                    var argumentLocation = syntax.Arguments[i].Location;
+                    var argument = boundArguments[i];
+                    var parameter = function.Parameters[i];
+                    boundArguments[i] = BindConversion(argumentLocation, argument, parameter.Type);
+                }
             }
+            catch { return new BoundErrorExpression(); }
 
             return new BoundCallExpression(function, boundArguments.ToImmutable(), syntax.Namespace);
         }
