@@ -98,6 +98,7 @@ namespace ReCT.CodeAnalysis.Emit
 
         private bool isConstructor = false;
         private TypeDefinition inType = null;
+        private ClassSymbol inClass = null;
 
         private TypeDefinition _typeDefinition;
         private FieldDefinition _randomFieldDefinition;
@@ -468,6 +469,7 @@ namespace ReCT.CodeAnalysis.Emit
                 _classes.Add(_class.Key, classDefinition);
 
                 inType = classDefinition;
+                inClass = _class.Key;
                 _classGlobals.Add(classDefinition, new Dictionary<VariableSymbol, FieldDefinition>());
                 _knownTypes.Add(TypeSymbol.Class[_class.Key], classDefinition);
                 _classMethods.Add(_class.Key, new Dictionary<FunctionSymbol, MethodDefinition>());
@@ -598,6 +600,7 @@ namespace ReCT.CodeAnalysis.Emit
 
             isConstructor = false;
             inType = null;
+            inClass = null;
 
             foreach (var functionWithBody in program.Functions)
                 EmitFunctionDeclaration(functionWithBody.Key);
@@ -761,8 +764,7 @@ namespace ReCT.CodeAnalysis.Emit
         private FieldDefinition EmitGlobalVar(ILProcessor ilProcessor, BoundVariableDeclaration node)
         {
             var _globalField = new FieldDefinition(
-                "$" + node.Variable.Name,
-                FieldAttributes.Static | FieldAttributes.Public,
+                "$" + node.Variable.Name, inType == null ? FieldAttributes.Static : (inClass.IsStatic ? FieldAttributes.Static : 0) | FieldAttributes.Public,
                 _knownTypes[node.Variable.Type]
             );
             (inType == null ? _typeDefinition : inType).Fields.Add(_globalField);
@@ -893,25 +895,28 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitObjectAccessExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
         {
-            if (node.Variable is ParameterSymbol parameter)
+            if (!node.Class.IsStatic)
             {
-                ilProcessor.Emit(OpCodes.Ldarg, parameter.Ordinal + (isConstructor ? 1 : 0));
-            }
-            else if (node.Variable.IsGlobal)
-            {
-                var fieldDefinition = (inType == null ? _globals : _classGlobals[inType])[node.Variable];
-                ilProcessor.Emit(OpCodes.Ldsfld, fieldDefinition);
-            }
-            else
-            {
-                var variableDefinition = _locals[node.Variable];
-                ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
+                if (node.Variable is ParameterSymbol parameter)
+                {
+                    ilProcessor.Emit(OpCodes.Ldarg, parameter.Ordinal + (isConstructor ? 1 : 0));
+                }
+                else if (node.Variable.IsGlobal)
+                {
+                    var fieldDefinition = (inType == null ? _globals : _classGlobals[inType])[node.Variable];
+                    ilProcessor.Emit(OpCodes.Ldsfld, fieldDefinition);
+                }
+                else
+                {
+                    var variableDefinition = _locals[node.Variable];
+                    ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
 
+                }
             }
 
             //EmitTypeCallExpression(ilProcessor, node);
 
-            var classSymbol = TypeSymbol.Class.FirstOrDefault(x => x.Value == node.Variable.Type).Key;
+            var classSymbol = node.Class;
 
             if (node.AccessType == ObjectAccessExpression.AccessType.Call)
             {
@@ -919,24 +924,24 @@ namespace ReCT.CodeAnalysis.Emit
                     EmitExpression(ilProcessor, argument);
 
                 if (node.Package == null)
-                    ilProcessor.Emit(OpCodes.Callvirt, _classMethods[classSymbol][node.Function]);
+                    ilProcessor.Emit(node.Class.IsStatic ? OpCodes.Call : OpCodes.Callvirt, _classMethods[classSymbol][node.Function]);
                 else
-                    ilProcessor.Emit(OpCodes.Callvirt, _packageClassMethods[classSymbol].FirstOrDefault(x => x.Name == node.Function.Name));
+                    ilProcessor.Emit(node.Class.IsStatic ? OpCodes.Call : OpCodes.Callvirt, _packageClassMethods[classSymbol].FirstOrDefault(x => x.Name == node.Function.Name));
             }
             if (node.AccessType == ObjectAccessExpression.AccessType.Get)
             {
                 if (node.Package == null)
-                    ilProcessor.Emit(OpCodes.Ldfld, _classGlobals[_classes[classSymbol]].FirstOrDefault(x => x.Key.Name == node.Property.Name && x.Key.Type == node.Property.Type).Value);
+                    ilProcessor.Emit(node.Class.IsStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, _classGlobals[_classes[classSymbol]].FirstOrDefault(x => x.Key.Name == node.Property.Name && x.Key.Type == node.Property.Type).Value);
                 else
-                    ilProcessor.Emit(OpCodes.Ldfld, _packageClassFields[classSymbol].FirstOrDefault(x => x.Name == node.Property.Name));
+                    ilProcessor.Emit(node.Class.IsStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, _packageClassFields[classSymbol].FirstOrDefault(x => x.Name == node.Property.Name));
             }
             if (node.AccessType == ObjectAccessExpression.AccessType.Set)
             {
                 EmitExpression(ilProcessor, node.Value);
                 if (node.Package == null)
-                    ilProcessor.Emit(OpCodes.Stfld, _classGlobals[_classes[classSymbol]].FirstOrDefault(x => x.Key.Name == node.Property.Name && x.Key.Type == node.Property.Type).Value);
+                    ilProcessor.Emit(node.Class.IsStatic ? OpCodes.Stsfld : OpCodes.Stfld, _classGlobals[_classes[classSymbol]].FirstOrDefault(x => x.Key.Name == node.Property.Name && x.Key.Type == node.Property.Type).Value);
                 else
-                    ilProcessor.Emit(OpCodes.Stfld, _packageClassFields[classSymbol].FirstOrDefault(x => x.Name == node.Property.Name));
+                    ilProcessor.Emit(node.Class.IsStatic ? OpCodes.Stsfld : OpCodes.Stfld, _packageClassFields[classSymbol].FirstOrDefault(x => x.Name == node.Property.Name));
             }
         }
 

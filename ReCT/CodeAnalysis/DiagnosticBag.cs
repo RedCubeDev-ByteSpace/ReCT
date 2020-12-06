@@ -283,5 +283,10 @@ namespace ReCT.CodeAnalysis
         {
             Report(location, $"Class '{name}' doesnt have a Variable called '{text}'! (Maybe its not accessable)");
         }
+
+        internal void ReportCantMakeInstanceOfStaticClass(TextLocation location, string text)
+        {
+            Report(location, $"Can not make instance os static class '{text}'!");
+        }
     }
 }

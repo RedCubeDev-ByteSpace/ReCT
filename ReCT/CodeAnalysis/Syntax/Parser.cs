@@ -125,6 +125,9 @@ namespace ReCT.CodeAnalysis.Syntax
             if (Current.Kind == SyntaxKind.ClassKeyword)
                 return ParseClassDeclaration(false);
 
+            if (Current.Kind == SyntaxKind.SetKeyword && Peek(1).Kind == SyntaxKind.ClassKeyword)
+                return ParseClassDeclaration(true);
+
             return ParseGlobalStatement();
         }
 

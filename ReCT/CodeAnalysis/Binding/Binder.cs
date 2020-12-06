@@ -54,11 +54,11 @@ namespace ReCT.CodeAnalysis.Binding
             var classDeclarations = syntaxTrees.SelectMany(st => st.Root.Members)
                                                   .OfType<ClassDeclarationSyntax>();
 
-            foreach (var function in functionDeclarations)
-                binder.BindFunctionDeclaration(function);
-
             foreach (var _class in classDeclarations)
                 binder.BindClassDeclaration(_class);
+
+            foreach (var function in functionDeclarations)
+                binder.BindFunctionDeclaration(function);
 
             foreach (var _class in binder._scope.GetDeclaredClasses())
                 binder.BindClassFunctionDeclaration(_class.Declaration, _class);
@@ -299,6 +299,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (!TypeSymbol.Class.ContainsKey(classSymbol))
             {
+                Console.WriteLine("ADDED CLASS: " + classSymbol.Name);
                 var classTypeSymbol = new TypeSymbol(classSymbol.Name);
                 classTypeSymbol.isClass = true;
                 TypeSymbol.Class.Add(classSymbol, classTypeSymbol);
@@ -765,6 +766,12 @@ namespace ReCT.CodeAnalysis.Binding
                 return new BoundErrorExpression();
             }
 
+            if (_class.IsStatic)
+            {
+                _diagnostics.ReportCantMakeInstanceOfStaticClass(syntax.Type.Location, syntax.Type.Text);
+                return new BoundErrorExpression();
+            }
+
             FunctionSymbol constructorFunction = _class.Scope.GetDeclaredFunctions().FirstOrDefault(x => x.Name == "Constructor");
 
             if (constructorFunction == null && syntax.Arguments.Count != 0)
@@ -827,7 +834,17 @@ namespace ReCT.CodeAnalysis.Binding
 
         private BoundExpression BindObjectAccessExpression(ObjectAccessExpression syntax)
         {
-            var variable = BindVariableReference(syntax.IdentifierToken);
+            var staticClass = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
+            VariableSymbol variable = null;
+            ClassSymbol _class = null;
+
+            if (staticClass == null)
+            {
+                variable = BindVariableReference(syntax.IdentifierToken);
+                _class = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == variable.Type.Name);
+            }
+            else
+                _class = staticClass;
 
             FunctionSymbol function = null;
             ImmutableArray<BoundExpression> arguments = new ImmutableArray<BoundExpression>();
@@ -836,7 +853,6 @@ namespace ReCT.CodeAnalysis.Binding
             BoundExpression value = null;
             Package.Package package = null;
 
-            var _class = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == variable.Type.Name);
             if (_class == null)
             {
                 _class = _packageNamespaces.SelectMany(x => x.scope.GetDeclaredClasses()).FirstOrDefault(x => x.Name == variable.Type.Name);
@@ -911,7 +927,7 @@ namespace ReCT.CodeAnalysis.Binding
                 type = TypeSymbol.Void;
             }
 
-            return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property, type, value, package);
+            return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property, type, value, package, _class);
         }
 
         private BoundExpression BindArrayCreationExpression(ArrayCreationSyntax syntax)
@@ -1222,7 +1238,7 @@ namespace ReCT.CodeAnalysis.Binding
                 case "tcpsocketArr":
                     return TypeSymbol.TCPSocketArr;
                 default:
-                    return null;
+                    return TypeSymbol.Class.Values.FirstOrDefault(x => x.Name == name);
             }
         }
         private TypeSymbol TypeToArray(TypeSymbol type)

@@ -26,6 +26,9 @@ namespace ReCT.CodeAnalysis.Binding
             if (from == to)
                 return Conversion.Identity;
 
+            if (from.isClass && to.isClass && from.Name == to.Name)
+                return Conversion.Identity;
+
             if (from != TypeSymbol.Void && to == TypeSymbol.Any)
             {
                 return Conversion.Implicit;

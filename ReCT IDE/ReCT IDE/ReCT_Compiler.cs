@@ -85,8 +85,6 @@ namespace ReCT_IDE
                 }
             }
 
-            try
-            {
                 var compilation = Compilation.Create(syntaxTree);
 
 
@@ -174,11 +172,6 @@ namespace ReCT_IDE
                 }
                 form.startAllowed(true);
                 inUse = false;
-            }
-            catch
-            {
-                inUse = false;
-            }
         }
         public static bool CompileRCTBC(string fileOut, string inPath, Error errorBox)
         {
