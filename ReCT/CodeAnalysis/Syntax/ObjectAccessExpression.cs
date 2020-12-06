@@ -2,7 +2,7 @@
 {
     public sealed class ObjectAccessExpression : ExpressionSyntax
     {
-        public ObjectAccessExpression(SyntaxTree syntaxTree, SyntaxToken identifierToken, AccessType type, CallExpressionSyntax call, SyntaxToken lookingFor, ExpressionSyntax value)
+        public ObjectAccessExpression(SyntaxTree syntaxTree, SyntaxToken identifierToken, AccessType type, CallExpressionSyntax call, SyntaxToken lookingFor, ExpressionSyntax value, SyntaxToken package)
             : base(syntaxTree)
         {
             IdentifierToken = identifierToken;
@@ -10,6 +10,7 @@
             Call = call;
             LookingFor = lookingFor;
             Value = value;
+            Package = package;
         }
 
         public override SyntaxKind Kind => SyntaxKind.ObjectAccessExpression;
@@ -18,6 +19,7 @@
         public CallExpressionSyntax Call { get; }
         public SyntaxToken LookingFor { get; }
         public ExpressionSyntax Value { get; }
+        public SyntaxToken Package { get; }
 
         public enum AccessType
         {

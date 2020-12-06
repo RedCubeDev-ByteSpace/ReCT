@@ -1,1 +1,0 @@
-dotnet exec "classtest3.dll"

@@ -608,7 +608,7 @@ namespace ReCT.CodeAnalysis.Syntax
             if (Peek(0).Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.OpenParenthesisToken)
                 return ParseCallExpression();
 
-            if (Current.Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.NamespaceToken)
+            if (Current.Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.NamespaceToken && Peek(3).Kind != SyntaxKind.AccessToken)
             {
                 var namespc = NextToken();
                 MatchToken(SyntaxKind.NamespaceToken);
@@ -657,7 +657,7 @@ namespace ReCT.CodeAnalysis.Syntax
 
         private ExpressionSyntax ParseNameExpression()
         {
-            if (Peek(1).Kind == SyntaxKind.AccessToken)
+            if (Peek(1).Kind == SyntaxKind.AccessToken || (Peek(1).Kind == SyntaxKind.NamespaceToken && Peek(3).Kind == SyntaxKind.AccessToken))
                 return ParseObjectAccessExpression();
 
             var identifierToken = MatchToken(SyntaxKind.IdentifierToken);
@@ -674,25 +674,34 @@ namespace ReCT.CodeAnalysis.Syntax
 
         ExpressionSyntax ParseObjectAccessExpression()
         {
+            SyntaxToken package = null;
+            var peek1 = Peek(1);
+
+            if (Peek(1).Kind == SyntaxKind.NamespaceToken)
+            {
+                package = MatchToken(SyntaxKind.IdentifierToken);
+                MatchToken(SyntaxKind.NamespaceToken);
+            }
+                
             var identifierToken = MatchToken(SyntaxKind.IdentifierToken);
             MatchToken(SyntaxKind.AccessToken);
 
             if (Peek(1).Kind == SyntaxKind.OpenParenthesisToken)
             {
                 var call = ParseCallExpression();
-                return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Call, (CallExpressionSyntax)call, null, null);
+                return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Call, (CallExpressionSyntax)call, null, null, package);
             }
             if (Peek(1).Kind == SyntaxKind.AssignToken)
             {
                 var propIdentifier = NextToken();
                 MatchToken(SyntaxKind.AssignToken);
                 var value = ParseExpression();
-                return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Set, null, propIdentifier, value);
+                return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Set, null, propIdentifier, value, package);
             }
             else if (Current.Kind == SyntaxKind.IdentifierToken)
             {
                 var propIdentifier = NextToken();
-                return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Get, null, propIdentifier, null);
+                return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Get, null, propIdentifier, null, package);
             }
 
             return null;

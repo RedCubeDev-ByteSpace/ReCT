@@ -156,7 +156,7 @@ namespace ReCT.CodeAnalysis.Binding
             {
                 var cFunctionBodies = ImmutableDictionary.CreateBuilder<FunctionSymbol, BoundBlockStatement>();
                 _class.Scope.ClearVariables();
-                Console.WriteLine("CLASS SCOPE: " + _class.Name);
+                //Console.WriteLine("CLASS SCOPE: " + _class.Name);
 
                 var symbol = _class.Scope.TryLookupSymbol("Constructor");
                 if (symbol != null && symbol is FunctionSymbol fs)
@@ -299,7 +299,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (!TypeSymbol.Class.ContainsKey(classSymbol))
             {
-                Console.WriteLine("ADDED CLASS: " + classSymbol.Name);
+               // Console.WriteLine("ADDED CLASS: " + classSymbol.Name);
                 var classTypeSymbol = new TypeSymbol(classSymbol.Name);
                 classTypeSymbol.isClass = true;
                 TypeSymbol.Class.Add(classSymbol, classTypeSymbol);
@@ -759,6 +759,28 @@ namespace ReCT.CodeAnalysis.Binding
         private BoundExpression BindObjectCreationExpression(ObjectCreationSyntax syntax)
         {
             ClassSymbol _class = (syntax.Package == null ? ParentScope : _packageNamespaces.FirstOrDefault(x => x.name == syntax.Package.Text).scope).GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.Type.Text);
+            Package.Package package = null;
+
+            if (syntax.Package != null)
+                package = _packageNamespaces.FirstOrDefault(x => x.name == syntax.Package.Text);
+
+            if (_class == null)
+            {
+                foreach (string s in _usingPackages)
+                {
+                    var _package = _packageNamespaces.FirstOrDefault(x => x.name == s);
+
+                    if (_package != null)
+                    {
+                        _class = _package.scope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.Type.Text);
+                        if (_class != null)
+                        {
+                            package = _package;
+                            break;
+                        }
+                    }
+                }
+            }
 
             if (_class == null)
             {
@@ -795,7 +817,7 @@ namespace ReCT.CodeAnalysis.Binding
                 boundArguments.Add(boundArgument);
             }
 
-            return new BoundObjectCreationExpression(_class, boundArguments.ToImmutable(), syntax.Package == null ? null : _packageNamespaces.FirstOrDefault(x => x.name == syntax.Package.Text));
+            return new BoundObjectCreationExpression(_class, boundArguments.ToImmutable(), package);
         }
 
         private BoundExpression BindParenthesizedExpression(ParenthesizedExpressionSyntax syntax)
@@ -835,6 +857,43 @@ namespace ReCT.CodeAnalysis.Binding
         private BoundExpression BindObjectAccessExpression(ObjectAccessExpression syntax)
         {
             var staticClass = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
+            FunctionSymbol function = null;
+            ImmutableArray<BoundExpression> arguments = new ImmutableArray<BoundExpression>();
+            VariableSymbol property = null;
+            TypeSymbol type = TypeSymbol.Any;
+            BoundExpression value = null;
+            Package.Package package = null;
+
+            if (syntax.Package != null)
+            {
+                package = _packageNamespaces.FirstOrDefault(x => x.name == syntax.Package.Text);
+
+                if (package == null)
+                    goto SKIP0;
+
+                staticClass = package.scope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
+            }
+
+            SKIP0:
+
+            if (syntax.Package == null && staticClass == null)
+            {
+                foreach (string s in _usingPackages)
+                {
+                    package = _packageNamespaces.FirstOrDefault(x => x.scope.TryLookupSymbol(syntax.IdentifierToken.Text) != null);
+                    if (package == null) continue;
+
+                    //var sym = package.scope.TryLookupSymbol(syntax.IdentifierToken.Text);
+
+                }
+
+                if (package == null) goto SKIP1;
+
+                staticClass = package.scope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
+            }
+
+            SKIP1:
+
             VariableSymbol variable = null;
             ClassSymbol _class = null;
 
@@ -846,14 +905,7 @@ namespace ReCT.CodeAnalysis.Binding
             else
                 _class = staticClass;
 
-            FunctionSymbol function = null;
-            ImmutableArray<BoundExpression> arguments = new ImmutableArray<BoundExpression>();
-            VariableSymbol property = null;
-            TypeSymbol type = TypeSymbol.Any;
-            BoundExpression value = null;
-            Package.Package package = null;
-
-            if (_class == null)
+            if (_class == null && variable != null)
             {
                 _class = _packageNamespaces.SelectMany(x => x.scope.GetDeclaredClasses()).FirstOrDefault(x => x.Name == variable.Type.Name);
 
@@ -1027,24 +1079,14 @@ namespace ReCT.CodeAnalysis.Binding
             {
                 foreach (string s in _usingPackages)
                 {
-                    foreach (Package.Package p in _packageNamespaces)
+                    var pack = _packageNamespaces.FirstOrDefault(x => x.name == s);
+                    if (pack != null && pack.scope.TryLookupSymbol(syntax.Identifier.Text) != null)
                     {
-                        if (s == p.name)
-                        {
-                            foreach (FunctionSymbol f in p.scope.GetDeclaredFunctions())
-                            {
-                                if (f.Name == syntax.Identifier.Text)
-                                {
-                                    syntax.Namespace = s;
-                                    goto Shut;
-                                }
-                            }
-                        }
+                        syntax.Namespace = s;
+                        break;
                     }
                 }
             }
-
-            Shut:
 
             if (syntax.Namespace != "")
             {
@@ -1163,7 +1205,7 @@ namespace ReCT.CodeAnalysis.Binding
                                 ? (VariableSymbol)new GlobalVariableSymbol(name, isReadOnly, type)
                                 : new LocalVariableSymbol(name, isReadOnly, type);
 
-            Console.WriteLine($"VAR: {name} | {declare} | {variable} | {(variable.IsGlobal ? getClassScope() : _scope).Name}");
+            //Console.WriteLine($"VAR: {name} | {declare} | {variable} | {(variable.IsGlobal ? getClassScope() : _scope).Name}");
 
             if (declare && variable.IsGlobal ? !getClassScope().TryDeclareVariable(variable) : !_scope.TryDeclareVariable(variable))
                 _diagnostics.ReportSymbolAlreadyDeclared(identifier.Location, name);
@@ -1238,6 +1280,7 @@ namespace ReCT.CodeAnalysis.Binding
                 case "tcpsocketArr":
                     return TypeSymbol.TCPSocketArr;
                 default:
+                    if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
                     return TypeSymbol.Class.Values.FirstOrDefault(x => x.Name == name);
             }
         }

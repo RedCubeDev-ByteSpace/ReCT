@@ -255,7 +255,7 @@ namespace ReCT_IDE
             //comment highlighting [DarkMode]
             e.ChangedRange.SetStyle(CommentStyle, @"//.*$", RegexOptions.Multiline);
 
-            e.ChangedRange.SetStyle(AttachStyle, @"(#attach\b)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(AttachStyle, @"(#attach\b|#copy\b)", RegexOptions.Singleline);
 
             //clear style of range [DarkMode]
             e.ChangedRange.ClearStyle(SystemFunctionStyle);
