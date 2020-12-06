@@ -6,6 +6,8 @@ using System.Text;
 using System.Collections.Immutable;
 using System.Linq;
 using Mono.Cecil;
+using ReCT.CodeAnalysis.Binding;
+using ReCT.CodeAnalysis.Symbols;
 
 namespace ReCT.CodeAnalysis.Package
 {
@@ -18,10 +20,11 @@ namespace ReCT.CodeAnalysis.Package
             {"winf","ReCT.winf.pack"},
         };
 
-        public static Package loadPackage(string sysPack)
+        public static Package loadPackage(string sysPack, bool isDLL)
         {
             var scope = new Binding.BoundScope(null);
             var key = systemPackages.FirstOrDefault(x => x.Value == sysPack).Key;
+            if (isDLL) key = Path.GetFileNameWithoutExtension(sysPack);
 
             sysPack = "Packages/" + sysPack;
 
@@ -29,6 +32,7 @@ namespace ReCT.CodeAnalysis.Package
             TypeDefinition AsmType = Asm.MainModule.Types.FirstOrDefault(x => x.Name == key);
 
             var methods = AsmType.Methods;
+            var types = AsmType.NestedTypes;
 
             foreach (MethodDefinition m in methods)
             {
@@ -50,9 +54,56 @@ namespace ReCT.CodeAnalysis.Package
 
                 //Console.WriteLine("FUNCTON: " + m.Name + "; TYPE: " + m.MethodReturnType.Name + "; RTYPE: " + m.ReturnType.Name);
 
-                var methodType = Binding.Binder.LookupType(returnType);
+                var methodType = Binder.LookupType(returnType);
 
                 scope.TryDeclareFunction(new Symbols.FunctionSymbol(m.Name, parameters.ToImmutable(), methodType, package: key));
+            }
+
+            foreach (TypeDefinition t in types)
+            {
+                var classSymbol = new ClassSymbol(t.Name, null, t.IsSealed && t.IsAbstract);
+                var classMethods = t.Methods;
+                var classFields = t.Fields;
+                classSymbol.Scope = new BoundScope(scope);
+
+                foreach (MethodDefinition m in classMethods)
+                {
+                    var parameters = ImmutableArray.CreateBuilder<Symbols.ParameterSymbol>();
+
+                    foreach (ParameterDefinition p in m.Parameters)
+                    {
+                        var parameterName = p.Name;
+                        var parameterType = Binding.Binder.LookupType(netTypeLookup(p.ParameterType.Name.ToLower()));
+
+                        var parameter = new Symbols.ParameterSymbol(parameterName, parameterType, parameters.Count);
+                        parameters.Add(parameter);
+                    }
+
+                    var returnType = netTypeLookup(m.ReturnType.Name.ToLower());
+
+                    //Console.WriteLine("FUNCTON: " + m.Name + "; TYPE: " + t.Name);
+
+                    var methodType = Binder.LookupType(returnType);
+
+                    classSymbol.Scope.TryDeclareFunction(new Symbols.FunctionSymbol(m.Name == ".ctor" ? "Constructor" : m.Name, parameters.ToImmutable(), methodType, package: key));
+                }
+
+                foreach (FieldDefinition f in classFields)
+                {
+                    var type = netTypeLookup(f.FieldType.Name.ToLower());
+                    classSymbol.Scope.TryDeclareVariable(new GlobalVariableSymbol(f.Name, false, Binder.LookupType(type)));
+                }
+
+                if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
+
+                if (!TypeSymbol.Class.ContainsKey(classSymbol))
+                {
+                    var typesymbol = new TypeSymbol(classSymbol.Name);
+                    typesymbol.isClass = true;
+                    TypeSymbol.Class.Add(classSymbol, typesymbol);
+                }
+
+                scope.TryDeclareClass(classSymbol);
             }
 
             return new Package(key, sysPack, scope);

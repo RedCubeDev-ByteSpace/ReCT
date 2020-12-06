@@ -178,11 +178,19 @@ namespace ReCT.CodeAnalysis.Syntax
         {
             var makeKeyword = MatchToken(SyntaxKind.MakeKeyword);
             var objectKeyword = MatchToken(SyntaxKind.ObjectKeyword);
+            SyntaxToken package = null;
+
+            if (Peek(1).Kind == SyntaxKind.NamespaceToken)
+            {
+                package = NextToken();
+                MatchToken(SyntaxKind.NamespaceToken);
+            }
+
             var type = MatchToken(SyntaxKind.IdentifierToken);
             MatchToken(SyntaxKind.OpenParenthesisToken);
             var args = ParseArguments();
             MatchToken(SyntaxKind.CloseParenthesisToken);
-            return new ObjectCreationSyntax(_syntaxTree, type, args);
+            return new ObjectCreationSyntax(_syntaxTree, type, args, package);
         }
 
         private SeparatedSyntaxList<ParameterSyntax> ParseParameterList()
@@ -349,8 +357,12 @@ namespace ReCT.CodeAnalysis.Syntax
         private StatementSyntax ParsePackageStatement()
         {
             var keyword = MatchToken(SyntaxKind.PackageKeyword);
+
+            var isDll = Current.Kind == SyntaxKind.DllKeyword;
+            if (isDll) MatchToken(SyntaxKind.DllKeyword);
+
             var package = NextToken();
-            return new PackageStatementSyntax(_syntaxTree, keyword, package);
+            return new PackageStatementSyntax(_syntaxTree, keyword, package, isDll);
         }
 
         private StatementSyntax ParseTryCatchStatement()

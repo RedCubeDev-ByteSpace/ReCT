@@ -347,7 +347,7 @@ namespace ReCT.CodeAnalysis.Syntax
 
         private void ReadIdentifierOrKeyword()
         {
-            while (char.IsLetter(Current) || char.IsDigit(Current))
+            while (char.IsLetter(Current) || char.IsDigit(Current) || Current == '.' || Current == '_')
                 _position++;
 
             var length = _position - _start;

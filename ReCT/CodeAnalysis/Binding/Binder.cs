@@ -512,13 +512,16 @@ namespace ReCT.CodeAnalysis.Binding
         {
             var package = syntax.Package.Text;
 
-            if (!Package.Packager.systemPackages.ContainsKey(package))
+            if (!Package.Packager.systemPackages.ContainsKey(package) && !syntax.IsDll)
             {
                 _diagnostics.ReportUnknownPackage(package);
                 return BindErrorStatement();
             }
 
-            _packageNamespaces.Add(Package.Packager.loadPackage(Package.Packager.systemPackages[package]));
+            if (syntax.IsDll)
+                _packageNamespaces.Add(Package.Packager.loadPackage(package + ".dll", true));
+            else
+                _packageNamespaces.Add(Package.Packager.loadPackage(Package.Packager.systemPackages[package], false));
             return null;
         }
 
@@ -754,33 +757,15 @@ namespace ReCT.CodeAnalysis.Binding
 
         private BoundExpression BindObjectCreationExpression(ObjectCreationSyntax syntax)
         {
-            var found = false;
-            ClassSymbol _class = null;
+            ClassSymbol _class = (syntax.Package == null ? ParentScope : _packageNamespaces.FirstOrDefault(x => x.name == syntax.Package.Text).scope).GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.Type.Text);
 
-            foreach (ClassSymbol c in ParentScope.GetDeclaredClasses())
-            {
-                if (c.Name == syntax.Type.Text)
-                {
-                    found = true;
-                    _class = c;
-                    break;
-                }
-            }
-
-            if (!found)
+            if (_class == null)
             {
                 _diagnostics.ReportClassNotFound(syntax.Type.Location, syntax.Type.Text);
                 return new BoundErrorExpression();
             }
 
-            FunctionSymbol constructorFunction = null;
-
-            foreach (FunctionSymbol f in _class.Scope.GetDeclaredFunctions())
-                if (f.Name == "Constructor")
-                {
-                    constructorFunction = f;
-                    break;
-                }
+            FunctionSymbol constructorFunction = _class.Scope.GetDeclaredFunctions().FirstOrDefault(x => x.Name == "Constructor");
 
             if (constructorFunction == null && syntax.Arguments.Count != 0)
             {
@@ -803,7 +788,7 @@ namespace ReCT.CodeAnalysis.Binding
                 boundArguments.Add(boundArgument);
             }
 
-            return new BoundObjectCreationExpression(_class, boundArguments.ToImmutable());
+            return new BoundObjectCreationExpression(_class, boundArguments.ToImmutable(), syntax.Package == null ? null : _packageNamespaces.FirstOrDefault(x => x.name == syntax.Package.Text));
         }
 
         private BoundExpression BindParenthesizedExpression(ParenthesizedExpressionSyntax syntax)
@@ -849,8 +834,16 @@ namespace ReCT.CodeAnalysis.Binding
             VariableSymbol property = null;
             TypeSymbol type = TypeSymbol.Any;
             BoundExpression value = null;
+            Package.Package package = null;
 
             var _class = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == variable.Type.Name);
+            if (_class == null)
+            {
+                _class = _packageNamespaces.SelectMany(x => x.scope.GetDeclaredClasses()).FirstOrDefault(x => x.Name == variable.Type.Name);
+
+                if (_class != null)
+                    package = _packageNamespaces.FirstOrDefault(x => x.scope.TryLookupSymbol(_class.Name) != null);
+            }
 
             if (_class == null)
             {
@@ -918,7 +911,7 @@ namespace ReCT.CodeAnalysis.Binding
                 type = TypeSymbol.Void;
             }
 
-            return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property, type, value);
+            return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property, type, value, package);
         }
 
         private BoundExpression BindArrayCreationExpression(ArrayCreationSyntax syntax)

@@ -85,6 +85,8 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly AssemblyDefinition _assemblyDefinition;
         private readonly Dictionary<FunctionSymbol, MethodDefinition> _methods = new Dictionary<FunctionSymbol, MethodDefinition>();
         private readonly Dictionary<ClassSymbol, Dictionary<FunctionSymbol, MethodDefinition>> _classMethods = new Dictionary<ClassSymbol, Dictionary<FunctionSymbol, MethodDefinition>>();
+        private readonly Dictionary<ClassSymbol, MethodReference[]> _packageClassMethods = new Dictionary<ClassSymbol, MethodReference[]>();
+        private readonly Dictionary<ClassSymbol, FieldReference[]> _packageClassFields = new Dictionary<ClassSymbol, FieldReference[]>();
         private readonly Dictionary<ClassSymbol, TypeDefinition> _classes = new Dictionary<ClassSymbol, TypeDefinition>();
         private readonly Dictionary<string, Package.Package> _packages = new Dictionary<string, Package.Package>();
         private readonly Dictionary<string, MethodDefinition> str_methods = new Dictionary<string, MethodDefinition>();
@@ -337,6 +339,29 @@ namespace ReCT.CodeAnalysis.Emit
             _envDie = ResolveMethod("System.Environment", "Exit", new[] { "System.Int32" });
         }
 
+        public TypeReference ResolveTypePublic(string rectName, string metadataName)
+        {
+            var foundTypes = s_assemblies.SelectMany(a => a.Modules)
+                                       .SelectMany(m => m.Types)
+                                       .Where(t => t.FullName == metadataName)
+                                       .ToArray();
+            if (foundTypes.Length == 1)
+            {
+                var typeReference = _assemblyDefinition.MainModule.ImportReference(foundTypes[0]);
+                return typeReference;
+            }
+            else if (foundTypes.Length == 0)
+            {
+                _diagnostics.ReportRequiredTypeNotFound(rectName, metadataName);
+            }
+            else
+            {
+                _diagnostics.ReportRequiredTypeAmbiguous(rectName, metadataName, foundTypes);
+            }
+
+            return null;
+        }
+
         public MethodReference ResolveMethodPublic(string typeName, string methodName, string[] parameterTypeNames)
         {
             var foundTypes = s_assemblies.SelectMany(a => a.Modules)
@@ -401,7 +426,29 @@ namespace ReCT.CodeAnalysis.Emit
 
             foreach (Package.Package p in program.Packages)
             {
-                s_assemblies.Add(AssemblyDefinition.ReadAssembly(p.fullName));
+                var assemblyDef = AssemblyDefinition.ReadAssembly(p.fullName);
+                s_assemblies.Add(assemblyDef);
+
+                foreach (ClassSymbol c in p.scope.GetDeclaredClasses())
+                {
+                    var typeRef = s_assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).SelectMany(t => t.NestedTypes).FirstOrDefault(nt => nt.FullName == p.name + "." + p.name + "/" + c.Name);
+                    _knownTypes.Add(TypeSymbol.Class[c], s_assemblyDefinition.MainModule.ImportReference(typeRef));
+
+                    List<MethodReference> mrefs = new List<MethodReference>();
+                    List<FieldReference> frefs = new List<FieldReference>();
+
+                    foreach (MethodDefinition m in typeRef.Methods)
+                    {
+                        mrefs.Add(s_assemblyDefinition.MainModule.ImportReference(m));
+                    }
+                    foreach (FieldDefinition f in typeRef.Fields)
+                    {
+                        frefs.Add(s_assemblyDefinition.MainModule.ImportReference(f));
+                    }
+                    _packageClassMethods.Add(c, mrefs.ToArray());
+                    _packageClassFields.Add(c, frefs.ToArray());
+                }
+
                 _packages.Add(p.name, p);
             }
 
@@ -809,14 +856,23 @@ namespace ReCT.CodeAnalysis.Emit
 
             MethodDefinition ctor = null;
 
-            foreach (var funcs in _classMethods[node.Class])
+            if (node.Package == null)
+                ctor = _classMethods[node.Class].FirstOrDefault(x => x.Key.Name == "Constructor").Value;
+            else
             {
-                if (funcs.Key.Name == "Constructor")
-                {
-                    ctor = funcs.Value;
-                    break;
-                }
+                List<string> args = new List<string>();
+
+                var constructor = node.Package.scope.GetDeclaredClasses().FirstOrDefault(x => x == node.Class).Scope.GetDeclaredFunctions().FirstOrDefault(x => x.Name == "Constructor");
+                foreach (ParameterSymbol p in constructor.Parameters)
+                    args.Add(_knownTypes[p.Type].FullName);
+
+                //var ctorr = ResolveMethodPublic(node.Package.name + "." + node.Package.name + "/" + node.Class.Name, ".ctor", args.ToArray());
+                var ctorr = _packageClassMethods[node.Class].FirstOrDefault(x => x.Name == ".ctor");
+                ilProcessor.Emit(OpCodes.Newobj, ctorr);
+
+                return;
             }
+
 
             ilProcessor.Emit(OpCodes.Newobj, ctor);
         }
@@ -862,16 +918,25 @@ namespace ReCT.CodeAnalysis.Emit
                 foreach (var argument in node.Arguments)
                     EmitExpression(ilProcessor, argument);
 
-                ilProcessor.Emit(OpCodes.Callvirt, _classMethods[classSymbol][node.Function]);
+                if (node.Package == null)
+                    ilProcessor.Emit(OpCodes.Callvirt, _classMethods[classSymbol][node.Function]);
+                else
+                    ilProcessor.Emit(OpCodes.Callvirt, _packageClassMethods[classSymbol].FirstOrDefault(x => x.Name == node.Function.Name));
             }
             if (node.AccessType == ObjectAccessExpression.AccessType.Get)
             {
-                ilProcessor.Emit(OpCodes.Ldfld, _classGlobals[_classes[classSymbol]].FirstOrDefault(x => x.Key.Name == node.Property.Name && x.Key.Type == node.Property.Type).Value);
+                if (node.Package == null)
+                    ilProcessor.Emit(OpCodes.Ldfld, _classGlobals[_classes[classSymbol]].FirstOrDefault(x => x.Key.Name == node.Property.Name && x.Key.Type == node.Property.Type).Value);
+                else
+                    ilProcessor.Emit(OpCodes.Ldfld, _packageClassFields[classSymbol].FirstOrDefault(x => x.Name == node.Property.Name));
             }
             if (node.AccessType == ObjectAccessExpression.AccessType.Set)
             {
                 EmitExpression(ilProcessor, node.Value);
-                ilProcessor.Emit(OpCodes.Stfld, _classGlobals[_classes[classSymbol]].FirstOrDefault(x => x.Key.Name == node.Property.Name && x.Key.Type == node.Property.Type).Value);
+                if (node.Package == null)
+                    ilProcessor.Emit(OpCodes.Stfld, _classGlobals[_classes[classSymbol]].FirstOrDefault(x => x.Key.Name == node.Property.Name && x.Key.Type == node.Property.Type).Value);
+                else
+                    ilProcessor.Emit(OpCodes.Stfld, _packageClassFields[classSymbol].FirstOrDefault(x => x.Name == node.Property.Name));
             }
         }
 
@@ -1288,16 +1353,8 @@ namespace ReCT.CodeAnalysis.Emit
                 {
                     List<string> args = new List<string>();
 
-                    foreach(FunctionSymbol f in _packages[node.Function.Package].scope.GetDeclaredFunctions())
-                    {
-                        if (f.Name == node.Function.Name)
-                        {
-                            foreach (ParameterSymbol p in f.Parameters)
-                            {
-                                args.Add(_knownTypes[p.Type].FullName);
-                            }
-                        }
-                    }
+                    foreach (ParameterSymbol p in _packages[node.Function.Package].scope.GetDeclaredFunctions().FirstOrDefault(x => x.Name == node.Function.Name).Parameters)
+                        args.Add(_knownTypes[p.Type].FullName);
 
                     var method = ResolveMethodPublic(node.Function.Package + "." + node.Function.Package, node.Function.Name, args.ToArray());
                     ilProcessor.Emit(OpCodes.Call, method);

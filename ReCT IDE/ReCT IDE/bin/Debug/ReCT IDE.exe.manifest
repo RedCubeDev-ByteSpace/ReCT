@@ -170,19 +170,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>Ugt/Z49f7vTRCHbm1vRxLM8bqObH+6qh051wzc5UVhI=</dsig:DigestValue>
+        <dsig:DigestValue>GiGlL8J7sXyHqVDF4o3JGHNgk0t0nEso/herD/AULMY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT.dll" size="168448">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ReCT.dll" size="174592">
       <assemblyIdentity name="ReCT" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>SJx49BkXNiCTUf9ZRQR9gqTSwzVeC7QfuDc+gNDyYdc=</dsig:DigestValue>
+        <dsig:DigestValue>OZUMjLaY3G7WviOxLa7A/4aSfipauqJ7KWmq9GMtko8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

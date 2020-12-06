@@ -85,93 +85,100 @@ namespace ReCT_IDE
                 }
             }
 
-            var compilation = Compilation.Create(syntaxTree);
+            try
+            {
+                var compilation = Compilation.Create(syntaxTree);
 
 
-            Variables = "";
-            Functions = "";
-            Namespaces = "";
-            NamespaceFunctions = "";
-            ImportedFunctions = "";
-            Classes = "";
+                Variables = "";
+                Functions = "";
+                Namespaces = "";
+                NamespaceFunctions = "";
+                ImportedFunctions = "";
+                Classes = "";
 
-            var vars = compilation.Variables.ToArray();
-            variables = vars;
-            foreach(VariableSymbol vs in vars)
-            {
-                Variables += "\\b" + vs.Name + "\\b" + "|";
-            }
-            if(Variables != "")
-            {
-                Variables = Variables.Substring(0, Variables.Length - 1);
-                Variables = "(" + Variables + ")";
-            }
-            var fns = compilation.Functions.ToArray();
-            functions = fns;
-            foreach (FunctionSymbol fs in fns)
-            {
-                Functions += "\\b" + fs.Name + "\\b" + "|";
-            }
-            if (Functions != "")
-            {
-                Functions = Functions.Substring(0, Functions.Length - 1);
-                Functions = "(" + Functions + ")";
-            }
-            var cls = compilation.Classes.ToArray();
-            foreach (ClassSymbol cs in cls)
-            {
-                Classes += "\\b" + cs.Name + "\\b" + "|";
-            }
-            if (Classes != "")
-            {
-                Classes = Classes.Substring(0, Classes.Length - 1);
-                Classes = "(" + Classes + ")";
-            }
-            var nspc = compilation.Packages.ToArray();
-            packages = nspc;
-            foreach (ReCT.CodeAnalysis.Package.Package p in nspc)
-            {
-                Namespaces += "\\b" + p.name + "\\b" + "|";
-
-                var funcs = p.scope.GetDeclaredFunctions();
-
-                foreach (FunctionSymbol f in funcs)
+                var vars = compilation.Variables.ToArray();
+                variables = vars;
+                foreach (VariableSymbol vs in vars)
                 {
-                    NamespaceFunctions += "\\b" + f.Name + "\\b" + "|";
+                    Variables += "\\b" + vs.Name + "\\b" + "|";
                 }
-            }
-            if (Namespaces != "")
-            {
-                Namespaces = Namespaces.Substring(0, Namespaces.Length - 1);
-                Namespaces = "(" + Namespaces + ")";
-            }
-            if (NamespaceFunctions != "")
-            {
-                NamespaceFunctions = NamespaceFunctions.Substring(0, NamespaceFunctions.Length - 1);
-                NamespaceFunctions = "(" + NamespaceFunctions + ")";
-            }
-            var used = compilation.UsingPackages.ToArray();
-            foreach (Package p in nspc)
-            {
-                foreach (string s in used)
+                if (Variables != "")
                 {
-                    if (p.name == s)
+                    Variables = Variables.Substring(0, Variables.Length - 1);
+                    Variables = "(" + Variables + ")";
+                }
+                var fns = compilation.Functions.ToArray();
+                functions = fns;
+                foreach (FunctionSymbol fs in fns)
+                {
+                    Functions += "\\b" + fs.Name + "\\b" + "|";
+                }
+                if (Functions != "")
+                {
+                    Functions = Functions.Substring(0, Functions.Length - 1);
+                    Functions = "(" + Functions + ")";
+                }
+                var cls = compilation.Classes.ToArray();
+                foreach (ClassSymbol cs in cls)
+                {
+                    Classes += "\\b" + cs.Name + "\\b" + "|";
+                }
+                if (Classes != "")
+                {
+                    Classes = Classes.Substring(0, Classes.Length - 1);
+                    Classes = "(" + Classes + ")";
+                }
+                var nspc = compilation.Packages.ToArray();
+                packages = nspc;
+                foreach (ReCT.CodeAnalysis.Package.Package p in nspc)
+                {
+                    Namespaces += "\\b" + p.name + "\\b" + "|";
+
+                    var funcs = p.scope.GetDeclaredFunctions();
+
+                    foreach (FunctionSymbol f in funcs)
                     {
-                        foreach (FunctionSymbol f in p.scope.GetDeclaredFunctions())
+                        NamespaceFunctions += "\\b" + f.Name + "\\b" + "|";
+                    }
+                }
+                if (Namespaces != "")
+                {
+                    Namespaces = Namespaces.Substring(0, Namespaces.Length - 1);
+                    Namespaces = "(" + Namespaces + ")";
+                }
+                if (NamespaceFunctions != "")
+                {
+                    NamespaceFunctions = NamespaceFunctions.Substring(0, NamespaceFunctions.Length - 1);
+                    NamespaceFunctions = "(" + NamespaceFunctions + ")";
+                }
+                var used = compilation.UsingPackages.ToArray();
+                foreach (Package p in nspc)
+                {
+                    foreach (string s in used)
+                    {
+                        if (p.name == s)
                         {
-                            ImportedFunctions += "\\b" + f.Name + "\\b" + "|";
-                            functions.Append(f);
+                            foreach (FunctionSymbol f in p.scope.GetDeclaredFunctions())
+                            {
+                                ImportedFunctions += "\\b" + f.Name + "\\b" + "|";
+                                functions.Append(f);
+                            }
                         }
                     }
                 }
+                if (ImportedFunctions != "")
+                {
+                    ImportedFunctions = ImportedFunctions.Substring(0, ImportedFunctions.Length - 1);
+                    ImportedFunctions = "(" + ImportedFunctions + ")";
+                }
+                form.startAllowed(true);
+                inUse = false;
             }
-            if (ImportedFunctions != "")
+            catch
             {
-                ImportedFunctions = ImportedFunctions.Substring(0, ImportedFunctions.Length - 1);
-                ImportedFunctions = "(" + ImportedFunctions + ")";
+                inUse = false;
             }
-            form.startAllowed(true);
-            inUse = false;
         }
         public static bool CompileRCTBC(string fileOut, string inPath, Error errorBox)
         {
@@ -308,6 +315,12 @@ namespace ReCT_IDE
 
                     foreach (ReCT.CodeAnalysis.Package.Package p in compilation.Packages)
                     {
+                        if (p.fullName.EndsWith(".dll"))
+                        {
+                            File.Copy(p.fullName, Path.GetDirectoryName(fileOut) + "/" + Path.GetFileName(p.fullName));
+                            continue;
+                        }
+
                         File.Copy(p.fullName, Path.GetDirectoryName(fileOut) + "/" + p.name + "lib.dll");
                     }
                 }

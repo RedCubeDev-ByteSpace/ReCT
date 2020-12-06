@@ -23,10 +23,13 @@ namespace ReCT_IDE
 
         private void Startup_Load(object sender, EventArgs e)
         {
-            for (float i = 1; i < 100; i += 2)
+            var steps = 25;
+            var stepsize = 100f / steps;
+
+            for (float i = 0; i < steps; i ++)
             {
                 Thread.Sleep(1);
-                Opacity = i / 100;
+                Opacity = stepsize * i / 100;
                 Update();
             }
             Opacity = 1;
