@@ -37,6 +37,7 @@ namespace ReCT.CodeAnalysis
 
         public static void resetBinder()
         {
+            Binder._diagnostics = new DiagnosticBag();
             Binder._packageNamespaces.Clear();
             Binder._usingPackages.Clear();
             Binder._namespace = "";

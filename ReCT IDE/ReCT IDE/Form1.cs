@@ -255,7 +255,7 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(CommentStyle, @"//.*$", RegexOptions.Multiline);
             e.ChangedRange.SetStyle(CommentStyle, @"/\*(.*?)\*/", RegexOptions.Singleline);
 
-            e.ChangedRange.SetStyle(AttachStyle, @"(#attach\b|#copy\b)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(AttachStyle, @"(#attach\b|#copy\b|#copyFolder\b)", RegexOptions.Singleline);
 
             //clear style of range [DarkMode]
             e.ChangedRange.ClearStyle(SystemFunctionStyle);
@@ -483,7 +483,6 @@ namespace ReCT_IDE
                 rectCompCheck.Variables = "";
                 if (CodeBox.Text != "")
                 {
-                    ReCT.CodeAnalysis.Compilation.resetBinder();
                     rectCompCheck.Check(CodeBox.Text, this, tabs[currentTab].path);
                     CodeBox.ClearStylesBuffer();
                     ReloadHightlighting(new TextChangedEventArgs(CodeBox.Range));
@@ -512,13 +511,11 @@ namespace ReCT_IDE
                     }
 
                     ReCTAutoComplete.Items = ACItems.ToArray();
-                    ReCT.CodeAnalysis.Compilation.resetBinder();
                 }
             }
             catch(Exception ee)
             {
                 ReCT_Compiler.inUse = false;
-                ReCT.CodeAnalysis.Compilation.resetBinder();
                 //Console.WriteLine(ee);
             }
         }
@@ -541,7 +538,6 @@ namespace ReCT_IDE
             if (fileChanged)
                 Save_Click(this, new EventArgs());
 
-            Compilation.resetBinder();
 
             ReCT_Compiler.CompileRCTBC (saveFileDialog1.FileName, tabs[currentTab].path, errorBox);
 
@@ -576,8 +572,6 @@ namespace ReCT_IDE
                 ReCT_Compiler.ForceDeleteFilesAndFoldersRecursively("Builder");
             if (!Directory.Exists("Builder"))
                 Directory.CreateDirectory("Builder");
-
-            Compilation.resetBinder();
 
             Console.WriteLine("----------------------------------------------------");
 

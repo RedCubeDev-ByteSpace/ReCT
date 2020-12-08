@@ -38,8 +38,6 @@ namespace ReCT_IDE
 
             inUse = true;
 
-            Compilation.resetBinder();
-
             form.startAllowed(false);
             var syntaxTree = SyntaxTree.Parse(code);
 
@@ -85,6 +83,7 @@ namespace ReCT_IDE
                 }
             }
 
+            Compilation.resetBinder();
             var compilation = Compilation.Create(syntaxTree);
 
 
@@ -174,7 +173,6 @@ namespace ReCT_IDE
                 ImportedFunctions = ImportedFunctions.Substring(0, ImportedFunctions.Length - 1);
                 ImportedFunctions = "(" + ImportedFunctions + ")";
             }
-            Compilation.resetBinder();
             form.startAllowed(true);
             inUse = false;
         }
@@ -185,8 +183,6 @@ namespace ReCT_IDE
 
             inUse = true;
 
-            Compilation.resetBinder();
-
             string code = "";
             using (StreamReader sr = new StreamReader(new FileStream(inPath, FileMode.Open)))
             {
@@ -196,6 +192,7 @@ namespace ReCT_IDE
 
             var syntaxTree = SyntaxTree.Parse(code);
             List<string> filesToCopy = new List<string>();
+            List<string> foldersToCopy = new List<string>();
 
             if (code.Contains("#attach"))
             {
@@ -253,6 +250,20 @@ namespace ReCT_IDE
 
             while (true)
             {
+                if (!code.Contains("#copyFolder"))
+                    break;
+
+                var matches = Regex.Matches(code, @"(?<=#copyFolder\(\" + "\"" + @")(.*)(?=\" + "\"" + @"\))");
+
+                for (int i = 0; i < matches.Count; i++)
+                {
+                    foldersToCopy.Add(matches[i].Value);
+                    code = code.Replace($"#copyFolder(\"{matches[i].Value}\")", "");
+                }
+            }
+
+            while (true)
+            {
                 if (!code.Contains("#copy"))
                     break;
 
@@ -288,8 +299,9 @@ namespace ReCT_IDE
 
             ImmutableArray<Diagnostic> errors = ImmutableArray<Diagnostic>.Empty;
 
-            // try
+            try
             {
+                Compilation.resetBinder();
                 var compilation = Compilation.Create(syntaxTree);
                 errors = compilation.Emit(Path.GetFileNameWithoutExtension(fileOut), new string[] { @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Net.Sockets.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.IO.FileSystem.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Console.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Threading.Thread.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Threading.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.dll", @"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.1.0\ref\netcoreapp3.1\System.Runtime.Extensions.dll" }, Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".dll");
 
@@ -340,39 +352,58 @@ namespace ReCT_IDE
 
                 foreach (string s in filesToCopy)
                 {
-                    File.Copy("Packages/" + s, Path.GetDirectoryName(fileOut) + "/" + s);
+                    if (Path.IsPathRooted(s))
+                        File.Copy(s, Path.GetDirectoryName(fileOut) + "/" + Path.GetFileName(s));
+                    else
+                        File.Copy("Packages/" + s, Path.GetDirectoryName(fileOut) + "/" + Path.GetFileName(s));
+                }
+                foreach (string s in foldersToCopy)
+                {
+                    var SourcePath = s;
+                    var DestinationPath = Path.GetDirectoryName(fileOut) + "/" + s.Split('\\').Last().Split('/').Last();
+                    if (!Path.IsPathRooted(s)) SourcePath = "Packages/" + SourcePath;
+
+                    Directory.CreateDirectory(DestinationPath);
+
+                    foreach (string dirPath in Directory.GetDirectories(SourcePath, "*",SearchOption.AllDirectories))
+                        Directory.CreateDirectory(dirPath.Replace(SourcePath, DestinationPath));
+
+                    //Copy all the files
+                    foreach (string newPath in Directory.GetFiles(SourcePath, "*.*",
+                        SearchOption.AllDirectories))
+                        File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath));
                 }
             }
-            //catch (Exception e)
-            //{
-            //    errorBox.Show();
-            //    errorBox.errorBox.Clear();
+            catch (Exception e)
+            {
+                errorBox.Show();
+                errorBox.errorBox.Clear();
 
-            //    inUse = false;
+                inUse = false;
 
-            //    if (errors.Any())
-            //    {
-            //        errorBox.Show();
-            //        errorBox.errorBox.Clear();
-            //        foreach (Diagnostic d in errors)
-            //        {
-            //            if (d.Location.Text != null)
-            //            {
-            //                errorBox.errorBox.Text += $"[L: {d.Location.StartLine}, C: {d.Location.StartCharacter}] {d.Message}\n";
-            //            }
-            //            else
-            //                errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
-            //        }
-            //        errorBox.version.Text = ReCT.info.Version;
-            //        return false;
-            //    }
-            //    else
-            //    {
-            //        errorBox.errorBox.Text = "THIS ERROR MIGHT BE INTERNAL! Please try again in a few seconds. (ReCT is unstable sometimes so you might have to try multiple times) \n" + errorBox.errorBox.Text;
-            //        errorBox.errorBox.Text += e.Source + ": " + e.Message + "\n" + e.StackTrace;
-            //        return false;
-            //    }
-            //}
+                if (errors.Any())
+                {
+                    errorBox.Show();
+                    errorBox.errorBox.Clear();
+                    foreach (Diagnostic d in errors)
+                    {
+                        if (d.Location.Text != null)
+                        {
+                            errorBox.errorBox.Text += $"[L: {d.Location.StartLine}, C: {d.Location.StartCharacter}] {d.Message}\n";
+                        }
+                        else
+                            errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
+                    }
+                    errorBox.version.Text = ReCT.info.Version;
+                    return false;
+                }
+                else
+                {
+                    errorBox.errorBox.Text = "THIS ERROR MIGHT BE INTERNAL! Please try again in a few seconds. (ReCT is unstable sometimes so you might have to try multiple times) \n" + errorBox.errorBox.Text;
+                    errorBox.errorBox.Text += e.Source + ": " + e.Message + "\n" + e.StackTrace;
+                    return false;
+                }
+            }
             inUse = false;
             return true;
         }

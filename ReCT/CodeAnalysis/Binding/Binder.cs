@@ -11,7 +11,7 @@ namespace ReCT.CodeAnalysis.Binding
 {
     internal sealed class Binder
     {
-        private static DiagnosticBag _diagnostics = new DiagnosticBag();
+        public static DiagnosticBag _diagnostics = new DiagnosticBag();
         private readonly bool _isScript;
         private readonly FunctionSymbol _function;
 
