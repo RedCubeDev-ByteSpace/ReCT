@@ -243,9 +243,6 @@ namespace ReCT_IDE
             //set folding markers [DarkMode]
             e.ChangedRange.SetFoldingMarkers("{", "}");
 
-            //Dev highlighting [lol]
-            //e.ChangedRange.SetStyle(RedStyleDM, @"(ProfessorDJ|Realmy|RedCube)");
-
             //clear style of range [DarkMode]
             e.ChangedRange.ClearStyle(CommentStyle);
             //quotes
