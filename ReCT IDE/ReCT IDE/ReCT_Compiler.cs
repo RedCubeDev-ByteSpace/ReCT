@@ -276,6 +276,14 @@ namespace ReCT_IDE
                 }
             }
 
+            var addExit = false;
+
+            if (code.Contains("#closeConsole"))
+            {
+                addExit = true;
+                code = code.Replace("#closeConsole", "");
+            }
+
             var sErrors = syntaxTree.Diagnostics;
 
             if (sErrors.Any())
@@ -335,7 +343,9 @@ namespace ReCT_IDE
                     }
                     using (StreamWriter sw = new StreamWriter(new FileStream(fileOut, FileMode.Create)))
                     {
-                        sw.Write($"dotnet exec \"{Path.GetFileNameWithoutExtension(fileOut)}.dll\"");
+                        sw.WriteLine($"dotnet exec \"{Path.GetFileNameWithoutExtension(fileOut)}.dll\"");
+
+                        if (addExit) sw.WriteLine($"exit");
                     }
 
                     foreach (ReCT.CodeAnalysis.Package.Package p in compilation.Packages)

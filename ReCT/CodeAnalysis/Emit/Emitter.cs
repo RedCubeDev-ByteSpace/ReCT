@@ -460,9 +460,13 @@ namespace ReCT.CodeAnalysis.Emit
             //classes
             var classDefinitions = new Dictionary<KeyValuePair<ClassSymbol, ImmutableDictionary<FunctionSymbol, BoundBlockStatement>>, TypeDefinition>();
 
-            isConstructor = true;
             foreach (var _class in program.Classes)
             {
+                if (!_class.Key.IsStatic)
+                    isConstructor = true;
+                else
+                    isConstructor = false;
+
                 var classDefinition = new TypeDefinition(program.Namespace, _class.Key.Name, (_class.Key.IsStatic ? (TypeAttributes.Abstract | TypeAttributes.Sealed) : 0) | TypeAttributes.Public, objectType);
                 _assemblyDefinition.MainModule.Types.Add(classDefinition);
 
@@ -517,6 +521,11 @@ namespace ReCT.CodeAnalysis.Emit
                 var hasContructor = false;
                 var _class = _classDef.Key;
                 var classDefinition = _classDef.Value;
+
+                if (!_class.Key.IsStatic)
+                    isConstructor = true;
+                else
+                    isConstructor = false;
 
                 inType = classDefinition;
                 inClass = _class.Key;
@@ -796,7 +805,7 @@ namespace ReCT.CodeAnalysis.Emit
         {
             var _globalField = new FieldDefinition(
                 "$" + node.Variable.Name, inType == null ? FieldAttributes.Static : (inClass.IsStatic ? FieldAttributes.Static : 0) | FieldAttributes.Public,
-                _knownTypes[node.Variable.Type]
+                _knownTypes[_knownTypes.Keys.FirstOrDefault(x => x.Name == node.Variable.Type.Name)]
             );
             (inType == null ? _typeDefinition : inType).Fields.Add(_globalField);
             return _globalField;
@@ -1070,7 +1079,7 @@ namespace ReCT.CodeAnalysis.Emit
                 return;
             }
 
-            if (inType != null && !inClass.IsStatic)
+            if (inType != null && !inClass.IsStatic && node.Variable.IsGlobal)
                 ilProcessor.Emit(OpCodes.Ldarg_0);
 
             EmitExpression(ilProcessor, node.Expression);
@@ -1407,7 +1416,7 @@ namespace ReCT.CodeAnalysis.Emit
                               node.Expression.Type == TypeSymbol.TCPSocketArr ||
                               node.Expression.Type.isClass;
             if (needsBoxing)
-                ilProcessor.Emit(OpCodes.Box, _knownTypes[node.Expression.Type]);
+                ilProcessor.Emit(OpCodes.Box, _knownTypes[node.Expression.Type.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.Expression.Type.Name) : node.Expression.Type]);
 
             if (node.Type == TypeSymbol.Any)
             {

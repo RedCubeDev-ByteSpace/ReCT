@@ -223,6 +223,7 @@ namespace ReCT_IDE
         Style AttachStyle = new TextStyle(new SolidBrush(Color.FromArgb(232, 128, 121)), null, FontStyle.Regular);
         Style TypeStyle = new TextStyle(new SolidBrush(Color.FromArgb(24, 115, 163)), null, FontStyle.Regular);
         Style NumberStyle = new TextStyle(new SolidBrush(Color.FromArgb(9, 170, 179)), null, FontStyle.Regular);
+        Style DecimalStyle = new TextStyle(new SolidBrush(Color.FromArgb(0, 113, 120)), null, FontStyle.Regular);
         Style SystemFunctionStyle = new TextStyle(new SolidBrush(Color.FromArgb(255, 131, 7)), null, FontStyle.Regular);
         Style UserFunctionStyle = new TextStyle(new SolidBrush(Color.FromArgb(25, 189, 93)), null, FontStyle.Regular);
         Style VariableStyle = new TextStyle(new SolidBrush(Color.FromArgb(255, 212, 125)), null, FontStyle.Regular);
@@ -252,7 +253,7 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(CommentStyle, @"//.*$", RegexOptions.Multiline);
             e.ChangedRange.SetStyle(CommentStyle, @"/\*(.*?)\*/", RegexOptions.Singleline);
 
-            e.ChangedRange.SetStyle(AttachStyle, @"(#attach\b|#copy\b|#copyFolder\b)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(AttachStyle, @"(#attach\b|#copy\b|#copyFolder\b|#closeConsole\b)", RegexOptions.Singleline);
 
             //clear style of range [DarkMode]
             e.ChangedRange.ClearStyle(SystemFunctionStyle);
@@ -269,6 +270,11 @@ namespace ReCT_IDE
 
             //settings
             e.ChangedRange.SetStyle(SettingStyle, @"(\bpackage\b|\bnamespace\b|\btype\b|\buse\b|\bdll\b)", RegexOptions.Singleline);
+
+            //numbers
+            e.ChangedRange.SetStyle(DecimalStyle, @"(?<=\.)\d+", RegexOptions.Multiline);
+            e.ChangedRange.SetStyle(NumberStyle, @"(\b\d+\b)", RegexOptions.Multiline);
+            e.ChangedRange.SetStyle(NumberStyle, @"(?<=\d)\.(?=\d)", RegexOptions.Multiline);
 
             //variables
             e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+<-))");
@@ -293,9 +299,6 @@ namespace ReCT_IDE
 
             //statements highlighting
             e.ChangedRange.SetStyle(StatementStyle, @"(\btry\b|\bcatch\b|\bbreak\b|\bcontinue\b|\bfor\b|\breturn\b|\bto\b|\bwhile\b|\bdo\b|\bdie\b|\bfrom\b)", RegexOptions.Singleline);
-
-            //numbers
-            e.ChangedRange.SetStyle(NumberStyle, @"(\b\d+\b)", RegexOptions.Multiline);
 
             //set standard text color
             e.ChangedRange.SetStyle(WhiteStyle, @".*", RegexOptions.Multiline);
