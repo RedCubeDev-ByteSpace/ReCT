@@ -18,7 +18,6 @@ using DiscordRPC;
 using System.Threading;
 using System.Reflection;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ReCT_IDE
 {
@@ -33,9 +32,9 @@ namespace ReCT_IDE
         string[] standardAC;
         BoltUpdater boltUpdater;
 
-        public FastColoredTextBox stdBox;
-
         public static string fileToOpen = "";
+
+        public string head = "";
 
         Discord dc;
         RichPresence presence;
@@ -139,8 +138,6 @@ namespace ReCT_IDE
             TabPrefab = (Button)CtrlClone.ControlFactory.CloneCtrl(Tab);
             Tab.Dispose();
             Controls.Remove(Tab);
-
-            stdBox = Cloner.DeepClone<FastColoredTextBox>(CodeBox);// (FastColoredTextBox)CtrlClone.ControlFactory.CloneCtrl(CodeBox);
 
             var tab = makeNewTab();
             tabs.Add(tab);
@@ -337,9 +334,7 @@ namespace ReCT_IDE
         {
             var newTab = new Tab();
             newTab.button = (Button)CtrlClone.ControlFactory.CloneCtrl(TabPrefab);
-            newTab.codebox = Cloner.DeepClone<FastColoredTextBox>(CodeBox);
-            newTab.codebox.ClearUndo();
-            newTab.codebox.Text = standardMsg;
+            newTab.code = standardMsg;
             newTab.saved = true;
             newTab.button.Click += Tab_Click;
             newTab.button.FlatStyle = FlatStyle.Flat;
@@ -358,10 +353,16 @@ namespace ReCT_IDE
                     tabs[i].button.Location = new Point(5 + (100 * i), 35);
                     tabs[i].button.Text = tabs[i].name;
 
-                    if (!tabs[i].saved)
-                        tabs[i].button.Text += "*";
-
                     tabs[i].button.BackColor = Color.FromArgb(32, 32, 32);
+
+                    if (!tabs[i].saved)
+                    {
+                        tabs[i].button.Text += "*";
+                        tabs[i].button.BackColor = Color.FromArgb(45, 59, 64);
+                    }
+
+                    if (tabs[i].path == head)
+                        tabs[i].button.BackColor = Color.FromArgb(45, 64, 49);
                 }
                 tabs[currentTab].button.BackColor = Color.FromArgb(64, 41, 41);
 
@@ -373,7 +374,7 @@ namespace ReCT_IDE
 
         private void New_Click(object sender, EventArgs e)
         {
-            tabs[currentTab].codebox = CodeBox;
+            tabs[currentTab].code = CodeBox.Text;
             tabs.Add(makeNewTab());
             switchTab(tabs.Count - 1);
             tabs[currentTab].name = "Untitled";
@@ -426,7 +427,7 @@ namespace ReCT_IDE
         {
             if (tabs.Count != 1 || tabs[0].name != "Untitled" || !tabs[0].saved)
             {
-                tabs[currentTab].codebox = CodeBox;
+                tabs[currentTab].code = CodeBox.Text;
                 tabs.Add(makeNewTab());
                 switchTab(tabs.Count - 1);
             }
@@ -511,7 +512,7 @@ namespace ReCT_IDE
                 rectCompCheck.Variables = "";
                 if (CodeBox.Text != "")
                 {
-                    rectCompCheck.Check(CodeBox.Text, this, tabs[currentTab].path);
+                    rectCompCheck.Check(CodeBox.Text, this, head == "" ? tabs[currentTab].path : head);
                     CodeBox.ClearStylesBuffer();
                     ReloadHightlighting(new TextChangedEventArgs(CodeBox.Range));
 
@@ -567,7 +568,7 @@ namespace ReCT_IDE
                 Save_Click(this, new EventArgs());
 
 
-            ReCT_Compiler.CompileRCTBC (saveFileDialog1.FileName, tabs[currentTab].path, errorBox);
+            ReCT_Compiler.CompileRCTBC (saveFileDialog1.FileName, head == "" ? tabs[currentTab].path : head, errorBox);
 
             System.Diagnostics.Process.Start("explorer.exe", string.Format("/select,\"{0}\"", saveFileDialog1.FileName));
             Typechecker.Enabled = true;
@@ -603,7 +604,7 @@ namespace ReCT_IDE
 
             Console.WriteLine("----------------------------------------------------");
 
-            if (!ReCT_Compiler.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(tabs[currentTab].path) + ".cmd", tabs[currentTab].path, errorBox)) return;
+            if (!ReCT_Compiler.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(tabs[currentTab].path) + ".cmd", head == "" ? tabs[currentTab].path : head, errorBox)) return;
 
             string strCmdText = $"/K cd \"{Path.GetFullPath($"Builder")}\" & cls & \"{Path.GetFileNameWithoutExtension(tabs[currentTab].path)}.cmd\"";
 
@@ -765,7 +766,7 @@ namespace ReCT_IDE
             {
                 if (currentTab < tabs.Count)
                 {
-                    tabs[currentTab].codebox = CodeBox;
+                    tabs[currentTab].code = CodeBox.Text;
                     tabs[currentTab].button.BackColor = Color.FromArgb(32, 32, 32);
                 }
                 currentTab = tab;
@@ -773,9 +774,10 @@ namespace ReCT_IDE
             }
             
             tabs[currentTab].button.BackColor = Color.FromArgb(64, 41, 41);
-            CodeBox = tabs[currentTab].codebox;
+            CodeBox.Text = tabs[currentTab].code;
 
             tabswitchTimer.Start();
+            OrderTabs();
         }
 
         private void tabswitchTimer_Tick(object sender, EventArgs e)
@@ -858,7 +860,7 @@ namespace ReCT_IDE
             {
                 if (tabs.Count != 1 || tabs[0].name != "Untitled" || !tabs[0].saved)
                 {
-                    tabs[currentTab].codebox = CodeBox;
+                    tabs[currentTab].code = CodeBox.Text;
                     tabs.Add(makeNewTab());
                     switchTab(tabs.Count - 1);
                 }
@@ -981,33 +983,25 @@ namespace ReCT_IDE
                 System.Diagnostics.Process.Start("explorer.exe", string.Format("/select,\"{0}\"", saveFileDialog1.FileName));
             Typechecker.Enabled = true;
         }
+
+        private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var newProject = new NewProject();
+            newProject.Show();
+        }
+
+        private void setAsHeadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            head = tabs[currentTab].path;
+        }
     }
 
     class Tab
     {
         public Button button;
-        public FastColoredTextBox codebox;
+        public string code;
         public string name;
         public string path;
         public bool saved;
     }
-
-    public static class Cloner
-    {
-        public static T DeepClone<T>(T obj)
-        {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(stream, obj);
-                stream.Position = 0;
-
-                return (T)formatter.Deserialize(stream);
-            }
-        }
-    }
 }
-
-[System.Serializable]
-public class fctb : FastColoredTextBox
-{}

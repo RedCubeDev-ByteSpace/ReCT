@@ -57,7 +57,7 @@ namespace CtrlClone
 						ctrl = new DateTimePicker();
 						break;
 					case "FastColoredTextBox":
-						ctrl = new DateTimePicker();
+						ctrl = new FastColoredTextBox();
 						break;
 					default:
 						Assembly controlAsm = Assembly.LoadWithPartialName(partialName);
