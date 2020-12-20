@@ -243,17 +243,17 @@ namespace ReCT.CodeAnalysis.Emit
 
             _objectConstructor = ResolveMethod("System.Object", ".ctor", Array.Empty<string>());
 
-            _objectEqualsReference = ResolveMethod("System.Object", "Equals", new [] { "System.Object", "System.Object" });
+            _objectEqualsReference = ResolveMethod("System.Object", "Equals", new[] { "System.Object", "System.Object" });
 
             _consoleReadLineReference = ResolveMethod("System.Console", "ReadLine", Array.Empty<string>());
-            _consoleWriteLineReference = ResolveMethod("System.Console", "WriteLine", new [] { "System.String" });
-            _consoleWriteReference = ResolveMethod("System.Console", "Write", new [] { "System.String" });
+            _consoleWriteLineReference = ResolveMethod("System.Console", "WriteLine", new[] { "System.String" });
+            _consoleWriteReference = ResolveMethod("System.Console", "Write", new[] { "System.String" });
             _consoleClearReference = ResolveMethod("System.Console", "Clear", Array.Empty<string>());
             _consoleSetCoursorReference = ResolveMethod("System.Console", "SetCursorPosition", new[] { "System.Int32", "System.Int32" });
 
             //ReadKey
             _consoleReadKeyReference = ResolveMethod("System.Console", "ReadKey", Array.Empty<string>());
-            _consoleGetKeyReference = ResolveMethod("System.Console", "ReadKey", new[] { "System.Boolean"});
+            _consoleGetKeyReference = ResolveMethod("System.Console", "ReadKey", new[] { "System.Boolean" });
             _consoleKeyInfoGetKeyChar = ResolveMethod("System.ConsoleKeyInfo", "get_KeyChar", Array.Empty<string>());
 
             //cursor visibility
@@ -279,18 +279,18 @@ namespace ReCT.CodeAnalysis.Emit
             _consoleBeepReference = ResolveMethod("System.Console", "Beep", new[] { "System.Int32", "System.Int32" });
 
 
-            _threadSlooopeReference = ResolveMethod("System.Threading.Thread", "Sleep", new[] { "System.Int32"});
+            _threadSlooopeReference = ResolveMethod("System.Threading.Thread", "Sleep", new[] { "System.Int32" });
 
-            _stringConcatReference = ResolveMethod("System.String", "Concat", new [] { "System.String", "System.String" });
-            _convertToBooleanReference = ResolveMethod("System.Convert", "ToBoolean", new [] { "System.Object" });
-            _convertToInt32Reference = ResolveMethod("System.Convert", "ToInt32", new [] { "System.Object" });
-            _convertToUInt8Reference = ResolveMethod("System.Convert", "ToByte", new [] { "System.Object" });
-            _convertToSingleReference = ResolveMethod("System.Convert", "ToSingle", new [] { "System.Object" });
-            _convertToStringReference = ResolveMethod("System.Convert", "ToString", new [] { "System.Object" });
+            _stringConcatReference = ResolveMethod("System.String", "Concat", new[] { "System.String", "System.String" });
+            _convertToBooleanReference = ResolveMethod("System.Convert", "ToBoolean", new[] { "System.Object" });
+            _convertToInt32Reference = ResolveMethod("System.Convert", "ToInt32", new[] { "System.Object" });
+            _convertToUInt8Reference = ResolveMethod("System.Convert", "ToByte", new[] { "System.Object" });
+            _convertToSingleReference = ResolveMethod("System.Convert", "ToSingle", new[] { "System.Object" });
+            _convertToStringReference = ResolveMethod("System.Convert", "ToString", new[] { "System.Object" });
             _convertToDoubleReference = ResolveMethod("System.Convert", "ToDouble", new[] { "System.Object" });
             _randomReference = ResolveType(null, "System.Random");
             _randomCtorReference = ResolveMethod("System.Random", ".ctor", Array.Empty<string>());
-            _randomNextReference = ResolveMethod("System.Random", "Next", new [] { "System.Int32" });
+            _randomNextReference = ResolveMethod("System.Random", "Next", new[] { "System.Int32" });
 
             //Meth
             _mathFloorReference = ResolveMethod("System.Math", "Floor", new[] { "System.Double" });
@@ -460,6 +460,7 @@ namespace ReCT.CodeAnalysis.Emit
             //classes
             var classDefinitions = new Dictionary<KeyValuePair<ClassSymbol, ImmutableDictionary<FunctionSymbol, BoundBlockStatement>>, TypeDefinition>();
 
+            //Register class names
             foreach (var _class in program.Classes)
             {
                 if (!_class.Key.IsStatic)
@@ -481,6 +482,7 @@ namespace ReCT.CodeAnalysis.Emit
                 classDefinitions.Add(_class, classDefinition);
             }
 
+            //register function names
             foreach (var _classDef in classDefinitions)
             {
                 var _class = _classDef.Key;
@@ -516,9 +518,9 @@ namespace ReCT.CodeAnalysis.Emit
                 }
             }
 
+            //register constructor bodies
             foreach (var _classDef in classDefinitions)
             {
-                var hasContructor = false;
                 var _class = _classDef.Key;
                 var classDefinition = _classDef.Value;
 
@@ -529,7 +531,6 @@ namespace ReCT.CodeAnalysis.Emit
 
                 inType = classDefinition;
                 inClass = _class.Key;
-                //Dictionary<FunctionSymbol, MethodDefinition> classMethods = new Dictionary<FunctionSymbol, MethodDefinition>();
 
                 if (_class.Value.FirstOrDefault(x => x.Key.Name == "Constructor").Value != null)
                 {
@@ -538,9 +539,9 @@ namespace ReCT.CodeAnalysis.Emit
                     var body = pair.Value;
                     var method = _classMethods[_class.Key][function];
 
-                    if (function.Name == "Constructor")
+                    _class.Key.hasConstructor = true;
 
-                    //body
+                     //body
                     _locals.Clear();
                     _labels.Clear();
                     _fixups.Clear();
@@ -565,7 +566,42 @@ namespace ReCT.CodeAnalysis.Emit
 
                     method.Body.OptimizeMacros();
                 }
+            }
 
+            inClass = null;
+            inType = null;
+            isConstructor = false;
+
+            //register main class functions
+            foreach (var functionWithBody in program.Functions)
+                EmitFunctionDeclaration(functionWithBody.Key);
+
+            if (program.MainFunction != null)
+                EmitFunctionBody(program.MainFunction, program.Functions.FirstOrDefault(x => x.Key == program.MainFunction).Value);
+
+            foreach (var functionWithBody in program.Functions)
+                if (functionWithBody.Key != program.MainFunction)
+                    EmitFunctionBody(functionWithBody.Key, functionWithBody.Value);
+
+
+            //register constructor body
+            foreach (var _classDef in classDefinitions)
+            {
+                var _class = _classDef.Key;
+                var classDefinition = _classDef.Value;
+
+                var hasContructor = _class.Key.hasConstructor;
+
+                if (!_class.Key.IsStatic)
+                    isConstructor = true;
+                else
+                    isConstructor = false;
+
+                inType = classDefinition;
+                inClass = _class.Key;
+                //Dictionary<FunctionSymbol, MethodDefinition> classMethods = new Dictionary<FunctionSymbol, MethodDefinition>();
+
+                //register function bodies
                 foreach (var functionSB in _class.Value)
                 {
                     if (functionSB.Key.Name == "Constructor") continue;
@@ -596,6 +632,7 @@ namespace ReCT.CodeAnalysis.Emit
                     method.Body.OptimizeMacros();
                 }
 
+                //generate constructor if needed
                 if (!_class.Key.IsStatic && !hasContructor)
                 {
                     var method = new MethodDefinition(".ctor", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, _knownTypes[TypeSymbol.Void]);
@@ -622,12 +659,6 @@ namespace ReCT.CodeAnalysis.Emit
             isConstructor = false;
             inType = null;
             inClass = null;
-
-            foreach (var functionWithBody in program.Functions)
-                EmitFunctionDeclaration(functionWithBody.Key);
-
-            foreach (var functionWithBody in program.Functions)
-                EmitFunctionBody(functionWithBody.Key, functionWithBody.Value);
 
             if (program.MainFunction != null)
                 _assemblyDefinition.EntryPoint = _methods[program.MainFunction];
@@ -763,7 +794,7 @@ namespace ReCT.CodeAnalysis.Emit
             var variableDefinition = new VariableDefinition(typeReference);
             FieldDefinition field = null;
 
-            if(node.Variable.IsGlobal)
+            if (node.Variable.IsGlobal)
             {
                 field = EmitGlobalVar(ilProcessor, node);
                 (inType == null ? _globals : _classGlobals[inType]).Add(node.Variable, field);
@@ -1026,9 +1057,11 @@ namespace ReCT.CodeAnalysis.Emit
         {
             try
             {
-                if (node.Variable is ParameterSymbol parameter)
+                if (node.Variable is ParameterSymbol || node.Variable.Kind == SymbolKind.Parameter)
                 {
-                    ilProcessor.Emit(OpCodes.Ldarg, parameter.Ordinal + (isConstructor ? 1 : 0));
+                    var parameter = node.Variable as ParameterSymbol;
+                    var ord = parameter.Ordinal;
+                    ilProcessor.Emit(OpCodes.Ldarg, ord + (isConstructor ? 1 : 0));
                 }
                 else if (node.Variable.IsGlobal)
                 {
@@ -1051,7 +1084,7 @@ namespace ReCT.CodeAnalysis.Emit
             }
             catch
             {
-                throw new Exception($"EMITTER ERROR: Could not find Variable / Object '{node.Variable.Name}'");
+                new Exception($"EMITTER ERROR: Could not find Variable / Object '{node.Variable.Name}'");
             }
         }
 
@@ -1065,7 +1098,7 @@ namespace ReCT.CodeAnalysis.Emit
             else
                 variableDefinition = _locals[node.Variable];
 
-            if(node.isArray)
+            if (node.isArray)
             {
                 if (node.Variable.IsGlobal)
                     ilProcessor.Emit(OpCodes.Ldsfld, fieldDefinition);
@@ -1369,7 +1402,7 @@ namespace ReCT.CodeAnalysis.Emit
                     return;
                 }
 
-                var methodDefinition = (inType == null ? _methods : _classMethods[_classes.FirstOrDefault(x => x.Value == inType).Key]) [node.Function];
+                var methodDefinition = (inType == null ? _methods : _classMethods[_classes.FirstOrDefault(x => x.Value == inType).Key])[node.Function];
                 ilProcessor.Emit(OpCodes.Call, methodDefinition);
             }
         }
@@ -1382,7 +1415,7 @@ namespace ReCT.CodeAnalysis.Emit
                 _randomReference
             );
             _typeDefinition.Fields.Add(_randomFieldDefinition);
-            
+
             var staticConstructor = new MethodDefinition(
                 ".cctor",
                 MethodAttributes.Static |

@@ -105,6 +105,7 @@ namespace ReCT.CodeAnalysis.Binding
                             break;
                         case BoundNodeKind.VariableDeclaration:
                         case BoundNodeKind.ExpressionStatement:
+                        case BoundNodeKind.TryCatchStatement:
                             _statements.Add(statement);
                             break;
                         default:
@@ -190,6 +191,7 @@ namespace ReCT.CodeAnalysis.Binding
                             case BoundNodeKind.VariableDeclaration:
                             case BoundNodeKind.LabelStatement:
                             case BoundNodeKind.ExpressionStatement:
+                            case BoundNodeKind.TryCatchStatement:
                                 if (isLastStatementInBlock)
                                     Connect(current, next);
                                 break;

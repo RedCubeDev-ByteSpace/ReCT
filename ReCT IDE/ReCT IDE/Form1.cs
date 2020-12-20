@@ -16,6 +16,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DiscordRPC;
 using System.Threading;
+using System.Reflection;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ReCT_IDE
 {
@@ -29,6 +32,10 @@ namespace ReCT_IDE
         public Process running;
         string[] standardAC;
         BoltUpdater boltUpdater;
+
+        public FastColoredTextBox stdBox;
+
+        public static string fileToOpen = "";
 
         Discord dc;
         RichPresence presence;
@@ -54,6 +61,12 @@ namespace ReCT_IDE
 
         public Form1()
         {
+            //make sure program path is set correctly
+            Directory.SetCurrentDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+
+            //set file associations and icons
+            FileAssociations.EnsureAssociationsSet();
+
             Thread t = new Thread(new ThreadStart(SplashScreen));
             t.Start();
 
@@ -127,6 +140,8 @@ namespace ReCT_IDE
             Tab.Dispose();
             Controls.Remove(Tab);
 
+            stdBox = Cloner.DeepClone<FastColoredTextBox>(CodeBox);// (FastColoredTextBox)CtrlClone.ControlFactory.CloneCtrl(CodeBox);
+
             var tab = makeNewTab();
             tabs.Add(tab);
 
@@ -158,6 +173,12 @@ namespace ReCT_IDE
             dc.client.SetPresence(presence);
 
             OrderTabs();
+
+            if (fileToOpen != "")
+            {
+                OpenFile(fileToOpen);
+                fileToOpen = "";
+            }
         }
 
         public void startAllowed(bool allowed)
@@ -316,7 +337,9 @@ namespace ReCT_IDE
         {
             var newTab = new Tab();
             newTab.button = (Button)CtrlClone.ControlFactory.CloneCtrl(TabPrefab);
-            newTab.code = standardMsg;
+            newTab.codebox = Cloner.DeepClone<FastColoredTextBox>(CodeBox);
+            newTab.codebox.ClearUndo();
+            newTab.codebox.Text = standardMsg;
             newTab.saved = true;
             newTab.button.Click += Tab_Click;
             newTab.button.FlatStyle = FlatStyle.Flat;
@@ -350,7 +373,7 @@ namespace ReCT_IDE
 
         private void New_Click(object sender, EventArgs e)
         {
-            tabs[currentTab].code = CodeBox.Text;
+            tabs[currentTab].codebox = CodeBox;
             tabs.Add(makeNewTab());
             switchTab(tabs.Count - 1);
             tabs[currentTab].name = "Untitled";
@@ -396,27 +419,32 @@ namespace ReCT_IDE
             if (res != DialogResult.OK)
                 return;
 
+            OpenFile(openFileDialog1.FileName);
+        }
+
+        public void OpenFile(string path)
+        {
             if (tabs.Count != 1 || tabs[0].name != "Untitled" || !tabs[0].saved)
             {
-                tabs[currentTab].code = CodeBox.Text;
+                tabs[currentTab].codebox = CodeBox;
                 tabs.Add(makeNewTab());
                 switchTab(tabs.Count - 1);
             }
-                        
 
-            using (StreamReader sr = new StreamReader(new FileStream(openFileDialog1.FileName, FileMode.Open)))
+
+            using (StreamReader sr = new StreamReader(new FileStream(path, FileMode.Open)))
             {
                 CodeBox.Text = sr.ReadToEnd();
                 CodeBox.ClearUndo();
                 sr.Close();
             }
 
-            tabs[currentTab].name = Path.GetFileName(openFileDialog1.FileName);
-            tabs[currentTab].path = openFileDialog1.FileName;
+            tabs[currentTab].name = Path.GetFileName(path);
+            tabs[currentTab].path = path;
             tabs[currentTab].saved = true;
             OrderTabs();
 
-            Properties.Settings.Default.LastOpenFile = openFileDialog1.FileName;
+            Properties.Settings.Default.LastOpenFile = path;
             Properties.Settings.Default.Save();
         }
 
@@ -737,7 +765,7 @@ namespace ReCT_IDE
             {
                 if (currentTab < tabs.Count)
                 {
-                    tabs[currentTab].code = CodeBox.Text;
+                    tabs[currentTab].codebox = CodeBox;
                     tabs[currentTab].button.BackColor = Color.FromArgb(32, 32, 32);
                 }
                 currentTab = tab;
@@ -745,7 +773,7 @@ namespace ReCT_IDE
             }
             
             tabs[currentTab].button.BackColor = Color.FromArgb(64, 41, 41);
-            CodeBox.Text = tabs[currentTab].code;
+            CodeBox = tabs[currentTab].codebox;
 
             tabswitchTimer.Start();
         }
@@ -830,7 +858,7 @@ namespace ReCT_IDE
             {
                 if (tabs.Count != 1 || tabs[0].name != "Untitled" || !tabs[0].saved)
                 {
-                    tabs[currentTab].code = CodeBox.Text;
+                    tabs[currentTab].codebox = CodeBox;
                     tabs.Add(makeNewTab());
                     switchTab(tabs.Count - 1);
                 }
@@ -958,9 +986,28 @@ namespace ReCT_IDE
     class Tab
     {
         public Button button;
-        public string code;
+        public FastColoredTextBox codebox;
         public string name;
         public string path;
         public bool saved;
     }
+
+    public static class Cloner
+    {
+        public static T DeepClone<T>(T obj)
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(stream, obj);
+                stream.Position = 0;
+
+                return (T)formatter.Deserialize(stream);
+            }
+        }
+    }
 }
+
+[System.Serializable]
+public class fctb : FastColoredTextBox
+{}

@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.CodeBox = new FastColoredTextBoxNS.FastColoredTextBox();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.New = new System.Windows.Forms.ToolStripMenuItem();
             this.Open = new System.Windows.Forms.ToolStripMenuItem();
@@ -60,57 +59,15 @@
             this.tabswitchTimer = new System.Windows.Forms.Timer(this.components);
             this.Autosave = new System.Windows.Forms.Timer(this.components);
             this.MaxTimer = new System.Windows.Forms.Timer(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.CodeBox)).BeginInit();
+            this.CodeBox = new FastColoredTextBoxNS.FastColoredTextBox();
             this.Menu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Build)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Stop)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Play)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Typechecker)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CodeBox)).BeginInit();
             this.SuspendLayout();
-            // 
-            // CodeBox
-            // 
-            this.CodeBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.CodeBox.AutoCompleteBracketsList = new char[] {
-        '(',
-        ')',
-        '{',
-        '}',
-        '[',
-        ']',
-        '\"',
-        '\"',
-        '\'',
-        '\''};
-            this.ReCTAutoComplete.SetAutocompleteMenu(this.CodeBox, this.ReCTAutoComplete);
-            this.CodeBox.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*" +
-    "(?<range>:)\\s*(?<range>[^;]+);";
-            this.CodeBox.AutoScrollMinSize = new System.Drawing.Size(51, 14);
-            this.CodeBox.BackBrush = null;
-            this.CodeBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.CodeBox.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
-            this.CodeBox.CharHeight = 14;
-            this.CodeBox.CharWidth = 8;
-            this.CodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.CodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.CodeBox.Font = new System.Drawing.Font("Courier New", 9.75F);
-            this.CodeBox.ForeColor = System.Drawing.Color.White;
-            this.CodeBox.IsReplaceMode = false;
-            this.CodeBox.Location = new System.Drawing.Point(0, 65);
-            this.CodeBox.Name = "CodeBox";
-            this.CodeBox.Paddings = new System.Windows.Forms.Padding(0);
-            this.CodeBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.CodeBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("CodeBox.ServiceColors")));
-            this.CodeBox.ShowFoldingLines = true;
-            this.CodeBox.Size = new System.Drawing.Size(1088, 566);
-            this.CodeBox.TabIndex = 1;
-            this.CodeBox.Text = "kek";
-            this.CodeBox.Zoom = 100;
-            this.CodeBox.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.CodeBox_Chnaged);
-            this.CodeBox.Load += new System.EventHandler(this.CodeBox_Load);
             // 
             // fileToolStripMenuItem
             // 
@@ -468,6 +425,48 @@
             // 
             this.MaxTimer.Tick += new System.EventHandler(this.MaxTimer_Tick);
             // 
+            // CodeBox
+            // 
+            this.CodeBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.CodeBox.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.ReCTAutoComplete.SetAutocompleteMenu(this.CodeBox, this.ReCTAutoComplete);
+            this.CodeBox.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*" +
+    "(?<range>:)\\s*(?<range>[^;]+);";
+            this.CodeBox.AutoScrollMinSize = new System.Drawing.Size(51, 14);
+            this.CodeBox.BackBrush = null;
+            this.CodeBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.CodeBox.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
+            this.CodeBox.CharHeight = 14;
+            this.CodeBox.CharWidth = 8;
+            this.CodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.CodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.CodeBox.ForeColor = System.Drawing.Color.White;
+            this.CodeBox.IsReplaceMode = false;
+            this.CodeBox.Location = new System.Drawing.Point(0, 65);
+            this.CodeBox.Name = "CodeBox";
+            this.CodeBox.Paddings = new System.Windows.Forms.Padding(0);
+            this.CodeBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.CodeBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("CodeBox.ServiceColors")));
+            this.CodeBox.ShowFoldingLines = true;
+            this.CodeBox.Size = new System.Drawing.Size(1088, 566);
+            this.CodeBox.TabIndex = 1;
+            this.CodeBox.Text = "kek";
+            this.CodeBox.Zoom = 100;
+            this.CodeBox.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.CodeBox_Chnaged);
+            this.CodeBox.Load += new System.EventHandler(this.CodeBox_Load);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -487,7 +486,6 @@
             this.Text = "ReCT IDE";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.CodeBox)).EndInit();
             this.Menu.ResumeLayout(false);
             this.Menu.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Build)).EndInit();
@@ -495,13 +493,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.Play)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Typechecker)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CodeBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private FastColoredTextBoxNS.FastColoredTextBox CodeBox;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem New;
         private System.Windows.Forms.ToolStripMenuItem Open;
@@ -531,6 +529,7 @@
         private System.Windows.Forms.ToolStripMenuItem reloadHighlightingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem forceRunToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem forceBuildToolStripMenuItem;
+        private FastColoredTextBoxNS.FastColoredTextBox CodeBox;
     }
 }
 

@@ -12,11 +12,16 @@ namespace ReCT_IDE
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            if (args.Length > 0)
+                Form1.fileToOpen = args[0];
+
             Application.Run(new Form1());
+
         }
     }
 }

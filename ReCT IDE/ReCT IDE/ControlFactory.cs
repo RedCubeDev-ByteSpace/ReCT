@@ -5,6 +5,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using FastColoredTextBoxNS;
 
 namespace CtrlClone
 {
@@ -53,6 +54,9 @@ namespace CtrlClone
 						ctrl = new MonthCalendar();
 						break;
 					case "DateTimePicker":
+						ctrl = new DateTimePicker();
+						break;
+					case "FastColoredTextBox":
 						ctrl = new DateTimePicker();
 						break;
 					default:
@@ -206,7 +210,7 @@ namespace CtrlClone
 		public CBFormCtrl(Control ctrl)
 		{
 			CtrlName = ctrl.GetType().Name;
-			PartialName = ctrl.GetType().Namespace;
+			PartialName = ctrl.GetType().FullName.Replace("." + ctrlName, "");
 
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(ctrl);
 

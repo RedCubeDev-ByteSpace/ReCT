@@ -17,6 +17,8 @@ namespace ReCT.CodeAnalysis.Symbols
         public object[] Statements;
         public Binding.BoundScope Scope;
 
+        public bool hasConstructor;
+
         public override SymbolKind Kind => SymbolKind.Class;
     }
 }

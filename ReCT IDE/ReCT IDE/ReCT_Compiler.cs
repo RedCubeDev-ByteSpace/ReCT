@@ -176,6 +176,21 @@ namespace ReCT_IDE
             form.startAllowed(true);
             inUse = false;
         }
+
+        struct Attachment
+        {
+            public string Name;
+            public int Length;
+            public int BackBuffer;
+
+            public Attachment(string n, int l, int b)
+            {
+                Name = n;
+                Length = l;
+                BackBuffer = b;
+            }
+        };
+
         public static bool CompileRCTBC(string fileOut, string inPath, Error errorBox)
         {
             if (inUse)
@@ -193,46 +208,36 @@ namespace ReCT_IDE
             var syntaxTree = SyntaxTree.Parse(code);
             List<string> filesToCopy = new List<string>();
             List<string> foldersToCopy = new List<string>();
+            List<Attachment> attachements = new List<Attachment>();
 
             if (code.Contains("#attach"))
             {
                 var lookingforfile = "";
                 try
                 {
-                    while (true)
+                    while (code.Contains("#attach"))
                     {
-                        if (!code.Contains("#attach"))
-                            break;
-
-                        List<string> neededFiles = new List<string>();
-                        List<string> neededCode = new List<string>();
+                        string neededFile = "";
                         var matches = Regex.Matches(code, @"(?<=#attach\(\" + "\"" + @")(.*)(?=\" + "\"" + @"\))");
 
-                        for (int i = 0; i < matches.Count; i++)
+                        neededFile = matches[0].Value;
+                        Console.WriteLine(matches.Count);
+
+                        lookingforfile = neededFile;
+
+                        if (!lookingforfile.Contains(":"))
                         {
-                            neededFiles.Add(matches[i].Value);
-                        }
+                            lookingforfile = Path.GetDirectoryName(inPath) + "\\" + neededFile;
+                        } 
 
-                        foreach (string p in neededFiles)
+                        using (StreamReader sr = new StreamReader(new FileStream(lookingforfile, FileMode.Open)))
                         {
-                            var lp = p;
-                            if (!p.Contains(":"))
-                            {
-                                lp = Path.GetDirectoryName(inPath) + "\\" + p;
-                            }
+                            var cod = sr.ReadToEnd();
+                            code = code.Replace($"#attach(\"{neededFile}\")", cod);
 
-                            lookingforfile = lp;
+                            attachements.Add(new Attachment(neededFile, cod.Split('\n').Length, matches[0].Index));
 
-                            using (StreamReader sr = new StreamReader(new FileStream(lp, FileMode.Open)))
-                            {
-                                neededCode.Add(sr.ReadToEnd());
-                                sr.Close();
-                            }
-                        }
-
-                        for (int i = 0; i < neededFiles.Count; i++)
-                        {
-                            code = code.Replace($"#attach(\"{neededFiles[i]}\")", neededCode[i]);
+                            sr.Close();
                         }
                     }
                 }
@@ -307,7 +312,7 @@ namespace ReCT_IDE
 
             ImmutableArray<Diagnostic> errors = ImmutableArray<Diagnostic>.Empty;
 
-            try
+            //try
             {
                 Compilation.resetBinder();
                 var compilation = Compilation.Create(syntaxTree);
@@ -323,7 +328,12 @@ namespace ReCT_IDE
                     {
                         if (d.Location.Text != null)
                         {
-                            errorBox.errorBox.Text += $"[L: {d.Location.StartLine}, C: {d.Location.StartCharacter}] {d.Message}\n";
+                            var lineInfo = getLineNumber(attachements.ToArray(), d.Location.StartLine, code);
+
+                            if (lineInfo.Length == 1)
+                                errorBox.errorBox.Text += $"[L: {lineInfo[0]}, C: {d.Location.StartCharacter}] {d.Message}\n";
+                            else
+                                errorBox.errorBox.Text += $"[L: {lineInfo[0]}, C: {d.Location.StartCharacter}, in '{lineInfo[1]}'] {d.Message}\n";
                         }
                         else
                             errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
@@ -375,7 +385,7 @@ namespace ReCT_IDE
 
                     Directory.CreateDirectory(DestinationPath);
 
-                    foreach (string dirPath in Directory.GetDirectories(SourcePath, "*",SearchOption.AllDirectories))
+                    foreach (string dirPath in Directory.GetDirectories(SourcePath, "*", SearchOption.AllDirectories))
                         Directory.CreateDirectory(dirPath.Replace(SourcePath, DestinationPath));
 
                     //Copy all the files
@@ -384,39 +394,45 @@ namespace ReCT_IDE
                         File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath));
                 }
             }
-            catch (Exception e)
-            {
-                errorBox.Show();
-                errorBox.errorBox.Clear();
+            //catch (Exception e)
+            //{
+            //    errorBox.Show();
+            //    errorBox.errorBox.Clear();
 
-                inUse = false;
+            //    inUse = false;
 
-                if (errors.Any())
-                {
-                    errorBox.Show();
-                    errorBox.errorBox.Clear();
-                    foreach (Diagnostic d in errors)
-                    {
-                        if (d.Location.Text != null)
-                        {
-                            errorBox.errorBox.Text += $"[L: {d.Location.StartLine}, C: {d.Location.StartCharacter}] {d.Message}\n";
-                        }
-                        else
-                            errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
-                    }
-                    errorBox.version.Text = ReCT.info.Version;
-                    return false;
-                }
-                else
-                {
-                    errorBox.errorBox.Text = "THIS ERROR MIGHT BE INTERNAL! Please try again in a few seconds. (ReCT is unstable sometimes so you might have to try multiple times) \n" + errorBox.errorBox.Text;
-                    errorBox.errorBox.Text += e.Source + ": " + e.Message + "\n" + e.StackTrace;
-                    return false;
-                }
-            }
+            //    if (errors.Any())
+            //    {
+            //        errorBox.Show();
+            //        errorBox.errorBox.Clear();
+            //        foreach (Diagnostic d in errors)
+            //        {
+            //            if (d.Location.Text != null)
+            //            {
+            //                var lineInfo = getLineNumber(attachements.ToArray(), d.Location.StartLine, code);
+
+            //                if (lineInfo.Length == 1)
+            //                    errorBox.errorBox.Text += $"[L: {lineInfo[0]}, C: {d.Location.StartCharacter}] {d.Message}\n";
+            //                else
+            //                    errorBox.errorBox.Text += $"[L: {lineInfo[0]}, C: {d.Location.StartCharacter}, in '{lineInfo[1]}'] {d.Message}\n";
+            //            }
+            //            else
+            //                errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
+            //        }
+            //        errorBox.version.Text = ReCT.info.Version;
+            //        return false;
+            //    }
+            //    else
+            //    {
+            //        errorBox.errorBox.Text = "THIS ERROR MIGHT BE INTERNAL! Please try again in a few seconds. (ReCT is unstable sometimes so you might have to try multiple times) \n" + errorBox.errorBox.Text;
+            //        errorBox.errorBox.Text += e.Source + ": " + e.Message + "\n" + e.StackTrace;
+            //        return false;
+            //    }
+            //}
             inUse = false;
             return true;
         }
+
         public void CompileDNCLI(string fileName, string outName)
         {
             if (Directory.Exists(@"Builder/ReCTClasses"))
@@ -463,6 +479,7 @@ namespace ReCT_IDE
             Thread.Sleep(1);
             Directory.Delete(target_dir);
         }
+
         public Process Run(string fileName)
         {
             if (Directory.Exists(@"Builder/ReCTClasses"))
@@ -487,6 +504,31 @@ namespace ReCT_IDE
             var process = Process.Start("CMD.exe", strCmdText);
 
             return process;
+        }
+
+        static string[] getLineNumber(Attachment[] attachments, int line, string code)
+        {
+            var allLengths = 0;
+            foreach (Attachment a in attachments)
+            {
+                allLengths += a.Length;
+                if (line + 1 > LineFromPos(code, a.BackBuffer) && line + 1 <= LineFromPos(code, a.BackBuffer) + a.Length)
+                {
+                    return new[] { (line - LineFromPos(code, a.BackBuffer) + 1).ToString(), a.Name };
+                }
+            }
+
+            return new[] { (line - allLengths).ToString() };
+        }
+
+        static int LineFromPos(string input, int indexPosition)
+        {
+            int lineNumber = 1;
+            for (int i = 0; i < indexPosition; i++)
+            {
+                if (input[i] == '\n') lineNumber++;
+            }
+            return lineNumber;
         }
     }
 }
