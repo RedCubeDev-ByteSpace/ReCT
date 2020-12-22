@@ -107,7 +107,6 @@ namespace ReCT.CodeAnalysis.Emit
         private Emitter(string moduleName, string[] references)
         {
             var assemblies = new List<AssemblyDefinition>();
-            s_assemblies = assemblies;
 
             foreach (var reference in references)
             {
@@ -122,6 +121,8 @@ namespace ReCT.CodeAnalysis.Emit
                 }
             }
 
+            s_assemblies = assemblies;
+            
             var builtInTypes = new List<(TypeSymbol type, string MetadataName)>()
             {
                 (TypeSymbol.Any, "System.Object"),
@@ -433,11 +434,15 @@ namespace ReCT.CodeAnalysis.Emit
                 foreach (ClassSymbol c in p.scope.GetDeclaredClasses())
                 {
                     var typeRef = s_assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).SelectMany(t => t.NestedTypes).FirstOrDefault(nt => nt.FullName == p.name + "." + p.name + "/" + c.Name);
-                    _knownTypes.Add(TypeSymbol.Class[c], s_assemblyDefinition.MainModule.ImportReference(typeRef));
+                    var asmRef = s_assemblyDefinition.MainModule.ImportReference(typeRef);
+                    _knownTypes.Add(TypeSymbol.Class[c], asmRef);
 
-                    if(!c.IsStatic)
-                        _knownTypes.Add(TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == c.Name + "Arr").Value , _knownTypes[TypeSymbol.Class[c]].MakeArrayType());
-                    
+                    //if (!c.IsStatic)
+                    //{
+                    //var type = TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == c.Name + "Arr");
+                    //_knownTypes.Add(type.Value, asmRef.MakeArrayType());
+                    //}
+
                     List<MethodReference> mrefs = new List<MethodReference>();
                     List<FieldReference> frefs = new List<FieldReference>();
 

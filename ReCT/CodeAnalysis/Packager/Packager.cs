@@ -18,7 +18,9 @@ namespace ReCT.CodeAnalysis.Package
             {"sys", "ReCT.sys.pack" },
             {"math","ReCT.math.pack"},
             {"net","ReCT.net.pack"},
+            {"web","ReCT.web.pack"},
             {"io","ReCT.io.pack"},
+            {"audio","ReCT.audio.pack"},
         };
 
         public static Package loadPackage(string sysPack, bool isDLL)
@@ -102,6 +104,10 @@ namespace ReCT.CodeAnalysis.Package
                     var typesymbol = new TypeSymbol(classSymbol.Name);
                     typesymbol.isClass = true;
                     TypeSymbol.Class.Add(classSymbol, typesymbol);
+                    
+                    var arraysymbol = new TypeSymbol(classSymbol.Name + "Arr");
+                    arraysymbol.isClass = true;
+                    TypeSymbol.Class.Add(new ClassSymbol(classSymbol.Name + "Arr"), arraysymbol);
                 }
 
                 scope.TryDeclareClass(classSymbol);
