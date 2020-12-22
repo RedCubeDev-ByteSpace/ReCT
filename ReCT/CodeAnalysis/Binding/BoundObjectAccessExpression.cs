@@ -8,7 +8,7 @@ namespace ReCT.CodeAnalysis.Binding
     {
         private readonly TypeSymbol _type;
 
-        public BoundObjectAccessExpression(VariableSymbol variable, ObjectAccessExpression.AccessType accessType, FunctionSymbol function, ImmutableArray<BoundExpression> arguments, VariableSymbol property, TypeSymbol type, BoundExpression value, Package.Package package, ClassSymbol _class, BoundCallExpression typeCall)
+        public BoundObjectAccessExpression(VariableSymbol variable, ObjectAccessExpression.AccessType accessType, FunctionSymbol function, ImmutableArray<BoundExpression> arguments, VariableSymbol property, TypeSymbol type, BoundExpression value, Package.Package package, ClassSymbol _class, BoundCallExpression typeCall, BoundExpression expression)
         {
             Variable = variable;
             AccessType = accessType;
@@ -20,6 +20,7 @@ namespace ReCT.CodeAnalysis.Binding
             Package = package;
             Class = _class;
             TypeCall = typeCall;
+            Expression = expression;
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.ObjectAccessExpression;
@@ -32,6 +33,7 @@ namespace ReCT.CodeAnalysis.Binding
         public Package.Package Package { get; }
         public ClassSymbol Class { get; }
         public BoundCallExpression TypeCall { get; }
+        public BoundExpression Expression { get; }
 
         public override TypeSymbol Type => _type;
     }

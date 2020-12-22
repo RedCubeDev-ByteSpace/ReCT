@@ -60,7 +60,7 @@ namespace ReCT.CodeAnalysis
             {
                 if (_globalScope == null)
                 {
-                    Console.WriteLine("SCOPE CREATED");
+                    //Console.WriteLine("SCOPE CREATED");
                     var globalScope = Binder.BindGlobalScope(IsScript, Previous?.GlobalScope, SyntaxTrees);
                     Interlocked.CompareExchange(ref _globalScope, globalScope, null);
                 }

@@ -312,7 +312,7 @@ namespace ReCT_IDE
 
             ImmutableArray<Diagnostic> errors = ImmutableArray<Diagnostic>.Empty;
 
-            //try
+           // try
             {
                 Compilation.resetBinder();
                 var compilation = Compilation.Create(syntaxTree);

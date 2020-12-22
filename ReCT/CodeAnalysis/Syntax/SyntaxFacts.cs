@@ -112,6 +112,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.ObjectKeyword;
                 case "dll":
                     return SyntaxKind.DllKeyword;
+                case "acs":
+                    return SyntaxKind.AccessKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -249,6 +251,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "object";
                 case SyntaxKind.DllKeyword:
                     return "dll";
+                case SyntaxKind.AccessKeyword:
+                    return "acs";
                 default:
                     return null;
             }

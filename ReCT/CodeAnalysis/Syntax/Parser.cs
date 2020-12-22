@@ -570,6 +570,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseArrayCreation();
                 case SyntaxKind.MakeKeyword when Peek(1).Kind == SyntaxKind.ObjectKeyword:
                     return ParseObjectCreation();
+                case SyntaxKind.AccessKeyword:
+                    return ParseObjectAccessExpression();
                 case SyntaxKind.IdentifierToken:
                 default:
                     return ParseNameOrCallExpression();
@@ -675,33 +677,46 @@ namespace ReCT.CodeAnalysis.Syntax
         ExpressionSyntax ParseObjectAccessExpression()
         {
             SyntaxToken package = null;
-            var peek1 = Peek(1);
 
             if (Peek(1).Kind == SyntaxKind.NamespaceToken)
             {
                 package = MatchToken(SyntaxKind.IdentifierToken);
                 MatchToken(SyntaxKind.NamespaceToken);
             }
+
+            SyntaxToken identifierToken = null;
+            ExpressionSyntax expression = null;
+
+            if (Current.Kind == SyntaxKind.AccessKeyword)
+            {
+                MatchToken(SyntaxKind.AccessKeyword);
                 
-            var identifierToken = MatchToken(SyntaxKind.IdentifierToken);
+                if (Current.Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.AccessToken)
+                    identifierToken = MatchToken(SyntaxKind.IdentifierToken);
+                else
+                    expression = ParseExpression();
+            }
+            else
+                identifierToken = MatchToken(SyntaxKind.IdentifierToken);
+            
             MatchToken(SyntaxKind.AccessToken);
 
             if (Peek(1).Kind == SyntaxKind.OpenParenthesisToken)
             {
                 var call = ParseCallExpression();
-                return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Call, (CallExpressionSyntax)call, null, null, package);
+                return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Call, (CallExpressionSyntax)call, null, null, package, expression);
             }
             if (Peek(1).Kind == SyntaxKind.AssignToken)
             {
                 var propIdentifier = NextToken();
                 MatchToken(SyntaxKind.AssignToken);
                 var value = ParseExpression();
-                return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Set, null, propIdentifier, value, package);
+                return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Set, null, propIdentifier, value, package, expression);
             }
             else if (Current.Kind == SyntaxKind.IdentifierToken)
             {
                 var propIdentifier = NextToken();
-                return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Get, null, propIdentifier, null, package);
+                return new ObjectAccessExpression(_syntaxTree, identifierToken, ObjectAccessExpression.AccessType.Get, null, propIdentifier, null, package, expression);
             }
 
             return null;

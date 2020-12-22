@@ -295,7 +295,7 @@ namespace ReCT.CodeAnalysis.Binding
                 _diagnostics.ReportSymbolAlreadyDeclared(syntax.Identifier.Location, classSymbol.Name);
             }
 
-            if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
+            if (TypeSymbol.Class == null) {TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>(); }
 
             if (!TypeSymbol.Class.ContainsKey(classSymbol))
             {
@@ -303,6 +303,13 @@ namespace ReCT.CodeAnalysis.Binding
                 var classTypeSymbol = new TypeSymbol(classSymbol.Name);
                 classTypeSymbol.isClass = true;
                 TypeSymbol.Class.Add(classSymbol, classTypeSymbol);
+
+                if (!classSymbol.IsStatic)
+                {
+                    var classArraySymbol = new TypeSymbol(classSymbol.Name + "Arr");
+                    classArraySymbol.isClass = true;
+                    TypeSymbol.Class.Add(new ClassSymbol(classSymbol.Name + "Arr", null, false), classArraySymbol);
+                }
             }
         }
 
@@ -856,10 +863,6 @@ namespace ReCT.CodeAnalysis.Binding
 
         private BoundExpression BindObjectAccessExpression(ObjectAccessExpression syntax)
         {
-            if (syntax.IdentifierToken.Text == null)
-                return new BoundErrorExpression();
-
-            var staticClass = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
             FunctionSymbol function = null;
             BoundCallExpression typeCall = null;
             ImmutableArray<BoundExpression> arguments = new ImmutableArray<BoundExpression>();
@@ -867,6 +870,19 @@ namespace ReCT.CodeAnalysis.Binding
             TypeSymbol type = TypeSymbol.Any;
             BoundExpression value = null;
             Package.Package package = null;
+            BoundExpression Expression = null;
+            ClassSymbol staticClass = null;
+
+            if (syntax.Expression != null)
+            {
+                Expression = BindExpression(syntax.Expression);
+                goto SKIP1;
+            }
+            
+            if (syntax.IdentifierToken.Text == null)
+                return new BoundErrorExpression();
+
+            staticClass = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
 
             if (syntax.Package != null)
             {
@@ -903,27 +919,46 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (staticClass == null)
             {
-                variable = BindVariableReference(syntax.IdentifierToken);
-
-                if (variable == null)
+                if (syntax.Expression == null)
                 {
-                    _diagnostics.ReportUndefinedVariable(syntax.IdentifierToken.Location, syntax.IdentifierToken.Text);
-                    return new BoundErrorExpression();
-                }
+                    variable = BindVariableReference(syntax.IdentifierToken);
 
-                if (!variable.Type.isClass)
+                    if (variable == null)
+                    {
+                        _diagnostics.ReportUndefinedVariable(syntax.IdentifierToken.Location,
+                            syntax.IdentifierToken.Text);
+                        return new BoundErrorExpression();
+                    }
+
+                    if (!variable.Type.isClass)
+                    {
+                        typeCall = (BoundCallExpression) BindCallExpression(syntax.Call);
+                        type = typeCall.Type;
+                        return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property,
+                            type, value, package, _class, typeCall, Expression);
+                    }
+                    
+                    _class = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == variable.Type.Name);
+                }
+                else
                 {
-                    typeCall = (BoundCallExpression)BindCallExpression(syntax.Call);
-                    type = typeCall.Type;
-                    return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property, type, value, package, _class, typeCall);
-                }
+                    variable = new LocalVariableSymbol("", true, Expression.Type);
+                    
+                    if (!Expression.Type.isClass)
+                    {
+                        typeCall = (BoundCallExpression) BindCallExpression(syntax.Call);
+                        type = typeCall.Type;
+                        return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property,
+                            type, value, package, _class, typeCall, Expression);
+                    }
 
-                _class = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == variable.Type.Name);
+                    _class = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == Expression.Type.Name);
+                }
             }
             else
                 _class = staticClass;
 
-            if (_class == null && variable != null)
+            if (_class == null)
             {
                 _class = _packageNamespaces.SelectMany(x => x.scope.GetDeclaredClasses()).FirstOrDefault(x => x.Name == variable.Type.Name);
 
@@ -997,7 +1032,7 @@ namespace ReCT.CodeAnalysis.Binding
                 type = TypeSymbol.Void;
             }
 
-            return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property, type, value, package, _class, typeCall);
+            return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property, type, value, package, _class, typeCall, Expression);
         }
 
         private BoundExpression BindArrayCreationExpression(ArrayCreationSyntax syntax)
@@ -1182,6 +1217,8 @@ namespace ReCT.CodeAnalysis.Binding
             {
                 for (var i = 0; i < syntax.Arguments.Count; i++)
                 {
+                    if (syntax.Arguments[i] == null) return new BoundErrorExpression();
+
                     var argumentLocation = syntax.Arguments[i].Location;
                     var argument = boundArguments[i];
                     var parameter = function.Parameters[i];
@@ -1306,7 +1343,7 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.TCPSocketArr;
                 default:
                     if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
-                    return TypeSymbol.Class.Values.FirstOrDefault(x => x.Name == name);
+                    return TypeSymbol.Class.Values.FirstOrDefault(x => x.Name == name);;
             }
         }
         private TypeSymbol TypeToArray(TypeSymbol type)
@@ -1329,7 +1366,8 @@ namespace ReCT.CodeAnalysis.Binding
                 return TypeSymbol.TCPListenerArr;
             else if (type == TypeSymbol.TCPSocket)
                 return TypeSymbol.TCPSocketArr;
-
+            else if (type.isClass)
+                return TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == type.Name + "Arr").Value;
 
             return null;
         }
@@ -1353,6 +1391,8 @@ namespace ReCT.CodeAnalysis.Binding
                 return TypeSymbol.TCPListener;
             else if (type == TypeSymbol.TCPSocketArr)
                 return TypeSymbol.TCPSocket;
+            else if (type.isClass)
+                return TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == type.Name.Substring(0, type.Name.Length - 3)).Value;
 
             return type;
         }

@@ -32,6 +32,7 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly TypeSymbol TCPSocketArr = new TypeSymbol("tcpsocketArr");
 
         public static Dictionary<ClassSymbol, TypeSymbol> Class;
+        public static Dictionary<ClassSymbol, TypeSymbol> ClassArrays;
 
         public TypeSymbol(string name)
             : base(name)

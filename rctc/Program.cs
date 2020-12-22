@@ -13,6 +13,12 @@ namespace ReCT
     {
         private static int Main(string[] args)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine("ReCT Standalone Compiler " + info.Version);
+            Console.WriteLine("-------------------------------");
+            Console.ForegroundColor = ConsoleColor.White;
+
             var outputPath = (string)null;
             var moduleName = (string)null;
             var referencePaths = new List<string>();
@@ -39,7 +45,9 @@ namespace ReCT
 
             if (sourcePaths.Count == 0)
             {
-                Console.Error.WriteLine("error: need at least one source file");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Error.WriteLine("Error: need at least one source file");
+                Console.ForegroundColor = ConsoleColor.White;
                 return 1;
             }
 
@@ -56,7 +64,9 @@ namespace ReCT
             {
                 if (!File.Exists(path))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.Error.WriteLine($"error: file '{path}' doesn't exist");
+                    Console.ForegroundColor = ConsoleColor.White;
                     hasErrors = true;
                     continue;
                 }
@@ -69,7 +79,9 @@ namespace ReCT
             {
                 if (!File.Exists(path))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.Error.WriteLine($"error: file '{path}' doesn't exist");
+                    Console.ForegroundColor = ConsoleColor.White;
                     hasErrors = true;
                     continue;
                 }

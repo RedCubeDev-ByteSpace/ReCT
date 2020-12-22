@@ -1,1 +1,0 @@
-dotnet exec "AsciiTranscriber.dll"
