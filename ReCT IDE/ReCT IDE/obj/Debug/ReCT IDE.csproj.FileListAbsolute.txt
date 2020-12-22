@@ -130,3 +130,4 @@ E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.exe
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.pdb
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csprojAssemblyReference.cache
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.NewProject.resources
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.History.resources

@@ -562,6 +562,9 @@ namespace ReCT.CodeAnalysis.Syntax
                 case SyntaxKind.NumberToken:
                     return ParseNumberLiteral();
 
+                case SyntaxKind.NullKeyword:
+                    return ParseNullLiteral();
+                
                 case SyntaxKind.StringToken:
                     return ParseStringLiteral();
                 case SyntaxKind.ThreadKeyword:
@@ -599,6 +602,12 @@ namespace ReCT.CodeAnalysis.Syntax
             return new LiteralExpressionSyntax(_syntaxTree, numberToken);
         }
 
+        private ExpressionSyntax ParseNullLiteral()
+        {
+            var nullToken = MatchToken(SyntaxKind.NullKeyword);
+            return new LiteralExpressionSyntax(_syntaxTree, nullToken);
+        }
+        
         private ExpressionSyntax ParseStringLiteral()
         {
             var stringToken = MatchToken(SyntaxKind.StringToken);

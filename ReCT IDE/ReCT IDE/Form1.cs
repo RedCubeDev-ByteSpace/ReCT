@@ -18,6 +18,7 @@ using DiscordRPC;
 using System.Threading;
 using System.Reflection;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace ReCT_IDE
 {
@@ -31,6 +32,10 @@ namespace ReCT_IDE
         public Process running;
         string[] standardAC;
         BoltUpdater boltUpdater;
+
+        public Project openProject;
+        public string projectPath;
+        public ToolStripDropDownItem menuItem;
 
         public static string fileToOpen = "";
 
@@ -53,7 +58,7 @@ namespace ReCT_IDE
         public static extern bool ShowWindow(System.IntPtr hWnd, int cmdShow);
 
 
-        string standardMsg = "//ReCT Compiler and IDE ";
+        public string standardMsg = "//ReCT Compiler and IDE ";
 
         List<Tab> tabs = new List<Tab>();
         int currentTab = 0;
@@ -112,6 +117,10 @@ namespace ReCT_IDE
         {
             Activate();
             CenterToScreen();
+
+            if (Properties.Settings.Default.LastOpenFiles == null) Properties.Settings.Default.LastOpenFiles = new System.Collections.Specialized.StringCollection();
+            if (Properties.Settings.Default.LastOpenProjects == null) Properties.Settings.Default.LastOpenProjects = new System.Collections.Specialized.StringCollection();
+            Properties.Settings.Default.Save();
 
             Menu.Renderer = new MenuRenderer();
 
@@ -411,7 +420,7 @@ namespace ReCT_IDE
             //    }
             //}
 
-            openFileDialog1.Filter = "ReCT code files (*.rct)|*.rct|All files (*.*)|*.*";
+            openFileDialog1.Filter = "ReCT files (*.rct / *.rcp)|*.rct;*.rcp|All files (*.*)|*.*";
 
             ((ToolStripMenuItem)sender).Owner.Hide();
 
@@ -425,6 +434,12 @@ namespace ReCT_IDE
 
         public void OpenFile(string path)
         {
+            if (path.EndsWith(".rcp"))
+            {
+                OpenProject(path);
+                return;
+            }
+
             if (tabs.Count != 1 || tabs[0].name != "Untitled" || !tabs[0].saved)
             {
                 tabs[currentTab].code = CodeBox.Text;
@@ -445,8 +460,116 @@ namespace ReCT_IDE
             tabs[currentTab].saved = true;
             OrderTabs();
 
-            Properties.Settings.Default.LastOpenFile = path;
+            if (openProject == null)
+            {
+
+                if (Properties.Settings.Default.LastOpenFiles.Contains(path)) Properties.Settings.Default.LastOpenFiles.Remove(path);
+                Properties.Settings.Default.LastOpenFiles.Insert(0, path);
+
+                if (Properties.Settings.Default.LastOpenFiles.Count > 5)
+                    for (int i = 5; i < Properties.Settings.Default.LastOpenFiles.Count; i++)
+                        Properties.Settings.Default.LastOpenFiles.RemoveAt(i);
+
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        public void OpenProject(string path)
+        {
+            for (int i = 0; i < tabs.Count; i++)
+            {
+                if (!tabs[i].saved)
+                {
+                    switchTab(i);
+                    Save_Click(null, null);
+                }
+                Controls.Remove(tabs[i].button);
+            }
+
+            tabs.Clear();
+            var emptyTab = makeNewTab();
+            emptyTab.name = "Untitled";
+            tabs.Add(emptyTab);
+            currentTab = 0;
+            OrderTabs();
+
+            var projJson = "";
+
+            using (StreamReader sr = new StreamReader(new FileStream(path, FileMode.Open)))
+            {
+                projJson = sr.ReadToEnd();
+            }
+
+            var project = JsonConvert.DeserializeObject<Project>(projJson);
+            var projectPath = path.Replace("\\" + Path.GetFileName(path), "");
+            this.projectPath = projectPath;
+            this.openProject = project;
+
+            this.project.Visible = true;
+            this.project.Text = project.Name;
+            this.project.Image = Image.FromStream(new MemoryStream(Convert.FromBase64String(project.Icon)));
+
+            OpenFile(projectPath + "\\Classes\\" + project.MainClass);
+            head = projectPath + "\\Classes\\" + project.MainClass;
+
+            menuItem = MenuItem;
+
+            RefreshClassMenu();
+            OrderTabs();
+
+            if (Properties.Settings.Default.LastOpenProjects.Contains(path)) Properties.Settings.Default.LastOpenProjects.Remove(path);
+            Properties.Settings.Default.LastOpenProjects.Insert(0, path);
+
+            if (Properties.Settings.Default.LastOpenProjects.Count > 5)
+                for (int i = 5; i < Properties.Settings.Default.LastOpenProjects.Count; i++)
+                    Properties.Settings.Default.LastOpenProjects.RemoveAt(i);
+
             Properties.Settings.Default.Save();
+        }
+
+        void RefreshClassMenu()
+        {
+            this.project.DropDownItems.Clear();
+
+            var classes = Directory.GetFiles(projectPath + "\\Classes");
+            var image = Image.FromFile("res/rct.ico");
+            foreach (string s in classes)
+            {
+                var item = new ToolStripMenuItem();
+                item.Text = Path.GetFileName(s);
+                item.Name = Path.GetFileName(s);
+                item.Click += ProjectItem_Click;
+                item.ForeColor = menuItem.ForeColor;
+                item.BackColor = menuItem.BackColor;
+                item.Image = image;
+                item.ImageAlign = ContentAlignment.BottomRight;
+                item.Margin = new Padding(0,0,0,0);
+                this.project.DropDownItems.Add(item);
+            }
+
+            var addClass = new ToolStripMenuItem();
+            addClass.Text = "Add File";
+            addClass.Name = "Add File";
+            addClass.Click += AddClass_Click;
+            addClass.ForeColor = menuItem.ForeColor;
+            addClass.BackColor = menuItem.BackColor;
+            addClass.Margin = new Padding(0,0,0,0);
+            this.project.DropDownItems.Add(addClass);
+        }
+
+        private void AddClass_Click(object sender, EventArgs e)
+        {
+            var name = Microsoft.VisualBasic.Interaction.InputBox("Add File to Project", "New File", "newFile.rct");
+            if (name == "") return;
+
+            if (!name.EndsWith(".rct")) name += ".rct";
+            using (StreamWriter sw = new StreamWriter(new FileStream(projectPath + "\\Classes\\" + name, FileMode.OpenOrCreate)))
+            {
+                sw.WriteLine("// " + name.Replace(".rct", "") + " in " + openProject.Name);
+            }
+
+            OpenFile(projectPath + "\\Classes\\" + name);
+            RefreshClassMenu();
         }
 
         private void Save_Click(object sender, EventArgs e)
@@ -464,6 +587,18 @@ namespace ReCT_IDE
             }
 
             tabs[currentTab].saved = true;
+
+            if (openProject == null)
+            {
+                if (Properties.Settings.Default.LastOpenFiles.Contains(tabs[currentTab].path)) Properties.Settings.Default.LastOpenFiles.Remove(tabs[currentTab].path);
+                Properties.Settings.Default.LastOpenFiles.Insert(0, tabs[currentTab].path);
+
+                if (Properties.Settings.Default.LastOpenFiles.Count > 5)
+                    for (int i = 5; i < Properties.Settings.Default.LastOpenFiles.Count; i++)
+                        Properties.Settings.Default.LastOpenFiles.RemoveAt(i);
+
+                Properties.Settings.Default.Save();
+            }
 
             OrderTabs();
         }
@@ -486,6 +621,18 @@ namespace ReCT_IDE
             tabs[currentTab].name = Path.GetFileName(saveFileDialog1.FileName);
             tabs[currentTab].saved = true;
             OrderTabs();
+
+            if (openProject == null)
+            {
+                if (Properties.Settings.Default.LastOpenFiles.Contains(tabs[currentTab].path)) Properties.Settings.Default.LastOpenFiles.Remove(tabs[currentTab].path);
+                Properties.Settings.Default.LastOpenFiles.Insert(0, tabs[currentTab].path);
+
+                if (Properties.Settings.Default.LastOpenFiles.Count > 5)
+                    for (int i = 5; i < Properties.Settings.Default.LastOpenFiles.Count; i++)
+                        Properties.Settings.Default.LastOpenFiles.RemoveAt(i);
+
+                Properties.Settings.Default.Save();
+            }
         }
 
 
@@ -854,32 +1001,6 @@ namespace ReCT_IDE
             MaxTimer.Stop();
         }
 
-        private void openLastFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (Properties.Settings.Default.LastOpenFile != "")
-            {
-                if (tabs.Count != 1 || tabs[0].name != "Untitled" || !tabs[0].saved)
-                {
-                    tabs[currentTab].code = CodeBox.Text;
-                    tabs.Add(makeNewTab());
-                    switchTab(tabs.Count - 1);
-                }
-
-
-                using (StreamReader sr = new StreamReader(new FileStream(Properties.Settings.Default.LastOpenFile, FileMode.Open)))
-                {
-                    CodeBox.Text = sr.ReadToEnd();
-                    CodeBox.ClearUndo();
-                    sr.Close();
-                }
-
-                tabs[currentTab].name = Path.GetFileName(Properties.Settings.Default.LastOpenFile);
-                tabs[currentTab].path = Properties.Settings.Default.LastOpenFile;
-                tabs[currentTab].saved = true;
-                OrderTabs();
-            }
-        }
-
         private void reloadHighlightingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var code = CodeBox.Text;
@@ -986,13 +1107,35 @@ namespace ReCT_IDE
 
         private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var newProject = new NewProject();
+            var newProject = new NewProject(this);
             newProject.Show();
         }
 
         private void setAsHeadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             head = tabs[currentTab].path;
+        }
+
+        private void ProjectItem_Click(object sender, EventArgs e)
+        {
+            var item = (ToolStripDropDownItem)sender;
+
+            for (int i = 0; i < tabs.Count; i++)
+            {
+                if (tabs[i].path == projectPath + "\\Classes\\" + item.Text)
+                {
+                    switchTab(i);
+                    return;
+                }
+            }
+
+            OpenFile(projectPath + "\\Classes\\" + item.Text);
+        }
+
+        private void histroryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var history = new History(this);
+            history.Show();
         }
     }
 

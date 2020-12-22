@@ -365,6 +365,13 @@ namespace ReCT.CodeAnalysis.Syntax
             var length = _position - _start;
             var text = _text.ToString(_start, length);
             _kind = SyntaxFacts.GetKeywordKind(text);
+
+            if (_kind == SyntaxKind.NullKeyword)
+                _value = new NullObject();
         }
+    }
+
+    public class NullObject
+    {
     }
 }

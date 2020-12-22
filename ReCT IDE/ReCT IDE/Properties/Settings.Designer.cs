@@ -12,7 +12,7 @@ namespace ReCT_IDE.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.7.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -61,13 +61,23 @@ namespace ReCT_IDE.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LastOpenFile {
+        public global::System.Collections.Specialized.StringCollection LastOpenFiles {
             get {
-                return ((string)(this["LastOpenFile"]));
+                return ((global::System.Collections.Specialized.StringCollection)(this["LastOpenFiles"]));
             }
             set {
-                this["LastOpenFile"] = value;
+                this["LastOpenFiles"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection LastOpenProjects {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["LastOpenProjects"]));
+            }
+            set {
+                this["LastOpenProjects"] = value;
             }
         }
     }

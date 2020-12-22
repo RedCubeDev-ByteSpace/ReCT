@@ -54,11 +54,11 @@ namespace ReCT_IDE
             // projectName
             // 
             this.projectName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
-            this.projectName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.projectName.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.projectName.ForeColor = System.Drawing.Color.White;
-            this.projectName.Location = new System.Drawing.Point(166, 80);
+            this.projectName.Location = new System.Drawing.Point(167, 84);
             this.projectName.Name = "projectName";
-            this.projectName.Size = new System.Drawing.Size(336, 20);
+            this.projectName.Size = new System.Drawing.Size(336, 13);
             this.projectName.TabIndex = 0;
             this.projectName.Text = "Untitled Project";
             // 
@@ -99,11 +99,11 @@ namespace ReCT_IDE
             // mainName
             // 
             this.mainName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(25)))), ((int)(((byte)(25)))), ((int)(((byte)(25)))));
-            this.mainName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.mainName.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.mainName.ForeColor = System.Drawing.Color.White;
-            this.mainName.Location = new System.Drawing.Point(166, 115);
+            this.mainName.Location = new System.Drawing.Point(167, 116);
             this.mainName.Name = "mainName";
-            this.mainName.Size = new System.Drawing.Size(336, 20);
+            this.mainName.Size = new System.Drawing.Size(336, 13);
             this.mainName.TabIndex = 3;
             this.mainName.Text = "main.rct";
             // 
@@ -121,11 +121,11 @@ namespace ReCT_IDE
             // location
             // 
             this.location.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(25)))), ((int)(((byte)(25)))), ((int)(((byte)(25)))));
-            this.location.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.location.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.location.ForeColor = System.Drawing.Color.White;
-            this.location.Location = new System.Drawing.Point(81, 171);
+            this.location.Location = new System.Drawing.Point(82, 175);
             this.location.Name = "location";
-            this.location.Size = new System.Drawing.Size(330, 20);
+            this.location.Size = new System.Drawing.Size(330, 13);
             this.location.TabIndex = 6;
             // 
             // button1
@@ -133,7 +133,7 @@ namespace ReCT_IDE
             this.button1.BackColor = System.Drawing.Color.Transparent;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(417, 170);
+            this.button1.Location = new System.Drawing.Point(418, 170);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(85, 21);
             this.button1.TabIndex = 7;
@@ -162,6 +162,7 @@ namespace ReCT_IDE
             this.button2.TabIndex = 9;
             this.button2.Text = "Create!";
             this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
@@ -175,6 +176,7 @@ namespace ReCT_IDE
             this.button3.TabIndex = 10;
             this.button3.Text = "Cancel";
             this.button3.UseVisualStyleBackColor = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // pictureBox1
             // 

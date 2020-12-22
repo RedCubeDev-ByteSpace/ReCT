@@ -69,6 +69,7 @@ namespace ReCT.CodeAnalysis.Syntax
         NamespaceKeyword,
         TypeKeyword,
         UseKeyword,
+        NullKeyword,
 
         // Nodes
         CompilationUnit,
