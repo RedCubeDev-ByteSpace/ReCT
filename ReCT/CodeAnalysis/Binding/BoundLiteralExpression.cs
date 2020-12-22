@@ -17,6 +17,8 @@ namespace ReCT.CodeAnalysis.Binding
                 Type = TypeSymbol.String;
             else if (value is float)
                 Type = TypeSymbol.Float;
+            else if (value is Syntax.NullObject)
+                Type = TypeSymbol.Any;
             else
                 throw new Exception($"Unexpected literal '{value}' of type {value.GetType()}");
         }

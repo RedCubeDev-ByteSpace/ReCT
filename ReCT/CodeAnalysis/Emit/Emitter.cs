@@ -1054,6 +1054,10 @@ namespace ReCT.CodeAnalysis.Emit
                 var value = (float)node.Value;
                 ilProcessor.Emit(OpCodes.Ldc_R4, value);
             }
+            else if (node.Type == TypeSymbol.Any)
+            {
+                ilProcessor.Emit(OpCodes.Ldnull);
+            }
             else
             {
                 throw new Exception($"Unexpected literal type: {node.Type}");
