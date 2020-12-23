@@ -260,6 +260,7 @@ namespace ReCT_IDE
         Style SettingStyle = new TextStyle(new SolidBrush(Color.FromArgb(17, 191, 119)), null, FontStyle.Bold);
         Style PackageStyle = new TextStyle(new SolidBrush(Color.FromArgb(252, 186, 3)), null, FontStyle.Regular);
         Style ClassStyle = new TextStyle(new SolidBrush(Color.FromArgb(83, 230, 159)), null, FontStyle.Bold);
+        Style ObjectLiteral = new TextStyle(new SolidBrush(Color.FromArgb(63, 78, 84)), null, FontStyle.Regular);
 
 
         Style DebugStyle = new TextStyle(new SolidBrush(Color.FromArgb(125, 125, 125)), null, FontStyle.Regular);
@@ -303,6 +304,9 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(NumberStyle, @"(\b\d+\b)", RegexOptions.Multiline);
             e.ChangedRange.SetStyle(NumberStyle, @"(?<=\d)\.(?=\d)", RegexOptions.Multiline);
 
+            //null / nil
+            e.ChangedRange.SetStyle(ObjectLiteral, @"(\b(null|nil)\b)", RegexOptions.Multiline);
+
             //variables
             e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+<-))");
             e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+->))");
@@ -314,6 +318,7 @@ namespace ReCT_IDE
 
             //classes
             e.ChangedRange.SetStyle(SettingStyle, rectCompCheck.Classes);
+            e.ChangedRange.SetStyle(SettingStyle, @"(\bMain\b)");
 
             //packages
             e.ChangedRange.SetStyle(PackageStyle, rectCompCheck.Namespaces);

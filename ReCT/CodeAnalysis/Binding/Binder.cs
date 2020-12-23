@@ -878,6 +878,13 @@ namespace ReCT.CodeAnalysis.Binding
                 Expression = BindExpression(syntax.Expression);
                 goto SKIP1;
             }
+
+            if (syntax.IdentifierToken.Text == "Main")
+            {
+                staticClass = new ClassSymbol("Main", null , true);
+                staticClass.Scope = new BoundScope(null);
+                goto SKIP1;
+            }
             
             if (syntax.IdentifierToken.Text == null)
                 return new BoundErrorExpression();
@@ -973,7 +980,9 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (syntax.Type == ObjectAccessExpression.AccessType.Call)
             {
-                var symbol = _class.Scope.TryLookupSymbol(syntax.Call.Identifier.Text);
+                Symbol symbol = _class.Scope.TryLookupSymbol(syntax.Call.Identifier.Text);
+
+                if (_class.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.Call.Identifier.Text);
 
                 if (symbol == null || !(symbol is FunctionSymbol))
                 {
@@ -1004,6 +1013,7 @@ namespace ReCT.CodeAnalysis.Binding
             if (syntax.Type == ObjectAccessExpression.AccessType.Get)
             {
                 var symbol = _class.Scope.TryLookupSymbol(syntax.LookingFor.Text);
+                if (_class.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.LookingFor.Text);
 
                 if (symbol == null || !(symbol is VariableSymbol))
                 {
@@ -1018,6 +1028,7 @@ namespace ReCT.CodeAnalysis.Binding
             if (syntax.Type == ObjectAccessExpression.AccessType.Set)
             {
                 var symbol = _class.Scope.TryLookupSymbol(syntax.LookingFor.Text);
+                if (_class.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.LookingFor.Text);
 
                 if (symbol == null || !(symbol is VariableSymbol))
                 {
@@ -1095,6 +1106,27 @@ namespace ReCT.CodeAnalysis.Binding
                 return new BoundErrorExpression();
 
             var boundOperator = BoundBinaryOperator.Bind(syntax.OperatorToken.Kind, boundLeft.Type, boundRight.Type);
+
+            if (boundOperator == null)
+            {
+                if (Conversion.Classify(boundLeft.Type, boundRight.Type) == Conversion.Implicit)
+                {
+                    var newLeft = BindConversion(syntax.Left.Location, boundLeft, boundRight.Type);
+                    boundOperator = BoundBinaryOperator.Bind(syntax.OperatorToken.Kind, newLeft.Type, boundRight.Type);
+
+                    if (boundOperator != null)
+                        boundLeft = newLeft;
+                }
+                
+                if (boundOperator == null && Conversion.Classify(boundRight.Type, boundLeft.Type) == Conversion.Implicit)
+                {
+                    var newRight = BindConversion(syntax.Right.Location, boundRight, boundLeft.Type);
+                    boundOperator = BoundBinaryOperator.Bind(syntax.OperatorToken.Kind, boundLeft.Type, newRight.Type);
+
+                    if (boundOperator != null)
+                        boundRight = newRight;
+                }
+            }
 
             if (boundOperator == null)
             {

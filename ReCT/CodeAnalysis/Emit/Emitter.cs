@@ -1004,6 +1004,12 @@ namespace ReCT.CodeAnalysis.Emit
                 foreach (var argument in node.Arguments)
                     EmitExpression(ilProcessor, argument);
 
+                if (classSymbol.Name == "Main")
+                {
+                    ilProcessor.Emit(OpCodes.Call , _methods.FirstOrDefault(x => x.Key.Name == node.Function.Name).Value);
+                    return;
+                }
+                
                 if (node.Package == null)
                     ilProcessor.Emit(classSymbol.IsStatic ? OpCodes.Call : OpCodes.Callvirt, _classMethods[classSymbol][node.Function]);
                 else
@@ -1011,6 +1017,12 @@ namespace ReCT.CodeAnalysis.Emit
             }
             else if (node.AccessType == ObjectAccessExpression.AccessType.Get)
             {
+                if (classSymbol.Name == "Main")
+                {
+                    ilProcessor.Emit(OpCodes.Ldsfld , _globals.FirstOrDefault(x => x.Key.Name == node.Property.Name).Value);
+                    return;
+                }
+                
                 if (node.Package == null)
                     ilProcessor.Emit(classSymbol.IsStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, _classGlobals[_classes[classSymbol]].FirstOrDefault(x => x.Key.Name == node.Property.Name && x.Key.Type == node.Property.Type).Value);
                 else
@@ -1019,6 +1031,13 @@ namespace ReCT.CodeAnalysis.Emit
             else if (node.AccessType == ObjectAccessExpression.AccessType.Set)
             {
                 EmitExpression(ilProcessor, node.Value);
+                
+                if (classSymbol.Name == "Main")
+                {
+                    ilProcessor.Emit(OpCodes.Stsfld , _globals.FirstOrDefault(x => x.Key.Name == node.Property.Name).Value);
+                    return;
+                }
+                
                 if (node.Package == null)
                     ilProcessor.Emit(classSymbol.IsStatic ? OpCodes.Stsfld : OpCodes.Stfld, _classGlobals[_classes[classSymbol]].FirstOrDefault(x => x.Key.Name == node.Property.Name && x.Key.Type == node.Property.Type).Value);
                 else

@@ -41,7 +41,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (from == TypeSymbol.Int)
                 if (to == TypeSymbol.Float || to == TypeSymbol.Byte)
-                    return Conversion.Explicit;
+                    return Conversion.Implicit;
 
             if (from == TypeSymbol.Byte)
                 if (to == TypeSymbol.Float || to == TypeSymbol.Int)

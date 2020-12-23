@@ -5,56 +5,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f70ae14b-409b-4327-998d-a1691ff5eb4e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../.vs/ReCT/DesignTimeBuild/.dtbcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/../.vs/ReCT/DesignTimeBuild/.dtbcache.v2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.vs/ReCT/v16/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/../.vs/ReCT/v16/.suo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/.idea.ReCT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/.idea.ReCT/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ReCT IDE/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ReCT IDE/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ReCT IDE/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ReCT IDE/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.vs/ReCT IDE/v16/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/ReCT IDE/v16/.suo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT_Compiler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/ReCT_Compiler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Builder/AsciiTranscriber.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Builder/AsciiTranscriber.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Builder/AsciiTranscriber.runtimeconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Packages/RSDL2.dll" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Packages/RSDL2.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ReCT IDE/Form1.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/Form1.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Builder/hmyesfile.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Builder/hmyesfile.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Builder/hmyesfile.runtimeconfig.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT IDE.exe" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT IDE.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT IDE.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT IDE.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT.dll" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/res/rcp.ico" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/bin/Debug/res/rcp.ico" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ReCT IDE/obj/Debug/DesignTimeResolveAssemblyReferences.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/obj/Debug/DesignTimeResolveAssemblyReferences.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ReCT IDE/obj/Debug/ReCT IDE.csprojAssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/obj/Debug/ReCT IDE.csprojAssemblyReference.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ReCT IDE/obj/Debug/ReCT IDE.exe" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/obj/Debug/ReCT IDE.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ReCT IDE/obj/Debug/ReCT IDE.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/obj/Debug/ReCT IDE.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Binding/Binder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Binding/Binder.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Binding/BoundBinaryOperator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Binding/BoundBinaryOperator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Binding/Conversion.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Binding/Conversion.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Emit/Emitter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Emit/Emitter.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ReCT/bin/Debug/netstandard2.0/ReCT.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/bin/Debug/netstandard2.0/ReCT.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ReCT/bin/Debug/netstandard2.0/ReCT.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/bin/Debug/netstandard2.0/ReCT.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ReCT/obj/Debug/netstandard2.0/ReCT.csprojAssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/obj/Debug/netstandard2.0/ReCT.csprojAssemblyReference.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ReCT/obj/Debug/netstandard2.0/ReCT.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/obj/Debug/netstandard2.0/ReCT.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ReCT/obj/Debug/netstandard2.0/ReCT.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/obj/Debug/netstandard2.0/ReCT.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ReCT/obj/ReCT.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/obj/ReCT.csproj.nuget.dgspec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ReCT/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/obj/project.assets.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ReCT/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/obj/project.nuget.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rctc/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../rctc/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rctc/bin/Debug/netcoreapp3.1/ReCT.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../rctc/bin/Debug/netcoreapp3.1/ReCT.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rctc/bin/Debug/netcoreapp3.1/ReCT.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../rctc/bin/Debug/netcoreapp3.1/ReCT.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rctc/bin/Debug/netcoreapp3.1/rctc.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../rctc/bin/Debug/netcoreapp3.1/rctc.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rctc/bin/Debug/netcoreapp3.1/rctc.exe" beforeDir="false" afterPath="$PROJECT_DIR$/../rctc/bin/Debug/netcoreapp3.1/rctc.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rctc/bin/Debug/netcoreapp3.1/rctc.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../rctc/bin/Debug/netcoreapp3.1/rctc.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rctc/obj/Debug/netcoreapp3.1/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/../rctc/obj/Debug/netcoreapp3.1/apphost.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rctc/obj/Debug/netcoreapp3.1/rctc.csprojAssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../rctc/obj/Debug/netcoreapp3.1/rctc.csprojAssemblyReference.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rctc/obj/Debug/netcoreapp3.1/rctc.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../rctc/obj/Debug/netcoreapp3.1/rctc.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rctc/obj/Debug/netcoreapp3.1/rctc.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../rctc/obj/Debug/netcoreapp3.1/rctc.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rctc/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/../rctc/obj/project.assets.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rctc/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../rctc/obj/project.nuget.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rctc/obj/rctc.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/../rctc/obj/rctc.csproj.nuget.dgspec.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rcti/bin/Debug/netcoreapp3.1/ReCT.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../rcti/bin/Debug/netcoreapp3.1/ReCT.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rcti/bin/Debug/netcoreapp3.1/ReCT.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../rcti/bin/Debug/netcoreapp3.1/ReCT.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rcti/bin/Debug/netcoreapp3.1/rcti.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../rcti/bin/Debug/netcoreapp3.1/rcti.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rcti/bin/Debug/netcoreapp3.1/rcti.exe" beforeDir="false" afterPath="$PROJECT_DIR$/../rcti/bin/Debug/netcoreapp3.1/rcti.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rcti/bin/Debug/netcoreapp3.1/rcti.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../rcti/bin/Debug/netcoreapp3.1/rcti.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rcti/obj/Debug/netcoreapp3.1/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/../rcti/obj/Debug/netcoreapp3.1/apphost.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rcti/obj/Debug/netcoreapp3.1/rcti.csprojAssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../rcti/obj/Debug/netcoreapp3.1/rcti.csprojAssemblyReference.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rcti/obj/Debug/netcoreapp3.1/rcti.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../rcti/obj/Debug/netcoreapp3.1/rcti.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rcti/obj/Debug/netcoreapp3.1/rcti.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../rcti/obj/Debug/netcoreapp3.1/rcti.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rcti/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/../rcti/obj/project.assets.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rcti/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../rcti/obj/project.nuget.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rcti/obj/rcti.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/../rcti/obj/rcti.csproj.nuget.dgspec.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,6 +51,11 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <changedPaths>
+      <option value="$PROJECT_DIR$/ReCT IDE/Form1.cs" />
+    </changedPaths>
   </component>
   <component name="ProjectId" id="1lyTlHiQm82QxOe4EtO7Fv9l0BP" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -109,6 +102,8 @@
       <updated>1608568480655</updated>
       <workItem from="1608568489764" duration="2851000" />
       <workItem from="1608590472582" duration="1328000" />
+      <workItem from="1608678466679" duration="542000" />
+      <workItem from="1608686235179" duration="2269000" />
     </task>
     <servers />
   </component>
