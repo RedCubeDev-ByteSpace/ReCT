@@ -6,25 +6,21 @@
   <component name="ChangeListManager">
     <list default="true" id="f70ae14b-409b-4327-998d-a1691ff5eb4e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../.idea/.idea.ReCT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/.idea.ReCT/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ReCT IDE/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ReCT IDE/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ReCT IDE/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ReCT IDE/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.vs/ReCT IDE/v16/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/ReCT IDE/v16/.suo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/Form1.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/Form1.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Builder/hmyesfile.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Builder/hmyesfile.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Builder/hmyesfile.runtimeconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT_Compiler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/ReCT_Compiler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Builder/syslib.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Builder/yes.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Builder/yes.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/Builder/yes.runtimeconfig.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT IDE.exe" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT IDE.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT IDE.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT IDE.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT.dll" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/bin/Debug/ReCT.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/obj/Debug/DesignTimeResolveAssemblyReferences.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/obj/Debug/DesignTimeResolveAssemblyReferences.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ReCT IDE/obj/Debug/ReCT IDE.csprojAssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/obj/Debug/ReCT IDE.csprojAssemblyReference.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ReCT IDE/obj/Debug/ReCT IDE.exe" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/obj/Debug/ReCT IDE.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ReCT IDE/obj/Debug/ReCT IDE.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/obj/Debug/ReCT IDE.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Binding/Binder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Binding/Binder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Binding/BoundBinaryOperator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Binding/BoundBinaryOperator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Binding/Conversion.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Binding/Conversion.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Emit/Emitter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Emit/Emitter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Packager/Packager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/CodeAnalysis/Packager/Packager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ReCT/bin/Debug/netstandard2.0/ReCT.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/bin/Debug/netstandard2.0/ReCT.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ReCT/bin/Debug/netstandard2.0/ReCT.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/bin/Debug/netstandard2.0/ReCT.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ReCT/obj/Debug/netstandard2.0/ReCT.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../ReCT/obj/Debug/netstandard2.0/ReCT.dll" afterDir="false" />
@@ -55,6 +51,7 @@
   <component name="IdeDocumentHistory">
     <changedPaths>
       <option value="$PROJECT_DIR$/ReCT IDE/Form1.cs" />
+      <option value="$PROJECT_DIR$/ReCT IDE/ReCT_Compiler.cs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1lyTlHiQm82QxOe4EtO7Fv9l0BP" />
@@ -104,6 +101,7 @@
       <workItem from="1608590472582" duration="1328000" />
       <workItem from="1608678466679" duration="542000" />
       <workItem from="1608686235179" duration="2269000" />
+      <workItem from="1608840845933" duration="1006000" />
     </task>
     <servers />
   </component>

@@ -312,7 +312,7 @@ namespace ReCT_IDE
 
             ImmutableArray<Diagnostic> errors = ImmutableArray<Diagnostic>.Empty;
 
-            try
+            //try
             {
                 Compilation.resetBinder();
                 var compilation = Compilation.Create(syntaxTree);
@@ -397,7 +397,7 @@ namespace ReCT_IDE
                         File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath));
                 }
             }
-            catch (Exception e)
+            /*catch (Exception e)
             {
                 errorBox.Show();
                 errorBox.errorBox.Clear();
@@ -431,7 +431,7 @@ namespace ReCT_IDE
                     errorBox.errorBox.Text += e.Source + ": " + e.Message + "\n" + e.StackTrace;
                     return false;
                 }
-            }
+            }*/
             inUse = false;
             return true;
         }
