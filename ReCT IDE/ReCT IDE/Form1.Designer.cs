@@ -41,12 +41,14 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadHighlightingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.duplicateLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reCTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buildToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setAsHeadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.miniToolStrip = new System.Windows.Forms.MenuStrip();
+            this.Menu = new System.Windows.Forms.MenuStrip();
             this.project = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Build = new System.Windows.Forms.PictureBox();
@@ -62,9 +64,8 @@
             this.tabswitchTimer = new System.Windows.Forms.Timer(this.components);
             this.Autosave = new System.Windows.Forms.Timer(this.components);
             this.MaxTimer = new System.Windows.Forms.Timer(this.components);
-            this.Menu = new System.Windows.Forms.MenuStrip();
             ((System.ComponentModel.ISupportInitialize)(this.CodeBox)).BeginInit();
-            this.miniToolStrip.SuspendLayout();
+            this.Menu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Build)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Stop)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Play)).BeginInit();
@@ -101,6 +102,7 @@
             this.CodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.CodeBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.CodeBox.ForeColor = System.Drawing.Color.White;
+            this.CodeBox.Hotkeys = resources.GetString("CodeBox.Hotkeys");
             this.CodeBox.IsReplaceMode = false;
             this.CodeBox.Location = new System.Drawing.Point(0, 65);
             this.CodeBox.Name = "CodeBox";
@@ -128,7 +130,7 @@
             this.histroryToolStripMenuItem});
             this.fileToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(71, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(71, 29);
             this.fileToolStripMenuItem.Text = "File ▾";
             this.fileToolStripMenuItem.Click += new System.EventHandler(this.fileToolStripMenuItem_Click);
             // 
@@ -205,10 +207,12 @@
             this.editToolStripMenuItem.BackColor = System.Drawing.Color.Transparent;
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.autoFormatToolStripMenuItem,
-            this.reloadHighlightingToolStripMenuItem});
+            this.reloadHighlightingToolStripMenuItem,
+            this.duplicateLineToolStripMenuItem,
+            this.removeLineToolStripMenuItem});
             this.editToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(75, 20);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(75, 29);
             this.editToolStripMenuItem.Text = "Edit ▾";
             // 
             // autoFormatToolStripMenuItem
@@ -233,6 +237,27 @@
             this.reloadHighlightingToolStripMenuItem.Text = "Reload Highlighting";
             this.reloadHighlightingToolStripMenuItem.Click += new System.EventHandler(this.reloadHighlightingToolStripMenuItem_Click);
             // 
+            // duplicateLineToolStripMenuItem
+            // 
+            this.duplicateLineToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
+            this.duplicateLineToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.duplicateLineToolStripMenuItem.Name = "duplicateLineToolStripMenuItem";
+            this.duplicateLineToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
+            this.duplicateLineToolStripMenuItem.Size = new System.Drawing.Size(337, 30);
+            this.duplicateLineToolStripMenuItem.Text = "Duplicate Line";
+            this.duplicateLineToolStripMenuItem.Click += new System.EventHandler(this.duplicateLineToolStripMenuItem_Click);
+            // 
+            // removeLineToolStripMenuItem
+            // 
+            this.removeLineToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
+            this.removeLineToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.removeLineToolStripMenuItem.Name = "removeLineToolStripMenuItem";
+            this.removeLineToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.D)));
+            this.removeLineToolStripMenuItem.Size = new System.Drawing.Size(337, 30);
+            this.removeLineToolStripMenuItem.Text = "Remove Line";
+            this.removeLineToolStripMenuItem.Click += new System.EventHandler(this.removeLineToolStripMenuItem_Click);
+            // 
             // reCTToolStripMenuItem
             // 
             this.reCTToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -242,7 +267,7 @@
             this.setAsHeadToolStripMenuItem});
             this.reCTToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.reCTToolStripMenuItem.Name = "reCTToolStripMenuItem";
-            this.reCTToolStripMenuItem.Size = new System.Drawing.Size(84, 20);
+            this.reCTToolStripMenuItem.Size = new System.Drawing.Size(84, 29);
             this.reCTToolStripMenuItem.Text = "ReCT ▾";
             // 
             // buildToolStripMenuItem
@@ -283,23 +308,22 @@
             this.setAsHeadToolStripMenuItem.Text = "Set As Head";
             this.setAsHeadToolStripMenuItem.Click += new System.EventHandler(this.setAsHeadToolStripMenuItem_Click);
             // 
-            // miniToolStrip
+            // Menu
             // 
-            this.miniToolStrip.AutoSize = false;
-            this.miniToolStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
-            this.miniToolStrip.Dock = System.Windows.Forms.DockStyle.None;
-            this.miniToolStrip.Font = new System.Drawing.Font("Segoe UI", 13F);
-            this.miniToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Menu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
+            this.Menu.Font = new System.Drawing.Font("Segoe UI", 13F);
+            this.Menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
             this.reCTToolStripMenuItem,
             this.project});
-            this.miniToolStrip.Location = new System.Drawing.Point(418, 7);
-            this.miniToolStrip.Name = "miniToolStrip";
-            this.miniToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.miniToolStrip.Size = new System.Drawing.Size(1088, 24);
-            this.miniToolStrip.TabIndex = 0;
-            this.miniToolStrip.Visible = false;
+            this.Menu.Location = new System.Drawing.Point(0, 0);
+            this.Menu.Name = "Menu";
+            this.Menu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
+            this.Menu.Size = new System.Drawing.Size(1088, 33);
+            this.Menu.TabIndex = 0;
+            this.Menu.Text = "menuStrip1";
+            this.Menu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.Menu_ItemClicked);
             // 
             // project
             // 
@@ -309,7 +333,7 @@
             this.project.ForeColor = System.Drawing.Color.White;
             this.project.Image = ((System.Drawing.Image)(resources.GetObject("project.Image")));
             this.project.Name = "project";
-            this.project.Size = new System.Drawing.Size(182, 20);
+            this.project.Size = new System.Drawing.Size(182, 29);
             this.project.Text = "Untitled Project ▾";
             this.project.Visible = false;
             // 
@@ -370,6 +394,7 @@
             // 
             // Typechecker
             // 
+            this.Typechecker.Enabled = true;
             this.Typechecker.Interval = 5000D;
             this.Typechecker.SynchronizingObject = this;
             this.Typechecker.Elapsed += new System.Timers.ElapsedEventHandler(this.timer1_Elapsed);
@@ -488,17 +513,6 @@
             // 
             this.MaxTimer.Tick += new System.EventHandler(this.MaxTimer_Tick);
             // 
-            // Menu
-            // 
-            this.Menu.AutoSize = false;
-            this.Menu.Dock = System.Windows.Forms.DockStyle.None;
-            this.Menu.Location = new System.Drawing.Point(0, 0);
-            this.Menu.Name = "Menu";
-            this.Menu.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.Menu.Size = new System.Drawing.Size(92, 19);
-            this.Menu.TabIndex = 0;
-            this.Menu.TabStop = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -511,34 +525,34 @@
             this.Controls.Add(this.Play);
             this.Controls.Add(this.Stop);
             this.Controls.Add(this.Build);
-            this.Controls.Add(this.miniToolStrip);
+            this.Controls.Add(this.Menu);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Location = new System.Drawing.Point(15, 15);
+            this.MainMenuStrip = this.Menu;
             this.Name = "Form1";
+            this.Text = "ReCT IDE";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.CodeBox)).EndInit();
-            this.miniToolStrip.ResumeLayout(false);
-            this.miniToolStrip.PerformLayout();
+            this.Menu.ResumeLayout(false);
+            this.Menu.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Build)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Stop)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Play)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Typechecker)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
-
         #endregion
-        private System.Windows.Forms.MenuStrip Menu;
         private FastColoredTextBoxNS.FastColoredTextBox CodeBox;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reCTToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem buildToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
-        private System.Windows.Forms.MenuStrip miniToolStrip;
+        private System.Windows.Forms.MenuStrip Menu;
         private System.Windows.Forms.PictureBox Build;
         private System.Windows.Forms.PictureBox Stop;
         private System.Windows.Forms.PictureBox Play;
@@ -564,6 +578,8 @@
         private System.Windows.Forms.ToolStripMenuItem newProjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem New;
         private System.Windows.Forms.ToolStripMenuItem histroryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem duplicateLineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem removeLineToolStripMenuItem;
     }
 }
 
