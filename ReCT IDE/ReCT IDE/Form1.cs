@@ -664,7 +664,20 @@ namespace ReCT_IDE
                 rectCompCheck.Variables = "";
                 if (CodeBox.Text != "")
                 {
-                    rectCompCheck.Check(CodeBox.Text, this, head == "" ? tabs[currentTab].path : head);
+                    //MessageBox.Show(head == "" ? tabs[currentTab].path : head);
+                    var code = CodeBox.Text;
+
+                    if (head != "" && tabs[currentTab].path != head)
+                    {
+                        var mainTab = tabs.FirstOrDefault(x => x.path == head);
+                        
+                        if (mainTab != null) code = mainTab.code;
+                        else
+                            using (StreamReader sr = new StreamReader(new FileStream(head, FileMode.Open)))
+                                code = sr.ReadToEnd();
+                    }
+
+                    rectCompCheck.Check(code, this, head == "" ? tabs[currentTab].path : head);
                     CodeBox.ClearStylesBuffer();
                     ReloadHightlighting(new TextChangedEventArgs(CodeBox.Range));
 
@@ -688,6 +701,10 @@ namespace ReCT_IDE
                         foreach (ReCT.CodeAnalysis.Symbols.FunctionSymbol f in p.scope.GetDeclaredFunctions())
                         {
                             ACItems.Add(p.name + "::" + f.Name);
+                        }
+                        foreach (ReCT.CodeAnalysis.Symbols.ClassSymbol c in p.scope.GetDeclaredClasses())
+                        {
+                            ACItems.Add(p.name + "::" + c.Name);
                         }
                     }
 
@@ -1141,6 +1158,11 @@ namespace ReCT_IDE
         {
             var history = new History(this);
             history.Show();
+        }
+
+        private void removeLineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
         }
     }
 
