@@ -71,9 +71,6 @@ namespace ReCT.CodeAnalysis.Package
 
                 foreach (MethodDefinition m in classMethods)
                 {
-                    if (!m.IsPublic)
-                        continue;
-
                     var parameters = ImmutableArray.CreateBuilder<Symbols.ParameterSymbol>();
 
                     foreach (ParameterDefinition p in m.Parameters)
@@ -96,8 +93,6 @@ namespace ReCT.CodeAnalysis.Package
 
                 foreach (FieldDefinition f in classFields)
                 {
-                    if (!f.IsPublic || f.IsPrivate) continue;
-                    
                     var type = netTypeLookup(f.FieldType.Name.ToLower());
                     classSymbol.Scope.TryDeclareVariable(new GlobalVariableSymbol(f.Name, false, Binder.LookupType(type)));
                 }
