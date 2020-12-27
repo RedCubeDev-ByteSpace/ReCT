@@ -46,21 +46,15 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly FunctionSymbol KillThread = new FunctionSymbol("KillThread", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
 
         //Arr functions
-        public static readonly FunctionSymbol GetArrayLength = new FunctionSymbol("GetArrayLength", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
+        public static readonly FunctionSymbol Push = new FunctionSymbol("Push", ImmutableArray.Create(new ParameterSymbol("object", TypeSymbol.Any, 0)), TypeSymbol.Void);
 
         //TCP functions
         public static readonly FunctionSymbol OpenSocket = new FunctionSymbol("OpenSocket", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.TCPSocket);
 
-        public static readonly FunctionSymbol WriteToSocket = new FunctionSymbol("WriteToSocket", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol ReadSocket = new FunctionSymbol("ReadSocket", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
-        public static readonly FunctionSymbol CloseSocket = new FunctionSymbol("CloseSocket", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
-        public static readonly FunctionSymbol IsSocketConnected = new FunctionSymbol("IsSocketConnected", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Bool);
-
-
-        public static readonly FunctionSymbol WriteToClient = new FunctionSymbol("WriteToClient", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol ReadClient = new FunctionSymbol("ReadClient", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
-        public static readonly FunctionSymbol CloseClient = new FunctionSymbol("CloseClient", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
-        public static readonly FunctionSymbol IsClientConnected = new FunctionSymbol("IsClientConnected", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Bool);
+        public static readonly FunctionSymbol Write = new FunctionSymbol("Write", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
+        public static readonly FunctionSymbol Read = new FunctionSymbol("Read", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
+        public static readonly FunctionSymbol Close = new FunctionSymbol("Close", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
+        public static readonly FunctionSymbol IsConnected = new FunctionSymbol("IsConnected", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Bool);
 
         //Cube functions
         public static readonly FunctionSymbol Die = new FunctionSymbol("die", ImmutableArray.Create(new ParameterSymbol("exitCode", TypeSymbol.Int, 0)), TypeSymbol.Void);

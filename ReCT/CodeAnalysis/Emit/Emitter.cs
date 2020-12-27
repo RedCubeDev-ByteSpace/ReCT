@@ -2,12 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using ReCT.CodeAnalysis.Binding;
 using ReCT.CodeAnalysis.Symbols;
 using ReCT.CodeAnalysis.Syntax;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
+using FieldAttributes = Mono.Cecil.FieldAttributes;
+using MethodAttributes = Mono.Cecil.MethodAttributes;
+using ParameterAttributes = Mono.Cecil.ParameterAttributes;
+using TypeAttributes = Mono.Cecil.TypeAttributes;
 
 namespace ReCT.CodeAnalysis.Emit
 {
@@ -340,29 +345,76 @@ namespace ReCT.CodeAnalysis.Emit
             _envDie = ResolveMethod("System.Environment", "Exit", new[] { "System.Int32" });
         }
 
-        public TypeReference ResolveTypePublic(string rectName, string metadataName)
+        public TypeDefinition ResolveTypePublic(string typeName)
         {
             var foundTypes = s_assemblies.SelectMany(a => a.Modules)
-                                       .SelectMany(m => m.Types)
-                                       .Where(t => t.FullName == metadataName)
-                                       .ToArray();
+                .SelectMany(m => m.Types)
+                .Where(t => t.FullName == typeName)
+                .ToArray();
             if (foundTypes.Length == 1)
             {
-                var typeReference = _assemblyDefinition.MainModule.ImportReference(foundTypes[0]);
-                return typeReference;
+                return foundTypes[0];
             }
             else if (foundTypes.Length == 0)
             {
-                _diagnostics.ReportRequiredTypeNotFound(rectName, metadataName);
+                _diagnostics.ReportRequiredTypeNotFound("", typeName);
             }
             else
             {
-                _diagnostics.ReportRequiredTypeAmbiguous(rectName, metadataName, foundTypes);
+                _diagnostics.ReportRequiredTypeAmbiguous("", typeName, foundTypes);
             }
 
             return null;
         }
 
+        public MethodReference ResolveMethodGeneric(string typeName, string methodName, string[] parameterTypeNames, TypeReference genericType)
+        {
+            var foundTypes = s_assemblies.SelectMany(a => a.Modules)
+                .SelectMany(m => m.Types)
+                .Where(t => t.FullName == typeName)
+                .ToArray();
+            if (foundTypes.Length == 1)
+            {
+                var foundType = foundTypes[0];
+                var methods = foundType.Methods.Where(m => m.Name == methodName);
+
+                foreach (var method in methods)
+                {
+                    if (method.Parameters.Count != parameterTypeNames.Length)
+                        continue;
+
+                    var allParametersMatch = true;
+
+                    for (var i = 0; i < parameterTypeNames.Length; i++)
+                    {
+                        if (method.Parameters[i].ParameterType.FullName != parameterTypeNames[i])
+                        {
+                            allParametersMatch = false;
+                            break;
+                        }
+                    }
+
+                    if (!allParametersMatch)
+                        continue;
+
+                    return s_assemblyDefinition.MainModule.ImportReference(method, genericType);
+                }
+
+                _diagnostics.ReportRequiredMethodNotFound(typeName, methodName, parameterTypeNames);
+                return null;
+            }
+            else if (foundTypes.Length == 0)
+            {
+                _diagnostics.ReportRequiredTypeNotFound(null, typeName);
+            }
+            else
+            {
+                _diagnostics.ReportRequiredTypeAmbiguous(null, typeName, foundTypes);
+            }
+
+            return null;
+        }
+        
         public MethodReference ResolveMethodPublic(string typeName, string methodName, string[] parameterTypeNames)
         {
             var foundTypes = s_assemblies.SelectMany(a => a.Modules)
@@ -959,12 +1011,69 @@ namespace ReCT.CodeAnalysis.Emit
             ilProcessor.Emit(OpCodes.Newobj, _threadObjectReference);
         }
 
+        void LoadARef(ILProcessor ilProcessor, BoundObjectAccessExpression node)
+        {
+            if (node.Variable is ParameterSymbol parameter)
+            {
+                ilProcessor.Emit(OpCodes.Ldarga,
+                    parameter.Ordinal + (inClass != null && !inClass.IsStatic ? 1 : 0));
+            }
+            else if (node.Variable.IsGlobal)
+            {
+                var fieldDefinition = (inType == null ? _globals : _classGlobals[inType])[node.Variable];
+
+                if (inClass != null && !inClass.IsStatic) ilProcessor.Emit(OpCodes.Ldarg_0);
+                ilProcessor.Emit(
+                    inClass == null ? OpCodes.Ldsflda : inClass.IsStatic ? OpCodes.Ldsflda : OpCodes.Ldflda,
+                    fieldDefinition);
+            }
+            else
+            {
+                var variableDefinition = _locals[node.Variable];
+                ilProcessor.Emit(OpCodes.Ldloca, variableDefinition);
+            }
+        }
+        
+        void LoadRef(ILProcessor ilProcessor, BoundObjectAccessExpression node)
+        {
+            if (node.Expression == null)
+            {
+
+                if (node.Variable is ParameterSymbol parameter)
+                {
+                    ilProcessor.Emit(OpCodes.Ldarg,
+                        parameter.Ordinal + (inClass != null && !inClass.IsStatic ? 1 : 0));
+                }
+                else if (node.Variable.IsGlobal)
+                {
+                    var fieldDefinition = (inType == null ? _globals : _classGlobals[inType])[node.Variable];
+
+                    if (inClass != null && !inClass.IsStatic) ilProcessor.Emit(OpCodes.Ldarg_0);
+                    ilProcessor.Emit(
+                        inClass == null ? OpCodes.Ldsfld : inClass.IsStatic ? OpCodes.Ldsfld : OpCodes.Ldfld,
+                        fieldDefinition);
+                }
+                else
+                {
+                    var variableDefinition = _locals[node.Variable];
+                    ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
+                }
+            }
+            else
+            {
+                EmitExpression(ilProcessor, node.Expression);
+            }
+        }
+        
         private void EmitObjectAccessExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
         {
             if (node.Class == null || !node.Class.IsStatic)
             {
+                if (node.TypeCall != null && node.TypeCall.Function == BuiltinFunctions.Push)
+                    LoadARef(ilProcessor, node);
                 if (node.Expression == null)
                 {
+
                     if (node.Variable is ParameterSymbol parameter)
                     {
                         ilProcessor.Emit(OpCodes.Ldarg,
@@ -1299,7 +1408,7 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitTypeCallExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
         {
-            if (node.TypeCall.Function == BuiltinFunctions.WriteToClient)
+            if (node.TypeCall.Function == BuiltinFunctions.Write && node.Variable.Type == TypeSymbol.TCPClient)
             {
                 VariableDefinition var0 = new VariableDefinition(_StreamWriterRef);
 
@@ -1315,14 +1424,14 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Callvirt, _IOFlush);
                 return;
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.ReadClient)
+            else if (node.TypeCall.Function == BuiltinFunctions.Read && node.Variable.Type == TypeSymbol.TCPClient)
             {
                 ilProcessor.Emit(OpCodes.Callvirt, _TCPClientGetStream);
                 ilProcessor.Emit(OpCodes.Newobj, _IOStreamReaderCtor);
                 ilProcessor.Emit(OpCodes.Callvirt, _IOReadLine);
                 return;
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.WriteToSocket)
+            else if (node.TypeCall.Function == BuiltinFunctions.Write && node.Variable.Type == TypeSymbol.TCPSocket)
             {
                 VariableDefinition var0 = new VariableDefinition(_StreamWriterRef);
 
@@ -1338,18 +1447,48 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Callvirt, _IOFlush);
                 return;
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.ReadSocket)
+            else if (node.TypeCall.Function == BuiltinFunctions.Read && node.Variable.Type == TypeSymbol.TCPSocket)
             {
                 ilProcessor.Emit(OpCodes.Newobj, _TCPNetworkStreamCtor);
                 ilProcessor.Emit(OpCodes.Newobj, _IOStreamReaderCtor);
                 ilProcessor.Emit(OpCodes.Callvirt, _IOReadLine);
+                return;
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.Push && (node.Variable.Type.isClassArray || node.Variable.Type.isArray))
+            {
+                var type = _knownTypes[
+                    node.Variable.Type.isClass
+                        ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.Variable.Type.Name)
+                        : node.Variable.Type];
+
+
+                var method = ResolveMethodPublic("System.Array", "Resize", new[] {"T[]&", "System.Int32"});
+                var mmm = new GenericInstanceMethod(method);
+                mmm.GenericArguments.Add(_knownTypes.FirstOrDefault(x => x.Key.Name == (node.Variable.Type.Name.EndsWith("Arr") ? node.Variable.Type.Name.Replace("Arr", "") : node.Variable.Type.Name)).Value);
+                
+                ilProcessor.Emit(OpCodes.Ldlen);
+                ilProcessor.Emit(OpCodes.Conv_I4);
+                ilProcessor.Emit(OpCodes.Ldc_I4, 1);
+                ilProcessor.Emit(OpCodes.Add);
+                ilProcessor.Emit(OpCodes.Call, mmm);
+
+                LoadRef(ilProcessor, node);
+                LoadRef(ilProcessor, node);
+                ilProcessor.Emit(OpCodes.Ldlen);
+                ilProcessor.Emit(OpCodes.Conv_I4);
+                ilProcessor.Emit(OpCodes.Ldc_I4_1);
+                ilProcessor.Emit(OpCodes.Sub);
+                
+                EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
+                ilProcessor.Emit(OpCodes.Castclass, _knownTypes.FirstOrDefault(x => x.Key.Name == (node.Variable.Type.Name.EndsWith("Arr") ? node.Variable.Type.Name.Replace("Arr", "") : node.Variable.Type.Name) ).Value);
+                ilProcessor.Emit(OpCodes.Stelem_Ref);
                 return;
             }
 
             foreach (var argument in node.TypeCall.Arguments)
                 EmitExpression(ilProcessor, argument);
 
-            if (node.TypeCall.Function == BuiltinFunctions.GetLength)
+            if (node.TypeCall.Function == BuiltinFunctions.GetLength && node.Variable.Type == TypeSymbol.String)
             {
                 var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "get_Length", Array.Empty<string>());
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
@@ -1369,7 +1508,7 @@ namespace ReCT.CodeAnalysis.Emit
                 var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Interrupt", Array.Empty<string>());
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.GetArrayLength)
+            else if (node.TypeCall.Function == BuiltinFunctions.GetLength && (node.Variable.Type.isClassArray || node.Variable.Type.isArray))
             {
                 ilProcessor.Emit(OpCodes.Ldlen);
             }
@@ -1377,19 +1516,19 @@ namespace ReCT.CodeAnalysis.Emit
             {
                 ilProcessor.Emit(OpCodes.Callvirt, _TCPAcceptSocketReference);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.CloseClient)
+            else if (node.TypeCall.Function == BuiltinFunctions.Close && node.Variable.Type == TypeSymbol.TCPClient)
             {
                 ilProcessor.Emit(OpCodes.Callvirt, _TCPClientClose);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.CloseSocket)
+            else if (node.TypeCall.Function == BuiltinFunctions.Close && node.Variable.Type == TypeSymbol.TCPSocket)
             {
                 ilProcessor.Emit(OpCodes.Callvirt, _TCPSocketClose);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.IsClientConnected)
+            else if (node.TypeCall.Function == BuiltinFunctions.IsConnected && node.Variable.Type == TypeSymbol.TCPClient)
             {
                 ilProcessor.Emit(OpCodes.Callvirt, _TCPClientConnected);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.IsSocketConnected)
+            else if (node.TypeCall.Function == BuiltinFunctions.IsConnected && node.Variable.Type == TypeSymbol.TCPSocket)
             {
                 ilProcessor.Emit(OpCodes.Callvirt, _TCPSocketConnected);
             }

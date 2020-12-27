@@ -104,10 +104,14 @@ namespace ReCT.CodeAnalysis.Package
                     var typesymbol = new TypeSymbol(classSymbol.Name);
                     typesymbol.isClass = true;
                     TypeSymbol.Class.Add(classSymbol, typesymbol);
-                    
-                    var arraysymbol = new TypeSymbol(classSymbol.Name + "Arr");
-                    arraysymbol.isClass = true;
-                    TypeSymbol.Class.Add(new ClassSymbol(classSymbol.Name + "Arr"), arraysymbol);
+
+                    if (!classSymbol.IsStatic)
+                    {
+                        var arraysymbol = new TypeSymbol(classSymbol.Name + "Arr");
+                        arraysymbol.isClass = true;
+                        arraysymbol.isClassArray = true;
+                        TypeSymbol.Class.Add(new ClassSymbol(classSymbol.Name + "Arr"), arraysymbol);
+                    }
                 }
 
                 scope.TryDeclareClass(classSymbol);

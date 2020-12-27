@@ -308,6 +308,7 @@ namespace ReCT.CodeAnalysis.Binding
                 {
                     var classArraySymbol = new TypeSymbol(classSymbol.Name + "Arr");
                     classArraySymbol.isClass = true;
+                    classArraySymbol.isClassArray = true;
                     TypeSymbol.Class.Add(new ClassSymbol(classSymbol.Name + "Arr", null, false), classArraySymbol);
                 }
             }
@@ -885,9 +886,12 @@ namespace ReCT.CodeAnalysis.Binding
                 staticClass.Scope = new BoundScope(null);
                 goto SKIP1;
             }
-            
+
             if (syntax.IdentifierToken.Text == null)
+            {
+                _diagnostics.ReportUndefinedVariable(syntax.IdentifierToken.Location, syntax.IdentifierToken.Text);
                 return new BoundErrorExpression();
+            }
 
             staticClass = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
 
@@ -937,7 +941,7 @@ namespace ReCT.CodeAnalysis.Binding
                         return new BoundErrorExpression();
                     }
 
-                    if (!variable.Type.isClass)
+                    if (!variable.Type.isClass || variable.Type.isClassArray)
                     {
                         typeCall = (BoundCallExpression) BindCallExpression(syntax.Call);
                         type = typeCall.Type;
@@ -1160,7 +1164,10 @@ namespace ReCT.CodeAnalysis.Binding
         private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
         {
             if (syntax == null)
+            {
+                _diagnostics.ReportCustomeMessage("Call syntax was null (maybe wrong params?)");
                 return new BoundErrorExpression();
+            }
 
             var _symbol = _scope.TryLookupSymbol(syntax.Identifier.Text);
             if (_symbol == null)
@@ -1249,7 +1256,11 @@ namespace ReCT.CodeAnalysis.Binding
             {
                 for (var i = 0; i < syntax.Arguments.Count; i++)
                 {
-                    if (syntax.Arguments[i] == null) return new BoundErrorExpression();
+                    if (syntax.Arguments[i] == null)
+                    {
+                        _diagnostics.ReportCustomeMessage("Undefined Parameter!");
+                        return new BoundErrorExpression();
+                    }
 
                     var argumentLocation = syntax.Arguments[i].Location;
                     var argument = boundArguments[i];
@@ -1257,7 +1268,7 @@ namespace ReCT.CodeAnalysis.Binding
                     boundArguments[i] = BindConversion(argumentLocation, argument, parameter.Type);
                 }
             }
-            catch { return new BoundErrorExpression(); }
+            catch {_diagnostics.ReportCustomeMessage($"Parameter binding crashed on function {syntax.Identifier.Text}!"); return new BoundErrorExpression(); }
 
             return new BoundCallExpression(function, boundArguments.ToImmutable(), syntax.Namespace);
         }
@@ -1380,6 +1391,9 @@ namespace ReCT.CodeAnalysis.Binding
         }
         private TypeSymbol TypeToArray(TypeSymbol type)
         {
+            if (type == null)
+                return null;
+
             if (type == TypeSymbol.Any)
                 return TypeSymbol.AnyArr;
             else if (type == TypeSymbol.Bool)

@@ -664,7 +664,19 @@ namespace ReCT_IDE
                 rectCompCheck.Variables = "";
                 if (CodeBox.Text != "")
                 {
-                    rectCompCheck.Check(CodeBox.Text, this, head == "" ? tabs[currentTab].path : head);
+                    var code = CodeBox.Text;
+
+                    if (head != "" && tabs[currentTab].path != head)
+                    {
+                        var mainTab = tabs.FirstOrDefault(x => x.path == head);
+
+                        if (mainTab != null) code = mainTab.code;
+                        else
+                            using (StreamReader sr = new StreamReader(new FileStream(head, FileMode.Open)))
+                                code = sr.ReadToEnd();
+                    }
+
+                    rectCompCheck.Check(code, this, head == "" ? tabs[currentTab].path : head);
                     CodeBox.ClearStylesBuffer();
                     ReloadHightlighting(new TextChangedEventArgs(CodeBox.Range));
 

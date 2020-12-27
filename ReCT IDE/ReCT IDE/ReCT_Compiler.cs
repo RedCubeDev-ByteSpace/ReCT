@@ -312,7 +312,7 @@ namespace ReCT_IDE
 
             ImmutableArray<Diagnostic> errors = ImmutableArray<Diagnostic>.Empty;
 
-            try
+            //try
             {
                 Compilation.resetBinder();
                 var compilation = Compilation.Create(syntaxTree);
@@ -397,41 +397,41 @@ namespace ReCT_IDE
                         File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath));
                 }
             }
-            catch (Exception e)
-            {
-                errorBox.Show();
-                errorBox.errorBox.Clear();
+            //catch (Exception e)
+            //{
+            //    errorBox.Show();
+            //    errorBox.errorBox.Clear();
 
-                inUse = false;
+            //    inUse = false;
 
-                if (errors.Any())
-                {
-                    errorBox.Show();
-                    errorBox.errorBox.Clear();
-                    foreach (Diagnostic d in errors)
-                    {
-                        if (d.Location.Text != null)
-                        {
-                            var lineInfo = getLineNumber(attachements.ToArray(), d.Location.StartLine, code);
+            //    if (errors.Any())
+            //    {
+            //        errorBox.Show();
+            //        errorBox.errorBox.Clear();
+            //        foreach (Diagnostic d in errors)
+            //        {
+            //            if (d.Location.Text != null)
+            //            {
+            //                var lineInfo = getLineNumber(attachements.ToArray(), d.Location.StartLine, code);
 
-                            if (lineInfo.Length == 1)
-                                errorBox.errorBox.Text += $"[L: {lineInfo[0]}, C: {d.Location.StartCharacter}] {d.Message}\n";
-                            else
-                                errorBox.errorBox.Text += $"[L: {lineInfo[0]}, C: {d.Location.StartCharacter}, in '{lineInfo[1]}'] {d.Message}\n";
-                        }
-                        else
-                            errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
-                    }
-                    errorBox.version.Text = ReCT.info.Version;
-                    return false;
-                }
-                else
-                {
-                    errorBox.errorBox.Text = "THIS ERROR MIGHT BE INTERNAL! Please try again in a few seconds. (ReCT is unstable sometimes so you might have to try multiple times) \n" + errorBox.errorBox.Text;
-                    errorBox.errorBox.Text += e.Source + ": " + e.Message + "\n" + e.StackTrace;
-                    return false;
-                }
-            }
+            //                if (lineInfo.Length == 1)
+            //                    errorBox.errorBox.Text += $"[L: {lineInfo[0]}, C: {d.Location.StartCharacter}] {d.Message}\n";
+            //                else
+            //                    errorBox.errorBox.Text += $"[L: {lineInfo[0]}, C: {d.Location.StartCharacter}, in '{lineInfo[1]}'] {d.Message}\n";
+            //            }
+            //            else
+            //                errorBox.errorBox.Text += $"[L: ?, C: ?] {d.Message}\n";
+            //        }
+            //        errorBox.version.Text = ReCT.info.Version;
+            //        return false;
+            //    }
+            //    else
+            //    {
+            //        errorBox.errorBox.Text = "THIS ERROR MIGHT BE INTERNAL! Please try again in a few seconds. (ReCT is unstable sometimes so you might have to try multiple times) \n" + errorBox.errorBox.Text;
+            //        errorBox.errorBox.Text += e.Source + ": " + e.Message + "\n" + e.StackTrace;
+            //        return false;
+            //    }
+            //}
             inUse = false;
             return true;
         }

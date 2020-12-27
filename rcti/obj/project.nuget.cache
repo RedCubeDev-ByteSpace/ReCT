@@ -1,13 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "zOlxLG7pfbHGLQJoC04jcO60mmfXjXJc42WDadvAP4mRKFVlHGfgRYxQzTOq3R+8JzmWcVu2GFPS1GZrCtJyiQ==",
+  "dgSpecHash": "1hnqXBZomespVa55R5vWiyYuk2aGdb3s162bBGPDd5t53Y7/8OBOsCKWm+/rmFFQ5uzzqKNzJmnOKyO/ltkJtg==",
   "success": true,
   "projectFilePath": "E:\\GitRepos\\ReCT\\rcti\\rcti.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Salami\\.nuget\\packages\\mono.cecil\\0.11.2\\mono.cecil.0.11.2.nupkg.sha512",
-    "C:\\Users\\Salami\\.nuget\\packages\\system.collections.immutable\\1.5.0\\system.collections.immutable.1.5.0.nupkg.sha512",
-    "C:\\Users\\Salami\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.10\\microsoft.aspnetcore.app.ref.3.1.10.nupkg.sha512",
-    "C:\\Users\\Salami\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.10\\microsoft.netcore.app.host.win-x64.3.1.10.nupkg.sha512"
+    "C:\\Users\\Salami\\.nuget\\packages\\system.collections.immutable\\1.5.0\\system.collections.immutable.1.5.0.nupkg.sha512"
   ],
   "logs": []
 }
