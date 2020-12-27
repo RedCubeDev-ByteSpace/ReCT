@@ -108,6 +108,9 @@ namespace ReCT.CodeAnalysis.Emit
         private FieldDefinition _randomFieldDefinition;
         private static List<AssemblyDefinition> s_assemblies;
         private static AssemblyDefinition s_assemblyDefinition;
+        
+        private MethodReference _IOReadToEnd;
+        private MethodReference _IOWrite;
 
         private Emitter(string moduleName, string[] references)
         {
@@ -337,13 +340,16 @@ namespace ReCT.CodeAnalysis.Emit
 
             _IOStreamReaderCtor = ResolveMethod("System.IO.StreamReader", ".ctor", new[] { "System.IO.Stream" });
             _IOReadLine = ResolveMethod("System.IO.TextReader", "ReadLine", Array.Empty<string>());
+            _IOReadToEnd = ResolveMethod("System.IO.TextReader", "ReadToEnd", Array.Empty<string>());
             _IOStreamWriterCtor = ResolveMethod("System.IO.StreamWriter", ".ctor", new[] { "System.IO.Stream" });
             _IOWriteLine = ResolveMethod("System.IO.TextWriter", "WriteLine", new[] { "System.String" });
+            _IOWrite = ResolveMethod("System.IO.TextWriter", "Write", new[] { "System.String" });
             _IOFlush = ResolveMethod("System.IO.TextWriter", "Flush", Array.Empty<string>());
 
             //die
             _envDie = ResolveMethod("System.Environment", "Exit", new[] { "System.Int32" });
         }
+        
 
         public TypeDefinition ResolveTypePublic(string typeName)
         {
@@ -1408,7 +1414,7 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitTypeCallExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
         {
-            if (node.TypeCall.Function == BuiltinFunctions.Write && node.Variable.Type == TypeSymbol.TCPClient)
+            if ((node.TypeCall.Function == BuiltinFunctions.Write || node.TypeCall.Function == BuiltinFunctions.WriteLine) && node.Variable.Type == TypeSymbol.TCPClient)
             {
                 VariableDefinition var0 = new VariableDefinition(_StreamWriterRef);
 
@@ -1419,19 +1425,19 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Stloc, var0);
                 ilProcessor.Emit(OpCodes.Ldloc, var0);
                 EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
-                ilProcessor.Emit(OpCodes.Callvirt, _IOWriteLine);
+                ilProcessor.Emit(OpCodes.Callvirt, node.TypeCall.Function == BuiltinFunctions.Write ? _IOWrite : _IOWriteLine);
                 ilProcessor.Emit(OpCodes.Ldloc, var0);
                 ilProcessor.Emit(OpCodes.Callvirt, _IOFlush);
                 return;
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.Read && node.Variable.Type == TypeSymbol.TCPClient)
+            else if ((node.TypeCall.Function == BuiltinFunctions.Read || node.TypeCall.Function == BuiltinFunctions.ReadLine) && node.Variable.Type == TypeSymbol.TCPClient)
             {
                 ilProcessor.Emit(OpCodes.Callvirt, _TCPClientGetStream);
                 ilProcessor.Emit(OpCodes.Newobj, _IOStreamReaderCtor);
-                ilProcessor.Emit(OpCodes.Callvirt, _IOReadLine);
+                ilProcessor.Emit(OpCodes.Callvirt, node.TypeCall.Function == BuiltinFunctions.Read ? _IOReadToEnd : _IOReadLine);
                 return;
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.Write && node.Variable.Type == TypeSymbol.TCPSocket)
+            else if ((node.TypeCall.Function == BuiltinFunctions.Write || node.TypeCall.Function == BuiltinFunctions.WriteLine) && node.Variable.Type == TypeSymbol.TCPSocket)
             {
                 VariableDefinition var0 = new VariableDefinition(_StreamWriterRef);
 
@@ -1442,16 +1448,16 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Stloc, var0);
                 ilProcessor.Emit(OpCodes.Ldloc, var0);
                 EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
-                ilProcessor.Emit(OpCodes.Callvirt, _IOWriteLine);
+                ilProcessor.Emit(OpCodes.Callvirt, node.TypeCall.Function == BuiltinFunctions.Write ? _IOWrite : _IOWriteLine);
                 ilProcessor.Emit(OpCodes.Ldloc, var0);
                 ilProcessor.Emit(OpCodes.Callvirt, _IOFlush);
                 return;
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.Read && node.Variable.Type == TypeSymbol.TCPSocket)
+            else if ((node.TypeCall.Function == BuiltinFunctions.Read || node.TypeCall.Function == BuiltinFunctions.ReadLine) && node.Variable.Type == TypeSymbol.TCPSocket)
             {
                 ilProcessor.Emit(OpCodes.Newobj, _TCPNetworkStreamCtor);
                 ilProcessor.Emit(OpCodes.Newobj, _IOStreamReaderCtor);
-                ilProcessor.Emit(OpCodes.Callvirt, _IOReadLine);
+                ilProcessor.Emit(OpCodes.Callvirt, node.TypeCall.Function == BuiltinFunctions.Read ? _IOReadToEnd : _IOReadLine);
                 return;
             }
             else if (node.TypeCall.Function == BuiltinFunctions.Push && (node.Variable.Type.isClassArray || node.Variable.Type.isArray))

@@ -52,7 +52,9 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly FunctionSymbol OpenSocket = new FunctionSymbol("OpenSocket", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.TCPSocket);
 
         public static readonly FunctionSymbol Write = new FunctionSymbol("Write", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
+        public static readonly FunctionSymbol WriteLine = new FunctionSymbol("WriteLine", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
         public static readonly FunctionSymbol Read = new FunctionSymbol("Read", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
+        public static readonly FunctionSymbol ReadLine = new FunctionSymbol("ReadLine", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
         public static readonly FunctionSymbol Close = new FunctionSymbol("Close", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
         public static readonly FunctionSymbol IsConnected = new FunctionSymbol("IsConnected", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Bool);
 

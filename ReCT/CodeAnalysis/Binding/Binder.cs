@@ -943,7 +943,7 @@ namespace ReCT.CodeAnalysis.Binding
 
                     if (!variable.Type.isClass || variable.Type.isClassArray)
                     {
-                        typeCall = (BoundCallExpression) BindCallExpression(syntax.Call);
+                        typeCall = (BoundCallExpression) BindCallExpression(syntax.Call, true);
                         type = typeCall.Type;
                         return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property,
                             type, value, package, _class, typeCall, Expression);
@@ -1161,7 +1161,7 @@ namespace ReCT.CodeAnalysis.Binding
             return new BoundThreadCreateExpression(function);
         }
 
-        private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
+        private BoundExpression BindCallExpression(CallExpressionSyntax syntax, bool objectAccess = false)
         {
             if (syntax == null)
             {
@@ -1170,6 +1170,10 @@ namespace ReCT.CodeAnalysis.Binding
             }
 
             var _symbol = _scope.TryLookupSymbol(syntax.Identifier.Text);
+
+            if (syntax.Identifier.Text == "Write" && !objectAccess)
+                _symbol = null;
+            
             if (_symbol == null)
             {
                 foreach (string s in _usingPackages)
