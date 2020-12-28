@@ -202,7 +202,7 @@ namespace ReCT_IDE
                 new[]{ "?", "any", "bool", "int", "string", "void", "float", "thread", "tcpclient", "tcplistener", "tcpsocket", "anyArr", "boolArr", "intArr", "stringArr", "floatArr", "threadArr", "tcpclientArr", "tcplistenerArr", "tcpsocketArr" },
                 new[]{ "var", "set", "if", "else", "function", "class", "true", "false", "set", "break", "continue", "for", "from", "to", "return", "while", "die" },
                 new[]{ "Thread", "Constructor" },
-                new[]{ ">> GetLength", ">> Substring", ">> StartThread", ">> KillThread", ">> Open", ">> Write", ">> WriteLine", ">> Read", ">> ReadLine", ">> IsConnected", ">> Close", ">> Push" },
+                new[]{ ">>GetLength", ">>Substring", ">>StartThread", ">>KillThread", ">>Open", ">>Write", ">>WriteLine", ">>Read", ">>ReadLine", ">>IsConnected", ">>Close", ">>Push" },
                 new[]{ "#attach", "#copy", "#copyFolder", "#closeConsole" }
             };
 
@@ -359,7 +359,7 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\w*(?<=::)" + rectCompCheck.NamespaceFunctions + ")");
 
             //type functions
-            e.ChangedRange.SetStyle(TypeFunctionStyle, @"(?<=\>>\s)(\w+)");
+            e.ChangedRange.SetStyle(TypeFunctionStyle, @"(?<=\>>(\s|))(\w+)");
 
             //statements highlighting
             e.ChangedRange.SetStyle(StatementStyle, @"(\b(try|catch|break|continue|for|return|to|while|do|die|from)\b)", RegexOptions.Singleline);
@@ -1216,6 +1216,11 @@ namespace ReCT_IDE
             CodeBox.RemoveLines(line);
             CodeBox.Selection.Start = new Place(CodeBox.GetLineLength(ln.ToLine), ln.ToLine);
             CodeBox.Selection.End = new Place(CodeBox.GetLineLength(ln.ToLine), ln.ToLine);
+        }
+
+        private void ReCTAutoComplete_Selected(object sender, AutocompleteMenuNS.SelectedEventArgs e)
+        {
+
         }
     }
 

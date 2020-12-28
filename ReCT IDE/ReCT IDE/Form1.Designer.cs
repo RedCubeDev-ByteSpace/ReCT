@@ -415,8 +415,9 @@
             this.ReCTAutoComplete.Items = new string[0];
             this.ReCTAutoComplete.LeftPadding = 25;
             this.ReCTAutoComplete.MaximumSize = new System.Drawing.Size(300, 200);
-            this.ReCTAutoComplete.SearchPattern = "(\\w|\\.|\\:|\\#|\\>|(?<=\\>)\\s)";
+            this.ReCTAutoComplete.SearchPattern = "(\\w|\\.|\\:|\\#|\\>)";
             this.ReCTAutoComplete.TargetControlWrapper = null;
+            this.ReCTAutoComplete.Selected += new System.EventHandler<AutocompleteMenuNS.SelectedEventArgs>(this.ReCTAutoComplete_Selected);
             // 
             // autocompleteImageList
             // 
