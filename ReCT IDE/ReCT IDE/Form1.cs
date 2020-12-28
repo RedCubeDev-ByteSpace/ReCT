@@ -203,7 +203,7 @@ namespace ReCT_IDE
                 new[]{ "var", "set", "if", "else", "function", "class", "true", "false", "set", "break", "continue", "for", "from", "to", "return", "while", "die" },
                 new[]{ "Thread", "Constructor" },
                 new[]{ ">>GetLength", ">>Substring", ">>StartThread", ">>KillThread", ">>Open", ">>Write", ">>WriteLine", ">>Read", ">>ReadLine", ">>IsConnected", ">>Close", ">>Push" },
-                new[]{ "#attach", "#copy", "#copyFolder", "#closeConsole" }
+                new[]{ "#attach", "#copy", "#copyFolder", "#closeConsole", "#noConsole" }
             };
 
             for (int type = 0; type < acs.Length; type++)
@@ -314,7 +314,7 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(CommentStyle, @"//.*$", RegexOptions.Multiline);
             e.ChangedRange.SetStyle(CommentStyle, @"/\*(.*?)\*/", RegexOptions.Singleline);
 
-            e.ChangedRange.SetStyle(AttachStyle, @"(#attach\b|#copy\b|#copyFolder\b|#closeConsole\b)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(AttachStyle, @"(#attach\b|#copy\b|#copyFolder\b|#closeConsole\b|#noConsole\b)", RegexOptions.Singleline);
 
             //system function highlighting
             e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bVersion\b)");
@@ -769,7 +769,7 @@ namespace ReCT_IDE
         {
             Typechecker.Enabled = false;
             errorBox.Hide();
-            saveFileDialog1.Filter = "Launcher (*.cmd)|*.cmd|Assembly (*.dll)|*.dll|All files (*.*)|*.*";
+            saveFileDialog1.Filter = "Executable (*.exe)|*.exe|Assembly (*.dll)|*.dll|All files (*.*)|*.*";
             var res = saveFileDialog1.ShowDialog();
 
             if (res != DialogResult.OK)
@@ -815,13 +815,15 @@ namespace ReCT_IDE
 
             Console.WriteLine("----------------------------------------------------");
 
-            if (!ReCT_Compiler.CompileRCTBC("Builder/" + Path.GetFileNameWithoutExtension(tabs[currentTab].path) + ".cmd", head == "" ? tabs[currentTab].path : head, errorBox)) return;
+            var file = head == "" ? tabs[currentTab].path : head;
+            var outfile = openProject == null ? Path.GetFileNameWithoutExtension(tabs[currentTab].path) : openProject.Name;
 
-            string strCmdText = $"/K cd \"{Path.GetFullPath($"Builder")}\" & cls & \"{Path.GetFileNameWithoutExtension(tabs[currentTab].path)}.cmd\"";
+            if (!ReCT_Compiler.CompileRCTBC("Builder\\" + outfile + ".exe", file, errorBox)) return;
+
+            //string strCmdText = $"/K cd \"{Path.GetFullPath($"Builder")}\" & cls & \"{Path.GetFileNameWithoutExtension(tabs[currentTab].path)}.exe\"";
 
             running = new Process();
-            running.StartInfo.FileName = "CMD.exe";
-            running.StartInfo.Arguments = strCmdText;
+            running.StartInfo.FileName = Path.GetFullPath("Builder/" + outfile + ".exe");
 
             if(Properties.Settings.Default.Maximize)
                 running.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;

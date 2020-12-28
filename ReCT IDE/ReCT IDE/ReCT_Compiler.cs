@@ -14,6 +14,8 @@ using System.Threading;
 using System.Reflection;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
+using Microsoft.CSharp;
+using System.CodeDom.Compiler;
 
 namespace ReCT_IDE
 {
@@ -188,17 +190,18 @@ namespace ReCT_IDE
             inUse = false;
         }
 
-        struct Attachment
+        class Attachment
         {
             public string Name;
-            public int Length;
             public int BackBuffer;
+            public Dictionary<int, string> validLineNums;
+            public Attachment Parent;
 
-            public Attachment(string n, int l, int b)
+            public Attachment(string n, int b)
             {
                 Name = n;
-                Length = l;
                 BackBuffer = b;
+                validLineNums = new Dictionary<int, string>();
             }
         };
 
@@ -220,55 +223,89 @@ namespace ReCT_IDE
             List<string> filesToCopy = new List<string>();
             List<string> foldersToCopy = new List<string>();
             List<Attachment> attachements = new List<Attachment>();
+            bool noConsole = false;
 
-            if (code.Contains("#attach"))
+            var lookingforfile = "";
+            try
             {
-                var lookingforfile = "";
-                try
+                while (code.Contains("#attach"))
                 {
-                    while (code.Contains("#attach"))
+                    string neededFile = "";
+                    var matches = Regex.Matches(code, @"(?<=#attach\(\" + "\"" + @")(.*)(?=\" + "\"" + @"\))");
+
+                    neededFile = matches[0].Value;
+                    Console.WriteLine(matches.Count);
+
+                    lookingforfile = neededFile;
+
+                    if (!lookingforfile.Contains(":"))
                     {
-                        string neededFile = "";
-                        var matches = Regex.Matches(code, @"(?<=#attach\(\" + "\"" + @")(.*)(?=\" + "\"" + @"\))");
+                        lookingforfile = Path.GetDirectoryName(inPath) + "\\" + neededFile;
+                    } 
 
-                        neededFile = matches[0].Value;
-                        Console.WriteLine(matches.Count);
-
-                        lookingforfile = neededFile;
-
-                        if (!lookingforfile.Contains(":"))
-                        {
-                            lookingforfile = Path.GetDirectoryName(inPath) + "\\" + neededFile;
-                        } 
-
-                        using (StreamReader sr = new StreamReader(new FileStream(lookingforfile, FileMode.Open)))
-                        {
-                            var cod = sr.ReadToEnd();
-                            code = code.Replace($"#attach(\"{neededFile}\")", cod);
-
-                            attachements.Add(new Attachment(neededFile, cod.Split('\n').Length, matches[0].Index));
-
-                            sr.Close();
-                        }
+                    using (StreamReader sr = new StreamReader(new FileStream(lookingforfile, FileMode.Open)))
+                    {
+                        var cod = sr.ReadToEnd();
+                        code = code.Replace($"#attach(\"{neededFile}\")", "#---[ATTACHMENT]--->" + neededFile + "\n" + cod + "\n" + "#<---[ATTACHMENT]---");
+                        sr.Close();
                     }
                 }
-                catch
+                File.WriteAllText(@"C:\Users\Salami\Desktop\kek.rct", code);
+
+                var lines = code.Split('\n');
+                Attachment main = new Attachment(Path.GetFileName(inPath), 0);
+                attachements.Add(main);
+
+                Attachment current = main;
+                StreamWriter sw = new StreamWriter(new FileStream(@"C:\Users\Salami\Desktop\kekOrg.rct", FileMode.Create));
+
+                for (int i = 0; i < lines.Length; i++)
                 {
-                    errorBox.Show();
-                    errorBox.errorBox.Clear();
-                    errorBox.errorBox.Text = $"[L: ?, C: ?] Could not find attachment file '{lookingforfile}'!";
-                    inUse = false;
-                    return false;
+                    if (lines[i].StartsWith("#---[ATTACHMENT]--->"))
+                    {
+                        var newAtt = new Attachment(lines[i].Replace("#---[ATTACHMENT]--->", ""), getLength(current));
+                        newAtt.Parent = current;
+                        attachements.Add(newAtt);
+                        current = newAtt;
+                    }
+
+                    if (lines[i].StartsWith("#<---[ATTACHMENT]---"))
+                    {
+                        current = current.Parent;
+                    }
+
+                    current.validLineNums.Add(i, lines[i]);
+                    sw.WriteLine("/* " + current.Name + " */  " + lines[i].Replace("\r", "").Replace("\n", ""));
                 }
 
-                syntaxTree = SyntaxTree.Parse(code);
+                sw.Close();
+
+                int getLength(Attachment att)
+                {
+                    var len = 0;
+
+                    while(att != null)
+                    {
+                        len += att.validLineNums.Count;
+                        att = att.Parent;
+                    }
+
+                    return len;
+                }
+            }
+            catch
+            {
+                errorBox.Show();
+                errorBox.errorBox.Clear();
+                errorBox.errorBox.Text = $"[L: ?, C: ?] Could not find attachment file '{lookingforfile}'!";
+                inUse = false;
+                return false;
             }
 
-            while (true)
-            {
-                if (!code.Contains("#copyFolder"))
-                    break;
+            syntaxTree = SyntaxTree.Parse(code);
 
+            while (code.Contains("#copyFolder"))
+            {
                 var matches = Regex.Matches(code, @"(?<=#copyFolder\(\" + "\"" + @")(.*)(?=\" + "\"" + @"\))");
 
                 for (int i = 0; i < matches.Count; i++)
@@ -278,11 +315,8 @@ namespace ReCT_IDE
                 }
             }
 
-            while (true)
+            while (code.Contains("#copy"))
             {
-                if (!code.Contains("#copy"))
-                    break;
-
                 var matches = Regex.Matches(code, @"(?<=#copy\(\" + "\"" + @")(.*)(?=\" + "\"" + @"\))");
 
                 for (int i = 0; i < matches.Count; i++)
@@ -298,6 +332,12 @@ namespace ReCT_IDE
             {
                 addExit = true;
                 code = code.Replace("#closeConsole", "");
+            }
+
+            if (code.Contains("#noConsole"))
+            {
+                noConsole = true;
+                code = code.Replace("#noConsole", "");
             }
 
             var sErrors = syntaxTree.Diagnostics;
@@ -356,18 +396,18 @@ namespace ReCT_IDE
 
                 //generate runtimeconfig
                 var ext = Path.GetExtension(fileOut);
-                if (ext == ".cmd")
+                if (ext == ".exe")
                 {
                     using (StreamWriter sw = new StreamWriter(new FileStream(Path.GetDirectoryName(fileOut) + "\\" + Path.GetFileNameWithoutExtension(fileOut) + ".runtimeconfig.json", FileMode.Create)))
                     {
                         sw.Write("{\"runtimeOptions\": {\"tfm\": \"netcoreapp3.1\",\"framework\": {\"name\": \"Microsoft.NETCore.App\",\"version\": \"3.1.0\"}}}");
                     }
-                    using (StreamWriter sw = new StreamWriter(new FileStream(fileOut, FileMode.Create)))
-                    {
-                        sw.WriteLine($"dotnet exec \"{Path.GetFileNameWithoutExtension(fileOut)}.dll\"");
+                    //using (StreamWriter sw = new StreamWriter(new FileStream(fileOut, FileMode.Create)))
+                    //{
+                    //    sw.WriteLine($"dotnet exec \"{Path.GetFileNameWithoutExtension(fileOut)}.dll\"");
 
-                        if (addExit) sw.WriteLine($"exit");
-                    }
+                    //    if (addExit) sw.WriteLine($"exit");
+                    //}
 
                     foreach (ReCT.CodeAnalysis.Package.Package p in compilation.Packages)
                     {
@@ -382,6 +422,34 @@ namespace ReCT_IDE
                         if (p.name == "audio")
                             File.Copy("OtherDeps/NetCoreAudio.dll", Path.GetDirectoryName(fileOut) + "/" + "NetCoreAudio.dll", true);
                     }
+
+                    //generate launcher EXE
+                    CSharpCodeProvider csp = new CSharpCodeProvider();
+                    CompilerParameters cp = new CompilerParameters();
+
+                    cp.OutputAssembly = fileOut;
+                    cp.ReferencedAssemblies.Add("System.dll");
+                    cp.ReferencedAssemblies.Add("System.IO.dll");
+                    cp.ReferencedAssemblies.Add("System.Reflection.dll");
+                    cp.ReferencedAssemblies.Add("System.Diagnostics.Process.dll");
+
+                    cp.EmbeddedResources.Add(Path.ChangeExtension(fileOut, "dll"));
+
+                    File.WriteAllText(Path.ChangeExtension(fileOut, "opt"), "pause:" + (!noConsole && !addExit) + "\nshow:" + !noConsole);
+                    cp.EmbeddedResources.Add(Path.ChangeExtension(fileOut, "opt"));
+
+                    cp.WarningLevel = 3;
+
+                    cp.CompilerOptions = "/target:winexe";
+                    cp.GenerateExecutable = true;
+                    cp.GenerateInMemory = false;
+
+                    var cr = csp.CompileAssemblyFromSource(cp, File.ReadAllText(@"launch.cs"));
+
+                    foreach (string s in cr.Output)
+                        Console.WriteLine(s);
+
+                    File.Delete(Path.ChangeExtension(fileOut, "opt"));
                 }
 
                 foreach (string s in filesToCopy)
@@ -522,17 +590,24 @@ namespace ReCT_IDE
 
         static string[] getLineNumber(Attachment[] attachments, int line, string code)
         {
-            var allLengths = 0;
             foreach (Attachment a in attachments)
             {
-                allLengths += a.Length;
-                if (line + 1 > LineFromPos(code, a.BackBuffer) && line + 1 <= LineFromPos(code, a.BackBuffer) + a.Length)
+                if (a.validLineNums.ContainsKey(line))
                 {
-                    return new[] { (line - LineFromPos(code, a.BackBuffer) + 1).ToString(), a.Name };
+                    List<int> nums = new List<int>(a.validLineNums.Keys);
+
+                    line = nums.IndexOf(line);
+
+                    List<string> lines = new List<string>(a.validLineNums.Values);
+
+                    if (a.Parent != null)
+                        line--;
+
+                    return new[] { line.ToString(), a.Name };
                 }
             }
 
-            return new[] { (line - allLengths).ToString() };
+            return new string[0];
         }
 
         static int LineFromPos(string input, int indexPosition)

@@ -1,1 +1,0 @@
-dotnet exec "rsdltest.dll"
