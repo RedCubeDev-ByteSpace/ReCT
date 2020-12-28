@@ -19,6 +19,7 @@ using System.Threading;
 using System.Reflection;
 using System.IO;
 using Newtonsoft.Json;
+using System.Drawing.Text;
 
 namespace ReCT_IDE
 {
@@ -31,6 +32,7 @@ namespace ReCT_IDE
         public Error errorBox;
         public Process running;
         List<AutocompleteMenuNS.AutocompleteItem> standardAC = new List<AutocompleteMenuNS.AutocompleteItem>();
+        PrivateFontCollection collection = new PrivateFontCollection();
         BoltUpdater boltUpdater;
 
         public Project openProject;
@@ -246,7 +248,12 @@ namespace ReCT_IDE
             CodeBox.CurrentLineColor = Color.FromArgb(255, 41, 41, 41);
             CodeBox.ServiceLinesColor = Color.FromArgb(255, 25, 25, 25);
             CodeBox.SelectionColor = Color.Red;
-            CodeBox.Font = new Font("Liberation Mono", 20);
+
+            collection.AddFontFile(Path.GetFullPath(@"res\libmono.ttf"));
+            
+            FontFamily fontFamily = new FontFamily("Liberation Mono", collection);
+
+            CodeBox.Font = new Font(fontFamily, 20);
             CodeBox.Text = standardMsg;
             CodeBox.AutoCompleteBrackets = true;
             CodeBox.AutoIndent = true;
