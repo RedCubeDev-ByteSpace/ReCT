@@ -47,6 +47,8 @@ namespace ReCT_IDE
             ProjectView.Items.Clear();
             for (int i = 0; i < lastProjects.Count; i++)
             {
+                if (!File.Exists(lastProjects[i])) continue;
+
                 using (StreamReader sr = new StreamReader(new FileStream(lastProjects[i], FileMode.Open)))
                 {
                     var projJson = sr.ReadToEnd();

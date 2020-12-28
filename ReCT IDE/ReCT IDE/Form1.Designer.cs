@@ -59,6 +59,7 @@
             this.Typechecker = new System.Timers.Timer();
             this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ReCTAutoComplete = new AutocompleteMenuNS.AutocompleteMenu();
+            this.autocompleteImageList = new System.Windows.Forms.ImageList(this.components);
             this.Tab = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tabswitchTimer = new System.Windows.Forms.Timer(this.components);
@@ -409,69 +410,19 @@
             this.ReCTAutoComplete.AllowsTabKey = true;
             this.ReCTAutoComplete.AppearInterval = 100;
             this.ReCTAutoComplete.Colors = ((AutocompleteMenuNS.Colors)(resources.GetObject("ReCTAutoComplete.Colors")));
-            this.ReCTAutoComplete.Font = new System.Drawing.Font("Liberation Mono", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ReCTAutoComplete.ImageList = null;
-            this.ReCTAutoComplete.Items = new string[] {
-        "Thread",
-        "?",
-        "any",
-        "bool",
-        "int",
-        "string",
-        "void",
-        "float",
-        "thread",
-        "tcpclient",
-        "tcplistener",
-        "tcpsocket",
-        "anyArr",
-        "boolArr",
-        "intArr",
-        "stringArr",
-        "floatArr",
-        "threadArr",
-        "tcpclientArr",
-        "tcplistenerArr",
-        "tcpsocketArr",
-        "var",
-        "set",
-        "if",
-        "else",
-        "function",
-        "class",
-        "true",
-        "false",
-        "set",
-        "break",
-        "continue",
-        "for",
-        "return",
-        "to",
-        "while",
-        "do",
-        "die",
-        "from",
-        "Constructor",
-        "GetLength",
-        "Substring",
-        "StartThread",
-        "KillThread",
-        "GetArrayLength",
-        "OpenSocket",
-        "WriteToSocket",
-        "ReadSocket",
-        "WriteToClient",
-        "ReadClient",
-        "CloseSocket",
-        "IsSocketConnected",
-        "CloseClient",
-        "IsClientConnected",
-        "#attach",
-        "#copy"};
-            this.ReCTAutoComplete.LeftPadding = 0;
-            this.ReCTAutoComplete.MaximumSize = new System.Drawing.Size(200, 200);
-            this.ReCTAutoComplete.SearchPattern = "[\\w\\.\\:]";
+            this.ReCTAutoComplete.Font = new System.Drawing.Font("Liberation Mono", 16F);
+            this.ReCTAutoComplete.ImageList = this.autocompleteImageList;
+            this.ReCTAutoComplete.Items = new string[0];
+            this.ReCTAutoComplete.LeftPadding = 25;
+            this.ReCTAutoComplete.MaximumSize = new System.Drawing.Size(300, 200);
+            this.ReCTAutoComplete.SearchPattern = "(\\w|\\.|\\:|\\#|\\>|(?<=\\>)\\s)";
             this.ReCTAutoComplete.TargetControlWrapper = null;
+            // 
+            // autocompleteImageList
+            // 
+            this.autocompleteImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.autocompleteImageList.ImageSize = new System.Drawing.Size(24, 24);
+            this.autocompleteImageList.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // Tab
             // 
@@ -580,6 +531,7 @@
         private System.Windows.Forms.ToolStripMenuItem histroryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem duplicateLineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem removeLineToolStripMenuItem;
+        private System.Windows.Forms.ImageList autocompleteImageList;
     }
 }
 

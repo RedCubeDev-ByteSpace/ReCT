@@ -27,10 +27,15 @@ namespace ReCT_IDE
         public string Classes = "";
         public VariableSymbol[] variables;
         public FunctionSymbol[] functions;
+        public ClassSymbol[] classes;
+        public FunctionSymbol[] importFunctions;
+        public ClassSymbol[] importClasses;
         public Package[] packages;
         public Diagnostic[] errors = new Diagnostic[0];
         public static bool inUse = false;
 
+
+        /* this function is so so baaad but im too lazy to clean it up atm */
         public void Check(string code, Form1 form, string inPath)
         {
             if (inUse)
@@ -117,6 +122,7 @@ namespace ReCT_IDE
                 Functions = "(" + Functions + ")";
             }
             var cls = compilation.Classes.ToArray();
+            classes = cls;
             foreach (ClassSymbol cs in cls)
             {
                 Classes += "\\b" + cs.Name + "\\b" + "|";
@@ -145,6 +151,8 @@ namespace ReCT_IDE
                 NamespaceFunctions = "(" + NamespaceFunctions + ")";
             }
             var used = compilation.UsingPackages.ToArray();
+            var iF = new List<FunctionSymbol>();
+            var iC = new List<ClassSymbol>();
             foreach (Package p in nspc)
             {
                 foreach (string s in used)
@@ -154,11 +162,12 @@ namespace ReCT_IDE
                         foreach (FunctionSymbol f in p.scope.GetDeclaredFunctions())
                         {
                             ImportedFunctions += "\\b" + f.Name + "\\b" + "|";
-                            functions.Append(f);
+                            iF.Add(f);
                         }
                         foreach (ClassSymbol c in p.scope.GetDeclaredClasses())
                         {
                             Classes += "\\b" + c.Name + "\\b" + "|";
+                            iC.Add(c);
                         }
                     }
                 }
@@ -173,6 +182,8 @@ namespace ReCT_IDE
                 ImportedFunctions = ImportedFunctions.Substring(0, ImportedFunctions.Length - 1);
                 ImportedFunctions = "(" + ImportedFunctions + ")";
             }
+            importFunctions = iF.ToArray();
+            importClasses = iC.ToArray();
             form.startAllowed(true);
             inUse = false;
         }

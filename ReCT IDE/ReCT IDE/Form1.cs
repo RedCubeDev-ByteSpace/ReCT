@@ -30,7 +30,7 @@ namespace ReCT_IDE
         public ReCT_Compiler rectCompBuild = new ReCT_Compiler();
         public Error errorBox;
         public Process running;
-        string[] standardAC;
+        List<AutocompleteMenuNS.AutocompleteItem> standardAC = new List<AutocompleteMenuNS.AutocompleteItem>();
         BoltUpdater boltUpdater;
 
         public Project openProject;
@@ -142,7 +142,15 @@ namespace ReCT_IDE
 
             icons[6] = Image.FromFile("res/playIconLoad.png");
 
-            standardAC = ReCTAutoComplete.Items;
+            autocompleteImageList.Images.Add(Image.FromFile("res/typeIcon.png"));
+            autocompleteImageList.Images.Add(Image.FromFile("res/statementIcon.png"));
+            autocompleteImageList.Images.Add(Image.FromFile("res/functionIcon.png"));
+            autocompleteImageList.Images.Add(Image.FromFile("res/typefunctionIcon.png"));
+            autocompleteImageList.Images.Add(Image.FromFile("res/flagIcon.png"));
+            autocompleteImageList.Images.Add(Image.FromFile("res/variableIcon.png")); 
+            autocompleteImageList.Images.Add(Image.FromFile("res/classIcon.png"));
+
+            setAC();
 
             TabPrefab = (Button)CtrlClone.ControlFactory.CloneCtrl(Tab);
             Tab.Dispose();
@@ -187,7 +195,29 @@ namespace ReCT_IDE
             }
         }
 
-        public void startAllowed(bool allowed)
+        void setAC()
+        {
+            string[][] acs =
+            {
+                new[]{ "?", "any", "bool", "int", "string", "void", "float", "thread", "tcpclient", "tcplistener", "tcpsocket", "anyArr", "boolArr", "intArr", "stringArr", "floatArr", "threadArr", "tcpclientArr", "tcplistenerArr", "tcpsocketArr" },
+                new[]{ "var", "set", "if", "else", "function", "class", "true", "false", "set", "break", "continue", "for", "from", "to", "return", "while", "die" },
+                new[]{ "Thread", "Constructor" },
+                new[]{ ">> GetLength", ">> Substring", ">> StartThread", ">> KillThread", ">> Open", ">> Write", ">> WriteLine", ">> Read", ">> ReadLine", ">> IsConnected", ">> Close", ">> Push" },
+                new[]{ "#attach", "#copy", "#copyFolder", "#closeConsole" }
+            };
+
+            for (int type = 0; type < acs.Length; type++)
+            {
+                for (int i = 0; i < acs[type].Length; i++)
+                {
+                    standardAC.Add(new AutocompleteMenuNS.AutocompleteItem() { ImageIndex = type, Text = acs[type][i] });
+                }
+            }
+
+            ReCTAutoComplete.SetAutocompleteItems(standardAC);
+        }
+
+    public void startAllowed(bool allowed)
         {
             if(!allowed)
                 Play.BackgroundImage = icons[6];
@@ -268,12 +298,15 @@ namespace ReCT_IDE
         public void ReloadHightlighting(TextChangedEventArgs e)
         {
             e.ChangedRange.ClearFoldingMarkers();
+            e.ChangedRange.ClearStyle(UserFunctionStyle);
+            e.ChangedRange.ClearStyle(CommentStyle);
+            e.ChangedRange.ClearStyle(PackageStyle);
+            e.ChangedRange.ClearStyle(ClassStyle);
+            e.ChangedRange.ClearStyle(StringStyle);
 
             //set folding markers [DarkMode]
             e.ChangedRange.SetFoldingMarkers("{", "}");
 
-            //clear style of range [DarkMode]
-            e.ChangedRange.ClearStyle(CommentStyle);
             //quotes
             e.ChangedRange.SetStyle(StringStyle, "\\\"(.*?)\\\"", RegexOptions.Singleline);
 
@@ -283,11 +316,8 @@ namespace ReCT_IDE
 
             e.ChangedRange.SetStyle(AttachStyle, @"(#attach\b|#copy\b|#copyFolder\b|#closeConsole\b)", RegexOptions.Singleline);
 
-            //clear style of range [DarkMode]
-            e.ChangedRange.ClearStyle(SystemFunctionStyle);
-
             //system function highlighting
-            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bListenOnTCPPort\b|\bConnectTCPClient\b|\bGetDirsInDirectory\b|\bGetFilesInDirectory\b|\bCreateDirectory\b|\bDeleteDirectory\b|\bDeleteFile\b|\bDirectoryExists\b|\bFileExists\b|\bWriteFile\b|\bReadFile\b|\bFloor\b|\bCeil\b|\bThread\b|\bRandom\b|\bVersion\b)");
+            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bVersion\b)");
             e.ChangedRange.SetStyle(SystemFunctionStyle, rectCompCheck.ImportedFunctions);
 
             //types
@@ -301,13 +331,15 @@ namespace ReCT_IDE
 
             //numbers
             e.ChangedRange.SetStyle(DecimalStyle, @"(?<=\.)\d+", RegexOptions.Multiline);
-            e.ChangedRange.SetStyle(NumberStyle, @"(\b\d+\b)", RegexOptions.Multiline);
-            e.ChangedRange.SetStyle(NumberStyle, @"(?<=\d)\.(?=\d)", RegexOptions.Multiline);
+            e.ChangedRange.SetStyle(NumberStyle, @"(\b\d+\b)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(NumberStyle, @"(?<=\d)\.(?=\d)", RegexOptions.Singleline);
 
             //null / nil
-            e.ChangedRange.SetStyle(ObjectLiteral, @"(\b(null|nil)\b)", RegexOptions.Multiline);
+            e.ChangedRange.SetStyle(ObjectLiteral, @"(\b(null|nil)\b)", RegexOptions.Singleline);
 
             //variables
+            e.ChangedRange.ClearStyle(VariableStyle);
+
             e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+<-))");
             e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+->))");
             e.ChangedRange.SetStyle(VariableStyle, rectCompCheck.Variables);
@@ -330,10 +362,10 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(TypeFunctionStyle, @"(?<=\>>\s)(\w+)");
 
             //statements highlighting
-            e.ChangedRange.SetStyle(StatementStyle, @"(\btry\b|\bcatch\b|\bbreak\b|\bcontinue\b|\bfor\b|\breturn\b|\bto\b|\bwhile\b|\bdo\b|\bdie\b|\bfrom\b)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(StatementStyle, @"(\b(try|catch|break|continue|for|return|to|while|do|die|from)\b)", RegexOptions.Singleline);
 
             //set standard text color
-            e.ChangedRange.SetStyle(WhiteStyle, @".*", RegexOptions.Multiline);
+            e.ChangedRange.SetStyle(WhiteStyle, @".*", RegexOptions.Singleline);
         }
 
         Style ErrorMarker = new TextStyle(Brushes.White, Brushes.Red, FontStyle.Regular);
@@ -677,39 +709,54 @@ namespace ReCT_IDE
                     }
 
                     rectCompCheck.Check(code, this, head == "" ? tabs[currentTab].path : head);
-                    CodeBox.ClearStylesBuffer();
-                    ReloadHightlighting(new TextChangedEventArgs(CodeBox.Range));
+                    reloadHighlightingToolStripMenuItem_Click(null, null);
 
-                    List<string> ACItems = new List<string>();
+                    List<AutocompleteMenuNS.AutocompleteItem> ACItems = new List<AutocompleteMenuNS.AutocompleteItem>(standardAC);
 
-                    foreach (string s in standardAC)
-                    {
-                        ACItems.Add(s);
-                    }
                     foreach (ReCT.CodeAnalysis.Symbols.FunctionSymbol f in rectCompCheck.functions)
                     {
-                        ACItems.Add(f.Name);
+                        ACItems.Add(new AutocompleteMenuNS.AutocompleteItem(f.Name, 2));
                     }
                     foreach (ReCT.CodeAnalysis.Symbols.VariableSymbol v in rectCompCheck.variables)
                     {
-                        ACItems.Add(v.Name);
+                        ACItems.Add(new AutocompleteMenuNS.AutocompleteItem(v.Name, 5));
+                    }
+                    foreach (ReCT.CodeAnalysis.Symbols.ClassSymbol c in rectCompCheck.classes)
+                    {
+                        ACItems.Add(new AutocompleteMenuNS.AutocompleteItem(c.Name, 6));
                     }
 
                     foreach (ReCT.CodeAnalysis.Package.Package p in rectCompCheck.packages)
                     {
                         foreach (ReCT.CodeAnalysis.Symbols.FunctionSymbol f in p.scope.GetDeclaredFunctions())
                         {
-                            ACItems.Add(p.name + "::" + f.Name);
+                            ACItems.Add(new AutocompleteMenuNS.AutocompleteItem(p.name + "::" + f.Name, 2));
+                        }
+                        foreach (ReCT.CodeAnalysis.Symbols.ClassSymbol c in p.scope.GetDeclaredClasses())
+                        {
+                            ACItems.Add(new AutocompleteMenuNS.AutocompleteItem(p.name + "::" + c.Name, 6));
                         }
                     }
 
-                    ReCTAutoComplete.Items = ACItems.ToArray();
+                    foreach (ReCT.CodeAnalysis.Symbols.FunctionSymbol f in rectCompCheck.importFunctions)
+                    {
+                        ACItems.Add(new AutocompleteMenuNS.AutocompleteItem(f.Name, 2));
+                    }
+                    foreach (ReCT.CodeAnalysis.Symbols.ClassSymbol c in rectCompCheck.importClasses)
+                    {
+                        ACItems.Add(new AutocompleteMenuNS.AutocompleteItem(c.Name, 6));
+                    }
+
+                    ReCTAutoComplete.SetAutocompleteItems(ACItems);
+                    //ReloadHightlighting(new TextChangedEventArgs(CodeBox.VisibleRange));
+                    //CodeBox.Update();
+                    //reload();
                 }
             }
             catch(Exception ee)
             {
                 ReCT_Compiler.inUse = false;
-                //Console.WriteLine(ee);
+                //Console.WriteLine("ded");
             }
         }
 
@@ -1020,18 +1067,9 @@ namespace ReCT_IDE
 
         private void reloadHighlightingToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var code = CodeBox.Text;
-            var pos = CodeBox.Selection;
-            CodeBox.Text = "";
-            reload(code, pos);
-        }
-
-        private async Task reload(string c, Range p)
-        {
-            await Task.Delay(10);
-            CodeBox.Text = c;
-            CodeBox.Selection = p;
-            CodeBox.Focus();
+            ReloadHightlighting(new TextChangedEventArgs(CodeBox.Range));
+            CodeBox.Refresh();
+            CodeBox.Update();
         }
 
         private void forceRunToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1188,5 +1226,15 @@ namespace ReCT_IDE
         public string name;
         public string path;
         public bool saved;
+    }
+
+    class EllipseStyle : Style
+    {
+        public override void Draw(Graphics gr, Point position, Range range)
+        {
+            Size size = GetSizeOfRange(range);
+            Rectangle rect = new Rectangle(new Point(position.X, position.Y - size.Height), new Size(size.Width, 2));
+            gr.FillRectangle(new SolidBrush(Color.Red), rect);
+        }
     }
 }
