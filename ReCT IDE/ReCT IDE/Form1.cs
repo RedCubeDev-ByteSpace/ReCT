@@ -982,11 +982,12 @@ namespace ReCT_IDE
             if (tabs.Count == 1)
                 return;
 
+            tabs[currentTab].code = CodeBox.Text;
+
             if (tab != currentTab)
             {
                 if (currentTab < tabs.Count)
                 {
-                    tabs[currentTab].code = CodeBox.Text;
                     tabs[currentTab].button.BackColor = Color.FromArgb(32, 32, 32);
                 }
                 currentTab = tab;

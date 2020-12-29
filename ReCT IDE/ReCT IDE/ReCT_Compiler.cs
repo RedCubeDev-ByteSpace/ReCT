@@ -250,14 +250,12 @@ namespace ReCT_IDE
                         sr.Close();
                     }
                 }
-                File.WriteAllText(@"C:\Users\Salami\Desktop\kek.rct", code);
 
                 var lines = code.Split('\n');
                 Attachment main = new Attachment(Path.GetFileName(inPath), 0);
                 attachements.Add(main);
 
                 Attachment current = main;
-                StreamWriter sw = new StreamWriter(new FileStream(@"C:\Users\Salami\Desktop\kekOrg.rct", FileMode.Create));
 
                 for (int i = 0; i < lines.Length; i++)
                 {
@@ -275,10 +273,7 @@ namespace ReCT_IDE
                     }
 
                     current.validLineNums.Add(i, lines[i]);
-                    sw.WriteLine("/* " + current.Name + " */  " + lines[i].Replace("\r", "").Replace("\n", ""));
                 }
-
-                sw.Close();
 
                 int getLength(Attachment att)
                 {
