@@ -11,6 +11,7 @@ namespace ReCT.CodeAnalysis.Symbols
         //this all needs to go - (what a mess)
         //sys is gon
         //net is next
+        //all gon
 
         //Networking
         //public static readonly FunctionSymbol ConnectTCPClient = new FunctionSymbol("ConnectTCPClient", ImmutableArray.Create(new ParameterSymbol("address", TypeSymbol.String, 0), new ParameterSymbol("port", TypeSymbol.Int, 0)), TypeSymbol.TCPClient);

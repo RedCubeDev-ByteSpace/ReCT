@@ -137,7 +137,7 @@ namespace ReCT.CodeAnalysis.Syntax
                     _position++;
                     break;
                 case '~':
-                    _kind = SyntaxKind.TildeToken;
+                    _kind = SyntaxKind.AccessKeyword;
                     _position++;
                     break;
                 case '^':

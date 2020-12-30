@@ -202,7 +202,7 @@ namespace ReCT_IDE
             string[][] acs =
             {
                 new[]{ "?", "any", "bool", "int", "string", "void", "float", "thread", "tcpclient", "tcplistener", "tcpsocket", "anyArr", "boolArr", "intArr", "stringArr", "floatArr", "threadArr", "tcpclientArr", "tcplistenerArr", "tcpsocketArr" },
-                new[]{ "var", "set", "if", "else", "function", "class", "true", "false", "set", "break", "continue", "for", "from", "to", "return", "while", "die" },
+                new[]{ "var", "set", "if", "else", "function", "class", "true", "false", "break", "continue", "for", "from", "to", "return", "while", "die" },
                 new[]{ "Thread", "Constructor" },
                 new[]{ ">>GetLength", ">>Substring", ">>StartThread", ">>KillThread", ">>Open", ">>Write", ">>WriteLine", ">>Read", ">>ReadLine", ">>IsConnected", ">>Close", ">>Push" },
                 new[]{ "#attach", "#copy", "#copyFolder", "#closeConsole", "#noConsole" }
@@ -324,7 +324,7 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(AttachStyle, @"(#attach\b|#copy\b|#copyFolder\b|#closeConsole\b|#noConsole\b)", RegexOptions.Singleline);
 
             //system function highlighting
-            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\bVersion\b)");
+            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\b(Version|Thread)\b)");
             e.ChangedRange.SetStyle(SystemFunctionStyle, rectCompCheck.ImportedFunctions);
 
             //types
@@ -332,6 +332,7 @@ namespace ReCT_IDE
 
             //statementHighlingting
             e.ChangedRange.SetStyle(VarStyle, @"(\bacs\b|\bvar\b|\bset\b|\bif\b|\belse\b|\bfunction\b|\bclass\b|\btrue\b|\bfalse\b|\bmake\b|\barray\b|\bobject\b)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(VarStyle, @"(\~\b)", RegexOptions.Singleline);
 
             //settings
             e.ChangedRange.SetStyle(SettingStyle, @"(\bpackage\b|\bnamespace\b|\btype\b|\buse\b|\bdll\b)", RegexOptions.Singleline);
