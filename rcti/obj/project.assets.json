@@ -105,20 +105,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Salami\\.nuget\\packages\\": {}
+    "C:\\Users\\alexd\\.nuget\\packages\\": {},
+    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\GitRepos\\ReCT\\rcti\\rcti.csproj",
+      "projectUniqueName": "D:\\GitHub\\ReCT\\rcti\\rcti.csproj",
       "projectName": "rcti",
-      "projectPath": "E:\\GitRepos\\ReCT\\rcti\\rcti.csproj",
-      "packagesPath": "C:\\Users\\Salami\\.nuget\\packages\\",
-      "outputPath": "E:\\GitRepos\\ReCT\\rcti\\obj\\",
+      "projectPath": "D:\\GitHub\\ReCT\\rcti\\rcti.csproj",
+      "packagesPath": "C:\\Users\\alexd\\.nuget\\packages\\",
+      "outputPath": "D:\\GitHub\\ReCT\\rcti\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Microsoft\\Xamarin\\NuGet\\"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Salami\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\alexd\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
@@ -131,8 +136,8 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj": {
-              "projectPath": "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj"
+            "D:\\GitHub\\ReCT\\ReCT\\ReCT.csproj": {
+              "projectPath": "D:\\GitHub\\ReCT\\ReCT\\ReCT.csproj"
             }
           }
         }
@@ -161,7 +166,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

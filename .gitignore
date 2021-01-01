@@ -1,0 +1,7 @@
+rctc/obj/
+rctc/bin/
+rcti/obj/
+rcti/bin/
+*.exe
+*.cache
+*.cache
