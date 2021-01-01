@@ -256,20 +256,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Salami\\.nuget\\packages\\": {}
+    "C:\\Users\\alexd\\.nuget\\packages\\": {},
+    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj",
+      "projectUniqueName": "D:\\GitHub\\ReCT\\ReCT\\ReCT.csproj",
       "projectName": "ReCT",
-      "projectPath": "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj",
-      "packagesPath": "C:\\Users\\Salami\\.nuget\\packages\\",
-      "outputPath": "E:\\GitRepos\\ReCT\\ReCT\\obj\\",
+      "projectPath": "D:\\GitHub\\ReCT\\ReCT\\ReCT.csproj",
+      "packagesPath": "C:\\Users\\alexd\\.nuget\\packages\\",
+      "outputPath": "D:\\GitHub\\ReCT\\ReCT\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Microsoft\\Xamarin\\NuGet\\"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Salami\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\alexd\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netstandard2.0"
@@ -319,7 +324,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

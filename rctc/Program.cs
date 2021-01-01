@@ -6,12 +6,13 @@ using ReCT.CodeAnalysis;
 using ReCT.CodeAnalysis.Syntax;
 using ReCT.IO;
 using Mono.Options;
+using System.Collections.Immutable;
 
 namespace ReCT
 {
     internal static class Program
     {
-        private static int Main(string[] args)
+        private static void Main(string[] args)
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("-------------------------------");
@@ -19,13 +20,15 @@ namespace ReCT
             Console.WriteLine("-------------------------------");
             Console.ForegroundColor = ConsoleColor.White;
 
-            var outputPath = (string)null;
-            var moduleName = (string)null;
-            var referencePaths = new List<string>();
-            var sourcePaths = new List<string>();
-            var helpRequested = false;
+            string outputPath = default;
+            string moduleName = default;
 
-            var options = new OptionSet
+            bool helpRequested = false;
+
+            List<string> referencePaths = new List<string>();
+            List<string> sourcePaths = new List<string>();
+
+            OptionSet options = new OptionSet
             {
                 "usage: msc <source-paths> [options]",
                 { "r=", "The {path} of an assembly to reference", v => referencePaths.Add(v) },
@@ -38,17 +41,13 @@ namespace ReCT
             options.Parse(args);
 
             if (helpRequested)
-            {
                 options.WriteOptionDescriptions(Console.Out);
-                return 0;
-            }
 
             if (sourcePaths.Count == 0)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Error.WriteLine("Error: need at least one source file");
                 Console.ForegroundColor = ConsoleColor.White;
-                return 1;
             }
 
             if (outputPath == null)
@@ -57,49 +56,36 @@ namespace ReCT
             if (moduleName == null)
                 moduleName = Path.GetFileNameWithoutExtension(outputPath);
 
-            var syntaxTrees = new List<SyntaxTree>();
-            var hasErrors = false;
+            SyntaxTree[] syntaxTrees = new SyntaxTree[sourcePaths.Count];
 
-            foreach (var path in sourcePaths)
+            for (int pathIndex = 0; pathIndex < sourcePaths.Count; pathIndex++)
             {
-                if (!File.Exists(path))
+                if (!File.Exists(sourcePaths[pathIndex]))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Error.WriteLine($"error: file '{path}' doesn't exist");
+                    Console.Error.WriteLine($"error: file '{sourcePaths[pathIndex]}' doesn't exist");
                     Console.ForegroundColor = ConsoleColor.White;
-                    hasErrors = true;
                     continue;
                 }
 
-                var syntaxTree = SyntaxTree.Load(path);
-                syntaxTrees.Add(syntaxTree);
+                SyntaxTree syntaxTree = SyntaxTree.Load(sourcePaths[pathIndex]);
+                syntaxTrees[pathIndex] = syntaxTree;
             }
 
-            foreach (var path in referencePaths)
-            {
-                if (!File.Exists(path))
+            for (int pathIndex = 0; pathIndex < referencePaths.Count; pathIndex++)
+                if (!File.Exists(referencePaths[pathIndex]))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Error.WriteLine($"error: file '{path}' doesn't exist");
+                    Console.Error.WriteLine($"error: file '{referencePaths[pathIndex]}' doesn't exist");
                     Console.ForegroundColor = ConsoleColor.White;
-                    hasErrors = true;
                     continue;
                 }
-            }
 
-            if (hasErrors)
-                return 1;
+            Compilation compilation = Compilation.Create(syntaxTrees.ToArray());
+            ImmutableArray<Diagnostic> diagnostics = compilation.Emit(moduleName, referencePaths.ToArray(), outputPath);
 
-            var compilation = Compilation.Create(syntaxTrees.ToArray());
-            var diagnostics = compilation.Emit(moduleName, referencePaths.ToArray(), outputPath);
-
-            if (diagnostics.Any())
-            {
+            if (diagnostics.Length != 0)
                 Console.Error.WriteDiagnostics(diagnostics);
-                return 1;
-            }
-
-            return 0;
         }
     }
 }
