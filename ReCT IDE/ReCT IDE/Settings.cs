@@ -38,16 +38,9 @@ namespace ReCT_IDE
             f1.updateFromSettings();
         }
 
-        private void maximize_SelectedIndexChanged(object sender, EventArgs e)
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.Maximize = maximize.SelectedIndex == 1;
-            Properties.Settings.Default.Save();
-            f1.updateFromSettings();
-        }
-
-        private void maximizeRect_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.MaximizeRect = maximizeRect.SelectedIndex == 1;
+            Properties.Settings.Default.MaximizeRect = checkBox2.Checked;
             Properties.Settings.Default.Save();
             f1.updateFromSettings();
         }

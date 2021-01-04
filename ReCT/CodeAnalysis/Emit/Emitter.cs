@@ -109,7 +109,7 @@ namespace ReCT.CodeAnalysis.Emit
         private static List<AssemblyDefinition> s_assemblies;
         private static AssemblyDefinition s_assemblyDefinition;
         
-        private MethodReference _IOReadToEnd;
+        private MethodReference _IORead;
         private MethodReference _IOWrite;
 
         private Emitter(string moduleName, string[] references)
@@ -340,7 +340,7 @@ namespace ReCT.CodeAnalysis.Emit
 
             _IOStreamReaderCtor = ResolveMethod("System.IO.StreamReader", ".ctor", new[] { "System.IO.Stream" });
             _IOReadLine = ResolveMethod("System.IO.TextReader", "ReadLine", Array.Empty<string>());
-            _IOReadToEnd = ResolveMethod("System.IO.TextReader", "ReadToEnd", Array.Empty<string>());
+            _IORead = ResolveMethod("System.IO.TextReader", "Read", Array.Empty<string>());
             _IOStreamWriterCtor = ResolveMethod("System.IO.StreamWriter", ".ctor", new[] { "System.IO.Stream" });
             _IOWriteLine = ResolveMethod("System.IO.TextWriter", "WriteLine", new[] { "System.String" });
             _IOWrite = ResolveMethod("System.IO.TextWriter", "Write", new[] { "System.String" });
@@ -545,6 +545,27 @@ namespace ReCT.CodeAnalysis.Emit
                 _classMethods.Add(_class.Key, new Dictionary<FunctionSymbol, MethodDefinition>());
 
                 classDefinitions.Add(_class, classDefinition);
+            }
+
+            //Register class fields  //have todo it int this kinda ugly order because if not it dies ._.
+            foreach (var _classDef in classDefinitions)
+            {
+                var _class = _classDef.Key;
+                var classDefinition = _classDef.Value;
+
+                inType = classDefinition;
+                inClass = _class.Key;
+
+                var variables = inClass.Scope.GetDeclaredVariables();
+
+                foreach (var field in variables)
+                {
+                    if (field.IsGlobal)
+                    {
+                        var actualField = EmitGlobalVarFromSymbol(field);
+                        _classGlobals[inType].Add(field, actualField);
+                    }
+                }
             }
 
             //register function names
@@ -849,8 +870,14 @@ namespace ReCT.CodeAnalysis.Emit
 
             if (node.Variable.IsGlobal)
             {
-                field = EmitGlobalVar(ilProcessor, node);
-                (inType == null ? _globals : _classGlobals[inType]).Add(node.Variable, field);
+                if (inType == null)
+                {
+                    field = EmitGlobalVar(node);
+                    _globals.Add(node.Variable, field);
+                }
+                else
+                    field = _classGlobals[inType][node.Variable];
+                //(inType == null ? _globals : _classGlobals[inType]).Add(node.Variable, field);
             }
             else
             {
@@ -885,13 +912,23 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Stloc, variableDefinition);
         }
 
-        private FieldDefinition EmitGlobalVar(ILProcessor ilProcessor, BoundVariableDeclaration node)
+        private FieldDefinition EmitGlobalVar(BoundVariableDeclaration node)
         {
             var _globalField = new FieldDefinition(
                 "$" + node.Variable.Name, inType == null ? FieldAttributes.Static : (inClass.IsStatic ? FieldAttributes.Static : 0) | FieldAttributes.Public,
                 _knownTypes[_knownTypes.Keys.FirstOrDefault(x => x.Name == node.Variable.Type.Name)]
             );
             (inType == null ? _typeDefinition : inType).Fields.Add(_globalField);
+            return _globalField;
+        }
+
+        private FieldDefinition EmitGlobalVarFromSymbol(VariableSymbol varSym)
+        {
+            var _globalField = new FieldDefinition(
+                "$" + varSym.Name, (inClass.IsStatic ? FieldAttributes.Static : 0) | FieldAttributes.Public,
+                _knownTypes[_knownTypes.Keys.FirstOrDefault(x => x.Name == varSym.Type.Name)]
+            );
+            inType.Fields.Add(_globalField);
             return _globalField;
         }
 
@@ -1012,7 +1049,7 @@ namespace ReCT.CodeAnalysis.Emit
         private void EmitThreadCreate(ILProcessor ilProcessor, BoundThreadCreateExpression node)
         {
             ilProcessor.Emit(OpCodes.Ldnull);
-            ilProcessor.Emit(OpCodes.Ldftn, _methods[node.Function]);
+            ilProcessor.Emit(OpCodes.Ldftn, inClass == null ? _methods[node.Function] : _classMethods[inClass][node.Function]);
             ilProcessor.Emit(OpCodes.Newobj, _threadStartObjectReference);
             ilProcessor.Emit(OpCodes.Newobj, _threadObjectReference);
         }
@@ -1434,7 +1471,7 @@ namespace ReCT.CodeAnalysis.Emit
             {
                 ilProcessor.Emit(OpCodes.Callvirt, _TCPClientGetStream);
                 ilProcessor.Emit(OpCodes.Newobj, _IOStreamReaderCtor);
-                ilProcessor.Emit(OpCodes.Callvirt, node.TypeCall.Function == BuiltinFunctions.Read ? _IOReadToEnd : _IOReadLine);
+                ilProcessor.Emit(OpCodes.Callvirt, node.TypeCall.Function == BuiltinFunctions.Read ? _IORead : _IOReadLine);
                 return;
             }
             else if ((node.TypeCall.Function == BuiltinFunctions.Write || node.TypeCall.Function == BuiltinFunctions.WriteLine) && node.Variable.Type == TypeSymbol.TCPSocket)
@@ -1457,7 +1494,7 @@ namespace ReCT.CodeAnalysis.Emit
             {
                 ilProcessor.Emit(OpCodes.Newobj, _TCPNetworkStreamCtor);
                 ilProcessor.Emit(OpCodes.Newobj, _IOStreamReaderCtor);
-                ilProcessor.Emit(OpCodes.Callvirt, node.TypeCall.Function == BuiltinFunctions.Read ? _IOReadToEnd : _IOReadLine);
+                ilProcessor.Emit(OpCodes.Callvirt, node.TypeCall.Function == BuiltinFunctions.Read ? _IORead : _IOReadLine);
                 return;
             }
             else if (node.TypeCall.Function == BuiltinFunctions.Push && (node.Variable.Type.isClassArray || node.Variable.Type.isArray))

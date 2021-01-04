@@ -101,6 +101,8 @@ namespace ReCT_IDE
 
         private void button2_Click(object sender, EventArgs e)
         {
+            //if (mainName.)
+
             //create project holder
             if (!Directory.Exists(location.Text))
                 Directory.CreateDirectory(location.Text);

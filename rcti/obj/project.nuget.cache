@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "EJxT7fqDD/tYEh+zWqWOVFK6kegM+2ulbqBTr1ugPInGknorTDif/E9y5CnkiUuxqPS/VrA6gCnVdSP3U8KlOg==",
+  "dgSpecHash": "1hnqXBZomespVa55R5vWiyYuk2aGdb3s162bBGPDd5t53Y7/8OBOsCKWm+/rmFFQ5uzzqKNzJmnOKyO/ltkJtg==",
   "success": true,
-  "projectFilePath": "D:\\GitHub\\ReCT\\rcti\\rcti.csproj",
+  "projectFilePath": "E:\\GitRepos\\ReCT\\rcti\\rcti.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\alexd\\.nuget\\packages\\mono.cecil\\0.11.2\\mono.cecil.0.11.2.nupkg.sha512",
-    "C:\\Users\\alexd\\.nuget\\packages\\system.collections.immutable\\1.5.0\\system.collections.immutable.1.5.0.nupkg.sha512"
+    "C:\\Users\\Salami\\.nuget\\packages\\mono.cecil\\0.11.2\\mono.cecil.0.11.2.nupkg.sha512",
+    "C:\\Users\\Salami\\.nuget\\packages\\system.collections.immutable\\1.5.0\\system.collections.immutable.1.5.0.nupkg.sha512"
   ],
   "logs": []
 }

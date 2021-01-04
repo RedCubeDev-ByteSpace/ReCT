@@ -101,7 +101,6 @@
             this.CodeBox.CharWidth = 8;
             this.CodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.CodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.CodeBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.CodeBox.ForeColor = System.Drawing.Color.White;
             this.CodeBox.Hotkeys = resources.GetString("CodeBox.Hotkeys");
             this.CodeBox.IsReplaceMode = false;
@@ -200,7 +199,7 @@
             this.histroryToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.histroryToolStripMenuItem.Name = "histroryToolStripMenuItem";
             this.histroryToolStripMenuItem.Size = new System.Drawing.Size(290, 30);
-            this.histroryToolStripMenuItem.Text = "Histrory";
+            this.histroryToolStripMenuItem.Text = "History";
             this.histroryToolStripMenuItem.Click += new System.EventHandler(this.histroryToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem

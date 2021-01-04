@@ -165,8 +165,7 @@ namespace ReCT_IDE
             settings.Hide();
 
             settings.autosave.SelectedIndex = Properties.Settings.Default.Autosave;
-            settings.maximize.SelectedIndex = Properties.Settings.Default.Maximize ? 1 : 0;
-            settings.maximizeRect.SelectedIndex = Properties.Settings.Default.MaximizeRect ? 1 : 0;         
+            settings.checkBox2.Checked = Properties.Settings.Default.MaximizeRect;         
 
             dc = new Discord();
             dc.Initialize();
