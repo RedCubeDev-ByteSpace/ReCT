@@ -5,66 +5,7 @@
     <projectFile>rcti/rcti.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="21ebf009-0a69-4501-87ee-e42d8d7c9128" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ReCT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ReCT/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/.vs/ReCT IDE/v16/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/.vs/ReCT IDE/v16/.suo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/ReCT_Compiler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/ReCT_Compiler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/RSDL2.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Rendering.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Rendering.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Rendering.runtimeconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/WorkSans-Italic.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/WorkSans-Regular.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/WorkSans-SemiBold.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/WorkSans-SemiBoldItalic.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/animaster.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/arrow.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/bg.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/bgpx.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/danger.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/inputpx.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/linepx.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/namepx.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/panelpx.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/redcube.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/shadow.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/testimg.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/typing.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/Resources/whitepx.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/SDL2-CS.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/SDL2.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/SDL2_image.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/SDL2_mixer.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/SDL2_ttf.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/libfreetype-6.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/libjpeg-9.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/libmpg123-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/libpng16-16.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/libtiff-5.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/libwebp-7.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/syslib.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Builder/zlib1.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Packages/RSDL2.dll" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Packages/RSDL2.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/Packages/RSDL_UI.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/ReCT IDE.exe" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/ReCT IDE.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/ReCT IDE.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/ReCT IDE.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/ReCT.dll" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/ReCT.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/ReCT.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/bin/Debug/ReCT.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/obj/Debug/ReCT IDE.csprojAssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/obj/Debug/ReCT IDE.csprojAssemblyReference.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/obj/Debug/ReCT IDE.exe" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/obj/Debug/ReCT IDE.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/obj/Debug/ReCT IDE.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT IDE/ReCT IDE/obj/Debug/ReCT IDE.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT/CodeAnalysis/Symbols/BuiltinFunctions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Symbols/BuiltinFunctions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT/bin/Debug/netstandard2.0/ReCT.dll" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT/bin/Debug/netstandard2.0/ReCT.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT/bin/Debug/netstandard2.0/ReCT.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT/bin/Debug/netstandard2.0/ReCT.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT/obj/Debug/netstandard2.0/ReCT.dll" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT/obj/Debug/netstandard2.0/ReCT.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReCT/obj/Debug/netstandard2.0/ReCT.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ReCT/obj/Debug/netstandard2.0/ReCT.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rctc/bin/Debug/netcoreapp3.1/ReCT.dll" beforeDir="false" afterPath="$PROJECT_DIR$/rctc/bin/Debug/netcoreapp3.1/ReCT.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rctc/bin/Debug/netcoreapp3.1/ReCT.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/rctc/bin/Debug/netcoreapp3.1/ReCT.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rcti/bin/Debug/netcoreapp3.1/ReCT.dll" beforeDir="false" afterPath="$PROJECT_DIR$/rcti/bin/Debug/netcoreapp3.1/ReCT.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rcti/bin/Debug/netcoreapp3.1/ReCT.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/rcti/bin/Debug/netcoreapp3.1/ReCT.pdb" afterDir="false" />
-    </list>
+    <list default="true" id="21ebf009-0a69-4501-87ee-e42d8d7c9128" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -93,6 +34,7 @@
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Symbols/BuiltinFunctions.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" />
+      <option value="$PROJECT_DIR$/rctc/Program.cs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1lySmyqd4iCrCd9AA17VrRI6Hq7" />
@@ -104,7 +46,9 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/ReCT IDE/ReCT IDE.sln" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="preferences.editor" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RunManager" selected=".NET Project.rcti">
@@ -157,6 +101,10 @@
       <workItem from="1608678356751" duration="657000" />
       <workItem from="1608685660894" duration="2863000" />
       <workItem from="1609028661921" duration="12926000" />
+      <workItem from="1612403683372" duration="53000" />
+      <workItem from="1612431851137" duration="4135000" />
+      <workItem from="1612455332647" duration="2162000" />
+      <workItem from="1612466138918" duration="1907000" />
     </task>
     <servers />
   </component>

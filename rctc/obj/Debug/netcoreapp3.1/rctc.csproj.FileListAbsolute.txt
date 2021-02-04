@@ -1,105 +1,126 @@
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\bin\Debug\netcoreapp3.1\rctc.exe
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\bin\Debug\netcoreapp3.1\rctc.deps.json
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\bin\Debug\netcoreapp3.1\rctc.runtimeconfig.json
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\bin\Debug\netcoreapp3.1\rctc.runtimeconfig.dev.json
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\bin\Debug\netcoreapp3.1\rctc.dll
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\bin\Debug\netcoreapp3.1\rctc.pdb
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Mdb.dll
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Pdb.dll
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Rocks.dll
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.dll
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\bin\Debug\netcoreapp3.1\Mono.Options.dll
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\bin\Debug\netcoreapp3.1\ReCT.dll
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\bin\Debug\netcoreapp3.1\ReCT.pdb
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\obj\Debug\netcoreapp3.1\rctc.csprojAssemblyReference.cache
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\obj\Debug\netcoreapp3.1\rctc.AssemblyInfoInputs.cache
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\obj\Debug\netcoreapp3.1\rctc.AssemblyInfo.cs
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\obj\Debug\netcoreapp3.1\rctc.csproj.CoreCompileInputs.cache
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\obj\Debug\netcoreapp3.1\rctc.csproj.CopyComplete
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\obj\Debug\netcoreapp3.1\rctc.dll
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\obj\Debug\netcoreapp3.1\rctc.pdb
-C:\Users\User\Desktop\ReCT [much top secret]\src\rctc\obj\Debug\netcoreapp3.1\rctc.genruntimeconfig.cache
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\bin\Debug\netcoreapp3.1\rctc.exe
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\bin\Debug\netcoreapp3.1\rctc.deps.json
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\bin\Debug\netcoreapp3.1\rctc.runtimeconfig.json
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\bin\Debug\netcoreapp3.1\rctc.runtimeconfig.dev.json
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\bin\Debug\netcoreapp3.1\rctc.dll
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\bin\Debug\netcoreapp3.1\rctc.pdb
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Mdb.dll
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Pdb.dll
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Rocks.dll
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.dll
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\bin\Debug\netcoreapp3.1\Mono.Options.dll
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\bin\Debug\netcoreapp3.1\ReCT.dll
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\bin\Debug\netcoreapp3.1\ReCT.pdb
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\obj\Debug\netcoreapp3.1\rctc.csprojAssemblyReference.cache
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\obj\Debug\netcoreapp3.1\rctc.AssemblyInfoInputs.cache
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\obj\Debug\netcoreapp3.1\rctc.AssemblyInfo.cs
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\obj\Debug\netcoreapp3.1\rctc.csproj.CoreCompileInputs.cache
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\obj\Debug\netcoreapp3.1\rctc.csproj.CopyComplete
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\obj\Debug\netcoreapp3.1\rctc.dll
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\obj\Debug\netcoreapp3.1\rctc.pdb
-C:\Users\User\Desktop\ReCT [much top secret]\rctc\obj\Debug\netcoreapp3.1\rctc.genruntimeconfig.cache
-C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.exe
-C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.deps.json
-C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.runtimeconfig.json
-C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.runtimeconfig.dev.json
-C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.dll
-C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.pdb
-C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Mdb.dll
-C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Pdb.dll
-C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Rocks.dll
-C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.dll
-C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Options.dll
-C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\ReCT.dll
-C:\Users\User\source\repos\ReCT\ReCT\rctc\bin\Debug\netcoreapp3.1\ReCT.pdb
-C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.csprojAssemblyReference.cache
-C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.AssemblyInfoInputs.cache
-C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.AssemblyInfo.cs
-C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.csproj.CoreCompileInputs.cache
-C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.csproj.CopyComplete
-C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.dll
-C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.pdb
-C:\Users\User\source\repos\ReCT\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.genruntimeconfig.cache
-E:\GitRepos\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.exe
-E:\GitRepos\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.deps.json
-E:\GitRepos\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.runtimeconfig.json
-E:\GitRepos\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.runtimeconfig.dev.json
-E:\GitRepos\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.dll
-E:\GitRepos\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.pdb
-E:\GitRepos\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Mdb.dll
-E:\GitRepos\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Pdb.dll
-E:\GitRepos\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Rocks.dll
-E:\GitRepos\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.dll
-E:\GitRepos\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Options.dll
-E:\GitRepos\ReCT\rctc\bin\Debug\netcoreapp3.1\ReCT.dll
-E:\GitRepos\ReCT\rctc\bin\Debug\netcoreapp3.1\ReCT.pdb
-E:\GitRepos\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.csprojAssemblyReference.cache
-E:\GitRepos\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.AssemblyInfoInputs.cache
-E:\GitRepos\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.AssemblyInfo.cs
-E:\GitRepos\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.csproj.CoreCompileInputs.cache
-E:\GitRepos\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.csproj.CopyComplete
-E:\GitRepos\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.dll
-E:\GitRepos\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.pdb
-E:\GitRepos\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.genruntimeconfig.cache
-D:\GitHub\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.exe
-D:\GitHub\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.deps.json
-D:\GitHub\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.runtimeconfig.json
-D:\GitHub\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.runtimeconfig.dev.json
-D:\GitHub\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.dll
-D:\GitHub\ReCT\rctc\bin\Debug\netcoreapp3.1\rctc.pdb
-D:\GitHub\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Mdb.dll
-D:\GitHub\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Pdb.dll
-D:\GitHub\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.Rocks.dll
-D:\GitHub\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Cecil.dll
-D:\GitHub\ReCT\rctc\bin\Debug\netcoreapp3.1\Mono.Options.dll
-D:\GitHub\ReCT\rctc\bin\Debug\netcoreapp3.1\ReCT.dll
-D:\GitHub\ReCT\rctc\bin\Debug\netcoreapp3.1\ReCT.pdb
-D:\GitHub\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.csprojAssemblyReference.cache
-D:\GitHub\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.AssemblyInfoInputs.cache
-D:\GitHub\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.AssemblyInfo.cs
-D:\GitHub\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.csproj.CoreCompileInputs.cache
-D:\GitHub\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.csproj.CopyComplete
-D:\GitHub\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.dll
-D:\GitHub\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.pdb
-D:\GitHub\ReCT\rctc\obj\Debug\netcoreapp3.1\rctc.genruntimeconfig.cache
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/bin/Debug/netcoreapp3.1/rctc.exe
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/bin/Debug/netcoreapp3.1/rctc.deps.json
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/bin/Debug/netcoreapp3.1/rctc.runtimeconfig.json
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/bin/Debug/netcoreapp3.1/rctc.runtimeconfig.dev.json
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/bin/Debug/netcoreapp3.1/rctc.dll
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/bin/Debug/netcoreapp3.1/rctc.pdb
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Mdb.dll
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Pdb.dll
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Rocks.dll
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.dll
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/bin/Debug/netcoreapp3.1/Mono.Options.dll
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/bin/Debug/netcoreapp3.1/ReCT.dll
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/bin/Debug/netcoreapp3.1/ReCT.pdb
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/obj/Debug/netcoreapp3.1/rctc.csprojAssemblyReference.cache
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/obj/Debug/netcoreapp3.1/rctc.AssemblyInfoInputs.cache
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/obj/Debug/netcoreapp3.1/rctc.AssemblyInfo.cs
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/obj/Debug/netcoreapp3.1/rctc.csproj.CoreCompileInputs.cache
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/obj/Debug/netcoreapp3.1/rctc.csproj.CopyComplete
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/obj/Debug/netcoreapp3.1/rctc.dll
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/obj/Debug/netcoreapp3.1/rctc.pdb
+C:/Users/User/Desktop/ReCT [much top secret]/src/rctc/obj/Debug/netcoreapp3.1/rctc.genruntimeconfig.cache
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/bin/Debug/netcoreapp3.1/rctc.exe
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/bin/Debug/netcoreapp3.1/rctc.deps.json
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/bin/Debug/netcoreapp3.1/rctc.runtimeconfig.json
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/bin/Debug/netcoreapp3.1/rctc.runtimeconfig.dev.json
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/bin/Debug/netcoreapp3.1/rctc.dll
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/bin/Debug/netcoreapp3.1/rctc.pdb
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Mdb.dll
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Pdb.dll
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Rocks.dll
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.dll
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/bin/Debug/netcoreapp3.1/Mono.Options.dll
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/bin/Debug/netcoreapp3.1/ReCT.dll
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/bin/Debug/netcoreapp3.1/ReCT.pdb
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/obj/Debug/netcoreapp3.1/rctc.csprojAssemblyReference.cache
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/obj/Debug/netcoreapp3.1/rctc.AssemblyInfoInputs.cache
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/obj/Debug/netcoreapp3.1/rctc.AssemblyInfo.cs
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/obj/Debug/netcoreapp3.1/rctc.csproj.CoreCompileInputs.cache
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/obj/Debug/netcoreapp3.1/rctc.csproj.CopyComplete
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/obj/Debug/netcoreapp3.1/rctc.dll
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/obj/Debug/netcoreapp3.1/rctc.pdb
+C:/Users/User/Desktop/ReCT [much top secret]/rctc/obj/Debug/netcoreapp3.1/rctc.genruntimeconfig.cache
+C:/Users/User/source/repos/ReCT/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.exe
+C:/Users/User/source/repos/ReCT/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.deps.json
+C:/Users/User/source/repos/ReCT/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.runtimeconfig.json
+C:/Users/User/source/repos/ReCT/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.runtimeconfig.dev.json
+C:/Users/User/source/repos/ReCT/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.dll
+C:/Users/User/source/repos/ReCT/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.pdb
+C:/Users/User/source/repos/ReCT/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Mdb.dll
+C:/Users/User/source/repos/ReCT/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Pdb.dll
+C:/Users/User/source/repos/ReCT/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Rocks.dll
+C:/Users/User/source/repos/ReCT/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.dll
+C:/Users/User/source/repos/ReCT/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Options.dll
+C:/Users/User/source/repos/ReCT/ReCT/rctc/bin/Debug/netcoreapp3.1/ReCT.dll
+C:/Users/User/source/repos/ReCT/ReCT/rctc/bin/Debug/netcoreapp3.1/ReCT.pdb
+C:/Users/User/source/repos/ReCT/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.csprojAssemblyReference.cache
+C:/Users/User/source/repos/ReCT/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.AssemblyInfoInputs.cache
+C:/Users/User/source/repos/ReCT/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.AssemblyInfo.cs
+C:/Users/User/source/repos/ReCT/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.csproj.CoreCompileInputs.cache
+C:/Users/User/source/repos/ReCT/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.csproj.CopyComplete
+C:/Users/User/source/repos/ReCT/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.dll
+C:/Users/User/source/repos/ReCT/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.pdb
+C:/Users/User/source/repos/ReCT/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.genruntimeconfig.cache
+E:/GitRepos/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.exe
+E:/GitRepos/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.deps.json
+E:/GitRepos/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.runtimeconfig.json
+E:/GitRepos/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.runtimeconfig.dev.json
+E:/GitRepos/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.dll
+E:/GitRepos/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.pdb
+E:/GitRepos/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Mdb.dll
+E:/GitRepos/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Pdb.dll
+E:/GitRepos/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Rocks.dll
+E:/GitRepos/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.dll
+E:/GitRepos/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Options.dll
+E:/GitRepos/ReCT/rctc/bin/Debug/netcoreapp3.1/ReCT.dll
+E:/GitRepos/ReCT/rctc/bin/Debug/netcoreapp3.1/ReCT.pdb
+E:/GitRepos/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.csprojAssemblyReference.cache
+E:/GitRepos/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.AssemblyInfoInputs.cache
+E:/GitRepos/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.AssemblyInfo.cs
+E:/GitRepos/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.csproj.CoreCompileInputs.cache
+E:/GitRepos/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.csproj.CopyComplete
+E:/GitRepos/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.dll
+E:/GitRepos/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.pdb
+E:/GitRepos/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.genruntimeconfig.cache
+D:/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.exe
+D:/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.deps.json
+D:/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.runtimeconfig.json
+D:/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.runtimeconfig.dev.json
+D:/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.dll
+D:/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.pdb
+D:/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Mdb.dll
+D:/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Pdb.dll
+D:/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Rocks.dll
+D:/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.dll
+D:/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Options.dll
+D:/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/ReCT.dll
+D:/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/ReCT.pdb
+D:/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.csprojAssemblyReference.cache
+D:/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.AssemblyInfoInputs.cache
+D:/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.AssemblyInfo.cs
+D:/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.csproj.CoreCompileInputs.cache
+D:/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.csproj.CopyComplete
+D:/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.dll
+D:/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.pdb
+D:/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.genruntimeconfig.cache
+/home/redcube/Documents/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc
+/home/redcube/Documents/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.deps.json
+/home/redcube/Documents/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.runtimeconfig.json
+/home/redcube/Documents/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.runtimeconfig.dev.json
+/home/redcube/Documents/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.dll
+/home/redcube/Documents/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/rctc.pdb
+/home/redcube/Documents/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Mdb.dll
+/home/redcube/Documents/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Pdb.dll
+/home/redcube/Documents/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.Rocks.dll
+/home/redcube/Documents/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Cecil.dll
+/home/redcube/Documents/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/Mono.Options.dll
+/home/redcube/Documents/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/ReCT.dll
+/home/redcube/Documents/GitHub/ReCT/rctc/bin/Debug/netcoreapp3.1/ReCT.pdb
+/home/redcube/Documents/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.csprojAssemblyReference.cache
+/home/redcube/Documents/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.AssemblyInfoInputs.cache
+/home/redcube/Documents/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.AssemblyInfo.cs
+/home/redcube/Documents/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.csproj.CoreCompileInputs.cache
+/home/redcube/Documents/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.csproj.CopyComplete
+/home/redcube/Documents/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.dll
+/home/redcube/Documents/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.pdb
+/home/redcube/Documents/GitHub/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.genruntimeconfig.cache

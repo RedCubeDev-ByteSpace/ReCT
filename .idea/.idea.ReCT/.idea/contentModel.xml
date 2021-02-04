@@ -1,44 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\Salami\AppData\Local\JetBrains\Rider2020.3\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\Salami\AppData\Local\JetBrains\Rider2020.3\resharper-host\Local\Transient\Rider\v203\SolutionCaches\_ReCT.-1346108086.00" t="ExcludeRecursive" />
-    <e p="E:\GitRepos\ReCT" t="IncludeFlat">
-      <e p="packages" t="ExcludeRecursive" />
-      <e p="rctc" t="IncludeRecursive">
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.1" t="Include">
-              <e p="rctc.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
-        <e p="Program.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="launchSettings.json" t="Include" />
-          <e p="PublishProfiles" t="Include">
-            <e p="FolderProfile.pubxml" t="Include" />
-          </e>
-        </e>
-        <e p="rctc.csproj" t="IncludeRecursive" />
-      </e>
-      <e p="rcti" t="IncludeRecursive">
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.1" t="Include">
-              <e p="rcti.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
-        <e p="Program.cs" t="Include" />
-        <e p="rcti.csproj" t="IncludeRecursive" />
-        <e p="ReCTRepl.cs" t="Include" />
-        <e p="Repl.cs" t="Include" />
-      </e>
+    <e p="$USER_HOME$/.cache/JetBrains/Rider2020.3/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.cache/JetBrains/Rider2020.3/resharper-host/local/Transient/Rider/v203/SolutionCaches/_ReCT.-1292367394.00" t="ExcludeRecursive" />
+    <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="ReCT" t="IncludeRecursive">
-        <e p="bin" t="ExcludeRecursive" />
         <e p="CodeAnalysis" t="Include">
           <e p="Binding" t="Include">
             <e p="Binder.cs" t="Include" />
@@ -166,10 +132,13 @@
             <e p="TextSpan.cs" t="Include" />
           </e>
         </e>
-        <e p="info.cs" t="Include" />
         <e p="IO" t="Include">
           <e p="TextWriterExtensions.cs" t="Include" />
         </e>
+        <e p="ReCT.csproj" t="IncludeRecursive" />
+        <e p="Statics.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="info.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netstandard2.0" t="Include">
@@ -177,10 +146,41 @@
             </e>
           </e>
         </e>
-        <e p="ReCT.csproj" t="IncludeRecursive" />
-        <e p="Statics.cs" t="Include" />
       </e>
       <e p="ReCT.sln" t="IncludeFlat" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="rctc" t="IncludeRecursive">
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="PublishProfiles" t="Include">
+            <e p="FolderProfile.pubxml" t="Include" />
+          </e>
+          <e p="launchSettings.json" t="Include" />
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.1" t="Include">
+              <e p="rctc.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="rctc.csproj" t="IncludeRecursive" />
+      </e>
+      <e p="rcti" t="IncludeRecursive">
+        <e p="Program.cs" t="Include" />
+        <e p="ReCTRepl.cs" t="Include" />
+        <e p="Repl.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.1" t="Include">
+              <e p="rcti.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="rcti.csproj" t="IncludeRecursive" />
+      </e>
     </e>
   </component>
 </project>
