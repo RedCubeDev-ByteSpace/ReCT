@@ -67,7 +67,8 @@ namespace ReCT
 
             Console.WriteLine("Output: " + outputPath);
             
-            
+            Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
+
             SyntaxTree[] syntaxTrees = new SyntaxTree[sourcePaths.Count];
 
             for (int pathIndex = 0; pathIndex < sourcePaths.Count; pathIndex++)
