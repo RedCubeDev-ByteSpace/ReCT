@@ -66,7 +66,14 @@ namespace ReCT
                 moduleName = Path.GetFileNameWithoutExtension(outputPath);
 
             Console.WriteLine("Output: " + outputPath);
+
+            //making sure the relative paths still work after directory change
+            for (int i = 0; i < sourcePaths.Count; i++)
+                sourcePaths[i] = Path.GetFullPath(sourcePaths[i]);
+
+            outputPath = Path.GetFullPath(outputPath);
             
+            //change working directory to access compiler files
             Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 
             SyntaxTree[] syntaxTrees = new SyntaxTree[sourcePaths.Count];
@@ -134,6 +141,34 @@ namespace ReCT
                 if (p.name == "audio")
                     File.Copy("OtherDeps/NetCoreAudio.dll", Path.GetDirectoryName(outputPath) + "/" + "NetCoreAudio.dll", true);
             }
+            
+            //copy files and folders
+            foreach (string s in filesToCopy)
+            {
+                Console.WriteLine("Copying File: " + Path.GetFileName(s));
+                if (Path.IsPathRooted(s))
+                    File.Copy(s, Path.GetDirectoryName(outputPath) + "/" + Path.GetFileName(s), true);
+                else
+                    File.Copy("Packages/" + s, Path.GetDirectoryName(outputPath) + "/" + Path.GetFileName(s), true);
+            }
+            foreach (string s in foldersToCopy)
+            {
+                Console.WriteLine("Copying Folder: " + s.Split('\\').Last().Split('/').Last());
+                
+                var SourcePath = s;
+                var DestinationPath = Path.GetDirectoryName(outputPath) + "/" + s.Split('\\').Last().Split('/').Last();
+                if (!Path.IsPathRooted(s)) SourcePath = "Packages/" + SourcePath;
+
+                Directory.CreateDirectory(DestinationPath);
+
+                foreach (string dirPath in Directory.GetDirectories(SourcePath, "*", SearchOption.AllDirectories))
+                    Directory.CreateDirectory(dirPath.Replace(SourcePath, DestinationPath));
+
+                //Copy all the files
+                foreach (string newPath in Directory.GetFiles(SourcePath, "*.*",
+                    SearchOption.AllDirectories))
+                    File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath), true);
+            }
         }
 
         static void referenceStandardAssemblies(ref List<string> references)
@@ -164,7 +199,7 @@ namespace ReCT
                     neededFile = matches[0].Value;
                     lookingforfile = neededFile;
 
-                    if (!lookingforfile.Contains(":"))
+                    if (!Path.IsPathRooted(lookingforfile))
                         lookingforfile = Path.GetDirectoryName(inPath) + "/" + neededFile;
 
                     var codeFromFile = File.ReadAllText(lookingforfile);
