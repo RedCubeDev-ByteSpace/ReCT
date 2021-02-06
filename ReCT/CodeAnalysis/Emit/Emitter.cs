@@ -1605,7 +1605,7 @@ namespace ReCT.CodeAnalysis.Emit
                     List<string> args = new List<string>();
 
                     foreach (ParameterSymbol p in _packages[node.Function.Package].scope.GetDeclaredFunctions().FirstOrDefault(x => x.Name == node.Function.Name).Parameters)
-                        args.Add(_knownTypes[p.Type].FullName);
+                        args.Add(_knownTypes.FirstOrDefault(x => x.Key.Name == p.Type.Name).Value.FullName);
 
                     var method = ResolveMethodPublic(node.Function.Package + "." + node.Function.Package, node.Function.Name, args.ToArray());
                     ilProcessor.Emit(OpCodes.Call, method);

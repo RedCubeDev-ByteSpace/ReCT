@@ -50,7 +50,9 @@ namespace ReCT.CodeAnalysis.Package
                 if (!classSymbol.IsStatic)
                 {
                     if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
-                    TypeSymbol.Class.Add(classSymbol, new TypeSymbol(t.Name));
+                    var typesym = new TypeSymbol(t.Name);
+                    typesym.isClass = true;
+                    TypeSymbol.Class.Add(classSymbol, typesym);
                 }
 
                 foreach (MethodDefinition m in classMethods)
