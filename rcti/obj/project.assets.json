@@ -105,34 +105,32 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Salami\\.nuget\\packages\\": {}
+    "/home/redcube/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\GitRepos\\ReCT\\rcti\\rcti.csproj",
+      "projectUniqueName": "/home/redcube/Documents/GitHub/ReCT/rcti/rcti.csproj",
       "projectName": "rcti",
-      "projectPath": "E:\\GitRepos\\ReCT\\rcti\\rcti.csproj",
-      "packagesPath": "C:\\Users\\Salami\\.nuget\\packages\\",
-      "outputPath": "E:\\GitRepos\\ReCT\\rcti\\obj\\",
+      "projectPath": "/home/redcube/Documents/GitHub/ReCT/rcti/rcti.csproj",
+      "packagesPath": "/home/redcube/.nuget/packages/",
+      "outputPath": "/home/redcube/Documents/GitHub/ReCT/rcti/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Salami\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/home/redcube/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj": {
-              "projectPath": "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj"
+            "/home/redcube/Documents/GitHub/ReCT/ReCT/ReCT.csproj": {
+              "projectPath": "/home/redcube/Documents/GitHub/ReCT/ReCT/ReCT.csproj"
             }
           }
         }
@@ -161,7 +159,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.102/RuntimeIdentifierGraph.json"
       }
     }
   }

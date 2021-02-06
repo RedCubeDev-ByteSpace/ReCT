@@ -37,37 +37,21 @@ namespace ReCT.CodeAnalysis.Package
             var methods = AsmType.Methods;
             var types = AsmType.NestedTypes;
 
-            foreach (MethodDefinition m in methods)
-            {
-                if (!m.IsPublic)
-                    continue;
-
-                var parameters = ImmutableArray.CreateBuilder<Symbols.ParameterSymbol>();
-
-                foreach (ParameterDefinition p in m.Parameters)
-                {
-                    var parameterName = p.Name;
-                    var parameterType = Binding.Binder.LookupType(netTypeLookup(p.ParameterType.Name.ToLower()));
-
-                    var parameter = new Symbols.ParameterSymbol(parameterName, parameterType, parameters.Count);
-                    parameters.Add(parameter);
-                }
-
-                var returnType = netTypeLookup(m.ReturnType.Name.ToLower());
-
-                //Console.WriteLine("FUNCTON: " + m.Name + "; TYPE: " + m.MethodReturnType.Name + "; RTYPE: " + m.ReturnType.Name);
-
-                var methodType = Binder.LookupType(returnType);
-
-                scope.TryDeclareFunction(new Symbols.FunctionSymbol(m.Name, parameters.ToImmutable(), methodType, package: key));
-            }
-
+            List<string> TypesInThisPackage = new List<string>();
+            
             foreach (TypeDefinition t in types)
             {
+                TypesInThisPackage.Add(t.Name);
                 var classSymbol = new ClassSymbol(t.Name, null, t.IsSealed && t.IsAbstract);
                 var classMethods = t.Methods;
                 var classFields = t.Fields;
                 classSymbol.Scope = new BoundScope(scope);
+
+                if (!classSymbol.IsStatic)
+                {
+                    if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
+                    TypeSymbol.Class.Add(classSymbol, new TypeSymbol(t.Name));
+                }
 
                 foreach (MethodDefinition m in classMethods)
                 {
@@ -79,13 +63,13 @@ namespace ReCT.CodeAnalysis.Package
                     foreach (ParameterDefinition p in m.Parameters)
                     {
                         var parameterName = p.Name;
-                        var parameterType = Binding.Binder.LookupType(netTypeLookup(p.ParameterType.Name.ToLower()));
+                        var parameterType = Binding.Binder.LookupType(netTypeLookup(p.ParameterType.Name.ToLower(), TypesInThisPackage.ToArray()));
 
                         var parameter = new Symbols.ParameterSymbol(parameterName, parameterType, parameters.Count);
                         parameters.Add(parameter);
                     }
 
-                    var returnType = netTypeLookup(m.ReturnType.Name.ToLower());
+                    var returnType = netTypeLookup(m.ReturnType.Name.ToLower(), TypesInThisPackage.ToArray());
 
                     //Console.WriteLine("FUNCTON: " + m.Name + "; TYPE: " + t.Name);
 
@@ -99,7 +83,7 @@ namespace ReCT.CodeAnalysis.Package
                     if (!f.IsPublic || f.IsPrivate)
                         continue;
 
-                    var type = netTypeLookup(f.FieldType.Name.ToLower());
+                    var type = netTypeLookup(f.FieldType.Name.ToLower(), TypesInThisPackage.ToArray());
                     classSymbol.Scope.TryDeclareVariable(new GlobalVariableSymbol(f.Name, false, Binder.LookupType(type)));
                 }
 
@@ -123,10 +107,35 @@ namespace ReCT.CodeAnalysis.Package
                 scope.TryDeclareClass(classSymbol);
             }
 
+            foreach (MethodDefinition m in methods)
+            {
+                if (!m.IsPublic)
+                    continue;
+
+                var parameters = ImmutableArray.CreateBuilder<Symbols.ParameterSymbol>();
+
+                foreach (ParameterDefinition p in m.Parameters)
+                {
+                    var parameterName = p.Name;
+                    var parameterType = Binding.Binder.LookupType(netTypeLookup(p.ParameterType.Name.ToLower(), TypesInThisPackage.ToArray()));
+
+                    var parameter = new Symbols.ParameterSymbol(parameterName, parameterType, parameters.Count);
+                    parameters.Add(parameter);
+                }
+
+                var returnType = netTypeLookup(m.ReturnType.Name.ToLower(), TypesInThisPackage.ToArray());
+
+                //Console.WriteLine("FUNCTON: " + m.Name + "; TYPE: " + m.MethodReturnType.Name + "; RTYPE: " + m.ReturnType.Name);
+
+                var methodType = Binder.LookupType(returnType);
+
+                scope.TryDeclareFunction(new Symbols.FunctionSymbol(m.Name, parameters.ToImmutable(), methodType, package: key));
+            }
+            
             return new Package(key, sysPack, scope);
         }
 
-        static string netTypeLookup(string netversion)
+        static string netTypeLookup(string netversion, string[] inThisPackage)
         {
             switch (netversion)
             {
@@ -155,7 +164,9 @@ namespace ReCT.CodeAnalysis.Package
                     return "tcpscoket";
                 default:
                     if (netversion.EndsWith("[]"))
-                        return netTypeLookup(netversion.Replace("[]", "")) + "Arr";
+                        return netTypeLookup(netversion.Replace("[]", ""), inThisPackage) + "Arr";
+                    if (inThisPackage.FirstOrDefault(x => x.ToLower() == netversion) != null)
+                        return inThisPackage.FirstOrDefault(x => x.ToLower() == netversion);
 
                     throw new Exception($"Couldnt find .Net type '{netversion}'");
             }

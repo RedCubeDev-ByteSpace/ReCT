@@ -547,7 +547,7 @@ namespace ReCT.CodeAnalysis.Emit
                 classDefinitions.Add(_class, classDefinition);
             }
 
-            //Register class fields  //have todo it int this kinda ugly order because if not it dies ._.
+            //Register class fields  //have to do it in this kinda ugly order because if not it dies ._.
             foreach (var _classDef in classDefinitions)
             {
                 var _class = _classDef.Key;

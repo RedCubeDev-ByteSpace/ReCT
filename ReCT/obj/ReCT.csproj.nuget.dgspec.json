@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj": {}
+    "/home/redcube/Documents/GitHub/ReCT/ReCT/ReCT.csproj": {}
   },
   "projects": {
-    "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj": {
+    "/home/redcube/Documents/GitHub/ReCT/ReCT/ReCT.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj",
+        "projectUniqueName": "/home/redcube/Documents/GitHub/ReCT/ReCT/ReCT.csproj",
         "projectName": "ReCT",
-        "projectPath": "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj",
-        "packagesPath": "C:\\Users\\Salami\\.nuget\\packages\\",
-        "outputPath": "E:\\GitRepos\\ReCT\\ReCT\\obj\\",
+        "projectPath": "/home/redcube/Documents/GitHub/ReCT/ReCT/ReCT.csproj",
+        "packagesPath": "/home/redcube/.nuget/packages/",
+        "outputPath": "/home/redcube/Documents/GitHub/ReCT/ReCT/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Salami\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/redcube/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netstandard2.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -65,7 +63,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.102/RuntimeIdentifierGraph.json"
         }
       }
     }

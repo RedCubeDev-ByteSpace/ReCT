@@ -1,53 +1,62 @@
-C:\Users\User\Desktop\ReCT [much top secret]\src\Minsk\obj\Debug\netstandard2.0\ReCT.AssemblyInfoInputs.cache
-C:\Users\User\Desktop\ReCT [much top secret]\src\Minsk\obj\Debug\netstandard2.0\ReCT.AssemblyInfo.cs
-C:\Users\User\Desktop\ReCT [much top secret]\src\Minsk\obj\Debug\netstandard2.0\ReCT.csproj.CoreCompileInputs.cache
-C:\Users\User\Desktop\ReCT [much top secret]\src\Minsk\bin\Debug\netstandard2.0\ReCT.deps.json
-C:\Users\User\Desktop\ReCT [much top secret]\src\Minsk\bin\Debug\netstandard2.0\ReCT.dll
-C:\Users\User\Desktop\ReCT [much top secret]\src\Minsk\bin\Debug\netstandard2.0\ReCT.pdb
-C:\Users\User\Desktop\ReCT [much top secret]\src\Minsk\obj\Debug\netstandard2.0\ReCT.dll
-C:\Users\User\Desktop\ReCT [much top secret]\src\Minsk\obj\Debug\netstandard2.0\ReCT.pdb
-C:\Users\User\Desktop\ReCT [much top secret]\src\Minsk\obj\Debug\netstandard2.0\ReCT.csprojAssemblyReference.cache
-C:\Users\User\Desktop\ReCT [much top secret]\src\ReCT\bin\Debug\netstandard2.0\ReCT.deps.json
-C:\Users\User\Desktop\ReCT [much top secret]\src\ReCT\bin\Debug\netstandard2.0\ReCT.dll
-C:\Users\User\Desktop\ReCT [much top secret]\src\ReCT\bin\Debug\netstandard2.0\ReCT.pdb
-C:\Users\User\Desktop\ReCT [much top secret]\src\ReCT\obj\Debug\netstandard2.0\ReCT.csprojAssemblyReference.cache
-C:\Users\User\Desktop\ReCT [much top secret]\src\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfoInputs.cache
-C:\Users\User\Desktop\ReCT [much top secret]\src\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfo.cs
-C:\Users\User\Desktop\ReCT [much top secret]\src\ReCT\obj\Debug\netstandard2.0\ReCT.csproj.CoreCompileInputs.cache
-C:\Users\User\Desktop\ReCT [much top secret]\src\ReCT\obj\Debug\netstandard2.0\ReCT.dll
-C:\Users\User\Desktop\ReCT [much top secret]\src\ReCT\obj\Debug\netstandard2.0\ReCT.pdb
-C:\Users\User\Desktop\ReCT [much top secret]\ReCT\bin\Debug\netstandard2.0\ReCT.deps.json
-C:\Users\User\Desktop\ReCT [much top secret]\ReCT\bin\Debug\netstandard2.0\ReCT.dll
-C:\Users\User\Desktop\ReCT [much top secret]\ReCT\bin\Debug\netstandard2.0\ReCT.pdb
-C:\Users\User\Desktop\ReCT [much top secret]\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfoInputs.cache
-C:\Users\User\Desktop\ReCT [much top secret]\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfo.cs
-C:\Users\User\Desktop\ReCT [much top secret]\ReCT\obj\Debug\netstandard2.0\ReCT.csproj.CoreCompileInputs.cache
-C:\Users\User\Desktop\ReCT [much top secret]\ReCT\obj\Debug\netstandard2.0\ReCT.dll
-C:\Users\User\Desktop\ReCT [much top secret]\ReCT\obj\Debug\netstandard2.0\ReCT.pdb
-C:\Users\User\source\repos\ReCT\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.deps.json
-C:\Users\User\source\repos\ReCT\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.dll
-C:\Users\User\source\repos\ReCT\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.pdb
-C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfoInputs.cache
-C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfo.cs
-C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csproj.CoreCompileInputs.cache
-C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.dll
-C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.pdb
-C:\Users\User\source\repos\ReCT\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csprojAssemblyReference.cache
-E:\GitRepos\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.deps.json
-E:\GitRepos\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.dll
-E:\GitRepos\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.pdb
-E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfoInputs.cache
-E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfo.cs
-E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csproj.CoreCompileInputs.cache
-E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.dll
-E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.pdb
-E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csprojAssemblyReference.cache
-D:\GitHub\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.deps.json
-D:\GitHub\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.dll
-D:\GitHub\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.pdb
-D:\GitHub\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csprojAssemblyReference.cache
-D:\GitHub\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfoInputs.cache
-D:\GitHub\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfo.cs
-D:\GitHub\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csproj.CoreCompileInputs.cache
-D:\GitHub\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.dll
-D:\GitHub\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.pdb
+C:/Users/User/Desktop/ReCT [much top secret]/src/Minsk/obj/Debug/netstandard2.0/ReCT.AssemblyInfoInputs.cache
+C:/Users/User/Desktop/ReCT [much top secret]/src/Minsk/obj/Debug/netstandard2.0/ReCT.AssemblyInfo.cs
+C:/Users/User/Desktop/ReCT [much top secret]/src/Minsk/obj/Debug/netstandard2.0/ReCT.csproj.CoreCompileInputs.cache
+C:/Users/User/Desktop/ReCT [much top secret]/src/Minsk/bin/Debug/netstandard2.0/ReCT.deps.json
+C:/Users/User/Desktop/ReCT [much top secret]/src/Minsk/bin/Debug/netstandard2.0/ReCT.dll
+C:/Users/User/Desktop/ReCT [much top secret]/src/Minsk/bin/Debug/netstandard2.0/ReCT.pdb
+C:/Users/User/Desktop/ReCT [much top secret]/src/Minsk/obj/Debug/netstandard2.0/ReCT.dll
+C:/Users/User/Desktop/ReCT [much top secret]/src/Minsk/obj/Debug/netstandard2.0/ReCT.pdb
+C:/Users/User/Desktop/ReCT [much top secret]/src/Minsk/obj/Debug/netstandard2.0/ReCT.csprojAssemblyReference.cache
+C:/Users/User/Desktop/ReCT [much top secret]/src/ReCT/bin/Debug/netstandard2.0/ReCT.deps.json
+C:/Users/User/Desktop/ReCT [much top secret]/src/ReCT/bin/Debug/netstandard2.0/ReCT.dll
+C:/Users/User/Desktop/ReCT [much top secret]/src/ReCT/bin/Debug/netstandard2.0/ReCT.pdb
+C:/Users/User/Desktop/ReCT [much top secret]/src/ReCT/obj/Debug/netstandard2.0/ReCT.csprojAssemblyReference.cache
+C:/Users/User/Desktop/ReCT [much top secret]/src/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfoInputs.cache
+C:/Users/User/Desktop/ReCT [much top secret]/src/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfo.cs
+C:/Users/User/Desktop/ReCT [much top secret]/src/ReCT/obj/Debug/netstandard2.0/ReCT.csproj.CoreCompileInputs.cache
+C:/Users/User/Desktop/ReCT [much top secret]/src/ReCT/obj/Debug/netstandard2.0/ReCT.dll
+C:/Users/User/Desktop/ReCT [much top secret]/src/ReCT/obj/Debug/netstandard2.0/ReCT.pdb
+C:/Users/User/Desktop/ReCT [much top secret]/ReCT/bin/Debug/netstandard2.0/ReCT.deps.json
+C:/Users/User/Desktop/ReCT [much top secret]/ReCT/bin/Debug/netstandard2.0/ReCT.dll
+C:/Users/User/Desktop/ReCT [much top secret]/ReCT/bin/Debug/netstandard2.0/ReCT.pdb
+C:/Users/User/Desktop/ReCT [much top secret]/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfoInputs.cache
+C:/Users/User/Desktop/ReCT [much top secret]/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfo.cs
+C:/Users/User/Desktop/ReCT [much top secret]/ReCT/obj/Debug/netstandard2.0/ReCT.csproj.CoreCompileInputs.cache
+C:/Users/User/Desktop/ReCT [much top secret]/ReCT/obj/Debug/netstandard2.0/ReCT.dll
+C:/Users/User/Desktop/ReCT [much top secret]/ReCT/obj/Debug/netstandard2.0/ReCT.pdb
+C:/Users/User/source/repos/ReCT/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.deps.json
+C:/Users/User/source/repos/ReCT/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.dll
+C:/Users/User/source/repos/ReCT/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.pdb
+C:/Users/User/source/repos/ReCT/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfoInputs.cache
+C:/Users/User/source/repos/ReCT/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfo.cs
+C:/Users/User/source/repos/ReCT/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csproj.CoreCompileInputs.cache
+C:/Users/User/source/repos/ReCT/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.dll
+C:/Users/User/source/repos/ReCT/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.pdb
+C:/Users/User/source/repos/ReCT/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csprojAssemblyReference.cache
+E:/GitRepos/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.deps.json
+E:/GitRepos/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.dll
+E:/GitRepos/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.pdb
+E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfoInputs.cache
+E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfo.cs
+E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csproj.CoreCompileInputs.cache
+E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.dll
+E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.pdb
+E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csprojAssemblyReference.cache
+D:/GitHub/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.deps.json
+D:/GitHub/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.dll
+D:/GitHub/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.pdb
+D:/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csprojAssemblyReference.cache
+D:/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfoInputs.cache
+D:/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfo.cs
+D:/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csproj.CoreCompileInputs.cache
+D:/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.dll
+D:/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.pdb
+/home/redcube/Documents/GitHub/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.deps.json
+/home/redcube/Documents/GitHub/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.dll
+/home/redcube/Documents/GitHub/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.pdb
+/home/redcube/Documents/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csprojAssemblyReference.cache
+/home/redcube/Documents/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfoInputs.cache
+/home/redcube/Documents/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfo.cs
+/home/redcube/Documents/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csproj.CoreCompileInputs.cache
+/home/redcube/Documents/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.dll
+/home/redcube/Documents/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.pdb
