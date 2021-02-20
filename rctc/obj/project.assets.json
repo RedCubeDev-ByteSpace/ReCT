@@ -137,11 +137,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/redcube/Documents/GitHub/ReCT/rctc/rctc.csproj",
+      "projectUniqueName": "/home/redcube/Repos/ReCT/rctc/rctc.csproj",
       "projectName": "rctc",
-      "projectPath": "/home/redcube/Documents/GitHub/ReCT/rctc/rctc.csproj",
+      "projectPath": "/home/redcube/Repos/ReCT/rctc/rctc.csproj",
       "packagesPath": "/home/redcube/.nuget/packages/",
-      "outputPath": "/home/redcube/Documents/GitHub/ReCT/rctc/obj/",
+      "outputPath": "/home/redcube/Repos/ReCT/rctc/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/redcube/.nuget/NuGet/NuGet.Config"
@@ -156,8 +156,8 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "/home/redcube/Documents/GitHub/ReCT/ReCT/ReCT.csproj": {
-              "projectPath": "/home/redcube/Documents/GitHub/ReCT/ReCT/ReCT.csproj"
+            "/home/redcube/Repos/ReCT/ReCT/ReCT.csproj": {
+              "projectPath": "/home/redcube/Repos/ReCT/ReCT/ReCT.csproj"
             }
           }
         }
@@ -187,12 +187,26 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[3.1.10, 3.1.10]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.linux-x64",
+            "version": "[3.1.12, 3.1.12]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[3.1.0, 3.1.0]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.102/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/snap/dotnet-sdk/current/sdk/5.0.103/RuntimeIdentifierGraph.json"
       }
     }
   }

@@ -53,7 +53,26 @@ namespace ReCT.CodeAnalysis.Binding
 
             var classDeclarations = syntaxTrees.SelectMany(st => st.Root.Members)
                                                   .OfType<ClassDeclarationSyntax>();
+            
+            var globalStatements = syntaxTrees.SelectMany(st => st.Root.Members)
+                .OfType<GlobalStatementSyntax>();
+            
+            //package imports BEFORE anything else
+            foreach (var statement in globalStatements)
+            {
+                if (statement.Statement is PackageStatementSyntax p)
+                {
+                    binder.BindGlobalStatement(p);
+                    Console.WriteLine("imported: " + p.Package.Text);
+                }
+                if (statement.Statement is UseStatementSyntax u)
+                {
+                    binder.BindGlobalStatement(u);
+                    Console.WriteLine("using: " + u.Name.Text);
+                }
+            }
 
+            //bind classes functions and class-functions
             foreach (var _class in classDeclarations)
                 binder.BindClassDeclaration(_class);
 
@@ -62,14 +81,14 @@ namespace ReCT.CodeAnalysis.Binding
 
             foreach (var _class in binder._scope.GetDeclaredClasses())
                 binder.BindClassFunctionDeclaration(_class.Declaration, _class);
-
-            var globalStatements = syntaxTrees.SelectMany(st => st.Root.Members)
-                                              .OfType<GlobalStatementSyntax>();
+            
 
             var statements = ImmutableArray.CreateBuilder<BoundStatement>();
 
             foreach (var globalStatement in globalStatements)
             {
+                if (globalStatement.Statement is PackageStatementSyntax || globalStatement.Statement is UseStatementSyntax) continue;
+                
                 var statement = binder.BindGlobalStatement(globalStatement.Statement);
                 statements.Add(statement);
             }
@@ -819,9 +838,9 @@ namespace ReCT.CodeAnalysis.Binding
 
             var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
 
-            foreach (var argument in syntax.Arguments)
+            for (int i = 0; i < syntax.Arguments.Count; i++)
             {
-                var boundArgument = BindExpression(argument);
+                var boundArgument = BindConversion(syntax.Location, BindExpression(syntax.Arguments[i]), constructorFunction.Parameters[i].Type);
                 boundArguments.Add(boundArgument);
             }
 

@@ -108,8 +108,6 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.UseKeyword;
                 case "class":
                     return SyntaxKind.ClassKeyword;
-                case "object":
-                    return SyntaxKind.ObjectKeyword;
                 case "dll":
                     return SyntaxKind.DllKeyword;
                 case "acs":
@@ -250,8 +248,6 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "use";
                 case SyntaxKind.ClassKeyword:
                     return "class";
-                case SyntaxKind.ObjectKeyword:
-                    return "object";
                 case SyntaxKind.DllKeyword:
                     return "dll";
                 case SyntaxKind.AccessKeyword:

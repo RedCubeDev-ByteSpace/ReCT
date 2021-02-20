@@ -495,11 +495,12 @@ namespace ReCT.CodeAnalysis.Emit
                     var asmRef = s_assemblyDefinition.MainModule.ImportReference(typeRef);
                     _knownTypes.Add(TypeSymbol.Class[c], asmRef);
 
-                    //if (!c.IsStatic)
-                    //{
-                    //var type = TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == c.Name + "Arr");
-                    //_knownTypes.Add(type.Value, asmRef.MakeArrayType());
-                    //}
+                    if (!c.IsStatic)
+                    {
+                        //Console.WriteLine("Looking for: " + c.Name + "Arr");
+                        var type = TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == c.Name + "Arr");
+                        _knownTypes.Add(type.Value, asmRef.MakeArrayType());
+                    }
 
                     List<MethodReference> mrefs = new List<MethodReference>();
                     List<FieldReference> frefs = new List<FieldReference>();
@@ -1259,7 +1260,15 @@ namespace ReCT.CodeAnalysis.Emit
                 if (node.isArray)
                 {
                     EmitExpression(ilProcessor, node.Index);
-                    ilProcessor.Emit(OpCodes.Ldelem_Ref);
+                    
+                    if (node.Type == TypeSymbol.Bool)
+                        ilProcessor.Emit(OpCodes.Ldelem_I1);
+                    else if (node.Type == TypeSymbol.Int)
+                        ilProcessor.Emit(OpCodes.Ldelem_I4);
+                    else if (node.Type == TypeSymbol.Float)
+                        ilProcessor.Emit(OpCodes.Ldelem_R4);
+                    else
+                        ilProcessor.Emit(OpCodes.Ldelem_Ref);
                 }
             }
             catch
@@ -1278,22 +1287,33 @@ namespace ReCT.CodeAnalysis.Emit
             else
                 variableDefinition = _locals[node.Variable];
 
+            if (inClass != null && !inClass.IsStatic && node.Variable.IsGlobal)
+                ilProcessor.Emit(OpCodes.Ldarg_0);
+            
             if (node.isArray)
             {
                 if (node.Variable.IsGlobal)
-                    ilProcessor.Emit(OpCodes.Ldsfld, fieldDefinition);
+                    if (inClass == null || inClass.IsStatic)
+                        ilProcessor.Emit(OpCodes.Ldsfld, fieldDefinition);
+                    else
+                        ilProcessor.Emit(OpCodes.Ldfld, fieldDefinition);
                 else
                     ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
 
                 EmitExpression(ilProcessor, node.Index);
                 EmitExpression(ilProcessor, node.Expression);
-
-                ilProcessor.Emit(OpCodes.Stelem_Ref);
+                
+                if (node.Expression.Type == TypeSymbol.Bool)
+                    ilProcessor.Emit(OpCodes.Stelem_I1);
+                else if (node.Expression.Type == TypeSymbol.Int)
+                    ilProcessor.Emit(OpCodes.Stelem_I4);
+                else if (node.Expression.Type == TypeSymbol.Float)
+                    ilProcessor.Emit(OpCodes.Stelem_R4);
+                else
+                    ilProcessor.Emit(OpCodes.Stelem_Ref);
+                
                 return;
             }
-
-            if (inClass != null && !inClass.IsStatic && node.Variable.IsGlobal)
-                ilProcessor.Emit(OpCodes.Ldarg_0);
 
             EmitExpression(ilProcessor, node.Expression);
             //ilProcessor.Emit(OpCodes.Dup);
@@ -1658,6 +1678,7 @@ namespace ReCT.CodeAnalysis.Emit
                               node.Expression.Type == TypeSymbol.TCPListenerArr ||
                               node.Expression.Type == TypeSymbol.TCPSocketArr ||
                               node.Expression.Type.isClass;
+
             if (needsBoxing)
                 ilProcessor.Emit(OpCodes.Box, _knownTypes[node.Expression.Type.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.Expression.Type.Name) : node.Expression.Type]);
 

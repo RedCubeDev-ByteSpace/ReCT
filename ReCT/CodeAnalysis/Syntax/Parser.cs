@@ -180,7 +180,6 @@ namespace ReCT.CodeAnalysis.Syntax
         private ExpressionSyntax ParseObjectCreation()
         {
             var makeKeyword = MatchToken(SyntaxKind.MakeKeyword);
-            var objectKeyword = MatchToken(SyntaxKind.ObjectKeyword);
             SyntaxToken package = null;
 
             if (Peek(1).Kind == SyntaxKind.NamespaceToken)
@@ -571,7 +570,7 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseThreadCreation();
                 case SyntaxKind.MakeKeyword when Peek(2).Kind == SyntaxKind.ArrayKeyword:
                     return ParseArrayCreation();
-                case SyntaxKind.MakeKeyword when Peek(1).Kind == SyntaxKind.ObjectKeyword:
+                case SyntaxKind.MakeKeyword when Peek(2).Kind == SyntaxKind.OpenParenthesisToken:
                     return ParseObjectCreation();
                 case SyntaxKind.AccessKeyword:
                     return ParseObjectAccessExpression();

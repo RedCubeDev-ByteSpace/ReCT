@@ -1,11 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "iM40YmAhAZSY8bJaloViB74grqOC8Jp1iylKvUbKNgoEPdo60yEppUFi1SyH5cWQbjvj+bhc5HSVDZSkqG0F6g==",
+  "dgSpecHash": "AedqmTJ3rBAh/RLza5liBaU4tiCUEsliev8lbrphxkCFBBOyxo08iPxsKQ+2pPB4V95QjO7PEURN4p6UXHm0cQ==",
   "success": true,
-  "projectFilePath": "/home/redcube/Documents/GitHub/ReCT/rcti/rcti.csproj",
+  "projectFilePath": "/home/redcube/Repos/ReCT/rcti/rcti.csproj",
   "expectedPackageFiles": [
     "/home/redcube/.nuget/packages/mono.cecil/0.11.2/mono.cecil.0.11.2.nupkg.sha512",
-    "/home/redcube/.nuget/packages/system.collections.immutable/1.5.0/system.collections.immutable.1.5.0.nupkg.sha512"
+    "/home/redcube/.nuget/packages/system.collections.immutable/1.5.0/system.collections.immutable.1.5.0.nupkg.sha512",
+    "/home/redcube/.nuget/packages/microsoft.netcore.app.ref/3.1.0/microsoft.netcore.app.ref.3.1.0.nupkg.sha512",
+    "/home/redcube/.nuget/packages/microsoft.aspnetcore.app.ref/3.1.10/microsoft.aspnetcore.app.ref.3.1.10.nupkg.sha512",
+    "/home/redcube/.nuget/packages/microsoft.netcore.app.host.linux-x64/3.1.12/microsoft.netcore.app.host.linux-x64.3.1.12.nupkg.sha512"
   ],
   "logs": []
 }

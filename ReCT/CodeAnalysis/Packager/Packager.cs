@@ -47,12 +47,18 @@ namespace ReCT.CodeAnalysis.Package
                 var classFields = t.Fields;
                 classSymbol.Scope = new BoundScope(scope);
 
+                if (TypeSymbol.Class == null) {TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>(); }
+                
+                var classTypeSymbol = new TypeSymbol(classSymbol.Name);
+                classTypeSymbol.isClass = true;
+                TypeSymbol.Class.Add(classSymbol, classTypeSymbol);
+
                 if (!classSymbol.IsStatic)
                 {
-                    if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
-                    var typesym = new TypeSymbol(t.Name);
-                    typesym.isClass = true;
-                    TypeSymbol.Class.Add(classSymbol, typesym);
+                    var classArraySymbol = new TypeSymbol(classSymbol.Name + "Arr");
+                    classArraySymbol.isClass = true;
+                    classArraySymbol.isClassArray = true;
+                    TypeSymbol.Class.Add(new ClassSymbol(classSymbol.Name + "Arr", null, false), classArraySymbol);
                 }
 
                 foreach (MethodDefinition m in classMethods)
