@@ -881,6 +881,7 @@ namespace ReCT.CodeAnalysis.Binding
             return new BoundVariableExpression(variable);
         }
 
+        // TODO: Fix this RedCube, tf is this?? // refactoring VERY MUCH needed
         private BoundExpression BindObjectAccessExpression(ObjectAccessExpression syntax)
         {
             FunctionSymbol function = null;
@@ -896,7 +897,7 @@ namespace ReCT.CodeAnalysis.Binding
             if (syntax.Expression != null)
             {
                 Expression = BindExpression(syntax.Expression);
-                goto SKIP1;
+                goto SKIP1; //noo redcube gotos just make it messier
             }
 
             if (syntax.IdentifierToken.Text == "Main")

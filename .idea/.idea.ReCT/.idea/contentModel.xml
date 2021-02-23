@@ -69,6 +69,7 @@
             <e p="BuiltinFunctions.cs" t="Include" />
             <e p="ClassSymbol.cs" t="Include" />
             <e p="FunctionSymbol.cs" t="Include" />
+            <e p="FunctionalVariable.cs" t="Include" />
             <e p="GlobalVariableSymbol.cs" t="Include" />
             <e p="LocalVariableSymbol.cs" t="Include" />
             <e p="ParameterSymbol.cs" t="Include" />

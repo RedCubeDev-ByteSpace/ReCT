@@ -38,7 +38,7 @@ namespace ReCT.CodeAnalysis.Package
             var types = AsmType.NestedTypes;
 
             List<string> TypesInThisPackage = new List<string>();
-            
+
             foreach (TypeDefinition t in types)
             {
                 TypesInThisPackage.Add(t.Name);
@@ -61,6 +61,9 @@ namespace ReCT.CodeAnalysis.Package
                     TypeSymbol.Class.Add(new ClassSymbol(classSymbol.Name + "Arr", null, false), classArraySymbol);
                 }
 
+                Dictionary<string, FunctionSymbol> varGetters = new Dictionary<string, FunctionSymbol>();
+                Dictionary<string, FunctionSymbol> varSetters = new Dictionary<string, FunctionSymbol>();
+                
                 foreach (MethodDefinition m in classMethods)
                 {
                     if (!m.IsPublic)
@@ -83,7 +86,20 @@ namespace ReCT.CodeAnalysis.Package
 
                     var methodType = Binder.LookupType(returnType);
 
-                    classSymbol.Scope.TryDeclareFunction(new Symbols.FunctionSymbol(m.Name == ".ctor" ? "Constructor" : m.Name, parameters.ToImmutable(), methodType, package: key));
+                    var symbol = new Symbols.FunctionSymbol(m.Name == ".ctor" ? "Constructor" : m.Name, parameters.ToImmutable(), methodType, package: key);
+                    classSymbol.Scope.TryDeclareFunction(symbol);
+
+                    if (m.Name.StartsWith("get_") && m.Parameters.Count == 0)
+                    {
+                        //Console.WriteLine("Found function: " + m.Name + "; adding Getter: " + m.Name.Substring(4));
+                        varGetters.Add(m.Name.Substring(4), symbol);
+                    }
+
+                    if (m.Name.StartsWith("set_") && m.Parameters.Count == 1)
+                    {
+                        //Console.WriteLine("Found function: " + m.Name + "; adding Setter: " + m.Name.Substring(4));
+                        varSetters.Add(m.Name.Substring(4), symbol);
+                    }
                 }
 
                 foreach (FieldDefinition f in classFields)
@@ -95,6 +111,13 @@ namespace ReCT.CodeAnalysis.Package
                     classSymbol.Scope.TryDeclareVariable(new GlobalVariableSymbol(f.Name, false, Binder.LookupType(type)));
                 }
 
+                foreach (var get in varGetters)
+                {
+                    bool isReadonly = !varSetters.Keys.Contains(get.Key);
+                    classSymbol.Scope.TryDeclareVariable(new FunctionalVariableSymbol(get.Key, isReadonly, get.Value.Type));
+                    //Console.WriteLine("Declaring FunctionalVariable: " + get.Key + "; Readonly: " + isReadonly);
+                }
+                
                 if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
 
                 if (!TypeSymbol.Class.ContainsKey(classSymbol))

@@ -5,8 +5,9 @@ namespace ReCT.CodeAnalysis.Symbols
         Function,
         GlobalVariable,
         LocalVariable,
+        FunctionalVariable,
         Parameter,
         Type,
-        Class,
+        Class
     }
 }

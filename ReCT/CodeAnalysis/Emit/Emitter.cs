@@ -1117,7 +1117,6 @@ namespace ReCT.CodeAnalysis.Emit
                     LoadARef(ilProcessor, node);
                 if (node.Expression == null)
                 {
-
                     if (node.Variable is ParameterSymbol parameter)
                     {
                         ilProcessor.Emit(OpCodes.Ldarg,
@@ -1179,7 +1178,10 @@ namespace ReCT.CodeAnalysis.Emit
                 if (node.Package == null)
                     ilProcessor.Emit(classSymbol.IsStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, _classGlobals[_classes[classSymbol]].FirstOrDefault(x => x.Key.Name == node.Property.Name && x.Key.Type == node.Property.Type).Value);
                 else
-                    ilProcessor.Emit(classSymbol.IsStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, _packageClassFields[classSymbol].FirstOrDefault(x => x.Name == node.Property.Name));
+                    if (node.Property.IsFunctional)
+                        ilProcessor.Emit(classSymbol.IsStatic ? OpCodes.Call : OpCodes.Callvirt, _packageClassMethods[classSymbol].FirstOrDefault(x => x.Name == "get_" + node.Property.Name));
+                    else
+                        ilProcessor.Emit(classSymbol.IsStatic ? OpCodes.Ldsfld : OpCodes.Ldfld, _packageClassFields[classSymbol].FirstOrDefault(x => x.Name == node.Property.Name));
             }
             else if (node.AccessType == ObjectAccessExpression.AccessType.Set)
             {
@@ -1194,7 +1196,10 @@ namespace ReCT.CodeAnalysis.Emit
                 if (node.Package == null)
                     ilProcessor.Emit(classSymbol.IsStatic ? OpCodes.Stsfld : OpCodes.Stfld, _classGlobals[_classes[classSymbol]].FirstOrDefault(x => x.Key.Name == node.Property.Name && x.Key.Type == node.Property.Type).Value);
                 else
-                    ilProcessor.Emit(classSymbol.IsStatic ? OpCodes.Stsfld : OpCodes.Stfld, _packageClassFields[classSymbol].FirstOrDefault(x => x.Name == node.Property.Name));
+                    if (node.Property.IsFunctional)
+                        ilProcessor.Emit(classSymbol.IsStatic ? OpCodes.Call : OpCodes.Callvirt, _packageClassMethods[classSymbol].FirstOrDefault(x => x.Name == "set_" + node.Property.Name));
+                    else
+                        ilProcessor.Emit(classSymbol.IsStatic ? OpCodes.Stsfld : OpCodes.Stfld, _packageClassFields[classSymbol].FirstOrDefault(x => x.Name == node.Property.Name));
             }
         }
 
@@ -1519,10 +1524,9 @@ namespace ReCT.CodeAnalysis.Emit
             }
             else if (node.TypeCall.Function == BuiltinFunctions.Push && (node.Variable.Type.isClassArray || node.Variable.Type.isArray))
             {
-                var type = _knownTypes[
-                    node.Variable.Type.isClass
-                        ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.Variable.Type.Name)
-                        : node.Variable.Type];
+                var type = _knownTypes[node.Variable.Type.isClass
+                    ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.Variable.Type.Name)
+                    : node.Variable.Type];
 
 
                 var method = ResolveMethodPublic("System.Array", "Resize", new[] {"T[]&", "System.Int32"});
