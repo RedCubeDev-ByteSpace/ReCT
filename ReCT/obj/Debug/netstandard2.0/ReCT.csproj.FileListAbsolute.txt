@@ -51,14 +51,6 @@ D:/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.pdb
 /home/redcube/Documents/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csproj.CoreCompileInputs.cache
 /home/redcube/Documents/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.dll
 /home/redcube/Documents/GitHub/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.pdb
-E:/GitRepos/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.deps.json
-E:/GitRepos/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.dll
-E:/GitRepos/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.pdb
-E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfoInputs.cache
-E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfo.cs
-E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csproj.CoreCompileInputs.cache
-E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.dll
-E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.pdb
 /home/redcube/Repos/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.deps.json
 /home/redcube/Repos/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.dll
 /home/redcube/Repos/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.pdb
@@ -68,3 +60,11 @@ E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.pdb
 /home/redcube/Repos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csproj.CoreCompileInputs.cache
 /home/redcube/Repos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.dll
 /home/redcube/Repos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.pdb
+E:\GitRepos\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.deps.json
+E:\GitRepos\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.dll
+E:\GitRepos\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.pdb
+E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfoInputs.cache
+E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfo.cs
+E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csproj.CoreCompileInputs.cache
+E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.dll
+E:\GitRepos\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.pdb

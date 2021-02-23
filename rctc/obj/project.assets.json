@@ -132,32 +132,34 @@
     ]
   },
   "packageFolders": {
-    "/home/redcube/.nuget/packages/": {}
+    "C:\\Users\\Salami\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/redcube/Repos/ReCT/rctc/rctc.csproj",
+      "projectUniqueName": "E:\\GitRepos\\ReCT\\rctc\\rctc.csproj",
       "projectName": "rctc",
-      "projectPath": "/home/redcube/Repos/ReCT/rctc/rctc.csproj",
-      "packagesPath": "/home/redcube/.nuget/packages/",
-      "outputPath": "/home/redcube/Repos/ReCT/rctc/obj/",
+      "projectPath": "E:\\GitRepos\\ReCT\\rctc\\rctc.csproj",
+      "packagesPath": "C:\\Users\\Salami\\.nuget\\packages\\",
+      "outputPath": "E:\\GitRepos\\ReCT\\rctc\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/redcube/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\Salami\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "/home/redcube/Repos/ReCT/ReCT/ReCT.csproj": {
-              "projectPath": "/home/redcube/Repos/ReCT/ReCT/ReCT.csproj"
+            "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj": {
+              "projectPath": "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj"
             }
           }
         }
@@ -187,26 +189,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[3.1.10, 3.1.10]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Host.linux-x64",
-            "version": "[3.1.12, 3.1.12]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Ref",
-            "version": "[3.1.0, 3.1.0]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/snap/dotnet-sdk/current/sdk/5.0.103/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
       }
     }
   }

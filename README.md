@@ -15,7 +15,7 @@ The docs will be kept up to date as best as I can :P
 
 
 ## Contribution
-If you want to contribute to ReCT feel free to message me or any other staff mamber on [The Official Discord Server](https://discord.gg/5AUrqq9).
+If you want to contribute to ReCT feel free to message me or any other staff mamber on [The Official Discord Server](https://discord.gg/cKnhp3Rqp8).
 
 
 ## Remixing / Forking
