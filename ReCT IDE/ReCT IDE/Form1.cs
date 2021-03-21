@@ -106,6 +106,7 @@ namespace ReCT_IDE
             while (true)
             {
                 this.buildToolStripMenuItem.ShortcutKeys = SettingsInfo.run;
+                Thread.Sleep(1000);
             }
         }
 
