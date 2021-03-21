@@ -96,18 +96,26 @@ namespace ReCT_IDE
             }
 
             Thread.Sleep(1500);
-
             InitializeComponent();
+            Thread updateKeys = new Thread(new ThreadStart(UpdateKeys));
+            updateKeys.Start();
+        }
+
+        void UpdateKeys()
+        {
+            while (true)
+            {
+                this.buildToolStripMenuItem.ShortcutKeys = SettingsInfo.run;
+            }
         }
 
         void SplashScreen()
         {
             Application.Run(new Startup());
         }
-
+        
         private void fileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
         }
 
         private void Menu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)

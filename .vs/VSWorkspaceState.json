@@ -1,9 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\ReCT",
-    "\\ReCT\\CodeAnalysis"
+    "\\ReCT IDE",
+    "\\ReCT IDE\\ReCT IDE",
+    "\\ReCT IDE\\ReCT IDE\\publish\\Application Files\\ReCT IDE_1_0_0_0"
   ],
-  "SelectedNode": "\\ReCT.sln",
+  "SelectedNode": "\\ReCT IDE\\ReCT IDE\\Form1.cs",
   "PreviewInSolutionExplorer": false
 }

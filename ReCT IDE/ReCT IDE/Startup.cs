@@ -35,5 +35,10 @@ namespace ReCT_IDE
             Opacity = 1;
             Update();
         }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            
+        }
     }
 }
