@@ -161,6 +161,25 @@
         CgAAAAAAAAAAjQABAAH4/////P///woAAAAAAAAAAKQAAQAB9/////z///8KAAAAAAAAAACWAAEACw==
 </value>
   </data>
+  <data name="CodeBox.Text" xml:space="preserve">
+    <value>1.0 - released ReCT
+2.0 - Updated backend
+2.1 - Got the trailer for 2.0
+Jimmy Patch - Idk why i did it :)
+
+TODO:
+Fix bugs
+Eliminate other stuff
+
+DONE:
+Breathe
+
+"kek"
+       -Redcube, Creator of ReCT
+
+This message is only alivalable in the source code and is written by Jimmy(khhs(khhs167)) and is readable in the designer of form1
+Hi person!</value>
+  </data>
   <metadata name="Menu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>

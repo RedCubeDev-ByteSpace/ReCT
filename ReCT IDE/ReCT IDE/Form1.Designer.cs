@@ -93,7 +93,7 @@
             this.ReCTAutoComplete.SetAutocompleteMenu(this.CodeBox, this.ReCTAutoComplete);
             this.CodeBox.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*" +
     "(?<range>:)\\s*(?<range>[^;]+);";
-            this.CodeBox.AutoScrollMinSize = new System.Drawing.Size(51, 14);
+            this.CodeBox.AutoScrollMinSize = new System.Drawing.Size(1075, 238);
             this.CodeBox.BackBrush = null;
             this.CodeBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.CodeBox.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
@@ -112,7 +112,7 @@
             this.CodeBox.ShowFoldingLines = true;
             this.CodeBox.Size = new System.Drawing.Size(1088, 566);
             this.CodeBox.TabIndex = 1;
-            this.CodeBox.Text = "kek";
+            this.CodeBox.Text = resources.GetString("CodeBox.Text");
             this.CodeBox.Zoom = 100;
             this.CodeBox.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.CodeBox_Chnaged);
             this.CodeBox.Load += new System.EventHandler(this.CodeBox_Load);
@@ -409,7 +409,7 @@
             this.ReCTAutoComplete.AllowsTabKey = true;
             this.ReCTAutoComplete.AppearInterval = 100;
             this.ReCTAutoComplete.Colors = ((AutocompleteMenuNS.Colors)(resources.GetObject("ReCTAutoComplete.Colors")));
-            this.ReCTAutoComplete.Font = new System.Drawing.Font("Liberation Mono", 16F);
+            this.ReCTAutoComplete.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
             this.ReCTAutoComplete.ImageList = this.autocompleteImageList;
             this.ReCTAutoComplete.Items = new string[0];
             this.ReCTAutoComplete.LeftPadding = 25;
