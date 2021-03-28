@@ -42,6 +42,8 @@ namespace ReCT_IDE
         public static string fileToOpen = "";
 
         public string head = "";
+        public static string[][] terms;
+        public string types = "";
 
         Discord dc;
         RichPresence presence;
@@ -209,12 +211,21 @@ namespace ReCT_IDE
         {
             string[][] acs =
             {
-                new[]{ "?", "any", "bool", "int", "string", "void", "float", "thread", "tcpclient", "tcplistener", "tcpsocket", "anyArr", "boolArr", "intArr", "stringArr", "floatArr", "threadArr", "tcpclientArr", "tcplistenerArr", "tcpsocketArr" },
+                new[]{ "any", "bool", "int", "string", "void", "float", "thread", "tcpclient", "tcplistener", "tcpsocket", "anyArr", "boolArr", "intArr", "stringArr", "floatArr", "threadArr", "tcpclientArr", "tcplistenerArr", "tcpsocketArr" },
                 new[]{ "var", "set", "if", "else", "function", "class", "true", "false", "break", "continue", "for", "from", "to", "return", "while", "die" },
                 new[]{ "Thread", "Constructor" },
-                new[]{ ">>GetLength", ">>Substring", ">>StartThread", ">>KillThread", ">>Open", ">>Write", ">>WriteLine", ">>Read", ">>ReadLine", ">>IsConnected", ">>Close", ">>Push" },
+                new[]{ "->GetLength", "->Substring", "->StartThread", "->KillThread", "->Open", "->Write", "->WriteLine", "->Read", "->ReadLine", "->IsConnected", "->Close", "->Push" },
                 new[]{ "#attach", "#copy", "#copyFolder", "#closeConsole", "#noConsole" }
             };
+
+            terms = acs;
+            types = "(";
+            for(int i = 0; i < acs.GetLength(0); i++)
+            {
+                types += acs[0][i] + "|";
+            }
+            types = types.Substring(0, types.Length - 1);
+            types += ")";
 
             for (int type = 0; type < acs.Length; type++)
             {
@@ -357,7 +368,7 @@ namespace ReCT_IDE
             e.ChangedRange.ClearStyle(VariableStyle);
 
             e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+<-))");
-            e.ChangedRange.SetStyle(VariableStyle, @"(\w+(?=\s+->))");
+            e.ChangedRange.SetStyle(VariableStyle, @$"((?<=\()\w+(?=\s+{types})|(?<=,)(\s|)\w+(?=\s+{types}))");
             e.ChangedRange.SetStyle(VariableStyle, rectCompCheck.Variables);
 
             //functions
@@ -375,7 +386,7 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\w*(?<=::)" + rectCompCheck.NamespaceFunctions + ")");
 
             //type functions
-            e.ChangedRange.SetStyle(TypeFunctionStyle, @"(?<=\>>(\s|))(\w+)");
+            e.ChangedRange.SetStyle(TypeFunctionStyle, @"(?<=\->(\s|))(\w+)");
 
             //statements highlighting
             e.ChangedRange.SetStyle(StatementStyle, @"(\b(try|catch|break|continue|for|return|to|while|do|die|from)\b)", RegexOptions.Singleline);

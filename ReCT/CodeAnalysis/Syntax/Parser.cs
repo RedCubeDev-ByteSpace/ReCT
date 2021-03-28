@@ -334,7 +334,7 @@ namespace ReCT.CodeAnalysis.Syntax
 
         private TypeClauseSyntax ParseOptionalTypeClause()
         {
-            if (Current.Kind != SyntaxKind.TypeToken)
+            if (Current.Kind != SyntaxKind.IdentifierToken)
                 return null;
 
             return ParseTypeClause();
@@ -342,9 +342,8 @@ namespace ReCT.CodeAnalysis.Syntax
 
         private TypeClauseSyntax ParseTypeClause()
         {
-            var colonToken = MatchToken(SyntaxKind.TypeToken);
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
-            return new TypeClauseSyntax(_syntaxTree, colonToken, identifier);
+            return new TypeClauseSyntax(_syntaxTree, identifier);
         }
 
         private StatementSyntax ParseIfStatement()

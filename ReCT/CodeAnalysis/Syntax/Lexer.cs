@@ -197,7 +197,7 @@ namespace ReCT.CodeAnalysis.Syntax
                     _position+=2;
                     break;
                 case '-' when Lookahead == '>':
-                    _kind = SyntaxKind.TypeToken;
+                    _kind = SyntaxKind.AccessToken;
                     _position+=2;
                     break;
                 case '"':
