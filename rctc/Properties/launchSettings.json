@@ -1,7 +1,8 @@
 {
   "profiles": {
     "rctc": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "/home/redcube/ReCT_Tests/bitshifting.rct -s -f"
     }
   }
 }

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="$USER_HOME$/.var/app/com.jetbrains.Rider/cache/JetBrains/Rider2020.3/extResources" t="IncludeRecursive" />
-    <e p="$USER_HOME$/.var/app/com.jetbrains.Rider/cache/JetBrains/Rider2020.3/resharper-host/local/Transient/Rider/v203/SolutionCaches/_ReCT.-1280778837.00" t="ExcludeRecursive" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="ReCT" t="IncludeRecursive">
         <e p="CodeAnalysis" t="Include">
@@ -137,7 +135,6 @@
           <e p="TextWriterExtensions.cs" t="Include" />
         </e>
         <e p="ReCT.csproj" t="IncludeRecursive" />
-        <e p="Statics.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="info.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive">
@@ -183,5 +180,7 @@
         <e p="rcti.csproj" t="IncludeRecursive" />
       </e>
     </e>
+    <e p="$USER_HOME$/.cache/JetBrains/Rider2020.3/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.cache/JetBrains/Rider2020.3/resharper-host/local/Transient/Rider/v203/SolutionCaches/_ReCT.-633312418.00" t="ExcludeRecursive" />
   </component>
 </project>

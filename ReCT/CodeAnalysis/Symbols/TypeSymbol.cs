@@ -14,10 +14,6 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly TypeSymbol Float = new TypeSymbol("float");
         public static readonly TypeSymbol Thread = new TypeSymbol("thread");
 
-        public static readonly TypeSymbol TCPClient = new TypeSymbol("tcpclient");
-        public static readonly TypeSymbol TCPListener = new TypeSymbol("tcplistener");
-        public static readonly TypeSymbol TCPSocket = new TypeSymbol("tcpsocket");
-
         //arrays
         public static readonly TypeSymbol AnyArr = new TypeSymbol("anyArr", true);
         public static readonly TypeSymbol BoolArr = new TypeSymbol("boolArr", true);
@@ -26,10 +22,6 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly TypeSymbol StringArr = new TypeSymbol("stringArr", true);
         public static readonly TypeSymbol FloatArr = new TypeSymbol("floatArr", true);
         public static readonly TypeSymbol ThreadArr = new TypeSymbol("threadArr", true);
-
-        public static readonly TypeSymbol TCPClientArr = new TypeSymbol("tcpclientArr", true);
-        public static readonly TypeSymbol TCPListenerArr = new TypeSymbol("tcplistenerArr", true);
-        public static readonly TypeSymbol TCPSocketArr = new TypeSymbol("tcpsocketArr", true);
 
         public static Dictionary<ClassSymbol, TypeSymbol> Class;
         public static Dictionary<ClassSymbol, TypeSymbol> ClassArrays;

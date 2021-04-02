@@ -26,11 +26,11 @@ namespace ReCT.CodeAnalysis.Syntax
             {
                 case SyntaxKind.StarToken:
                 case SyntaxKind.SlashToken:
-                    return 5;
+                    return 6;
 
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:
-                    return 4;
+                    return 5;
 
                 case SyntaxKind.EqualsToken:
                 case SyntaxKind.NotEqualsToken:
@@ -38,6 +38,10 @@ namespace ReCT.CodeAnalysis.Syntax
                 case SyntaxKind.LessOrEqualsToken:
                 case SyntaxKind.GreaterToken:
                 case SyntaxKind.GreaterOrEqualsToken:
+                    return 4;
+
+                case SyntaxKind.ShiftLeft:
+                case SyntaxKind.ShiftRight:
                     return 3;
 
                 case SyntaxKind.AmpersandToken:
@@ -198,6 +202,10 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ",";
                 case SyntaxKind.NamespaceToken:
                     return "::";
+                case SyntaxKind.ShiftLeft:
+                    return "<<";
+                case SyntaxKind.ShiftRight:
+                    return ">>";
                 case SyntaxKind.BreakKeyword:
                     return "break";
                 case SyntaxKind.ContinueKeyword:

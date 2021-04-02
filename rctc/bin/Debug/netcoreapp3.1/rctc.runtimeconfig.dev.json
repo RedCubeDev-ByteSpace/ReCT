@@ -1,8 +1,8 @@
 {
   "runtimeOptions": {
     "additionalProbingPaths": [
-      "C:\\Users\\Salami\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\Salami\\.nuget\\packages"
+      "/home/redcube/.dotnet/store/|arch|/|tfm|",
+      "/home/redcube/.nuget/packages"
     ]
   }
 }

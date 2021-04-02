@@ -39,6 +39,8 @@ namespace ReCT.CodeAnalysis.Syntax
         OpenBracketToken,
         CloseBracketToken,
         AccessToken,
+        ShiftRight,
+        ShiftLeft,
 
         // Keywords
         BreakKeyword,
@@ -109,6 +111,6 @@ namespace ReCT.CodeAnalysis.Syntax
         ObjectAccessExpression,
         ThreadCreateExpression,
         ArrayCreateExpression,
-        ObjectCreateExpression,
+        ObjectCreateExpression
     }
 }

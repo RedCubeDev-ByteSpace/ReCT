@@ -326,7 +326,13 @@ namespace ReCT.CodeAnalysis.Syntax
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
             var equals = MatchToken(SyntaxKind.AssignToken);
             var initializer = ParseExpression();
-            var typeClause = ParseOptionalTypeClause();
+            var typeClause = (TypeClauseSyntax)null;
+
+            if (Current.Kind == SyntaxKind.AccessToken)
+            {
+                MatchToken(SyntaxKind.AccessToken);
+                typeClause = ParseOptionalTypeClause();
+            }
             TypeSymbol returnType = null;
 
             return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer, returnType);

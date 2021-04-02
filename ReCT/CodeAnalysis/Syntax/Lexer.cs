@@ -180,15 +180,11 @@ namespace ReCT.CodeAnalysis.Syntax
                     _kind = SyntaxKind.LessOrEqualsToken;
                     _position+=2;
                     break;
-                case '<' when Lookahead != '=' && Lookahead != '-':
+                case '<' when Lookahead != '=' && Lookahead != '-' && Lookahead != '<':
                     _kind = SyntaxKind.LessToken;
                     _position++;
                     break;
-                case '>' when Lookahead == '>':
-                    _kind = SyntaxKind.AccessToken;
-                    _position += 2;
-                    break;
-                case '>' when Lookahead != '=':
+                case '>' when Lookahead != '=' && Lookahead != '>':
                     _position++;
                     _kind = SyntaxKind.GreaterToken;
                     break;
@@ -198,6 +194,14 @@ namespace ReCT.CodeAnalysis.Syntax
                     break;
                 case '-' when Lookahead == '>':
                     _kind = SyntaxKind.AccessToken;
+                    _position+=2;
+                    break;
+                case '>' when Lookahead == '>':
+                    _kind = SyntaxKind.ShiftRight;
+                    _position+=2;
+                    break;
+                case '<' when Lookahead == '<':
+                    _kind = SyntaxKind.ShiftLeft;
                     _position+=2;
                     break;
                 case '"':

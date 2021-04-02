@@ -60,24 +60,27 @@
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Compilation.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/ObjectAccessExpression.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/BoundObjectAccessExpression.cs" />
-      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/SyntaxKind.cs" />
-      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/Lexer.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/BoundLiteralExpression.cs" />
-      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/BoundBinaryOperator.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Symbols/TypeSymbol.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Symbols/BuiltinFunctions.cs" />
       <option value="$PROJECT_DIR$/rctc/Program.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Conversion.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/Parser.cs" />
-      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/SyntaxFacts.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Symbols/SymbolKind.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Symbols/VariableSymbol.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Symbols/LocalVariableSymbol.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Symbols/GlobalVariableSymbol.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Symbols/FunctionalVariable.cs" />
-      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" />
-      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Packager/Packager.cs" />
+      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/BoundBinaryOperator.cs" />
+      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/BoundBinaryOperatorKind.cs" />
+      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs" />
+      <option value="$PROJECT_DIR$/ReCT/info.cs" />
+      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/SyntaxFacts.cs" />
+      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/SyntaxKind.cs" />
+      <option value="$PROJECT_DIR$/rctc/Properties/launchSettings.json" />
+      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" />
+      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/Lexer.cs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1lySmyqd4iCrCd9AA17VrRI6Hq7" />
@@ -86,15 +89,17 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.3502455" />
+    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.0" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="/media/redcube/6CE6D963E6D92E58/Users/Salami/source/repos/RSDL2/RSDL2.sln" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="RiderRazorLiveTemplatesSettingsId" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="RunManager" selected=".NET Project.rcti">
+  <component name="RunManager" selected=".NET Launch Settings Profile.rctc">
     <configuration name="rcti" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -154,6 +159,7 @@
       <workItem from="1613758899440" duration="6680000" />
       <workItem from="1613823983491" duration="3796000" />
       <workItem from="1614096352214" duration="7968000" />
+      <workItem from="1617381676334" duration="7572000" />
     </task>
     <servers />
   </component>
@@ -172,6 +178,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />

@@ -752,7 +752,10 @@ namespace ReCT.CodeAnalysis.Binding
         private BoundExpression BindExpressionInternal(ExpressionSyntax syntax)
         {
             if (syntax == null)
+            {
+                _diagnostics.ReportCustomeMessage("The given Syntax is null!");
                 return new BoundErrorExpression();
+            }
 
             switch (syntax.Kind)
             {
@@ -999,6 +1002,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (_class == null)
             {
+                _diagnostics.ReportCustomeMessage("Requested class was null!");
                 return new BoundErrorExpression();
             }
 
@@ -1383,12 +1387,6 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.Float;
                 case "thread":
                     return TypeSymbol.Thread;
-                case "tcpclient":
-                    return TypeSymbol.TCPClient;
-                case "tcplistener":
-                    return TypeSymbol.TCPListener;
-                case "tcpsocket":
-                    return TypeSymbol.TCPSocket;
 
                 case "anyArr":
                     return TypeSymbol.AnyArr;
@@ -1402,12 +1400,6 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.FloatArr;
                 case "threadArr":
                     return TypeSymbol.ThreadArr;
-                case "tcpclientArr":
-                    return TypeSymbol.TCPClientArr;
-                case "tcplistenerArr":
-                    return TypeSymbol.TCPListenerArr;
-                case "tcpsocketArr":
-                    return TypeSymbol.TCPSocketArr;
                 default:
                     if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
                     return TypeSymbol.Class.Values.FirstOrDefault(x => x.Name == name);;
@@ -1430,12 +1422,6 @@ namespace ReCT.CodeAnalysis.Binding
                 return TypeSymbol.FloatArr;
             else if (type == TypeSymbol.Thread)
                 return TypeSymbol.ThreadArr;
-            else if (type == TypeSymbol.TCPClient)
-                return TypeSymbol.TCPClientArr;
-            else if (type == TypeSymbol.TCPListener)
-                return TypeSymbol.TCPListenerArr;
-            else if (type == TypeSymbol.TCPSocket)
-                return TypeSymbol.TCPSocketArr;
             else if (type.isClass)
                 return TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == type.Name + "Arr").Value;
 
@@ -1455,12 +1441,6 @@ namespace ReCT.CodeAnalysis.Binding
                 return TypeSymbol.Float;
             else if (type == TypeSymbol.ThreadArr)
                 return TypeSymbol.Thread;
-            else if (type == TypeSymbol.TCPClientArr)
-                return TypeSymbol.TCPClient;
-            else if (type == TypeSymbol.TCPListenerArr)
-                return TypeSymbol.TCPListener;
-            else if (type == TypeSymbol.TCPSocketArr)
-                return TypeSymbol.TCPSocket;
             else if (type.isClass)
                 return TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == type.Name.Substring(0, type.Name.Length - 3)).Value;
 

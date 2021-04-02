@@ -71,21 +71,6 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _IODirCreateReference;
         private readonly MethodReference _IOGetFilesInDirReference;
         private readonly MethodReference _IOGetDirsInDirReference;
-        private readonly MethodReference _TCPClientCtorReference;
-        private readonly MethodReference _TCPListenerCtorReference;
-        private readonly MethodReference _TCPListenerStartReference;
-        private readonly MethodReference _TCPAcceptSocketReference;
-        private readonly MethodReference _TCPClientGetStream;
-        private readonly MethodReference _TCPClientClose;
-        private readonly MethodReference _TCPClientConnected;
-        private readonly MethodReference _TCPNetworkStreamCtor;
-        private readonly MethodReference _TCPSocketClose;
-        private readonly MethodReference _TCPSocketConnected;
-        private readonly MethodReference _IOStreamReaderCtor;
-        private readonly MethodReference _IOReadLine;
-        private readonly MethodReference _IOStreamWriterCtor;
-        private readonly MethodReference _IOWriteLine;
-        private readonly MethodReference _IOFlush;
         private readonly MethodReference _envDie;
         private readonly AssemblyDefinition _assemblyDefinition;
         private readonly Dictionary<FunctionSymbol, MethodDefinition> _methods = new Dictionary<FunctionSymbol, MethodDefinition>();
@@ -109,8 +94,8 @@ namespace ReCT.CodeAnalysis.Emit
         private static List<AssemblyDefinition> s_assemblies;
         private static AssemblyDefinition s_assemblyDefinition;
         
-        private MethodReference _IORead;
-        private MethodReference _IOWrite;
+        //private MethodReference _IORead;
+        //private MethodReference _IOWrite;
 
         private Emitter(string moduleName, string[] references)
         {
@@ -140,10 +125,7 @@ namespace ReCT.CodeAnalysis.Emit
                 (TypeSymbol.String, "System.String"),
                 (TypeSymbol.Void, "System.Void"),
                 (TypeSymbol.Float, "System.Single"),
-                (TypeSymbol.Thread, "System.Threading.Thread"),
-                (TypeSymbol.TCPClient, "System.Net.Sockets.TcpClient"),
-                (TypeSymbol.TCPListener, "System.Net.Sockets.TcpListener"),
-                (TypeSymbol.TCPSocket, "System.Net.Sockets.Socket"),
+                (TypeSymbol.Thread, "System.Threading.Thread")
             };
 
             var assemblyName = new AssemblyNameDefinition(moduleName, new Version(1, 0));
@@ -245,9 +227,6 @@ namespace ReCT.CodeAnalysis.Emit
             _knownTypes.Add(TypeSymbol.StringArr, _knownTypes[TypeSymbol.String].MakeArrayType());
             _knownTypes.Add(TypeSymbol.FloatArr, _knownTypes[TypeSymbol.Float].MakeArrayType());
             _knownTypes.Add(TypeSymbol.ThreadArr, _knownTypes[TypeSymbol.Thread].MakeArrayType());
-            _knownTypes.Add(TypeSymbol.TCPClientArr, _knownTypes[TypeSymbol.TCPClient].MakeArrayType());
-            _knownTypes.Add(TypeSymbol.TCPListenerArr, _knownTypes[TypeSymbol.TCPListener].MakeArrayType());
-            _knownTypes.Add(TypeSymbol.TCPSocketArr, _knownTypes[TypeSymbol.TCPSocket].MakeArrayType());
 
             _objectConstructor = ResolveMethod("System.Object", ".ctor", Array.Empty<string>());
 
@@ -322,29 +301,6 @@ namespace ReCT.CodeAnalysis.Emit
 
             _IOGetFilesInDirReference = ResolveMethod("System.IO.Directory", "GetFiles", new[] { "System.String" });
             _IOGetDirsInDirReference = ResolveMethod("System.IO.Directory", "GetDirectories", new[] { "System.String" });
-
-            //TCP Networking
-            _TCPClientCtorReference = ResolveMethod("System.Net.Sockets.TcpClient", ".ctor", new[] { "System.String", "System.Int32" });
-            _TCPListenerCtorReference = ResolveMethod("System.Net.Sockets.TcpListener", ".ctor", new[] { "System.Int32" });
-            _TCPListenerStartReference = ResolveMethod("System.Net.Sockets.TcpListener", "Start", Array.Empty<string>());
-
-            _TCPAcceptSocketReference = ResolveMethod("System.Net.Sockets.TcpListener", "AcceptSocket", Array.Empty<string>());
-
-            _TCPClientGetStream = ResolveMethod("System.Net.Sockets.TcpClient", "GetStream", Array.Empty<string>());
-            _TCPClientClose = ResolveMethod("System.Net.Sockets.TcpClient", "Close", Array.Empty<string>());
-            _TCPClientConnected = ResolveMethod("System.Net.Sockets.TcpClient", "get_Connected", Array.Empty<string>());
-            _TCPNetworkStreamCtor = ResolveMethod("System.Net.Sockets.NetworkStream", ".ctor", new[] { "System.Net.Sockets.Socket" });
-
-            _TCPSocketClose = ResolveMethod("System.Net.Sockets.Socket", "Close", Array.Empty<string>());
-            _TCPSocketConnected = ResolveMethod("System.Net.Sockets.Socket", "get_Connected", Array.Empty<string>());
-
-            _IOStreamReaderCtor = ResolveMethod("System.IO.StreamReader", ".ctor", new[] { "System.IO.Stream" });
-            _IOReadLine = ResolveMethod("System.IO.TextReader", "ReadLine", Array.Empty<string>());
-            _IORead = ResolveMethod("System.IO.TextReader", "Read", Array.Empty<string>());
-            _IOStreamWriterCtor = ResolveMethod("System.IO.StreamWriter", ".ctor", new[] { "System.IO.Stream" });
-            _IOWriteLine = ResolveMethod("System.IO.TextWriter", "WriteLine", new[] { "System.String" });
-            _IOWrite = ResolveMethod("System.IO.TextWriter", "Write", new[] { "System.String" });
-            _IOFlush = ResolveMethod("System.IO.TextWriter", "Flush", Array.Empty<string>());
 
             //die
             _envDie = ResolveMethod("System.Environment", "Exit", new[] { "System.Int32" });
@@ -1445,6 +1401,16 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundBinaryOperatorKind.BitwiseXor:
                     ilProcessor.Emit(OpCodes.Xor);
                     break;
+                case BoundBinaryOperatorKind.BitshiftLeft:
+                    ilProcessor.Emit(OpCodes.Ldc_I4, 31);
+                    ilProcessor.Emit(OpCodes.And);
+                    ilProcessor.Emit(OpCodes.Shl);
+                    break;
+                case BoundBinaryOperatorKind.BitshiftRight:
+                    ilProcessor.Emit(OpCodes.Ldc_I4, 31);
+                    ilProcessor.Emit(OpCodes.And);
+                    ilProcessor.Emit(OpCodes.Shr);
+                    break;
                 case BoundBinaryOperatorKind.Equals:
                     ilProcessor.Emit(OpCodes.Ceq);
                     break;
@@ -1476,53 +1442,7 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitTypeCallExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
         {
-            if ((node.TypeCall.Function == BuiltinFunctions.Write || node.TypeCall.Function == BuiltinFunctions.WriteLine) && node.Variable.Type == TypeSymbol.TCPClient)
-            {
-                VariableDefinition var0 = new VariableDefinition(_StreamWriterRef);
-
-                ilProcessor.Body.Variables.Add(var0);
-
-                ilProcessor.Emit(OpCodes.Callvirt, _TCPClientGetStream);
-                ilProcessor.Emit(OpCodes.Newobj, _IOStreamWriterCtor);
-                ilProcessor.Emit(OpCodes.Stloc, var0);
-                ilProcessor.Emit(OpCodes.Ldloc, var0);
-                EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
-                ilProcessor.Emit(OpCodes.Callvirt, node.TypeCall.Function == BuiltinFunctions.Write ? _IOWrite : _IOWriteLine);
-                ilProcessor.Emit(OpCodes.Ldloc, var0);
-                ilProcessor.Emit(OpCodes.Callvirt, _IOFlush);
-                return;
-            }
-            else if ((node.TypeCall.Function == BuiltinFunctions.Read || node.TypeCall.Function == BuiltinFunctions.ReadLine) && node.Variable.Type == TypeSymbol.TCPClient)
-            {
-                ilProcessor.Emit(OpCodes.Callvirt, _TCPClientGetStream);
-                ilProcessor.Emit(OpCodes.Newobj, _IOStreamReaderCtor);
-                ilProcessor.Emit(OpCodes.Callvirt, node.TypeCall.Function == BuiltinFunctions.Read ? _IORead : _IOReadLine);
-                return;
-            }
-            else if ((node.TypeCall.Function == BuiltinFunctions.Write || node.TypeCall.Function == BuiltinFunctions.WriteLine) && node.Variable.Type == TypeSymbol.TCPSocket)
-            {
-                VariableDefinition var0 = new VariableDefinition(_StreamWriterRef);
-
-                ilProcessor.Body.Variables.Add(var0);
-
-                ilProcessor.Emit(OpCodes.Newobj, _TCPNetworkStreamCtor);
-                ilProcessor.Emit(OpCodes.Newobj, _IOStreamWriterCtor);
-                ilProcessor.Emit(OpCodes.Stloc, var0);
-                ilProcessor.Emit(OpCodes.Ldloc, var0);
-                EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
-                ilProcessor.Emit(OpCodes.Callvirt, node.TypeCall.Function == BuiltinFunctions.Write ? _IOWrite : _IOWriteLine);
-                ilProcessor.Emit(OpCodes.Ldloc, var0);
-                ilProcessor.Emit(OpCodes.Callvirt, _IOFlush);
-                return;
-            }
-            else if ((node.TypeCall.Function == BuiltinFunctions.Read || node.TypeCall.Function == BuiltinFunctions.ReadLine) && node.Variable.Type == TypeSymbol.TCPSocket)
-            {
-                ilProcessor.Emit(OpCodes.Newobj, _TCPNetworkStreamCtor);
-                ilProcessor.Emit(OpCodes.Newobj, _IOStreamReaderCtor);
-                ilProcessor.Emit(OpCodes.Callvirt, node.TypeCall.Function == BuiltinFunctions.Read ? _IORead : _IOReadLine);
-                return;
-            }
-            else if (node.TypeCall.Function == BuiltinFunctions.Push && (node.Variable.Type.isClassArray || node.Variable.Type.isArray))
+             if (node.TypeCall.Function == BuiltinFunctions.Push && (node.Variable.Type.isClassArray || node.Variable.Type.isArray))
             {
                 var type = _knownTypes[node.Variable.Type.isClass
                     ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.Variable.Type.Name)
@@ -1565,6 +1485,17 @@ namespace ReCT.CodeAnalysis.Emit
                 var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Substring", new[] { "System.Int32", "System.Int32" });
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
+            else if (node.TypeCall.Function == BuiltinFunctions.Split)
+            {
+                ilProcessor.Emit(OpCodes.Ldc_I4_0);
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Split", new[] { "System.String", "System.StringSplitOptions" });
+                ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.Replace)
+            {
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Replace", new[] { "System.String", "System.String" });
+                ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+            }
             else if (node.TypeCall.Function == BuiltinFunctions.StartThread)
             {
                 var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Start", Array.Empty<string>());
@@ -1578,26 +1509,6 @@ namespace ReCT.CodeAnalysis.Emit
             else if (node.TypeCall.Function == BuiltinFunctions.GetLength && (node.Variable.Type.isClassArray || node.Variable.Type.isArray))
             {
                 ilProcessor.Emit(OpCodes.Ldlen);
-            }
-            else if (node.TypeCall.Function == BuiltinFunctions.OpenSocket)
-            {
-                ilProcessor.Emit(OpCodes.Callvirt, _TCPAcceptSocketReference);
-            }
-            else if (node.TypeCall.Function == BuiltinFunctions.Close && node.Variable.Type == TypeSymbol.TCPClient)
-            {
-                ilProcessor.Emit(OpCodes.Callvirt, _TCPClientClose);
-            }
-            else if (node.TypeCall.Function == BuiltinFunctions.Close && node.Variable.Type == TypeSymbol.TCPSocket)
-            {
-                ilProcessor.Emit(OpCodes.Callvirt, _TCPSocketClose);
-            }
-            else if (node.TypeCall.Function == BuiltinFunctions.IsConnected && node.Variable.Type == TypeSymbol.TCPClient)
-            {
-                ilProcessor.Emit(OpCodes.Callvirt, _TCPClientConnected);
-            }
-            else if (node.TypeCall.Function == BuiltinFunctions.IsConnected && node.Variable.Type == TypeSymbol.TCPSocket)
-            {
-                ilProcessor.Emit(OpCodes.Callvirt, _TCPSocketConnected);
             }
             else
             {
@@ -1678,9 +1589,6 @@ namespace ReCT.CodeAnalysis.Emit
                               node.Expression.Type == TypeSymbol.StringArr ||
                               node.Expression.Type == TypeSymbol.BoolArr ||
                               node.Expression.Type == TypeSymbol.ThreadArr ||
-                              node.Expression.Type == TypeSymbol.TCPClientArr ||
-                              node.Expression.Type == TypeSymbol.TCPListenerArr ||
-                              node.Expression.Type == TypeSymbol.TCPSocketArr ||
                               node.Expression.Type.isClass;
 
             if (needsBoxing)
@@ -1710,18 +1618,6 @@ namespace ReCT.CodeAnalysis.Emit
             {
                 ilProcessor.Emit(OpCodes.Call, _convertToStringReference);
             }
-            else if (node.Type == TypeSymbol.TCPClient)
-            {
-                ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.TCPClient]);
-            }
-            else if (node.Type == TypeSymbol.TCPListener)
-            {
-                ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.TCPListener]);
-            }
-            else if (node.Type == TypeSymbol.TCPSocket)
-            {
-                ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.TCPSocket]);
-            }
             else if (node.Type == TypeSymbol.AnyArr)
             {
                 ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.AnyArr]);
@@ -1745,18 +1641,6 @@ namespace ReCT.CodeAnalysis.Emit
             else if (node.Type == TypeSymbol.ThreadArr)
             {
                 ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.ThreadArr]);
-            }
-            else if (node.Type == TypeSymbol.TCPClientArr)
-            {
-                ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.TCPClientArr]);
-            }
-            else if (node.Type == TypeSymbol.TCPListenerArr)
-            {
-                ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.TCPListenerArr]);
-            }
-            else if (node.Type == TypeSymbol.TCPSocketArr)
-            {
-                ilProcessor.Emit(OpCodes.Castclass, _knownTypes[TypeSymbol.TCPSocketArr]);
             }
             else if (node.Type.isClass)
             {

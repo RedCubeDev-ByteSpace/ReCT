@@ -40,6 +40,8 @@ namespace ReCT.CodeAnalysis.Symbols
 
         //String funcs
         public static readonly FunctionSymbol GetLength = new FunctionSymbol("GetLength", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
+        public static readonly FunctionSymbol Split = new FunctionSymbol("Split", ImmutableArray.Create(new ParameterSymbol("seperator", TypeSymbol.String, 0)), TypeSymbol.StringArr);
+        public static readonly FunctionSymbol Replace = new FunctionSymbol("Replace", ImmutableArray.Create(new ParameterSymbol("original", TypeSymbol.String, 0), new ParameterSymbol("replacement", TypeSymbol.String, 1)), TypeSymbol.String);
         public static readonly FunctionSymbol Substring = new FunctionSymbol("Substring", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0), new ParameterSymbol("length", TypeSymbol.Int, 0)), TypeSymbol.String);
 
         //Thread functions
@@ -48,16 +50,6 @@ namespace ReCT.CodeAnalysis.Symbols
 
         //Arr functions
         public static readonly FunctionSymbol Push = new FunctionSymbol("Push", ImmutableArray.Create(new ParameterSymbol("object", TypeSymbol.Any, 0)), TypeSymbol.Void);
-
-        //TCP functions
-        public static readonly FunctionSymbol OpenSocket = new FunctionSymbol("OpenSocket", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.TCPSocket);
-
-        public static readonly FunctionSymbol Write = new FunctionSymbol("Write", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol WriteLine = new FunctionSymbol("WriteLine", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
-        public static readonly FunctionSymbol Read = new FunctionSymbol("Read", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
-        public static readonly FunctionSymbol ReadLine = new FunctionSymbol("ReadLine", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
-        public static readonly FunctionSymbol Close = new FunctionSymbol("Close", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
-        public static readonly FunctionSymbol IsConnected = new FunctionSymbol("IsConnected", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Bool);
 
         //Cube functions
         public static readonly FunctionSymbol Die = new FunctionSymbol("die", ImmutableArray.Create(new ParameterSymbol("exitCode", TypeSymbol.Int, 0)), TypeSymbol.Void);

@@ -1,91 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "E:\\GitRepos\\ReCT\\rctc\\rctc.csproj": {}
+    "/external/GitRepos/ReCT/rctc/rctc.csproj": {}
   },
   "projects": {
-    "E:\\GitRepos\\ReCT\\rctc\\rctc.csproj": {
+    "/external/GitRepos/ReCT/ReCT/ReCT.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\GitRepos\\ReCT\\rctc\\rctc.csproj",
-        "projectName": "rctc",
-        "projectPath": "E:\\GitRepos\\ReCT\\rctc\\rctc.csproj",
-        "packagesPath": "C:\\Users\\Salami\\.nuget\\packages\\",
-        "outputPath": "E:\\GitRepos\\ReCT\\rctc\\obj\\",
-        "projectStyle": "PackageReference",
-        "configFilePaths": [
-          "C:\\Users\\Salami\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
-        ],
-        "originalTargetFrameworks": [
-          "netcoreapp3.1"
-        ],
-        "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
-        },
-        "frameworks": {
-          "netcoreapp3.1": {
-            "targetAlias": "netcoreapp3.1",
-            "projectReferences": {
-              "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj": {
-                "projectPath": "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj"
-              }
-            }
-          }
-        },
-        "warningProperties": {
-          "warnAsError": [
-            "NU1605"
-          ]
-        }
-      },
-      "frameworks": {
-        "netcoreapp3.1": {
-          "targetAlias": "netcoreapp3.1",
-          "dependencies": {
-            "Mono.Options": {
-              "target": "Package",
-              "version": "[6.6.0.161, )"
-            }
-          },
-          "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48"
-          ],
-          "assetTargetFallback": true,
-          "warn": true,
-          "frameworkReferences": {
-            "Microsoft.NETCore.App": {
-              "privateAssets": "all"
-            }
-          },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
-        }
-      }
-    },
-    "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj",
+        "projectUniqueName": "/external/GitRepos/ReCT/ReCT/ReCT.csproj",
         "projectName": "ReCT",
-        "projectPath": "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj",
-        "packagesPath": "C:\\Users\\Salami\\.nuget\\packages\\",
-        "outputPath": "E:\\GitRepos\\ReCT\\ReCT\\obj\\",
+        "projectPath": "/external/GitRepos/ReCT/ReCT/ReCT.csproj",
+        "packagesPath": "/home/redcube/.nuget/packages/",
+        "outputPath": "/external/GitRepos/ReCT/ReCT/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Salami\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/redcube/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netstandard2.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -129,7 +63,79 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.104/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/external/GitRepos/ReCT/rctc/rctc.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/external/GitRepos/ReCT/rctc/rctc.csproj",
+        "projectName": "rctc",
+        "projectPath": "/external/GitRepos/ReCT/rctc/rctc.csproj",
+        "packagesPath": "/home/redcube/.nuget/packages/",
+        "outputPath": "/external/GitRepos/ReCT/rctc/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/redcube/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "targetAlias": "netcoreapp3.1",
+            "projectReferences": {
+              "/external/GitRepos/ReCT/ReCT/ReCT.csproj": {
+                "projectPath": "/external/GitRepos/ReCT/ReCT/ReCT.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
+          "dependencies": {
+            "Mono.Options": {
+              "target": "Package",
+              "version": "[6.6.0.161, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.1.10, 3.1.10]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.linux-x64",
+              "version": "[3.1.13, 3.1.13]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.104/RuntimeIdentifierGraph.json"
         }
       }
     }

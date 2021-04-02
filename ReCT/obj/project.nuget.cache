@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "e8EmmNIc+9ZlafAwkQgwe/OXBI5jZSlq0mUjXYq07oVlw8S3UifGJWskH2vrI/FHikpoHM6E54fOMVZ+sLi/XA==",
+  "dgSpecHash": "qsCPtFLbJ3Qm6m2Ve0GHnnCo1M77sxQEVjTLscVG8mBpVDTsVLvP6WAdrZYj8NaEOdt+K64PQ4p7TIOKXJSv2Q==",
   "success": true,
-  "projectFilePath": "E:\\GitRepos\\ReCT\\ReCT\\ReCT.csproj",
+  "projectFilePath": "/external/GitRepos/ReCT/ReCT/ReCT.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Salami\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
-    "C:\\Users\\Salami\\.nuget\\packages\\mono.cecil\\0.11.2\\mono.cecil.0.11.2.nupkg.sha512",
-    "C:\\Users\\Salami\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
-    "C:\\Users\\Salami\\.nuget\\packages\\system.collections.immutable\\1.5.0\\system.collections.immutable.1.5.0.nupkg.sha512"
+    "/home/redcube/.nuget/packages/microsoft.netcore.platforms/1.1.0/microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "/home/redcube/.nuget/packages/mono.cecil/0.11.2/mono.cecil.0.11.2.nupkg.sha512",
+    "/home/redcube/.nuget/packages/netstandard.library/2.0.3/netstandard.library.2.0.3.nupkg.sha512",
+    "/home/redcube/.nuget/packages/system.collections.immutable/1.5.0/system.collections.immutable.1.5.0.nupkg.sha512"
   ],
   "logs": []
 }

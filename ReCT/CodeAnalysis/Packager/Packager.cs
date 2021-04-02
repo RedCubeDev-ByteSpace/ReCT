@@ -40,8 +40,10 @@ namespace ReCT.CodeAnalysis.Package
             List<string> TypesInThisPackage = new List<string>();
 
             foreach (TypeDefinition t in types)
-            {
                 TypesInThisPackage.Add(t.Name);
+
+            foreach (TypeDefinition t in types)
+            {
                 var classSymbol = new ClassSymbol(t.Name, null, t.IsSealed && t.IsAbstract);
                 var classMethods = t.Methods;
                 var classFields = t.Fields;
@@ -187,12 +189,6 @@ namespace ReCT.CodeAnalysis.Package
                     return "void";
                 case "thread":
                     return "thread";
-                case "tcpclient":
-                    return "tcpclient";
-                case "tcplistener":
-                    return "tcplistener";
-                case "socket":
-                    return "tcpscoket";
                 default:
                     if (netversion.EndsWith("[]"))
                         return netTypeLookup(netversion.Replace("[]", ""), inThisPackage) + "Arr";
