@@ -94,7 +94,6 @@ E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Mdb.dll
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Pdb.dll
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Rocks.dll
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Newtonsoft.Json.dll
-E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT.dll
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Buffers.dll
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Collections.Immutable.dll
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Memory.dll
@@ -371,3 +370,4 @@ E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Xml.XmlSerializer.dll
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Xml.XPath.dll
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Xml.XPath.XDocument.dll
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.exe.config
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT.dll

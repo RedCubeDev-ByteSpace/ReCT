@@ -1382,6 +1382,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.Bool;
                 case "int":
                     return TypeSymbol.Int;
+                case "byte":
+                    return TypeSymbol.Byte;
                 case "string":
                     return TypeSymbol.String;
                 case "float":
@@ -1395,6 +1397,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.BoolArr;
                 case "intArr":
                     return TypeSymbol.IntArr;
+                case "byteArr":
+                    return TypeSymbol.ByteArr;
                 case "stringArr":
                     return TypeSymbol.StringArr;
                 case "floatArr":
@@ -1417,6 +1421,8 @@ namespace ReCT.CodeAnalysis.Binding
                 return TypeSymbol.BoolArr;
             else if (type == TypeSymbol.Int)
                 return TypeSymbol.IntArr;
+            else if (type == TypeSymbol.Byte)
+                return TypeSymbol.ByteArr;
             else if (type == TypeSymbol.String)
                 return TypeSymbol.StringArr;
             else if (type == TypeSymbol.Float)
@@ -1436,6 +1442,8 @@ namespace ReCT.CodeAnalysis.Binding
                 return TypeSymbol.Bool;
             else if (type == TypeSymbol.IntArr)
                 return TypeSymbol.Int;
+            else if (type == TypeSymbol.ByteArr)
+                return TypeSymbol.Byte;
             else if (type == TypeSymbol.StringArr)
                 return TypeSymbol.String;
             else if (type == TypeSymbol.FloatArr)

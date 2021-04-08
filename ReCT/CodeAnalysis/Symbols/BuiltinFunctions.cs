@@ -48,6 +48,10 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly FunctionSymbol StartThread = new FunctionSymbol("StartThread", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
         public static readonly FunctionSymbol KillThread = new FunctionSymbol("KillThread", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
 
+        //Byte functions
+        public static readonly FunctionSymbol GetBit = new FunctionSymbol("GetBit", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0)), TypeSymbol.Int);
+        public static readonly FunctionSymbol SetBit = new FunctionSymbol("SetBit", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0), new ParameterSymbol("value", TypeSymbol.Int, 0)), TypeSymbol.Void);
+
         //Arr functions
         public static readonly FunctionSymbol Push = new FunctionSymbol("Push", ImmutableArray.Create(new ParameterSymbol("object", TypeSymbol.Any, 0)), TypeSymbol.Void);
 

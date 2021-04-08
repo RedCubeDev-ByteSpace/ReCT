@@ -169,12 +169,20 @@ namespace ReCT.CodeAnalysis.Syntax
         private ExpressionSyntax ParseArrayCreation()
         {
             var makeKeyword = MatchToken(SyntaxKind.MakeKeyword);
+            SyntaxToken package = null;
+
+            if (Peek(1).Kind == SyntaxKind.NamespaceToken)
+            {
+                package = MatchToken(SyntaxKind.IdentifierToken);
+                MatchToken(SyntaxKind.NamespaceToken);
+            }
+
             var type = MatchToken(SyntaxKind.IdentifierToken);
             var arrayKeyword = MatchToken(SyntaxKind.ArrayKeyword);
             MatchToken(SyntaxKind.OpenParenthesisToken);
             var length = ParseExpression();
             MatchToken(SyntaxKind.CloseParenthesisToken);
-            return new ArrayCreationSyntax(_syntaxTree, type, length);
+            return new ArrayCreationSyntax(_syntaxTree, type, length, package);
         }
 
         private ExpressionSyntax ParseObjectCreation()
@@ -224,6 +232,10 @@ namespace ReCT.CodeAnalysis.Syntax
         private ParameterSyntax ParseParameter()
         {
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
+
+            if (Current.Kind == SyntaxKind.AccessToken)
+                MatchToken(SyntaxKind.AccessToken);
+
             var type = ParseTypeClause();
             return new ParameterSyntax(_syntaxTree, identifier, type);
         }
@@ -340,7 +352,7 @@ namespace ReCT.CodeAnalysis.Syntax
 
         private TypeClauseSyntax ParseOptionalTypeClause()
         {
-            if (Current.Kind != SyntaxKind.IdentifierToken)
+            if (Current.Kind != SyntaxKind.IdentifierToken && Current.Kind != SyntaxKind.AccessToken)
                 return null;
 
             return ParseTypeClause();
@@ -348,6 +360,9 @@ namespace ReCT.CodeAnalysis.Syntax
 
         private TypeClauseSyntax ParseTypeClause()
         {
+            if (Current.Kind == SyntaxKind.AccessToken)
+                MatchToken(SyntaxKind.AccessToken);
+
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
             return new TypeClauseSyntax(_syntaxTree, identifier);
         }
@@ -703,11 +718,7 @@ namespace ReCT.CodeAnalysis.Syntax
             if (Current.Kind == SyntaxKind.AccessKeyword)
             {
                 MatchToken(SyntaxKind.AccessKeyword);
-                
-                if (Current.Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.AccessToken)
-                    identifierToken = MatchToken(SyntaxKind.IdentifierToken);
-                else
-                    expression = ParseExpression();
+                expression = ParseExpression();
             }
             else
                 identifierToken = MatchToken(SyntaxKind.IdentifierToken);

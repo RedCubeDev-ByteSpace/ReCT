@@ -1226,6 +1226,8 @@ namespace ReCT.CodeAnalysis.Emit
                         ilProcessor.Emit(OpCodes.Ldelem_I1);
                     else if (node.Type == TypeSymbol.Int)
                         ilProcessor.Emit(OpCodes.Ldelem_I4);
+                    else if (node.Type == TypeSymbol.Byte)
+                        ilProcessor.Emit(OpCodes.Ldelem_I1);
                     else if (node.Type == TypeSymbol.Float)
                         ilProcessor.Emit(OpCodes.Ldelem_R4);
                     else
@@ -1268,6 +1270,8 @@ namespace ReCT.CodeAnalysis.Emit
                     ilProcessor.Emit(OpCodes.Stelem_I1);
                 else if (node.Expression.Type == TypeSymbol.Int)
                     ilProcessor.Emit(OpCodes.Stelem_I4);
+                else if (node.Expression.Type == TypeSymbol.Byte)
+                    ilProcessor.Emit(OpCodes.Stelem_I1);
                 else if (node.Expression.Type == TypeSymbol.Float)
                     ilProcessor.Emit(OpCodes.Stelem_R4);
                 else
@@ -1442,7 +1446,65 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitTypeCallExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
         {
-             if (node.TypeCall.Function == BuiltinFunctions.Push && (node.Variable.Type.isClassArray || node.Variable.Type.isArray))
+            if (node.TypeCall.Function == BuiltinFunctions.GetBit && node.Variable.Type == TypeSymbol.Byte)
+            {
+                ilProcessor.Emit(OpCodes.Ldc_I4_1);
+                EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
+                ilProcessor.Emit(OpCodes.Shl);
+                ilProcessor.Emit(OpCodes.And);
+                ilProcessor.Emit(OpCodes.Ldc_I4_0);
+                ilProcessor.Emit(OpCodes.Cgt_Un);
+
+                return;
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.SetBit && node.Variable.Type == TypeSymbol.Byte)
+            {
+                ilProcessor.Emit(OpCodes.Ldc_I4_1);
+                EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
+                ilProcessor.Emit(OpCodes.Shl);
+                ilProcessor.Emit(OpCodes.Not);
+                ilProcessor.Emit(OpCodes.And);
+                EmitExpression(ilProcessor, node.TypeCall.Arguments[1]);
+                EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
+                ilProcessor.Emit(OpCodes.Shl);
+                ilProcessor.Emit(OpCodes.Or);
+                ilProcessor.Emit(OpCodes.Conv_U1);
+
+                VariableDefinition variableDefinition = null;
+                FieldDefinition fieldDefinition = null;
+
+                if (node.Variable.IsGlobal)
+                    fieldDefinition = (inClass == null ? _globals : _classGlobals[inType])[node.Variable];
+                else
+                    variableDefinition = _locals[node.Variable];
+
+                if (inClass != null && !inClass.IsStatic && node.Variable.IsGlobal)
+                    ilProcessor.Emit(OpCodes.Ldarg_0);
+
+                if (inType != null)
+                {
+                    if (!node.Variable.IsGlobal)
+                    {
+                        ilProcessor.Emit(OpCodes.Stloc, variableDefinition);
+                        return;
+                    }
+
+                    if (inClass.IsStatic)
+                        ilProcessor.Emit(OpCodes.Stsfld, fieldDefinition);
+                    else
+                        ilProcessor.Emit(OpCodes.Stfld, fieldDefinition);
+
+                    return;
+                }
+
+                if (node.Variable.IsGlobal)
+                    ilProcessor.Emit(OpCodes.Stsfld, fieldDefinition);
+                else
+                    ilProcessor.Emit(OpCodes.Stloc, variableDefinition);
+
+                return;
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.Push && (node.Variable.Type.isClassArray || node.Variable.Type.isArray))
             {
                 var type = _knownTypes[node.Variable.Type.isClass
                     ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.Variable.Type.Name)
@@ -1467,8 +1529,22 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Sub);
                 
                 EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
-                ilProcessor.Emit(OpCodes.Castclass, _knownTypes.FirstOrDefault(x => x.Key.Name == (node.Variable.Type.Name.EndsWith("Arr") ? node.Variable.Type.Name.Replace("Arr", "") : node.Variable.Type.Name) ).Value);
-                ilProcessor.Emit(OpCodes.Stelem_Ref);
+
+                var cType = _knownTypes.FirstOrDefault(x => x.Key.Name == (node.Variable.Type.Name.EndsWith("Arr") ? node.Variable.Type.Name.Replace("Arr", "") : node.Variable.Type.Name));
+
+                ilProcessor.Emit(OpCodes.Castclass, cType.Value);
+
+                if (cType.Key == TypeSymbol.Bool)
+                    ilProcessor.Emit(OpCodes.Stelem_I1);
+                else if (cType.Key == TypeSymbol.Int)
+                    ilProcessor.Emit(OpCodes.Stelem_I4);
+                else if (cType.Key == TypeSymbol.Byte)
+                    ilProcessor.Emit(OpCodes.Stelem_I1);
+                else if (cType.Key == TypeSymbol.Float)
+                    ilProcessor.Emit(OpCodes.Stelem_R4);
+                else
+                    ilProcessor.Emit(OpCodes.Stelem_Ref);
+
                 return;
             }
 
@@ -1582,6 +1658,7 @@ namespace ReCT.CodeAnalysis.Emit
             EmitExpression(ilProcessor, node.Expression);
             var needsBoxing = node.Expression.Type == TypeSymbol.Bool ||
                               node.Expression.Type == TypeSymbol.Int ||
+                              node.Expression.Type == TypeSymbol.Byte ||
                               node.Expression.Type == TypeSymbol.Float ||
                               node.Expression.Type == TypeSymbol.AnyArr ||
                               node.Expression.Type == TypeSymbol.IntArr ||
