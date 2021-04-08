@@ -101,6 +101,7 @@
             this.CodeBox.CharWidth = 8;
             this.CodeBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.CodeBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.CodeBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.CodeBox.ForeColor = System.Drawing.Color.White;
             this.CodeBox.Hotkeys = resources.GetString("CodeBox.Hotkeys");
             this.CodeBox.IsReplaceMode = false;
@@ -414,7 +415,7 @@
             this.ReCTAutoComplete.Items = new string[0];
             this.ReCTAutoComplete.LeftPadding = 25;
             this.ReCTAutoComplete.MaximumSize = new System.Drawing.Size(300, 200);
-            this.ReCTAutoComplete.SearchPattern = "(\\w|\\.|\\:|\\#|\\>)";
+            this.ReCTAutoComplete.SearchPattern = "(\\w|\\.|\\:|\\#|\\>|\\-)";
             this.ReCTAutoComplete.TargetControlWrapper = null;
             this.ReCTAutoComplete.Selected += new System.EventHandler<AutocompleteMenuNS.SelectedEventArgs>(this.ReCTAutoComplete_Selected);
             // 

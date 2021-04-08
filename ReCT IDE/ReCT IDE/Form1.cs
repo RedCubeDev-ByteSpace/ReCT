@@ -213,10 +213,10 @@ namespace ReCT_IDE
         {
             string[][] acs =
             {
-                new[]{ "any", "bool", "int", "string", "void", "float", "thread", "tcpclient", "tcplistener", "tcpsocket", "anyArr", "boolArr", "intArr", "stringArr", "floatArr", "threadArr", "tcpclientArr", "tcplistenerArr", "tcpsocketArr" },
+                new[]{ "any", "bool", "int", "byte", "string", "void", "float", "thread", "anyArr", "boolArr", "intArr", "byteArr", "stringArr", "floatArr", "threadArr" },
                 new[]{ "var", "set", "if", "else", "function", "class", "true", "false", "break", "continue", "for", "from", "to", "return", "while", "die" },
                 new[]{ "Thread", "Constructor" },
-                new[]{ "->GetLength", "->Substring", "->StartThread", "->KillThread", "->Open", "->Write", "->WriteLine", "->Read", "->ReadLine", "->IsConnected", "->Close", "->Push" },
+                new[]{ "->GetLength", "->Substring", "->StartThread", "->KillThread", "->Open", "->Write", "->WriteLine", "->Read", "->ReadLine", "->IsConnected", "->Close", "->Push", "->GetBit", "->SetBit" },
                 new[]{ "#attach", "#copy", "#copyFolder", "#closeConsole", "#noConsole" }
             };
 
@@ -349,7 +349,7 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(SystemFunctionStyle, rectCompCheck.ImportedFunctions);
 
             //types
-            e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\btcpsocketArr\b|\btcplistenerArr\b|\btcpclientArr\b|\btcpsocket\b|\btcplistener\b|\btcpclient\b|\bany\b|\bbool\b|\bint\b|\bstring\b|\bvoid\b|\bfloat\b|\bthread\b|\banyArr\b|\bboolArr\b|\bintArr\b|\bstringArr\b|\bfloatArr\b|\bthreadArr\b)");
+            e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\bany\b|\bbool\b|\bint\b|\bbyte\b|\bstring\b|\bvoid\b|\bfloat\b|\bthread\b|\banyArr\b|\bboolArr\b|\bintArr\b|\bbyteArr\b|\bstringArr\b|\bfloatArr\b|\bthreadArr\b)");
 
             //statementHighlingting
             e.ChangedRange.SetStyle(VarStyle, @"(\bacs\b|\bvar\b|\bset\b|\bif\b|\belse\b|\bfunction\b|\bclass\b|\btrue\b|\bfalse\b|\bmake\b|\barray\b|\bobject\b)", RegexOptions.Singleline);
