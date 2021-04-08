@@ -65,7 +65,6 @@
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Symbols/BuiltinFunctions.cs" />
       <option value="$PROJECT_DIR$/rctc/Program.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Conversion.cs" />
-      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/Parser.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Symbols/SymbolKind.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Symbols/VariableSymbol.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Symbols/LocalVariableSymbol.cs" />
@@ -79,8 +78,9 @@
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/SyntaxFacts.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/SyntaxKind.cs" />
       <option value="$PROJECT_DIR$/rctc/Properties/launchSettings.json" />
-      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/Lexer.cs" />
+      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" />
+      <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/Parser.cs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1lySmyqd4iCrCd9AA17VrRI6Hq7" />
@@ -159,7 +159,7 @@
       <workItem from="1613758899440" duration="6680000" />
       <workItem from="1613823983491" duration="3796000" />
       <workItem from="1614096352214" duration="7968000" />
-      <workItem from="1617381676334" duration="7572000" />
+      <workItem from="1617381676334" duration="11410000" />
     </task>
     <servers />
   </component>

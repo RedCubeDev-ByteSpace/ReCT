@@ -573,9 +573,9 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseStringLiteral();
                 case SyntaxKind.ThreadKeyword:
                     return ParseThreadCreation();
-                case SyntaxKind.MakeKeyword when Peek(2).Kind == SyntaxKind.ArrayKeyword:
+                case SyntaxKind.MakeKeyword when Peek(2).Kind == SyntaxKind.ArrayKeyword || (Peek(4).Kind == SyntaxKind.ArrayKeyword && Peek(2).Kind == SyntaxKind.NamespaceToken):
                     return ParseArrayCreation();
-                case SyntaxKind.MakeKeyword when Peek(2).Kind == SyntaxKind.OpenParenthesisToken:
+                case SyntaxKind.MakeKeyword when Peek(2).Kind == SyntaxKind.OpenParenthesisToken || (Peek(4).Kind == SyntaxKind.OpenParenthesisToken && Peek(2).Kind == SyntaxKind.NamespaceToken):
                     return ParseObjectCreation();
                 case SyntaxKind.AccessKeyword:
                     return ParseObjectAccessExpression();

@@ -45,6 +45,8 @@ namespace ReCT_IDE
         public static string[][] terms;
         public string types = "";
 
+        public static bool closing = false;
+
         Discord dc;
         RichPresence presence;
 
@@ -105,7 +107,7 @@ namespace ReCT_IDE
 
         void UpdateKeys()
         {
-            while (true)
+            while (!closing)
             {
                 this.buildToolStripMenuItem.ShortcutKeys = SettingsInfo.run;
                 Thread.Sleep(1000);
@@ -1029,6 +1031,8 @@ namespace ReCT_IDE
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            closing = true;
+
             foreach(Tab t in tabs)
             {
                 if (!t.saved)

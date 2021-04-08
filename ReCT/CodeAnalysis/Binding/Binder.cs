@@ -788,12 +788,13 @@ namespace ReCT.CodeAnalysis.Binding
 
         private BoundExpression BindObjectCreationExpression(ObjectCreationSyntax syntax)
         {
-            ClassSymbol _class = (syntax.Package == null ? ParentScope : _packageNamespaces.FirstOrDefault(x => x.name == syntax.Package.Text).scope).GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.Type.Text);
             Package.Package package = null;
 
             if (syntax.Package != null)
                 package = _packageNamespaces.FirstOrDefault(x => x.name == syntax.Package.Text);
 
+            ClassSymbol _class = (package == null ? ParentScope : package.scope).GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.Type.Text);
+            
             if (_class == null)
             {
                 foreach (string s in _usingPackages)
