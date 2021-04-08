@@ -54,7 +54,7 @@ namespace ReCT_IDE
 
         bool tabSwitch = false;
 
-        public Button TabPrefab;
+        public System.Windows.Forms.Button TabPrefab;
 
         public Image[] icons = new Image[7];
 
@@ -167,7 +167,7 @@ namespace ReCT_IDE
 
             setAC();
 
-            TabPrefab = (Button)CtrlClone.ControlFactory.CloneCtrl(Tab);
+            TabPrefab = (System.Windows.Forms.Button)CtrlClone.ControlFactory.CloneCtrl(Tab);
             Tab.Dispose();
             Controls.Remove(Tab);
 
@@ -408,7 +408,7 @@ namespace ReCT_IDE
         Tab makeNewTab()
         {
             var newTab = new Tab();
-            newTab.button = (Button)CtrlClone.ControlFactory.CloneCtrl(TabPrefab);
+            newTab.button = (System.Windows.Forms.Button)CtrlClone.ControlFactory.CloneCtrl(TabPrefab);
             newTab.code = standardMsg;
             newTab.saved = true;
             newTab.button.Click += Tab_Click;
@@ -951,7 +951,7 @@ namespace ReCT_IDE
         {
             for(int i = 0; i < tabs.Count; i++)
             {
-                if (tabs[i].button == (Button)button)
+                if (tabs[i].button == (System.Windows.Forms.Button)button)
                     return i;
             }
             return 0;
@@ -1260,7 +1260,7 @@ namespace ReCT_IDE
 
     class Tab
     {
-        public Button button;
+        public System.Windows.Forms.Button button;
         public string code;
         public string name;
         public string path;
