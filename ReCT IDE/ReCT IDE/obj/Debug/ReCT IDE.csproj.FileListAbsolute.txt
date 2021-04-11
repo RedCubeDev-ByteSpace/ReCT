@@ -273,3 +273,4 @@ C:\Users\khhsx\Source\Repos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.Cop
 C:\Users\khhsx\Source\Repos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.exe
 C:\Users\khhsx\Source\Repos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.pdb
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT.dll
+E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csprojAssemblyReference.cache

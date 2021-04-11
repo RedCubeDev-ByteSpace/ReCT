@@ -119,6 +119,8 @@ namespace ReCT.CodeAnalysis.Syntax
                 case "null":
                 case "nil":
                     return SyntaxKind.NullKeyword;
+                case "inc":
+                    return SyntaxKind.IncKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -262,6 +264,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "acs";
                 case SyntaxKind.NullKeyword:
                     return "null";
+                case SyntaxKind.IncKeyword:
+                    return "inc";
                 default:
                     return null;
             }

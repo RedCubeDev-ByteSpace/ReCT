@@ -214,7 +214,7 @@ namespace ReCT_IDE
             string[][] acs =
             {
                 new[]{ "any", "bool", "int", "byte", "string", "void", "float", "thread", "anyArr", "boolArr", "intArr", "byteArr", "stringArr", "floatArr", "threadArr" },
-                new[]{ "var", "set", "if", "else", "function", "class", "true", "false", "break", "continue", "for", "from", "to", "return", "while", "die" },
+                new[]{ "var", "set", "inc", "if", "else", "function", "class", "true", "false", "break", "continue", "for", "from", "to", "return", "while", "die" },
                 new[]{ "Thread", "Constructor" },
                 new[]{ "->GetLength", "->Substring", "->StartThread", "->KillThread", "->Open", "->Write", "->WriteLine", "->Read", "->ReadLine", "->IsConnected", "->Close", "->Push", "->GetBit", "->SetBit" },
                 new[]{ "#attach", "#copy", "#copyFolder", "#closeConsole", "#noConsole" }
@@ -352,7 +352,7 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\bany\b|\bbool\b|\bint\b|\bbyte\b|\bstring\b|\bvoid\b|\bfloat\b|\bthread\b|\banyArr\b|\bboolArr\b|\bintArr\b|\bbyteArr\b|\bstringArr\b|\bfloatArr\b|\bthreadArr\b)");
 
             //statementHighlingting
-            e.ChangedRange.SetStyle(VarStyle, @"(\bacs\b|\bvar\b|\bset\b|\bif\b|\belse\b|\bfunction\b|\bclass\b|\btrue\b|\bfalse\b|\bmake\b|\barray\b|\bobject\b)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(VarStyle, @"(\bacs\b|\bvar\b|\bset\b|\binc\b|\bif\b|\belse\b|\bfunction\b|\bclass\b|\btrue\b|\bfalse\b|\bmake\b|\barray\b|\bobject\b)", RegexOptions.Singleline);
             e.ChangedRange.SetStyle(VarStyle, @"(\~\b)", RegexOptions.Singleline);
 
             //settings

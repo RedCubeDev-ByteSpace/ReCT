@@ -111,6 +111,7 @@ namespace ReCT.CodeAnalysis.Syntax
         ObjectAccessExpression,
         ThreadCreateExpression,
         ArrayCreateExpression,
-        ObjectCreateExpression
+        ObjectCreateExpression,
+        IncKeyword
     }
 }

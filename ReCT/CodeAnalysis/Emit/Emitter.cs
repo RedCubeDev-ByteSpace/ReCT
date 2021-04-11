@@ -486,8 +486,12 @@ namespace ReCT.CodeAnalysis.Emit
             //Register class names
             foreach (var _class in program.Classes)
             {
-                var classDefinition = new TypeDefinition(program.Namespace, _class.Key.Name, (_class.Key.IsStatic ? (TypeAttributes.Abstract | TypeAttributes.Sealed) : 0) | TypeAttributes.Public, objectType);
-                _assemblyDefinition.MainModule.Types.Add(classDefinition);
+                var classDefinition = new TypeDefinition(program.Namespace, _class.Key.Name, (_class.Key.IsStatic ? (TypeAttributes.Abstract | TypeAttributes.Sealed) : 0) | (_class.Key.IsIncluded ? TypeAttributes.NestedPublic : TypeAttributes.Public), objectType);
+
+                if (!_class.Key.IsIncluded)
+                    _assemblyDefinition.MainModule.Types.Add(classDefinition);
+                else
+                    _typeDefinition.NestedTypes.Add(classDefinition);
 
                 _classes.Add(_class.Key, classDefinition);
 

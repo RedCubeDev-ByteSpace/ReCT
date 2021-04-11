@@ -305,7 +305,7 @@ namespace ReCT.CodeAnalysis.Binding
 
         private void BindClassDeclaration(ClassDeclarationSyntax syntax)
         {
-            var classSymbol = new ClassSymbol(syntax.Identifier.Text, syntax, syntax.isStatic);
+            var classSymbol = new ClassSymbol(syntax.Identifier.Text, syntax, syntax.isStatic, syntax.isIncluded);
             classSymbol.Scope = new BoundScope(CreateRootScope(), syntax.Identifier.Text);
 
             if (classSymbol.Declaration.Identifier.Text != null &&

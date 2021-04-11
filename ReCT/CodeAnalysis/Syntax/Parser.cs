@@ -123,10 +123,19 @@ namespace ReCT.CodeAnalysis.Syntax
                 return ParseFunctionDeclaration(true);
 
             if (Current.Kind == SyntaxKind.ClassKeyword)
-                return ParseClassDeclaration(false);
+                return ParseClassDeclaration(false, false);
 
             if (Current.Kind == SyntaxKind.SetKeyword && Peek(1).Kind == SyntaxKind.ClassKeyword)
-                return ParseClassDeclaration(true);
+                return ParseClassDeclaration(true, false);
+
+            if (Current.Kind == SyntaxKind.IncKeyword && Peek(1).Kind == SyntaxKind.ClassKeyword)
+                return ParseClassDeclaration(false, true);
+
+            if (Current.Kind == SyntaxKind.SetKeyword && Peek(1).Kind == SyntaxKind.IncKeyword && Peek(2).Kind == SyntaxKind.ClassKeyword)
+                return ParseClassDeclaration(true, true);
+
+            if (Current.Kind == SyntaxKind.IncKeyword && Peek(1).Kind == SyntaxKind.SetKeyword && Peek(2).Kind == SyntaxKind.ClassKeyword)
+                return ParseClassDeclaration(true, true);
 
             return ParseGlobalStatement();
         }
@@ -146,15 +155,31 @@ namespace ReCT.CodeAnalysis.Syntax
             return new FunctionDeclarationSyntax(_syntaxTree, functionKeyword, identifier, openParenthesisToken, parameters, closeParenthesisToken, type, body, isPublic);
         }
 
-        private MemberSyntax ParseClassDeclaration(bool isStatic)
+        private MemberSyntax ParseClassDeclaration(bool isStatic, bool isIncluded)
         {
-            if (isStatic)
-                MatchToken(SyntaxKind.SetKeyword);
+            if (isStatic || isIncluded)
+            {
+                if (Current.Kind == SyntaxKind.SetKeyword)
+                {
+                    MatchToken(SyntaxKind.SetKeyword);
+
+                    if (isIncluded)
+                        MatchToken(SyntaxKind.IncKeyword);
+                }
+                else if (Current.Kind == SyntaxKind.IncKeyword)
+                {
+                    MatchToken(SyntaxKind.IncKeyword);
+
+                    if (isStatic)
+                        MatchToken(SyntaxKind.SetKeyword);
+                }
+            }
+
 
             var classKeyword = MatchToken(SyntaxKind.ClassKeyword);
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
             var members = ParseMembersInternal();
-            return new ClassDeclarationSyntax(_syntaxTree, classKeyword, identifier, members, isStatic);
+            return new ClassDeclarationSyntax(_syntaxTree, classKeyword, identifier, members, isStatic, isIncluded);
         }
 
         private ExpressionSyntax ParseThreadCreation()
@@ -335,16 +360,15 @@ namespace ReCT.CodeAnalysis.Syntax
         {
             var expected = Current.Kind == SyntaxKind.SetKeyword ? SyntaxKind.SetKeyword : SyntaxKind.VarKeyword;
             var keyword = MatchToken(expected);
+            var typeClause = (TypeClauseSyntax)null;
+
+            if (Current.Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.IdentifierToken)
+                typeClause = ParseOptionalTypeClause();
+
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
             var equals = MatchToken(SyntaxKind.AssignToken);
             var initializer = ParseExpression();
-            var typeClause = (TypeClauseSyntax)null;
 
-            if (Current.Kind == SyntaxKind.AccessToken)
-            {
-                MatchToken(SyntaxKind.AccessToken);
-                typeClause = ParseOptionalTypeClause();
-            }
             TypeSymbol returnType = null;
 
             return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer, returnType);
