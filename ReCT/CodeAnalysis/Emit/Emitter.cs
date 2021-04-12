@@ -448,6 +448,10 @@ namespace ReCT.CodeAnalysis.Emit
                 foreach (ClassSymbol c in p.scope.GetDeclaredClasses())
                 {
                     var typeRef = s_assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).SelectMany(t => t.NestedTypes).FirstOrDefault(nt => nt.FullName == p.name + "." + p.name + "/" + c.Name);
+
+                    if (typeRef == null)
+                        typeRef = s_assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).SelectMany(t => t.NestedTypes).FirstOrDefault(nt => nt.FullName == p.name + "." + p.name + "/" + p.name + "." + c.Name);
+
                     var asmRef = s_assemblyDefinition.MainModule.ImportReference(typeRef);
                     _knownTypes.Add(TypeSymbol.Class[c], asmRef);
 
