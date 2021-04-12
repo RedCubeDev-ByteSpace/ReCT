@@ -226,7 +226,7 @@ namespace ReCT.CodeAnalysis.Syntax
                     ReadWhiteSpace();
                     break;
                 default:
-                    if (char.IsLetter(Current))
+                    if (char.IsLetter(Current) || Current == '$')
                     {
                         ReadIdentifierOrKeyword();
                     }
@@ -363,7 +363,7 @@ namespace ReCT.CodeAnalysis.Syntax
 
         private void ReadIdentifierOrKeyword()
         {
-            while (char.IsLetter(Current) || char.IsDigit(Current) || Current == '.' || Current == '_')
+            while (char.IsLetter(Current) || char.IsDigit(Current) || Current == '.' || Current == '_' || Current == '$')
                 _position++;
 
             var length = _position - _start;

@@ -880,7 +880,7 @@ namespace ReCT.CodeAnalysis.Emit
         private FieldDefinition EmitGlobalVar(BoundVariableDeclaration node)
         {
             var _globalField = new FieldDefinition(
-                "$" + node.Variable.Name, inType == null ? FieldAttributes.Static : (inClass.IsStatic ? FieldAttributes.Static : 0) | FieldAttributes.Public,
+                /*"$" +*/ node.Variable.Name, inType == null ? FieldAttributes.Static : (inClass.IsStatic ? FieldAttributes.Static : 0) | FieldAttributes.Public,
                 _knownTypes[_knownTypes.Keys.FirstOrDefault(x => x.Name == node.Variable.Type.Name)]
             );
             (inType == null ? _typeDefinition : inType).Fields.Add(_globalField);
@@ -890,7 +890,7 @@ namespace ReCT.CodeAnalysis.Emit
         private FieldDefinition EmitGlobalVarFromSymbol(VariableSymbol varSym)
         {
             var _globalField = new FieldDefinition(
-                "$" + varSym.Name, (inClass.IsStatic ? FieldAttributes.Static : 0) | FieldAttributes.Public,
+                /*"$" +*/ varSym.Name, (inClass.IsStatic ? FieldAttributes.Static : 0) | FieldAttributes.Public,
                 _knownTypes[_knownTypes.Keys.FirstOrDefault(x => x.Name == varSym.Type.Name)]
             );
             inType.Fields.Add(_globalField);
@@ -1634,31 +1634,6 @@ namespace ReCT.CodeAnalysis.Emit
                 var methodDefinition = (inType == null ? _methods : _classMethods[_classes.FirstOrDefault(x => x.Value == inType).Key])[node.Function];
                 ilProcessor.Emit(OpCodes.Call, methodDefinition);
             }
-        }
-
-        private void EmitRandomField()
-        {
-            _randomFieldDefinition = new FieldDefinition(
-                "$rnd",
-                FieldAttributes.Static | FieldAttributes.Private,
-                _randomReference
-            );
-            _typeDefinition.Fields.Add(_randomFieldDefinition);
-
-            var staticConstructor = new MethodDefinition(
-                ".cctor",
-                MethodAttributes.Static |
-                MethodAttributes.Private |
-                MethodAttributes.SpecialName |
-                MethodAttributes.RTSpecialName,
-                _knownTypes[TypeSymbol.Void]
-            );
-            _typeDefinition.Methods.Insert(0, staticConstructor);
-
-            var ilProcessor = staticConstructor.Body.GetILProcessor();
-            ilProcessor.Emit(OpCodes.Newobj, _randomCtorReference);
-            ilProcessor.Emit(OpCodes.Stsfld, _randomFieldDefinition);
-            ilProcessor.Emit(OpCodes.Ret);
         }
 
         private void EmitConversionExpression(ILProcessor ilProcessor, BoundConversionExpression node)
