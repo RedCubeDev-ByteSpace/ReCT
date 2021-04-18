@@ -5,5 +5,6 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="IDEX.MainWindow"
         Title="IDEX">
-    Welcome to Avalonia!
+
+        <text>basically an IDE now</text>
 </Window>
