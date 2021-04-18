@@ -2,6 +2,8 @@ rctc/obj/
 rctc/bin/
 rcti/obj/
 rcti/bin/
+IDEX ReCT/bin/
+IDEX ReCT/obj/
 *.exe
 *.cache
 *.cache
