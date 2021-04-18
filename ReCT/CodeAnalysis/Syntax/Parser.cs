@@ -671,6 +671,9 @@ namespace ReCT.CodeAnalysis.Syntax
                 return call;
             }
 
+            if (Peek(0).Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.AccessToken)
+                return ParseObjectAccessExpression();
+
             return ParseNameExpression();
         }
 

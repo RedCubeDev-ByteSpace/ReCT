@@ -992,7 +992,7 @@ namespace ReCT.CodeAnalysis.Emit
 
                 var constructor = node.Package.scope.GetDeclaredClasses().FirstOrDefault(x => x == node.Class).Scope.GetDeclaredFunctions().FirstOrDefault(x => x.Name == "Constructor");
                 foreach (ParameterSymbol p in constructor.Parameters)
-                    args.Add(_knownTypes[p.Type].FullName);
+                    args.Add(_knownTypes.FirstOrDefault(x => x.Key.Name == p.Type.Name).Value.FullName);
 
                 //var ctorr = ResolveMethodPublic(node.Package.name + "." + node.Package.name + "/" + node.Class.Name, ".ctor", args.ToArray());
                 var ctorr = _packageClassMethods[node.Class].FirstOrDefault(x => x.Name == ".ctor");
