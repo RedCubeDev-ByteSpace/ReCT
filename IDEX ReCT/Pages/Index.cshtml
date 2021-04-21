@@ -4,7 +4,7 @@
     ViewData["Title"] = "Cod";
 }
 
-<div class="filepopup">
+<div class="filepopup" id="filepopup">
     <button>New</button>
     <button>New Project</button>
     <button>Open</button>
@@ -27,17 +27,17 @@
             </div>
         </div>
         <div class="editor">
-            <div class="linenums">
-                <p>1</p><p>2</p>
+            <div class="linenums" id="lnbar">
+                <p>0</p><p>1</p>
             </div>
             <div class="textarea">
-                <textarea name="" id="" cols="30" rows="10">package sys;&#13;&#10;sys::Print("Hello World");</textarea>
+                <textarea name="" id="editArea" cols="30" rows="10" onkeyup="TextChange()">package sys;&#13;&#10;sys::Print("Hello World");</textarea>
             </div>
         </div>
     </section>
     <section class="sidebar">
         <div class="filesection">
-            <button class="filebutton centerme"> <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="file" class="svg-inline--fa fa-file fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48z"></path></svg> </button>
+            <button class="filebutton centerme" onclick="FileAnim()"> <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="file" class="svg-inline--fa fa-file fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48z"></path></svg> </button>
             <button class="filebutton projectbutton centerme"> <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="project-diagram" class="svg-inline--fa fa-project-diagram fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M384 320H256c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V352c0-17.67-14.33-32-32-32zM192 32c0-17.67-14.33-32-32-32H32C14.33 0 0 14.33 0 32v128c0 17.67 14.33 32 32 32h95.72l73.16 128.04C211.98 300.98 232.4 288 256 288h.28L192 175.51V128h224V64H192V32zM608 0H480c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V32c0-17.67-14.33-32-32-32z"></path></svg> </button>
         </div>
         <div class="runsection">
@@ -50,3 +50,6 @@
         </div>
     </section>
 </section>
+
+<script src="/js/controller.js"></script>
+<script src="/js/animaster.js"></script>

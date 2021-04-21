@@ -4,13 +4,22 @@
     <RootNamespace>IDEX_ReCT</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ElectronNET.API" Version="9.31.2"/>
-    <PackageReference Include="Westwind.AspNetCore.LiveReload" Version="0.3.1"/>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.5"/>
+    <PackageReference Include="ElectronNET.API" Version="9.31.2" />
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.3.0-beta">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Westwind.AspNetCore.LiveReload" Version="0.3.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.5" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="electron.manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="wwwroot\ts\animaster.ts" />
+    <TypeScriptCompile Include="wwwroot\ts\controller.ts" />
+    <TypeScriptCompile Include="wwwroot\ts\test.ts" />
   </ItemGroup>
 </Project>

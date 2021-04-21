@@ -133,11 +133,11 @@ body
 
 .linenums p
 {
-    width: 100;
+    width: 100%;
     text-align: center;
 
     margin: 0;
-    margin-top: 0.3em;
+    margin-top: 0.192em;
 }
 
 .textarea textarea
@@ -244,7 +244,9 @@ body
 .filepopup
 {
     position: absolute;
+    transform: translate(0em, -10em);
     background-color: #313131;
+    visibility: hidden;
     
     box-shadow: 5px 5px 22px 1px rgba(0,0,0,0.46);
 
