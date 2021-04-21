@@ -35,7 +35,7 @@ namespace IDEX_ReCT
         {
             app.UseLiveReload();
 
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || true)
             {
                 app.UseDeveloperExceptionPage();
             }

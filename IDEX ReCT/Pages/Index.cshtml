@@ -8,7 +8,7 @@
     <button>New</button>
     <button>New Project</button>
     <button>Open</button>
-    <button>Save</button>
+    <button onclick="document.getElementById('modeselect').nodeValue = 'save'; document.getElementById('codeform').submit();">Save</button>
     <button>Save As</button>
 </div>
 
@@ -31,7 +31,10 @@
                 <p>0</p><p>1</p>
             </div>
             <div class="textarea">
-                <textarea name="" id="editArea" cols="30" rows="10" onkeyup="TextChange()">package sys;&#13;&#10;sys::Print("Hello World");</textarea>
+                <form method="post" id="codeform">
+                    <input id="modeselect" type="hidden" name="mode" >
+                    <textarea name="code" id="editArea" cols="30" rows="10" onkeyup="TextChange()">package sys;&#13;&#10;sys::Print("Hello World");</textarea>
+                </form>
             </div>
         </div>
     </section>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +21,34 @@ namespace IDEX_ReCT.Pages
         public void OnGet()
         {
 
+        }
+
+        public void OnPost()
+        {
+            if (Request.Form.ContainsKey("code"))
+                StaticData.Code = Request.Form["code"];
+
+            if (Request.Form["mode"] == "save")
+                Save();
+            
+            if (Request.Form["mode"] == "saveas")
+                SaveAs();
+        }
+
+        void Save()
+        {
+            if (StaticData.FileName == "")
+            {
+                SaveAs();
+                return;
+            }
+
+            System.IO.File.WriteAllText(StaticData.FileName, StaticData.Code);
+        }
+
+        void SaveAs()
+        {
+            
         }
     }
 }
