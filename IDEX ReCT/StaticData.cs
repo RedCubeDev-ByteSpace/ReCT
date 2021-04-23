@@ -18,7 +18,7 @@ namespace IDEX_ReCT
 
         public static void Init()
         {
-            Tabs.Add(new Tab("//ReCT Compiler v 2.2 | IDEX v1.0\npackage sys;\nsys::Print(\"Hello World!\");"));
+            Tabs.Add(new Tab("//ReCT Compiler v2.2 with IDEX v1.0\npackage sys;\nsys::Print(\"Hello World!\");"));
         }
 
         public static string AssembleTabs()
@@ -45,7 +45,7 @@ namespace IDEX_ReCT
     {
         public string Code = "";
         public string FileName = "";
-        public bool Saved = false;
+        public bool Saved = true;
 
         public Tab()
         {

@@ -286,3 +286,8 @@ body
 {
     background-color: #3c3231 !important;
 }
+
+.unsaved
+{
+    background-color: #3c4046;
+}

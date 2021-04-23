@@ -27,13 +27,43 @@ namespace IDEX_ReCT.Pages
             Electron.IpcMain.On("save-event", async (code) => { await Save(code.ToString()); });
             Electron.IpcMain.On("saveas-event", async (code) => { await SaveAs(code.ToString()); });
             Electron.IpcMain.On("new-event", async (code) => { await NewTab(code.ToString()); });
+            Electron.IpcMain.On("open-event", async (code) => { await Open(code.ToString()); });
             Electron.IpcMain.On("tab-request", async (code) => { await SwitchTab(code.ToString()); });
+            Electron.IpcMain.On("tab-close", async (code) => { await CloseTab(code.ToString()); });
             Electron.IpcMain.On("transfer-code", async (code) => { await TransferCode(code.ToString()); });
         }
 
         public async Task TransferCode(string code)
         {
-            StaticData.Tabs[StaticData.ActiveTab].Code = code; 
+            StaticData.Tabs[StaticData.ActiveTab].Code = code;
+            StaticData.Tabs[StaticData.ActiveTab].Saved = false;
+            Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-status", StaticData.AssembleTabs());
+        }
+        
+        public async Task CloseTab(string data)
+        {
+            if (StaticData.Tabs.Count == 1) return;
+            
+            int tabnum = 0;
+            int lineIndex = 0;
+            
+            for (int i = 0; i < data.Length; i++)
+                if (data[i] == '|')
+                {
+                    lineIndex = i;
+                    break;
+                }
+
+            tabnum = int.Parse(data.Substring(0, lineIndex));
+            var code = data.Substring(lineIndex + 1);
+            
+            StaticData.Tabs[StaticData.ActiveTab].Code = code;
+
+            StaticData.Tabs.RemoveAt(tabnum);
+            
+            StaticData.ActiveTab = 0;
+            Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-status", StaticData.AssembleTabs());
+            Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-switch", JsonSerializer.Serialize(new Dictionary<string, object>() {{"code", StaticData.CurrentTab.Code}, {"active", StaticData.ActiveTab}}));
         }
         
         public async Task SwitchTab(string data)
@@ -60,12 +90,44 @@ namespace IDEX_ReCT.Pages
         public async Task NewTab(string code)
         {
             StaticData.Tabs[StaticData.ActiveTab].Code = code;
-            StaticData.Tabs.Add(new Tab("//ReCT Compiler v 2.2 | IDEX v1.0\npackage sys;\nsys::Print(\"Hello World!\");"));
+            StaticData.Tabs.Add(new Tab("//ReCT Compiler v2.2 with IDEX v1.0\npackage sys;\nsys::Print(\"Hello World!\");"));
             StaticData.ActiveTab = StaticData.Tabs.Count - 1;
             Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-status", StaticData.AssembleTabs());
             Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-switch", JsonSerializer.Serialize(new Dictionary<string, object>() {{"code", StaticData.CurrentTab.Code}, {"active", StaticData.ActiveTab}}));
         }
         
+        public async Task Open(string code)
+        {
+            StaticData.Tabs[StaticData.ActiveTab].Code = code;
+            
+            var options = new OpenDialogOptions
+            {
+                Filters = new FileFilter[]
+                {
+                    new FileFilter { Name = "ReCT Source File", Extensions = new string[] {"rct" } },
+                    new FileFilter { Name = "ReCT Project File", Extensions = new string[] {"rcp" } }
+                },
+                Properties = new OpenDialogProperty[] 
+                {
+                    OpenDialogProperty.openFile
+                }
+            };
+
+            string[] files = await Electron.Dialog.ShowOpenDialogAsync(StaticData.Window, options);
+
+            if (files.Length == 0) return;
+            
+            var newTab = new Tab();
+            newTab.FileName = files[0];
+            newTab.Code = System.IO.File.ReadAllText(files[0]);
+            newTab.Saved = true;
+            
+            StaticData.Tabs.Add(newTab);
+            StaticData.ActiveTab = StaticData.Tabs.Count - 1;
+            
+            Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-status", StaticData.AssembleTabs());
+            Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-switch", JsonSerializer.Serialize(new Dictionary<string, object>() {{"code", StaticData.CurrentTab.Code}, {"active", StaticData.ActiveTab}}));
+        }
         public async Task Save(string code)
         {
             StaticData.Tabs[StaticData.ActiveTab].Code = code;

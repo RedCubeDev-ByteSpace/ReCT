@@ -1,14 +1,28 @@
 import { ipcRenderer } from "electron";
 var activeTab = 0;
 
+var wasChanged = false;
+var Tabs;
+
+var glnbar = document.getElementById("lnbar");
+var gtextarea = document.getElementById("editArea") as HTMLInputElement;
+var laststart = 0;
+
 ipcRenderer.on("tab-switch", (event, args) => {
     let data = JSON.parse(args);
     activeTab = data["active"];
     (document.getElementById("editArea") as HTMLInputElement).value = data["code"];
-    (document.getElementsByClassName("active")[0] as HTMLDivElement).className = "tabarea";
+    (document.getElementsByClassName("active")[0] as HTMLDivElement).className = "tabarea " + (Tabs[getTabIndex()][1] == false ? "unsaved" : "");
     (document.getElementById("tabbar") as HTMLDivElement).children[activeTab].children[1].className = "tabarea active";
     TextChange();
-    UpdateColor(true);
+    wasChanged = false;
+
+    if (glnbar == null) return;
+    
+    (glnbar.children[getLineNr(laststart) - 1] as HTMLParagraphElement).style.color = "#9C9C9C";
+    (glnbar.children[getLineNr(gtextarea.selectionStart as number) - 1] as HTMLParagraphElement).style.color = "#FFB23F";
+
+    laststart = gtextarea.selectionStart as number;
 });
 
 ipcRenderer.on("tab-status", ((event, args) => {
@@ -16,22 +30,28 @@ ipcRenderer.on("tab-status", ((event, args) => {
     console.table(tabs);
     activeTab = tabs["active"];
     
+    Tabs = tabs["tabs"];
+    
     let tabbar = document.getElementById("tabbar") as HTMLDivElement; tabbar.innerHTML = "";
     let htmltabs = "";
     
     for (let i = 0; i < tabs["tabs"].length; i++)
     {
-        htmltabs += "<div class=\"tab\" onclick='SwitchTab("+ i +")'><div class=\"edge\"></div><div class=\"tabarea "+ (i == activeTab ? "active" : "") +"\"><p>"+ tabs["tabs"][i][0] as string + (tabs["tabs"][i][1] == false ? "*" : "") +"</p><button></button></div></div>";
+        htmltabs += "<div class=\"tab\" onclick='SwitchTab("+ i +")'><div class=\"edge\"></div><div class=\"tabarea "+ (i == activeTab ? "active" : "") +" "+ (tabs["tabs"][i][1] == false ? "unsaved" : "") +"\"><p>"+ tabs["tabs"][i][0] as string + (tabs["tabs"][i][1] == false ? "*" : "") +"</p><button onclick='CloseTab("+ i +")'></button></div></div>";
     }
     console.log(htmltabs);
     tabbar.innerHTML = htmltabs;
 }));
 
+function CloseTab(index: number)
+{
+    ipcRenderer.send("tab-close", index + "|" + (document.getElementById("editArea") as HTMLInputElement).value);
+}
+
 function SwitchTab(index: number)
 {
     if (index == activeTab) return;
     
-    //ipcRenderer.send("transfer-code", (document.getElementById("editArea") as HTMLInputElement).value);
     ipcRenderer.send("tab-request", index + "|" + (document.getElementById("editArea") as HTMLInputElement).value);
 }
 
@@ -45,13 +65,15 @@ function FileAnim()
 // Line Number Animation
 function TextChange()
 {
+    wasChanged = true;
+    
     let lnbar = document.getElementById("lnbar");
     let textarea = document.getElementById("editArea") as HTMLInputElement;
     
     if (textarea == null || lnbar == null) return;
 
     let text = textarea.value;
-
+    
     let lines = text.split("\n");
     let count = lines.length;
 
@@ -76,12 +98,18 @@ function TextChange()
         }
     }
 }
+setInterval(RefreshCode, 2000);
+
+function RefreshCode()
+{
+    if (wasChanged)
+    {
+        wasChanged = false;
+        ipcRenderer.send("transfer-code", (document.getElementById("editArea") as HTMLInputElement).value);
+    }
+}
 
 setInterval(UpdateColor, 30);
-
-var glnbar = document.getElementById("lnbar");
-var gtextarea = document.getElementById("editArea") as HTMLInputElement;
-var laststart = 0;
 
 function UpdateColor(force: boolean = false)
 {
@@ -99,4 +127,18 @@ function UpdateColor(force: boolean = false)
 function getLineNr(index: number)
 {
     return gtextarea.value.substr(0, index).split("\n").length;
+}
+
+function getTabIndex()
+{
+    let elem = (document.getElementsByClassName("active")[0] as HTMLDivElement);
+    let tabs = (document.getElementById("tabbar") as HTMLDivElement);
+    
+    for (let i = 0; i < tabs.childElementCount; i++)
+    {
+        if (tabs.children[i].children[1].className.endsWith("active"))
+            return i;
+    }
+    
+    return 0;
 }
