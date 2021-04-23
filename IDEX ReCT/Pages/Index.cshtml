@@ -4,23 +4,26 @@
     ViewData["Title"] = "Cod";
 }
 
+<script>const { ipcRenderer } = require("electron");</script>
+<script>var exports = {};</script>
+
 <div class="filepopup" id="filepopup">
-    <button>New</button>
-    <button>New Project</button>
-    <button>Open</button>
-    <button onclick="document.getElementById('modeselect').nodeValue = 'save'; document.getElementById('codeform').submit();">Save</button>
-    <button>Save As</button>
+    <button id="newbtn" onclick="ipcRenderer.send('new-event', {code: document.getElementById('editArea').value});">New</button>
+    <button id="newprojbtn">New Project</button>
+    <button id="openbtn">Open</button>
+    <button id="savebtn" onclick="ipcRenderer.send('save-event', {code: document.getElementById('editArea').value});">Save</button>
+    <button id="saveasbtn" onclick="ipcRenderer.send('saveas-event', {code: document.getElementById('editArea').value});">Save As</button>
 </div>
 
 <section class="main-grid">
     <section class="main">
         <div class="topbar">
-            <button class="new-button">+</button>
-            <div class="tabs">
+            <button class="new-button" onclick="ipcRenderer.send('new-event', {code: document.getElementById('editArea').value});">+</button>
+            <div class="tabs" id="tabbar">
                 <div class="tab">
                     <div class="edge"></div>
-                    <div class="tabarea">
-                        <p>Title.rct</p>
+                    <div class="tabarea active">
+                        <p>untitled</p>
                         <button></button>
                     </div>
                 </div>
@@ -28,12 +31,12 @@
         </div>
         <div class="editor">
             <div class="linenums" id="lnbar">
-                <p>0</p><p>1</p>
+                <p>0</p><p>1</p><p>2</p>
             </div>
             <div class="textarea">
                 <form method="post" id="codeform">
                     <input id="modeselect" type="hidden" name="mode" >
-                    <textarea name="code" id="editArea" cols="30" rows="10" onkeyup="TextChange()">package sys;&#13;&#10;sys::Print("Hello World");</textarea>
+                    <textarea name="code" id="editArea" cols="30" rows="10" onkeyup="TextChange()">//ReCT Compiler v 2.2 | IDEX v1.0&#13;&#10;package sys;&#13;&#10;sys::Print("Hello World");</textarea>
                 </form>
             </div>
         </div>

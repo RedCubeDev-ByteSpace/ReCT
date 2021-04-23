@@ -26,6 +26,7 @@ namespace IDEX_ReCT
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc().AddNewtonsoftJson();
             services.AddLiveReload();
             services.AddRazorPages().AddRazorRuntimeCompilation();
         }
@@ -35,7 +36,7 @@ namespace IDEX_ReCT
         {
             app.UseLiveReload();
 
-            if (env.IsDevelopment() || true)
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -65,7 +66,12 @@ namespace IDEX_ReCT
         private async void CreateWindow()
         {
             var window = await Electron.WindowManager.CreateWindowAsync();
+            
+            StaticData.Window = window;
+            StaticData.Init();
+            
             window.RemoveMenu();
+            window.WebContents.OpenDevTools();
             window.OnClosed += () => {
                 Electron.App.Quit();
             };

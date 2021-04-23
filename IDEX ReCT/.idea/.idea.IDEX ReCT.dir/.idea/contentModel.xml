@@ -27,6 +27,186 @@
       <e p="appsettings.json" t="Include" />
       <e p="bin" t="ExcludeRecursive" />
       <e p="electron.manifest.json" t="Include" />
+      <e p="node_modules" t="Include">
+        <e p="@electron" t="Include">
+          <e p="get" t="IncludeRecursive">
+            <e p="dist" t="Include">
+              <e p="cjs" t="Include">
+                <e p="Cache.d.ts" t="Include" />
+                <e p="Downloader.d.ts" t="Include" />
+                <e p="GotDownloader.d.ts" t="Include" />
+                <e p="artifact-utils.d.ts" t="Include" />
+                <e p="downloader-resolver.d.ts" t="Include" />
+                <e p="index.d.ts" t="Include" />
+                <e p="proxy.d.ts" t="Include" />
+                <e p="types.d.ts" t="Include" />
+                <e p="utils.d.ts" t="Include" />
+              </e>
+              <e p="esm" t="Include">
+                <e p="Cache.d.ts" t="Include" />
+                <e p="Downloader.d.ts" t="Include" />
+                <e p="GotDownloader.d.ts" t="Include" />
+                <e p="artifact-utils.d.ts" t="Include" />
+                <e p="downloader-resolver.d.ts" t="Include" />
+                <e p="index.d.ts" t="Include" />
+                <e p="proxy.d.ts" t="Include" />
+                <e p="types.d.ts" t="Include" />
+                <e p="utils.d.ts" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="@sindresorhus" t="Include">
+          <e p="is" t="Include">
+            <e p="dist" t="Include">
+              <e p="index.d.ts" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="@types" t="IncludeRecursive">
+          <e p="node" t="Include">
+            <e p="assert.d.ts" t="Include" />
+            <e p="async_hooks.d.ts" t="Include" />
+            <e p="base.d.ts" t="Include" />
+            <e p="buffer.d.ts" t="Include" />
+            <e p="child_process.d.ts" t="Include" />
+            <e p="cluster.d.ts" t="Include" />
+            <e p="console.d.ts" t="Include" />
+            <e p="constants.d.ts" t="Include" />
+            <e p="crypto.d.ts" t="Include" />
+            <e p="dgram.d.ts" t="Include" />
+            <e p="dns.d.ts" t="Include" />
+            <e p="domain.d.ts" t="Include" />
+            <e p="events.d.ts" t="Include" />
+            <e p="fs" t="Include">
+              <e p="promises.d.ts" t="Include" />
+            </e>
+            <e p="fs.d.ts" t="Include" />
+            <e p="globals.d.ts" t="Include" />
+            <e p="globals.global.d.ts" t="Include" />
+            <e p="http.d.ts" t="Include" />
+            <e p="http2.d.ts" t="Include" />
+            <e p="https.d.ts" t="Include" />
+            <e p="index.d.ts" t="Include" />
+            <e p="inspector.d.ts" t="Include" />
+            <e p="module.d.ts" t="Include" />
+            <e p="net.d.ts" t="Include" />
+            <e p="os.d.ts" t="Include" />
+            <e p="path.d.ts" t="Include" />
+            <e p="perf_hooks.d.ts" t="Include" />
+            <e p="process.d.ts" t="Include" />
+            <e p="punycode.d.ts" t="Include" />
+            <e p="querystring.d.ts" t="Include" />
+            <e p="readline.d.ts" t="Include" />
+            <e p="repl.d.ts" t="Include" />
+            <e p="stream.d.ts" t="Include" />
+            <e p="string_decoder.d.ts" t="Include" />
+            <e p="timers.d.ts" t="Include" />
+            <e p="tls.d.ts" t="Include" />
+            <e p="trace_events.d.ts" t="Include" />
+            <e p="ts3.6" t="Include">
+              <e p="assert.d.ts" t="Include" />
+              <e p="base.d.ts" t="Include" />
+              <e p="index.d.ts" t="Include" />
+            </e>
+            <e p="tty.d.ts" t="Include" />
+            <e p="url.d.ts" t="Include" />
+            <e p="util.d.ts" t="Include" />
+            <e p="v8.d.ts" t="Include" />
+            <e p="vm.d.ts" t="Include" />
+            <e p="wasi.d.ts" t="Include" />
+            <e p="worker_threads.d.ts" t="Include" />
+            <e p="zlib.d.ts" t="Include" />
+          </e>
+        </e>
+        <e p="boolean" t="Include">
+          <e p="build" t="Include">
+            <e p="lib" t="Include">
+              <e p="boolean.d.ts" t="Include" />
+            </e>
+          </e>
+          <e p="lib" t="Include">
+            <e p="boolean.ts" t="Include" />
+          </e>
+        </e>
+        <e p="cacheable-request" t="Include">
+          <e p="node_modules" t="Include">
+            <e p="get-stream" t="Include">
+              <e p="index.d.ts" t="Include" />
+            </e>
+            <e p="lowercase-keys" t="Include">
+              <e p="index.d.ts" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="defer-to-connect" t="Include">
+          <e p="dist" t="Include">
+            <e p="index.d.ts" t="Include" />
+          </e>
+        </e>
+        <e p="electron" t="IncludeRecursive">
+          <e p="electron.d.ts" t="Include" />
+        </e>
+        <e p="env-paths" t="IncludeRecursive">
+          <e p="index.d.ts" t="Include" />
+        </e>
+        <e p="es6-error" t="Include">
+          <e p="typings" t="Include">
+            <e p="index.d.ts" t="Include" />
+          </e>
+        </e>
+        <e p="escape-string-regexp" t="Include">
+          <e p="index.d.ts" t="Include" />
+        </e>
+        <e p="matcher" t="Include">
+          <e p="index.d.ts" t="Include" />
+        </e>
+        <e p="normalize-url" t="Include">
+          <e p="index.d.ts" t="Include" />
+        </e>
+        <e p="p-cancelable" t="Include">
+          <e p="index.d.ts" t="Include" />
+        </e>
+        <e p="safe-buffer" t="Include">
+          <e p="index.d.ts" t="Include" />
+        </e>
+        <e p="serialize-error" t="Include">
+          <e p="index.d.ts" t="Include" />
+        </e>
+        <e p="sumchecker" t="IncludeRecursive">
+          <e p="index.d.ts" t="Include" />
+          <e p="index.test-d.ts" t="Include" />
+        </e>
+        <e p="type-fest" t="Include">
+          <e p="index.d.ts" t="Include" />
+          <e p="source" t="Include">
+            <e p="async-return-type.d.ts" t="Include" />
+            <e p="basic.d.ts" t="Include" />
+            <e p="conditional-except.d.ts" t="Include" />
+            <e p="conditional-keys.d.ts" t="Include" />
+            <e p="conditional-pick.d.ts" t="Include" />
+            <e p="except.d.ts" t="Include" />
+            <e p="literal-union.d.ts" t="Include" />
+            <e p="merge-exclusive.d.ts" t="Include" />
+            <e p="merge.d.ts" t="Include" />
+            <e p="mutable.d.ts" t="Include" />
+            <e p="opaque.d.ts" t="Include" />
+            <e p="package-json.d.ts" t="Include" />
+            <e p="partial-deep.d.ts" t="Include" />
+            <e p="promisable.d.ts" t="Include" />
+            <e p="promise-value.d.ts" t="Include" />
+            <e p="readonly-deep.d.ts" t="Include" />
+            <e p="require-at-least-one.d.ts" t="Include" />
+            <e p="require-exactly-one.d.ts" t="Include" />
+            <e p="set-optional.d.ts" t="Include" />
+            <e p="set-required.d.ts" t="Include" />
+            <e p="stringified.d.ts" t="Include" />
+            <e p="tsconfig-json.d.ts" t="Include" />
+            <e p="union-to-intersection.d.ts" t="Include" />
+            <e p="value-of.d.ts" t="Include" />
+          </e>
+        </e>
+      </e>
       <e p="obj" t="ExcludeRecursive">
         <e p="Debug" t="Include">
           <e p="net5.0" t="Include">
@@ -796,7 +976,153 @@
             </e>
           </e>
         </e>
+        <e p="desktop" t="Include">
+          <e p="linux" t="Include">
+            <e p="node_modules" t="Include">
+              <e p="@types" t="IncludeRecursive">
+                <e p="semver" t="Include">
+                  <e p="classes" t="Include">
+                    <e p="comparator.d.ts" t="Include" />
+                    <e p="range.d.ts" t="Include" />
+                    <e p="semver.d.ts" t="Include" />
+                  </e>
+                  <e p="functions" t="Include">
+                    <e p="clean.d.ts" t="Include" />
+                    <e p="cmp.d.ts" t="Include" />
+                    <e p="coerce.d.ts" t="Include" />
+                    <e p="compare-build.d.ts" t="Include" />
+                    <e p="compare-loose.d.ts" t="Include" />
+                    <e p="compare.d.ts" t="Include" />
+                    <e p="diff.d.ts" t="Include" />
+                    <e p="eq.d.ts" t="Include" />
+                    <e p="gt.d.ts" t="Include" />
+                    <e p="gte.d.ts" t="Include" />
+                    <e p="inc.d.ts" t="Include" />
+                    <e p="lt.d.ts" t="Include" />
+                    <e p="lte.d.ts" t="Include" />
+                    <e p="major.d.ts" t="Include" />
+                    <e p="minor.d.ts" t="Include" />
+                    <e p="neq.d.ts" t="Include" />
+                    <e p="parse.d.ts" t="Include" />
+                    <e p="patch.d.ts" t="Include" />
+                    <e p="prerelease.d.ts" t="Include" />
+                    <e p="rcompare.d.ts" t="Include" />
+                    <e p="rsort.d.ts" t="Include" />
+                    <e p="satisfies.d.ts" t="Include" />
+                    <e p="sort.d.ts" t="Include" />
+                    <e p="valid.d.ts" t="Include" />
+                  </e>
+                  <e p="index.d.ts" t="Include" />
+                  <e p="internals" t="Include">
+                    <e p="identifiers.d.ts" t="Include" />
+                  </e>
+                  <e p="preload.d.ts" t="Include" />
+                  <e p="ranges" t="Include">
+                    <e p="gtr.d.ts" t="Include" />
+                    <e p="intersects.d.ts" t="Include" />
+                    <e p="ltr.d.ts" t="Include" />
+                    <e p="max-satisfying.d.ts" t="Include" />
+                    <e p="min-satisfying.d.ts" t="Include" />
+                    <e p="min-version.d.ts" t="Include" />
+                    <e p="outside.d.ts" t="Include" />
+                    <e p="simplify.d.ts" t="Include" />
+                    <e p="subset.d.ts" t="Include" />
+                    <e p="to-comparators.d.ts" t="Include" />
+                    <e p="valid.d.ts" t="Include" />
+                  </e>
+                </e>
+              </e>
+              <e p="builder-util-runtime" t="IncludeRecursive">
+                <e p="out" t="Include">
+                  <e p="CancellationToken.d.ts" t="Include" />
+                  <e p="ProgressCallbackTransform.d.ts" t="Include" />
+                  <e p="bintray.d.ts" t="Include" />
+                  <e p="blockMapApi.d.ts" t="Include" />
+                  <e p="httpExecutor.d.ts" t="Include" />
+                  <e p="index.d.ts" t="Include" />
+                  <e p="publishOptions.d.ts" t="Include" />
+                  <e p="rfc2253Parser.d.ts" t="Include" />
+                  <e p="updateInfo.d.ts" t="Include" />
+                  <e p="uuid.d.ts" t="Include" />
+                  <e p="xml.d.ts" t="Include" />
+                </e>
+              </e>
+              <e p="dasherize" t="IncludeRecursive" />
+              <e p="electron-updater" t="IncludeRecursive">
+                <e p="out" t="Include">
+                  <e p="AppAdapter.d.ts" t="Include" />
+                  <e p="AppImageUpdater.d.ts" t="Include" />
+                  <e p="AppUpdater.d.ts" t="Include" />
+                  <e p="BaseUpdater.d.ts" t="Include" />
+                  <e p="DownloadedUpdateHelper.d.ts" t="Include" />
+                  <e p="ElectronAppAdapter.d.ts" t="Include" />
+                  <e p="MacUpdater.d.ts" t="Include" />
+                  <e p="NsisUpdater.d.ts" t="Include" />
+                  <e p="differentialDownloader" t="Include">
+                    <e p="DataSplitter.d.ts" t="Include" />
+                    <e p="DifferentialDownloader.d.ts" t="Include" />
+                    <e p="FileWithEmbeddedBlockMapDifferentialDownloader.d.ts" t="Include" />
+                    <e p="GenericDifferentialDownloader.d.ts" t="Include" />
+                    <e p="ProgressDifferentialDownloadCallbackTransform.d.ts" t="Include" />
+                    <e p="downloadPlanBuilder.d.ts" t="Include" />
+                    <e p="multipleRangeDownloader.d.ts" t="Include" />
+                  </e>
+                  <e p="electronHttpExecutor.d.ts" t="Include" />
+                  <e p="main.d.ts" t="Include" />
+                  <e p="providerFactory.d.ts" t="Include" />
+                  <e p="providers" t="Include">
+                    <e p="BintrayProvider.d.ts" t="Include" />
+                    <e p="GenericProvider.d.ts" t="Include" />
+                    <e p="GitHubProvider.d.ts" t="Include" />
+                    <e p="PrivateGitHubProvider.d.ts" t="Include" />
+                    <e p="Provider.d.ts" t="Include" />
+                  </e>
+                  <e p="windowsExecutableCodeSignatureVerifier.d.ts" t="Include" />
+                </e>
+              </e>
+              <e p="image-size" t="IncludeRecursive">
+                <e p="dist" t="Include">
+                  <e p="detector.d.ts" t="Include" />
+                  <e p="index.d.ts" t="Include" />
+                  <e p="readUInt.d.ts" t="Include" />
+                  <e p="types" t="Include">
+                    <e p="bmp.d.ts" t="Include" />
+                    <e p="cur.d.ts" t="Include" />
+                    <e p="dds.d.ts" t="Include" />
+                    <e p="gif.d.ts" t="Include" />
+                    <e p="icns.d.ts" t="Include" />
+                    <e p="ico.d.ts" t="Include" />
+                    <e p="interface.d.ts" t="Include" />
+                    <e p="j2c.d.ts" t="Include" />
+                    <e p="jp2.d.ts" t="Include" />
+                    <e p="jpg.d.ts" t="Include" />
+                    <e p="ktx.d.ts" t="Include" />
+                    <e p="png.d.ts" t="Include" />
+                    <e p="pnm.d.ts" t="Include" />
+                    <e p="psd.d.ts" t="Include" />
+                    <e p="svg.d.ts" t="Include" />
+                    <e p="tiff.d.ts" t="Include" />
+                    <e p="webp.d.ts" t="Include" />
+                  </e>
+                  <e p="types.d.ts" t="Include" />
+                </e>
+              </e>
+              <e p="lazy-val" t="IncludeRecursive">
+                <e p="out" t="Include">
+                  <e p="main.d.ts" t="Include" />
+                </e>
+              </e>
+              <e p="portscanner" t="IncludeRecursive" />
+              <e p="queue" t="IncludeRecursive">
+                <e p="index.d.ts" t="Include" />
+              </e>
+              <e p="socket.io" t="IncludeRecursive" />
+            </e>
+          </e>
+        </e>
       </e>
+      <e p="package-lock.json" t="Include" />
+      <e p="package.json" t="Include" />
       <e p="packages" t="ExcludeRecursive" />
       <e p="tsconfig.json" t="Include" />
       <e p="wwwroot" t="Include">

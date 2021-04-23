@@ -15,21 +15,23 @@
       <list>
         <option value="JSON File" />
         <option value="TypeScript File" />
+        <option value="package.json" />
       </list>
     </option>
   </component>
   <component name="IdeDocumentHistory">
     <changedPaths>
-      <option value="$PROJECT_DIR$/tsconfig.json" />
       <option value="$PROJECT_DIR$/wwwroot/ts/test.ts" />
       <option value="$PROJECT_DIR$/wwwroot/ts/animaster.ts" />
-      <option value="$PROJECT_DIR$/wwwroot/css/design.css" />
-      <option value="$PROJECT_DIR$/wwwroot/ts/controller.ts" />
-      <option value="$PROJECT_DIR$/StaticData.cs" />
       <option value="$PROJECT_DIR$/Controllers/FileController.cs" />
+      <option value="$PROJECT_DIR$/package.json" />
+      <option value="$PROJECT_DIR$/tsconfig.json" />
+      <option value="$PROJECT_DIR$/StaticData.cs" />
+      <option value="$PROJECT_DIR$/wwwroot/css/design.css" />
       <option value="$PROJECT_DIR$/Pages/Index.cshtml" />
-      <option value="$PROJECT_DIR$/Startup.cs" />
+      <option value="$PROJECT_DIR$/wwwroot/ts/controller.ts" />
       <option value="$PROJECT_DIR$/Pages/Index.cshtml.cs" />
+      <option value="$PROJECT_DIR$/Startup.cs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1rTcPHP0IEcMEJojhbT3Aph6Vbo" />
@@ -38,6 +40,8 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.3502907" />
+    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.0" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -90,6 +94,11 @@
         <option name="Build" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue=".NET Launch Settings Profile.IDEX ReCT: Electron.NET App" />
+      <item itemvalue=".NET Launch Settings Profile.IDEX ReCT: IDEX_ReCT" />
+      <item itemvalue=".NET Launch Settings Profile.IDEX ReCT: IIS Express" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -101,6 +110,10 @@
       <updated>1619003494757</updated>
       <workItem from="1619003499619" duration="2608000" />
       <workItem from="1619006126557" duration="8847000" />
+      <workItem from="1619015006159" duration="815000" />
+      <workItem from="1619096209948" duration="3294000" />
+      <workItem from="1619168307675" duration="11883000" />
+      <workItem from="1619186290315" duration="8527000" />
     </task>
     <servers />
   </component>
