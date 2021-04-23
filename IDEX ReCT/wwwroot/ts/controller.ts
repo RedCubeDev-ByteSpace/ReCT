@@ -5,8 +5,10 @@ ipcRenderer.on("tab-switch", (event, args) => {
     let data = JSON.parse(args);
     activeTab = data["active"];
     (document.getElementById("editArea") as HTMLInputElement).value = data["code"];
-    (document.getElementsByClassName("active")[0] as HTMLDivElement).className = "tab";
-    (document.getElementById("tabbar") as HTMLDivElement).children[activeTab].children[1].className = "tab active";
+    (document.getElementsByClassName("active")[0] as HTMLDivElement).className = "tabarea";
+    (document.getElementById("tabbar") as HTMLDivElement).children[activeTab].children[1].className = "tabarea active";
+    TextChange();
+    UpdateColor(true);
 });
 
 ipcRenderer.on("tab-status", ((event, args) => {
@@ -19,7 +21,7 @@ ipcRenderer.on("tab-status", ((event, args) => {
     
     for (let i = 0; i < tabs["tabs"].length; i++)
     {
-        htmltabs += "<div class=\"tab "+ (i == activeTab ? "active" : "") +"\" onclick='SwitchTab("+ i +")'><div class=\"edge\"></div><div class=\"tabarea\"><p>"+ tabs["tabs"][i][0] as string + (tabs["tabs"][i][1] == false ? "*" : "") +"</p><button></button></div></div>";
+        htmltabs += "<div class=\"tab\" onclick='SwitchTab("+ i +")'><div class=\"edge\"></div><div class=\"tabarea "+ (i == activeTab ? "active" : "") +"\"><p>"+ tabs["tabs"][i][0] as string + (tabs["tabs"][i][1] == false ? "*" : "") +"</p><button></button></div></div>";
     }
     console.log(htmltabs);
     tabbar.innerHTML = htmltabs;
@@ -27,13 +29,10 @@ ipcRenderer.on("tab-status", ((event, args) => {
 
 function SwitchTab(index: number)
 {
-    console.log(index);
     if (index == activeTab) return;
-    console.log("switching");
     
-    let json = "{ \"data\":" + JSON.stringify([index, (document.getElementById("editArea") as HTMLInputElement).value]) + "}";
-    console.log(json);
-    ipcRenderer.send("tab-request", json);
+    //ipcRenderer.send("transfer-code", (document.getElementById("editArea") as HTMLInputElement).value);
+    ipcRenderer.send("tab-request", index + "|" + (document.getElementById("editArea") as HTMLInputElement).value);
 }
 
 //File Menu Animation
@@ -84,9 +83,9 @@ var glnbar = document.getElementById("lnbar");
 var gtextarea = document.getElementById("editArea") as HTMLInputElement;
 var laststart = 0;
 
-function UpdateColor()
+function UpdateColor(force: boolean = false)
 {
-    if (gtextarea.selectionStart != laststart)
+    if (gtextarea.selectionStart != laststart || force)
     {
         if (glnbar == null || glnbar.childElementCount < getLineNr(gtextarea.selectionStart as number)) return;
         

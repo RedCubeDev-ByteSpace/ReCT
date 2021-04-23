@@ -28,10 +28,10 @@
       <option value="$PROJECT_DIR$/tsconfig.json" />
       <option value="$PROJECT_DIR$/StaticData.cs" />
       <option value="$PROJECT_DIR$/wwwroot/css/design.css" />
-      <option value="$PROJECT_DIR$/Pages/Index.cshtml" />
-      <option value="$PROJECT_DIR$/wwwroot/ts/controller.ts" />
       <option value="$PROJECT_DIR$/Pages/Index.cshtml.cs" />
       <option value="$PROJECT_DIR$/Startup.cs" />
+      <option value="$PROJECT_DIR$/Pages/Index.cshtml" />
+      <option value="$PROJECT_DIR$/wwwroot/ts/controller.ts" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1rTcPHP0IEcMEJojhbT3Aph6Vbo" />
@@ -113,7 +113,7 @@
       <workItem from="1619015006159" duration="815000" />
       <workItem from="1619096209948" duration="3294000" />
       <workItem from="1619168307675" duration="11883000" />
-      <workItem from="1619186290315" duration="8527000" />
+      <workItem from="1619186290315" duration="11572000" />
     </task>
     <servers />
   </component>

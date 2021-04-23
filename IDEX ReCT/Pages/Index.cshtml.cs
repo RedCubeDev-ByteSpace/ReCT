@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
-using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace IDEX_ReCT.Pages
@@ -29,13 +28,32 @@ namespace IDEX_ReCT.Pages
             Electron.IpcMain.On("saveas-event", async (code) => { await SaveAs(code.ToString()); });
             Electron.IpcMain.On("new-event", async (code) => { await NewTab(code.ToString()); });
             Electron.IpcMain.On("tab-request", async (code) => { await SwitchTab(code.ToString()); });
+            Electron.IpcMain.On("transfer-code", async (code) => { await TransferCode(code.ToString()); });
         }
 
+        public async Task TransferCode(string code)
+        {
+            StaticData.Tabs[StaticData.ActiveTab].Code = code; 
+        }
+        
         public async Task SwitchTab(string data)
         {
-            var dataObj = JsonConvert.DeserializeObject<List<object>>(data);
-            StaticData.Tabs[StaticData.ActiveTab].Code = (string)dataObj[1];
-            StaticData.ActiveTab = (int)dataObj[0];
+            int tabnum = 0;
+            int lineIndex = 0;
+            
+            for (int i = 0; i < data.Length; i++)
+                if (data[i] == '|')
+                {
+                    lineIndex = i;
+                    break;
+                }
+
+            tabnum = int.Parse(data.Substring(0, lineIndex));
+            var code = data.Substring(lineIndex + 1);
+            
+            StaticData.Tabs[StaticData.ActiveTab].Code = code;
+            
+            StaticData.ActiveTab = tabnum;
             Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-switch", JsonSerializer.Serialize(new Dictionary<string, object>() {{"code", StaticData.CurrentTab.Code}, {"active", StaticData.ActiveTab}}));
         }
         
