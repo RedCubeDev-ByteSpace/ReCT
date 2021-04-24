@@ -24,6 +24,7 @@ namespace IDEX_ReCT.Pages
 
         public void OnGet()
         {
+            //TS Events
             Electron.IpcMain.On("save-event", async (code) => { await Save(code.ToString()); });
             Electron.IpcMain.On("saveas-event", async (code) => { await SaveAs(code.ToString()); });
             Electron.IpcMain.On("new-event", async (code) => { await NewTab(code.ToString()); });
@@ -31,6 +32,10 @@ namespace IDEX_ReCT.Pages
             Electron.IpcMain.On("tab-request", async (code) => { await SwitchTab(code.ToString()); });
             Electron.IpcMain.On("tab-close", async (code) => { await CloseTab(code.ToString()); });
             Electron.IpcMain.On("transfer-code", async (code) => { await TransferCode(code.ToString()); });
+            
+            //Shortcuts
+            Electron.GlobalShortcut.Register("CommandOrControl+S", async () => { Electron.IpcMain.Send(StaticData.Window, "save-request");});
+            Electron.GlobalShortcut.Register("CommandOrControl+Shift+S", async () => { Electron.IpcMain.Send(StaticData.Window, "saveas-request");});
         }
 
         public async Task TransferCode(string code)

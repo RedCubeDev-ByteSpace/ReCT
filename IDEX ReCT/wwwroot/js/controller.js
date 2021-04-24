@@ -7,6 +7,12 @@ var Tabs;
 var glnbar = document.getElementById("lnbar");
 var gtextarea = document.getElementById("editArea");
 var laststart = 0;
+electron_1.ipcRenderer.on("save-request", function (event) {
+    electron_1.ipcRenderer.send('save-event', document.getElementById('editArea').value);
+});
+electron_1.ipcRenderer.on("saveas-request", function (event) {
+    electron_1.ipcRenderer.send('saveas-event', document.getElementById('editArea').value);
+});
 electron_1.ipcRenderer.on("tab-switch", function (event, args) {
     var data = JSON.parse(args);
     activeTab = data["active"];

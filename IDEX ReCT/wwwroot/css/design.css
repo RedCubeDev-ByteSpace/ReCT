@@ -271,15 +271,21 @@ body
 {
     border: none;
     background-color: transparent;
-
     color: white;
 
-    margin: 0.4em;
+    padding: 0.4em;
+    text-align: left;
+}
+
+.filepopup button span
+{
+    color: dimgray;
+    font-size: 0.7em;
 }
 
 .filepopup button:hover
 {
-    background-color: #ffffff0a;
+    background-color: #4e3e3d;
 }
 
 .active

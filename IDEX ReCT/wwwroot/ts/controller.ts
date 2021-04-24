@@ -8,6 +8,14 @@ var glnbar = document.getElementById("lnbar");
 var gtextarea = document.getElementById("editArea") as HTMLInputElement;
 var laststart = 0;
 
+ipcRenderer.on("save-request", (event) => {
+    ipcRenderer.send('save-event', (document.getElementById('editArea') as HTMLInputElement).value);
+});
+
+ipcRenderer.on("saveas-request", (event) => {
+    ipcRenderer.send('saveas-event', (document.getElementById('editArea') as HTMLInputElement).value);
+});
+
 ipcRenderer.on("tab-switch", (event, args) => {
     let data = JSON.parse(args);
     activeTab = data["active"];
