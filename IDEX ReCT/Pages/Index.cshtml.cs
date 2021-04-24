@@ -69,6 +69,9 @@ namespace IDEX_ReCT.Pages
             StaticData.ActiveTab = 0;
             Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-status", StaticData.AssembleTabs());
             Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-switch", JsonSerializer.Serialize(new Dictionary<string, object>() {{"code", StaticData.CurrentTab.Code}, {"active", StaticData.ActiveTab}}));
+            StaticData.Window.SetTitle((StaticData.CurrentTab.FileName == ""
+                ? "untitled"
+                : "\"" + Path.GetFileName(StaticData.CurrentTab.FileName) + "\"") + "  -  IDEX ReCT");
         }
         
         public async Task SwitchTab(string data)
@@ -90,6 +93,9 @@ namespace IDEX_ReCT.Pages
             
             StaticData.ActiveTab = tabnum;
             Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-switch", JsonSerializer.Serialize(new Dictionary<string, object>() {{"code", StaticData.CurrentTab.Code}, {"active", StaticData.ActiveTab}}));
+            StaticData.Window.SetTitle((StaticData.CurrentTab.FileName == ""
+                ? "untitled"
+                : "\"" + Path.GetFileName(StaticData.CurrentTab.FileName) + "\"") + "  -  IDEX ReCT");
         }
         
         public async Task NewTab(string code)
@@ -99,6 +105,9 @@ namespace IDEX_ReCT.Pages
             StaticData.ActiveTab = StaticData.Tabs.Count - 1;
             Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-status", StaticData.AssembleTabs());
             Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-switch", JsonSerializer.Serialize(new Dictionary<string, object>() {{"code", StaticData.CurrentTab.Code}, {"active", StaticData.ActiveTab}}));
+            StaticData.Window.SetTitle((StaticData.CurrentTab.FileName == ""
+                ? "untitled"
+                : "\"" + Path.GetFileName(StaticData.CurrentTab.FileName) + "\"") + "  -  IDEX ReCT");
         }
         
         public async Task Open(string code)
@@ -132,6 +141,9 @@ namespace IDEX_ReCT.Pages
             
             Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-status", StaticData.AssembleTabs());
             Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-switch", JsonSerializer.Serialize(new Dictionary<string, object>() {{"code", StaticData.CurrentTab.Code}, {"active", StaticData.ActiveTab}}));
+            StaticData.Window.SetTitle((StaticData.CurrentTab.FileName == ""
+                            ? "untitled"
+                            : "\"" + Path.GetFileName(StaticData.CurrentTab.FileName) + "\"") + "  -  IDEX ReCT");
         }
         public async Task Save(string code)
         {
@@ -142,6 +154,9 @@ namespace IDEX_ReCT.Pages
             StaticData.Tabs[StaticData.ActiveTab].Saved = true;
             
             Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-status", StaticData.AssembleTabs());
+            StaticData.Window.SetTitle((StaticData.CurrentTab.FileName == ""
+                ? "untitled"
+                : "\"" + Path.GetFileName(StaticData.CurrentTab.FileName) + "\"") + "  -  IDEX ReCT");
         }
         public async Task SaveAs(string code)
         {
@@ -165,6 +180,9 @@ namespace IDEX_ReCT.Pages
             StaticData.Tabs[StaticData.ActiveTab].Saved = true;
             
             Electron.IpcMain.Send(Electron.WindowManager.BrowserWindows.First(), "tab-status", StaticData.AssembleTabs());
+            StaticData.Window.SetTitle((StaticData.CurrentTab.FileName == ""
+                ? "untitled"
+                : "\"" + Path.GetFileName(StaticData.CurrentTab.FileName) + "\"") + "  -  IDEX ReCT");
         }
     }
 }

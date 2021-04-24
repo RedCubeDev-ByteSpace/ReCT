@@ -146,6 +146,8 @@ body
 
     margin: 0;
     margin-top: 0.192em;
+    
+    transition: 0.3s;
 }
 
 .textarea textarea
@@ -193,6 +195,12 @@ body
 .filebutton svg path
 {
     fill: #ffffff90;
+    transition: 0.3s;
+}
+
+.filebutton:hover svg path
+{
+    fill: rgba(255, 255, 255, 0.80);
 }
 
 .projectbutton
@@ -202,7 +210,8 @@ body
 
 .projectbutton svg path
 {
-    fill: #ffffff;
+    fill: #ffffff90;
+    transition: 0.3s;
 }
 
 .runsection
@@ -241,6 +250,12 @@ body
 .settingsbutton svg path
 {
     fill: #ffffff90;
+    transition: 0.3s;
+}
+
+.settingsbutton:hover svg path
+{
+    fill: rgba(255, 255, 255, 0.80);
 }
 
 .startbutton

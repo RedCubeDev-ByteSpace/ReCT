@@ -14,8 +14,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JSON File" />
-        <option value="TypeScript File" />
         <option value="package.json" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -30,8 +30,12 @@
       <option value="$PROJECT_DIR$/StaticData.cs" />
       <option value="$PROJECT_DIR$/wwwroot/ts/controller.ts" />
       <option value="$PROJECT_DIR$/Pages/Index.cshtml.cs" />
-      <option value="$PROJECT_DIR$/Pages/Index.cshtml" />
+      <option value="$PROJECT_DIR$/ReCTCompiler.cs" />
       <option value="$PROJECT_DIR$/wwwroot/css/design.css" />
+      <option value="$PROJECT_DIR$/wwwroot/ts/Highlighting.ts" />
+      <option value="$PROJECT_DIR$/wwwroot/ts/highlighting.ts" />
+      <option value="$PROJECT_DIR$/Pages/Index.cshtml" />
+      <option value="$PROJECT_DIR$/Pages/Shared/_Layout.cshtml" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1rTcPHP0IEcMEJojhbT3Aph6Vbo" />
@@ -45,6 +49,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ReCT/bin/Debug/netstandard2.0/ReCT.dll" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
   </component>
@@ -113,7 +118,7 @@
       <workItem from="1619015006159" duration="815000" />
       <workItem from="1619096209948" duration="3294000" />
       <workItem from="1619168307675" duration="11883000" />
-      <workItem from="1619186290315" duration="18367000" />
+      <workItem from="1619186290315" duration="23567000" />
     </task>
     <servers />
   </component>
