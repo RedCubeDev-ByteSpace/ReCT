@@ -6,6 +6,12 @@
 
 <script>const { ipcRenderer } = require("electron");</script>
 <script>var exports = {};</script>
+<script src="/ace-src-noconflict/ace.js"></script>
+<script defer>
+    var editor = ace.edit("editArea");
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/javascript");
+</script>
 
 <div class="filepopup" id="filepopup">
     <button id="newbtn" onclick="ipcRenderer.send('new-event', document.getElementById('editArea').value); FileAnim();">New <span>[Ctrl + N]</span></button>
@@ -30,14 +36,12 @@
             </div>
         </div>
         <div class="editor">
-            <div class="linenums" id="lnbar">
+            <!--<div class="linenums" id="lnbar">
                 <p>0</p><p>1</p><p>2</p>
             </div>
-            <div class="textarea" id="textareap">
-                <textarea name="code" id="editArea" cols="30" rows="10" onkeyup="TextChange()">//ReCT Compiler v2.2 with IDEX v1.0&#10;package sys;&#10;sys::Print("Hello World!");</textarea>
-            
-                <script>var editor = CodeMirror.fromTextArea(document.getElementById("editArea"));</script>
-            </div>
+            <div class="textarea" id="textareap">-->
+                <div id="editArea">//ReCT Compiler v2.2 with IDEX v1.0&#10;package sys;&#10;sys::Print("Hello World!");</div>
+            <!--</div>-->
         </div>
     </section>
     <section class="sidebar">

@@ -19,13 +19,7 @@ electron_1.ipcRenderer.on("tab-switch", function (event, args) {
     document.getElementById("editArea").value = data["code"];
     document.getElementsByClassName("active")[0].className = "tabarea " + (Tabs[getTabIndex()][1] == false ? "unsaved" : "");
     document.getElementById("tabbar").children[activeTab].children[1].className = "tabarea active";
-    TextChange();
     wasChanged = false;
-    if (glnbar == null)
-        return;
-    glnbar.children[getLineNr(laststart) - 1].style.color = "#9C9C9C";
-    glnbar.children[getLineNr(gtextarea.selectionStart) - 1].style.color = "#FFB23F";
-    laststart = gtextarea.selectionStart;
 });
 electron_1.ipcRenderer.on("tab-status", (function (event, args) {
     var tabs = JSON.parse(args);
@@ -57,27 +51,36 @@ function FileAnim() {
 // Line Number Animation
 function TextChange() {
     wasChanged = true;
-    var lnbar = document.getElementById("lnbar");
-    var textarea = document.getElementById("editArea");
-    if (textarea == null || lnbar == null)
-        return;
-    var text = textarea.value;
-    var lines = text.split("\n");
-    var count = lines.length;
+    /*let lnbar = document.getElementById("lnbar");
+    let textarea = document.getElementById("editArea") as HTMLInputElement;
+    
+    if (textarea == null || lnbar == null) return;
+
+    let text = textarea.value;
+    
+    let lines = text.split("\n");
+    let count = lines.length;
+
     // @ts-ignore
-    var cursorLine = textarea.value.substr(0, textarea.selectionStart).split("\n").length;
-    if (count != lnbar.childElementCount) {
+    let cursorLine = textarea.value.substr(0, textarea.selectionStart).split("\n").length;
+
+    if (count != lnbar.childElementCount)
+    {
         lnbar.innerHTML = ""; // absolutely obliterating all children
-        for (var i = 0; i < count; i++) {
-            var elem = document.createElement("p");
+        
+        for (let i = 0; i < count; i++)
+        {
+            const elem = document.createElement("p");
             elem.textContent = i.toString();
+            
             if (i == cursorLine - 1)
                 elem.style.color = "#FFB23F";
             else
                 elem.style.color = "#9C9C9C";
-            lnbar.appendChild(elem);
+            
+            lnbar.appendChild(elem)
         }
-    }
+    }*/
 }
 setInterval(RefreshCode, 2000);
 function RefreshCode() {
@@ -85,18 +88,22 @@ function RefreshCode() {
         wasChanged = false;
         electron_1.ipcRenderer.send("transfer-code", document.getElementById("editArea").value);
     }
+    document.getElementsByClassName("new-button")[0].style.width = document.getElementsByClassName("CodeMirror-gutter")[0].clientWidth + "px";
 }
-setInterval(UpdateColor, 30);
-function UpdateColor(force) {
-    if (force === void 0) { force = false; }
-    if (gtextarea.selectionStart != laststart || force) {
-        if (glnbar == null || glnbar.childElementCount < getLineNr(gtextarea.selectionStart))
-            return;
-        glnbar.children[getLineNr(laststart) - 1].style.color = "#9C9C9C";
-        glnbar.children[getLineNr(gtextarea.selectionStart) - 1].style.color = "#FFB23F";
-        laststart = gtextarea.selectionStart;
+/*setInterval(UpdateColor, 30);
+
+function UpdateColor(force: boolean = false)
+{
+    if (gtextarea.selectionStart != laststart || force)
+    {
+        if (glnbar == null || glnbar.childElementCount < getLineNr(gtextarea.selectionStart as number)) return;
+        
+        (glnbar.children[getLineNr(laststart) - 1] as HTMLParagraphElement).style.color = "#9C9C9C";
+        (glnbar.children[getLineNr(gtextarea.selectionStart as number) - 1] as HTMLParagraphElement).style.color = "#FFB23F";
+        
+        laststart = gtextarea.selectionStart as number;
     }
-}
+}*/
 function getLineNr(index) {
     return gtextarea.value.substr(0, index).split("\n").length;
 }

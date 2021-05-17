@@ -48,13 +48,17 @@ namespace ReCT
             options.Parse(args);
 
             if (helpRequested)
+            {
                 options.WriteOptionDescriptions(Console.Out);
+                return;
+            }
 
             if (sourcePaths.Count == 0)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Error.WriteLine("Error: need at least one source file");
+                Console.Error.WriteLine("Error: compiler needs source file");
                 Console.ForegroundColor = ConsoleColor.White;
+                return;
             }
             else
                 Console.WriteLine("Source: " + sourcePaths[0]);

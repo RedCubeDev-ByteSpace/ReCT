@@ -39,17 +39,14 @@ namespace ReCT.CodeAnalysis.Package
 
             List<string> TypesInThisPackage = new List<string>();
 
-            foreach (TypeDefinition t in types)
-                TypesInThisPackage.Add(t.Name);
+            if (TypeSymbol.Class == null) {TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>(); }
 
             foreach (TypeDefinition t in types)
             {
-                var classSymbol = new ClassSymbol(t.Name, null, t.IsSealed && t.IsAbstract);
-                var classMethods = t.Methods;
-                var classFields = t.Fields;
-                classSymbol.Scope = new BoundScope(scope);
+                TypesInThisPackage.Add(t.Name);
 
-                if (TypeSymbol.Class == null) {TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>(); }
+                var classSymbol = new ClassSymbol(t.Name, null, t.IsSealed && t.IsAbstract);
+                classSymbol.Scope = new BoundScope(scope);
                 
                 var classTypeSymbol = new TypeSymbol(classSymbol.Name);
                 classTypeSymbol.isClass = true;
@@ -62,6 +59,12 @@ namespace ReCT.CodeAnalysis.Package
                     classArraySymbol.isClassArray = true;
                     TypeSymbol.Class.Add(new ClassSymbol(classSymbol.Name + "Arr", null, false), classArraySymbol);
                 }
+            }
+
+            foreach (TypeDefinition t in types)
+            {
+                var classMethods = t.Methods;
+                var classFields = t.Fields;
 
                 Dictionary<string, FunctionSymbol> varGetters = new Dictionary<string, FunctionSymbol>();
                 Dictionary<string, FunctionSymbol> varSetters = new Dictionary<string, FunctionSymbol>();
@@ -89,7 +92,7 @@ namespace ReCT.CodeAnalysis.Package
                     var methodType = Binder.LookupType(returnType);
 
                     var symbol = new Symbols.FunctionSymbol(m.Name == ".ctor" ? "Constructor" : m.Name, parameters.ToImmutable(), methodType, package: key);
-                    classSymbol.Scope.TryDeclareFunction(symbol);
+                    TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == t.Name).Key.Scope.TryDeclareFunction(symbol);
 
                     if (m.Name.StartsWith("get_") && m.Parameters.Count == 0)
                     {
@@ -110,34 +113,17 @@ namespace ReCT.CodeAnalysis.Package
                         continue;
 
                     var type = netTypeLookup(f.FieldType.Name.ToLower(), TypesInThisPackage.ToArray());
-                    classSymbol.Scope.TryDeclareVariable(new GlobalVariableSymbol(f.Name, false, Binder.LookupType(type)));
+                    TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == t.Name).Key.Scope.TryDeclareVariable(new GlobalVariableSymbol(f.Name, false, Binder.LookupType(type)));
                 }
 
                 foreach (var get in varGetters)
                 {
                     bool isReadonly = !varSetters.Keys.Contains(get.Key);
-                    classSymbol.Scope.TryDeclareVariable(new FunctionalVariableSymbol(get.Key, isReadonly, get.Value.Type));
+                    TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == t.Name).Key.Scope.TryDeclareVariable(new FunctionalVariableSymbol(get.Key, isReadonly, get.Value.Type));
                     //Console.WriteLine("Declaring FunctionalVariable: " + get.Key + "; Readonly: " + isReadonly);
                 }
-                
-                if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
 
-                if (!TypeSymbol.Class.ContainsKey(classSymbol))
-                {
-                    var typesymbol = new TypeSymbol(classSymbol.Name);
-                    typesymbol.isClass = true;
-                    TypeSymbol.Class.Add(classSymbol, typesymbol);
-
-                    if (!classSymbol.IsStatic)
-                    {
-                        var arraysymbol = new TypeSymbol(classSymbol.Name + "Arr");
-                        arraysymbol.isClass = true;
-                        arraysymbol.isClassArray = true;
-                        TypeSymbol.Class.Add(new ClassSymbol(classSymbol.Name + "Arr"), arraysymbol);
-                    }
-                }
-
-                scope.TryDeclareClass(classSymbol);
+                scope.TryDeclareClass(TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == t.Name).Key);
             }
 
             foreach (MethodDefinition m in methods)

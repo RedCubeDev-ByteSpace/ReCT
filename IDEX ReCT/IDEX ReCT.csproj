@@ -28,4 +28,11 @@
       <HintPath>..\ReCT\bin\Debug\netstandard2.0\ReCT.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\mode\rect\index.html" />
+    <_ContentIncludedByDefault Remove="wwwroot\mode\rect\json-ld.html" />
+    <_ContentIncludedByDefault Remove="wwwroot\mode\rect\rect.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\mode\rect\test.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\mode\rect\typescript.html" />
+  </ItemGroup>
 </Project>

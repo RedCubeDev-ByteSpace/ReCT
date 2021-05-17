@@ -125,18 +125,17 @@ body
 
 .editor
 {
-    display: grid;
-    grid-template-columns: 2.2em auto;
-
-    height: calc(100% - 2.1em);
+    
 }
 
-.linenums
+/*.linenums
 {
     height: 100%;
 
     background-color: #313131;
     color: white;
+    
+    display: none;
 }
 
 .linenums p
@@ -163,6 +162,13 @@ body
     background-color: #3C3C3C;
 
     font-size: 1.8em;
+}*/
+
+.CodeMirror
+{
+    height: calc(100vh - 2.6em) !important;
+    font-family: 'Fira Code' !important;
+    font-size: 1.2em;
 }
 
 .centerme

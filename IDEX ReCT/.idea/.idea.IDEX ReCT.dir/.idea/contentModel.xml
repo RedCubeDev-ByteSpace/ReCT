@@ -1127,6 +1127,106 @@
       <e p="packages" t="ExcludeRecursive" />
       <e p="tsconfig.json" t="Include" />
       <e p="wwwroot" t="Include">
+        <e p="addon" t="Include">
+          <e p="comment" t="Include">
+            <e p="comment.js" t="Include" />
+            <e p="continuecomment.js" t="Include" />
+          </e>
+          <e p="dialog" t="Include">
+            <e p="dialog.css" t="Include" />
+            <e p="dialog.js" t="Include" />
+          </e>
+          <e p="display" t="Include">
+            <e p="autorefresh.js" t="Include" />
+            <e p="fullscreen.css" t="Include" />
+            <e p="fullscreen.js" t="Include" />
+            <e p="panel.js" t="Include" />
+            <e p="placeholder.js" t="Include" />
+            <e p="rulers.js" t="Include" />
+          </e>
+          <e p="edit" t="Include">
+            <e p="closebrackets.js" t="Include" />
+            <e p="closetag.js" t="Include" />
+            <e p="continuelist.js" t="Include" />
+            <e p="matchbrackets.js" t="Include" />
+            <e p="matchtags.js" t="Include" />
+            <e p="trailingspace.js" t="Include" />
+          </e>
+          <e p="fold" t="Include">
+            <e p="brace-fold.js" t="Include" />
+            <e p="comment-fold.js" t="Include" />
+            <e p="foldcode.js" t="Include" />
+            <e p="foldgutter.css" t="Include" />
+            <e p="foldgutter.js" t="Include" />
+            <e p="indent-fold.js" t="Include" />
+            <e p="markdown-fold.js" t="Include" />
+            <e p="xml-fold.js" t="Include" />
+          </e>
+          <e p="hint" t="Include">
+            <e p="anyword-hint.js" t="Include" />
+            <e p="css-hint.js" t="Include" />
+            <e p="html-hint.js" t="Include" />
+            <e p="javascript-hint.js" t="Include" />
+            <e p="show-hint.css" t="Include" />
+            <e p="show-hint.js" t="Include" />
+            <e p="sql-hint.js" t="Include" />
+            <e p="xml-hint.js" t="Include" />
+          </e>
+          <e p="lint" t="Include">
+            <e p="coffeescript-lint.js" t="Include" />
+            <e p="css-lint.js" t="Include" />
+            <e p="html-lint.js" t="Include" />
+            <e p="javascript-lint.js" t="Include" />
+            <e p="json-lint.js" t="Include" />
+            <e p="lint.css" t="Include" />
+            <e p="lint.js" t="Include" />
+            <e p="yaml-lint.js" t="Include" />
+          </e>
+          <e p="merge" t="Include">
+            <e p="merge.css" t="Include" />
+            <e p="merge.js" t="Include" />
+          </e>
+          <e p="mode" t="Include">
+            <e p="loadmode.js" t="Include" />
+            <e p="multiplex.js" t="Include" />
+            <e p="multiplex_test.js" t="Include" />
+            <e p="overlay.js" t="Include" />
+            <e p="simple.js" t="Include" />
+          </e>
+          <e p="runmode" t="Include">
+            <e p="colorize.js" t="Include" />
+            <e p="runmode-standalone.js" t="Include" />
+            <e p="runmode.js" t="Include" />
+            <e p="runmode.node.js" t="Include" />
+          </e>
+          <e p="scroll" t="Include">
+            <e p="annotatescrollbar.js" t="Include" />
+            <e p="scrollpastend.js" t="Include" />
+            <e p="simplescrollbars.css" t="Include" />
+            <e p="simplescrollbars.js" t="Include" />
+          </e>
+          <e p="search" t="Include">
+            <e p="jump-to-line.js" t="Include" />
+            <e p="match-highlighter.js" t="Include" />
+            <e p="matchesonscrollbar.css" t="Include" />
+            <e p="matchesonscrollbar.js" t="Include" />
+            <e p="search.js" t="Include" />
+            <e p="searchcursor.js" t="Include" />
+          </e>
+          <e p="selection" t="Include">
+            <e p="active-line.js" t="Include" />
+            <e p="mark-selection.js" t="Include" />
+            <e p="selection-pointer.js" t="Include" />
+          </e>
+          <e p="tern" t="Include">
+            <e p="tern.css" t="Include" />
+            <e p="tern.js" t="Include" />
+            <e p="worker.js" t="Include" />
+          </e>
+          <e p="wrap" t="Include">
+            <e p="hardwrap.js" t="Include" />
+          </e>
+        </e>
         <e p="css" t="Include">
           <e p="design.css" t="Include" />
           <e p="site.css" t="Include" />
@@ -1539,6 +1639,10 @@
             <e p="index.html" t="Include" />
             <e p="r.js" t="Include" />
           </e>
+          <e p="rect" t="Include">
+            <e p="index.html" t="Include" />
+            <e p="rect.js" t="Include" />
+          </e>
           <e p="rpm" t="Include">
             <e p="changes" t="Include">
               <e p="index.html" t="Include" />
@@ -1737,6 +1841,72 @@
             <e p="index.html" t="Include" />
             <e p="z80.js" t="Include" />
           </e>
+        </e>
+        <e p="theme" t="Include">
+          <e p="3024-day.css" t="Include" />
+          <e p="3024-night.css" t="Include" />
+          <e p="ReCTClassic.css" t="Include" />
+          <e p="abcdef.css" t="Include" />
+          <e p="ambiance-mobile.css" t="Include" />
+          <e p="ambiance.css" t="Include" />
+          <e p="ayu-dark.css" t="Include" />
+          <e p="ayu-mirage.css" t="Include" />
+          <e p="base16-dark.css" t="Include" />
+          <e p="base16-light.css" t="Include" />
+          <e p="bespin.css" t="Include" />
+          <e p="blackboard.css" t="Include" />
+          <e p="cobalt.css" t="Include" />
+          <e p="colorforth.css" t="Include" />
+          <e p="darcula.css" t="Include" />
+          <e p="dracula.css" t="Include" />
+          <e p="duotone-dark.css" t="Include" />
+          <e p="duotone-light.css" t="Include" />
+          <e p="eclipse.css" t="Include" />
+          <e p="elegant.css" t="Include" />
+          <e p="erlang-dark.css" t="Include" />
+          <e p="gruvbox-dark.css" t="Include" />
+          <e p="hopscotch.css" t="Include" />
+          <e p="icecoder.css" t="Include" />
+          <e p="idea.css" t="Include" />
+          <e p="isotope.css" t="Include" />
+          <e p="lesser-dark.css" t="Include" />
+          <e p="liquibyte.css" t="Include" />
+          <e p="lucario.css" t="Include" />
+          <e p="material-darker.css" t="Include" />
+          <e p="material-ocean.css" t="Include" />
+          <e p="material-palenight.css" t="Include" />
+          <e p="material.css" t="Include" />
+          <e p="mbo.css" t="Include" />
+          <e p="mdn-like.css" t="Include" />
+          <e p="midnight.css" t="Include" />
+          <e p="monokai.css" t="Include" />
+          <e p="moxer.css" t="Include" />
+          <e p="neat.css" t="Include" />
+          <e p="neo.css" t="Include" />
+          <e p="night.css" t="Include" />
+          <e p="nord.css" t="Include" />
+          <e p="oceanic-next.css" t="Include" />
+          <e p="panda-syntax.css" t="Include" />
+          <e p="paraiso-dark.css" t="Include" />
+          <e p="paraiso-light.css" t="Include" />
+          <e p="pastel-on-dark.css" t="Include" />
+          <e p="railscasts.css" t="Include" />
+          <e p="rubyblue.css" t="Include" />
+          <e p="seti.css" t="Include" />
+          <e p="shadowfox.css" t="Include" />
+          <e p="solarized.css" t="Include" />
+          <e p="ssms.css" t="Include" />
+          <e p="the-matrix.css" t="Include" />
+          <e p="tomorrow-night-bright.css" t="Include" />
+          <e p="tomorrow-night-eighties.css" t="Include" />
+          <e p="ttcn.css" t="Include" />
+          <e p="twilight.css" t="Include" />
+          <e p="vibrant-ink.css" t="Include" />
+          <e p="xq-dark.css" t="Include" />
+          <e p="xq-light.css" t="Include" />
+          <e p="yeti.css" t="Include" />
+          <e p="yonce.css" t="Include" />
+          <e p="zenburn.css" t="Include" />
         </e>
         <e p="ts" t="Include">
           <e p="animaster.ts" t="Include" />

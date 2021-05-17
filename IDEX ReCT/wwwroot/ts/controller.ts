@@ -22,15 +22,7 @@ ipcRenderer.on("tab-switch", (event, args) => {
     (document.getElementById("editArea") as HTMLInputElement).value = data["code"];
     (document.getElementsByClassName("active")[0] as HTMLDivElement).className = "tabarea " + (Tabs[getTabIndex()][1] == false ? "unsaved" : "");
     (document.getElementById("tabbar") as HTMLDivElement).children[activeTab].children[1].className = "tabarea active";
-    TextChange();
     wasChanged = false;
-
-    if (glnbar == null) return;
-    
-    (glnbar.children[getLineNr(laststart) - 1] as HTMLParagraphElement).style.color = "#9C9C9C";
-    (glnbar.children[getLineNr(gtextarea.selectionStart as number) - 1] as HTMLParagraphElement).style.color = "#FFB23F";
-
-    laststart = gtextarea.selectionStart as number;
 });
 
 ipcRenderer.on("tab-status", ((event, args) => {
@@ -75,7 +67,7 @@ function TextChange()
 {
     wasChanged = true;
     
-    let lnbar = document.getElementById("lnbar");
+    /*let lnbar = document.getElementById("lnbar");
     let textarea = document.getElementById("editArea") as HTMLInputElement;
     
     if (textarea == null || lnbar == null) return;
@@ -104,7 +96,7 @@ function TextChange()
             
             lnbar.appendChild(elem)
         }
-    }
+    }*/
 }
 setInterval(RefreshCode, 2000);
 
@@ -115,9 +107,10 @@ function RefreshCode()
         wasChanged = false;
         ipcRenderer.send("transfer-code", (document.getElementById("editArea") as HTMLInputElement).value);
     }
+    (document.getElementsByClassName("new-button")[0] as HTMLButtonElement).style.width = (document.getElementsByClassName("CodeMirror-gutter")[0] as HTMLDivElement).clientWidth + "px";
 }
 
-setInterval(UpdateColor, 30);
+/*setInterval(UpdateColor, 30);
 
 function UpdateColor(force: boolean = false)
 {
@@ -130,7 +123,7 @@ function UpdateColor(force: boolean = false)
         
         laststart = gtextarea.selectionStart as number;
     }
-}
+}*/
 
 function getLineNr(index: number)
 {
