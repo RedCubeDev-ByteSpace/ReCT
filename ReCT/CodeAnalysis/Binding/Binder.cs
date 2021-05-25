@@ -376,7 +376,16 @@ namespace ReCT.CodeAnalysis.Binding
                 counter++;
             }
 
-            var enumSymbol = new EnumSymbol(syntax.EnumName.Text, values);
+            if (TypeSymbol.Class == null) {TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>(); }
+
+            var enumTypeSymbol = new TypeSymbol(syntax.EnumName.Text);
+            enumTypeSymbol.isClass = true;
+            enumTypeSymbol.isEnum = true;
+            
+            var enumSymbol = new EnumSymbol(syntax.EnumName.Text, values, enumTypeSymbol);
+            enumTypeSymbol.enumSymbol = enumSymbol;
+
+            TypeSymbol.Class.Add(new ClassSymbol(syntax.EnumName.Text, null, true), enumTypeSymbol);
 
             if (!_scope.TryDeclareEnum(enumSymbol))
             {
@@ -984,6 +993,16 @@ namespace ReCT.CodeAnalysis.Binding
             // if class found return
             if (sClass != null) return BindAccessExpressionSuffix(syntax, new BoundObjectAccessExpression(null, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, pkg, sClass, null, null, null), null, sClass, pkg);
 
+
+            // check if enum with that name exists
+            var _enum = ParentScope.GetDeclaredEnums().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
+            if (_enum != null)
+            {
+                var bac = new BoundObjectAccessExpression(null, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, null, null, null, null, null);
+                bac.Enum = _enum;
+                return BindAccessExpressionSuffix(syntax, bac, null, null, null);
+            }
+
             VariableSymbol variable = BindVariableReference(syntax.IdentifierToken);
 
             if (variable != null)
@@ -1006,7 +1025,7 @@ namespace ReCT.CodeAnalysis.Binding
 
         private BoundExpression BindAccessExpressionSuffix(ObjectAccessExpression syntax, BoundObjectAccessExpression bac, TypeSymbol type, ClassSymbol classsym, Package.Package package)
         {
-            if (classsym == null)
+            if (classsym == null && bac.Enum == null)
             {
                 if (type == null)
                 {
@@ -1018,6 +1037,36 @@ namespace ReCT.CodeAnalysis.Binding
                     _diagnostics.ReportClassSymbolNotFound(syntax.Location);
                     return new BoundErrorExpression();
                 }
+            }
+
+            if (bac.Enum != null)
+            {
+                if (syntax.Type != ObjectAccessExpression.AccessType.Get)
+                {
+                    _diagnostics.ReportCanOnlyGetFromEnum(syntax.Location, bac.Enum.Name, syntax.Type.ToString());
+                    return new BoundErrorExpression();
+                }
+
+                var enumEntry = bac.Enum.Values.FirstOrDefault(x => x.Key == syntax.LookingFor.Text).Key;
+
+                if (enumEntry == null)
+                {
+                    _diagnostics.ReportEnumMemberNotFound(syntax.Location, bac.Enum.Name, syntax.LookingFor.Text);
+                    return new BoundErrorExpression();
+                }
+
+                var enumTypesymbol = TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == bac.Enum.Name).Value;
+
+                if (enumTypesymbol == null)
+                {
+                    _diagnostics.ReportCustomeMessage($"Couldnt find Typesymbol for Enum '{bac.Enum.Name}' (if you see this error message, something went wrong pretty badly internally. Please file a bug report)");
+                    return new BoundErrorExpression();
+                }
+
+                bac.EnumMember = enumEntry;
+                bac._type = enumTypesymbol;
+
+                return bac;
             }
 
             bac.Class = classsym;

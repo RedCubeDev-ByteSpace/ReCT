@@ -72,6 +72,9 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _IODirCreateReference;
         private readonly MethodReference _IOGetFilesInDirReference;
         private readonly MethodReference _IOGetDirsInDirReference;
+        private readonly MethodReference _typeOfReference;
+        private readonly MethodReference _enumParse;
+        private readonly MethodReference _toString;
         private readonly MethodReference _envDie;
         private readonly AssemblyDefinition _assemblyDefinition;
         private readonly Dictionary<FunctionSymbol, MethodDefinition> _methods = new Dictionary<FunctionSymbol, MethodDefinition>();
@@ -304,6 +307,11 @@ namespace ReCT.CodeAnalysis.Emit
             _IOGetFilesInDirReference = ResolveMethod("System.IO.Directory", "GetFiles", new[] { "System.String" });
             _IOGetDirsInDirReference = ResolveMethod("System.IO.Directory", "GetDirectories", new[] { "System.String" });
 
+            //Enum stuff
+            _typeOfReference = ResolveMethod("System.Type", "GetTypeFromHandle", new[] { "System.RuntimeTypeHandle" });
+            _enumParse = ResolveMethod("System.Enum", "Parse", new[] { "System.Type", "System.String" });
+            _toString = ResolveMethod("System.Object", "ToString", new string[] { });
+
             //die
             _envDie = ResolveMethod("System.Environment", "Exit", new[] { "System.Int32" });
         }
@@ -497,6 +505,7 @@ namespace ReCT.CodeAnalysis.Emit
                     enumDefinition.Fields.Add(new FieldDefinition(entry.Key,FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal, enumDefinition) { Constant = entry.Value });
                 }
                 _typeDefinition.NestedTypes.Add(enumDefinition);
+                _knownTypes.Add(_enum.Type, enumDefinition);
             }
 
             //classes
@@ -1090,7 +1099,7 @@ namespace ReCT.CodeAnalysis.Emit
         
         private void EmitObjectAccessExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
         {
-            if (node.Class == null || !node.Class.IsStatic)
+            if ((node.Class == null || !node.Class.IsStatic) && node.Enum == null)
             {
                 if (node.TypeCall != null && node.TypeCall.Function == BuiltinFunctions.Push)
                     LoadARef(ilProcessor, node);
@@ -1125,6 +1134,12 @@ namespace ReCT.CodeAnalysis.Emit
             if (node.TypeCall != null)
             {
                 EmitTypeCallExpression(ilProcessor, node);
+                return;
+            }
+
+            if (node.Enum != null)
+            {
+                ilProcessor.Emit(OpCodes.Ldc_I4, node.Enum.Values[node.EnumMember]);
                 return;
             }
 
@@ -1665,6 +1680,13 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitConversionExpression(ILProcessor ilProcessor, BoundConversionExpression node)
         {
+            if (node.Expression.Type == TypeSymbol.String && node.Type.isEnum)
+            {
+                var def = _knownTypes.FirstOrDefault(x => x.Key.Name == node.Type.Name && x.Key.isEnum).Value;
+                ilProcessor.Emit(OpCodes.Ldtoken, def);
+                ilProcessor.Emit(OpCodes.Call, _typeOfReference);
+            }
+
             EmitExpression(ilProcessor, node.Expression);
             var needsBoxing = node.Expression.Type == TypeSymbol.Bool ||
                               node.Expression.Type == TypeSymbol.Int ||
@@ -1677,6 +1699,29 @@ namespace ReCT.CodeAnalysis.Emit
                               node.Expression.Type == TypeSymbol.BoolArr ||
                               node.Expression.Type == TypeSymbol.ThreadArr ||
                               node.Expression.Type.isClass;
+
+            if (node.Expression.Type.isEnum && node.Type == TypeSymbol.Int) return;
+            if (node.Expression.Type == TypeSymbol.Int && node.Type.isEnum) return;
+            if (node.Expression.Type == TypeSymbol.String && node.Type.isEnum)
+            {
+                ilProcessor.Emit(OpCodes.Call, _enumParse);
+                ilProcessor.Emit(OpCodes.Call, _convertToInt32Reference);
+                return;
+            }
+            if (node.Expression.Type.isEnum && node.Type == TypeSymbol.String)
+            {
+                var def = _knownTypes.FirstOrDefault(x => x.Key.Name == node.Expression.Type.Name && x.Key.isEnum).Value;
+                VariableDefinition var = new VariableDefinition(_knownTypes[TypeSymbol.Int]);
+
+                ilProcessor.Body.Variables.Add(var);
+
+                ilProcessor.Emit(OpCodes.Stloc, var);
+                ilProcessor.Emit(OpCodes.Ldloca, var);
+                ilProcessor.Emit(OpCodes.Constrained, def);
+                ilProcessor.Emit(OpCodes.Callvirt, _toString);
+                return;
+            }
+
 
             if (needsBoxing)
                 ilProcessor.Emit(OpCodes.Box, _knownTypes[node.Expression.Type.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.Expression.Type.Name) : node.Expression.Type]);

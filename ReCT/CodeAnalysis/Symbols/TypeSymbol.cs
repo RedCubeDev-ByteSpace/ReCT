@@ -32,6 +32,8 @@ namespace ReCT.CodeAnalysis.Symbols
             isArray = array;
         }
 
+        public EnumSymbol enumSymbol;
+        public bool isEnum;
         public bool isClass;
         public bool isClassArray;
         public bool isArray;

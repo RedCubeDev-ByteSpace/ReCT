@@ -34,6 +34,8 @@ namespace ReCT.CodeAnalysis.Binding
         public BoundExpression Value;
         public Package.Package Package;
         public ClassSymbol Class;
+        public EnumSymbol Enum;
+        public string EnumMember;
         public BoundCallExpression TypeCall;
         public BoundExpression Expression;
 

@@ -318,5 +318,15 @@ namespace ReCT.CodeAnalysis
         {
             Report(default, $"Couldnt find Class to Access!");
         }
+
+        internal void ReportCanOnlyGetFromEnum(TextLocation location, string name, string v)
+        {
+            Report(default, $"Enum '{name}' only supports Get Access! Tried to: '{v}'!");
+        }
+
+        internal void ReportEnumMemberNotFound(TextLocation location, string name, string text)
+        {
+            Report(default, $"Enum '{name}' doesnt have a Member called '{text}'!");
+        }
     }
 }
