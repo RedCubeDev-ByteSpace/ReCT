@@ -47,11 +47,12 @@ namespace ReCT.CodeAnalysis.Binding
             return true;
         }
 
-        public Symbol TryLookupSymbol(string name)
+        public Symbol TryLookupSymbol(string name, bool noParent = false)
         {
             if (_symbols != null && _symbols.TryGetValue(name, out var symbol))
                 return symbol;
 
+            if (noParent) return null;
             return Parent?.TryLookupSymbol(name);
         }
 

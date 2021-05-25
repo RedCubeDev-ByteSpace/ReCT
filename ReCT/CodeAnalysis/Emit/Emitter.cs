@@ -1469,7 +1469,7 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitTypeCallExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
         {
-            if (node.TypeCall.Function == BuiltinFunctions.GetBit && node.Variable.Type == TypeSymbol.Byte)
+            if (node.TypeCall.Function == BuiltinFunctions.GetBit && node.InnerType == TypeSymbol.Byte)
             {
                 ilProcessor.Emit(OpCodes.Ldc_I4_1);
                 EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
@@ -1480,8 +1480,14 @@ namespace ReCT.CodeAnalysis.Emit
 
                 return;
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.SetBit && node.Variable.Type == TypeSymbol.Byte)
+            else if (node.TypeCall.Function == BuiltinFunctions.SetBit && node.InnerType == TypeSymbol.Byte)
             {
+                if (node.Variable == null)
+                {
+                    _diagnostics.ReportTypefunctionVarOnly(BuiltinFunctions.SetBit.Name);
+                    return;
+                }
+
                 ilProcessor.Emit(OpCodes.Ldc_I4_1);
                 EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
                 ilProcessor.Emit(OpCodes.Shl);
@@ -1527,8 +1533,14 @@ namespace ReCT.CodeAnalysis.Emit
 
                 return;
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.Push && (node.Variable.Type.isClassArray || node.Variable.Type.isArray))
+            else if (node.TypeCall.Function == BuiltinFunctions.Push && (node.InnerType.isClassArray || node.InnerType.isArray))
             {
+                if (node.Variable == null)
+                {
+                    _diagnostics.ReportTypefunctionVarOnly(BuiltinFunctions.Push.Name);
+                    return;
+                }
+
                 var type = _knownTypes[node.Variable.Type.isClass
                     ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.Variable.Type.Name)
                     : node.Variable.Type];
@@ -1574,44 +1586,44 @@ namespace ReCT.CodeAnalysis.Emit
             foreach (var argument in node.TypeCall.Arguments)
                 EmitExpression(ilProcessor, argument);
 
-            if (node.TypeCall.Function == BuiltinFunctions.GetLength && node.Variable.Type == TypeSymbol.String)
+            if (node.TypeCall.Function == BuiltinFunctions.GetLength && node.InnerType == TypeSymbol.String)
             {
-                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "get_Length", Array.Empty<string>());
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "get_Length", Array.Empty<string>());
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.Substring)
+            else if (node.TypeCall.Function == BuiltinFunctions.Substring && node.InnerType == TypeSymbol.String)
             {
-                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Substring", new[] { "System.Int32", "System.Int32" });
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "Substring", new[] { "System.Int32", "System.Int32" });
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.Split)
+            else if (node.TypeCall.Function == BuiltinFunctions.Split && node.InnerType == TypeSymbol.String)
             {
                 ilProcessor.Emit(OpCodes.Ldc_I4_0);
-                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Split", new[] { "System.String", "System.StringSplitOptions" });
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "Split", new[] { "System.String", "System.StringSplitOptions" });
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.Replace)
+            else if (node.TypeCall.Function == BuiltinFunctions.Replace && node.InnerType == TypeSymbol.String)
             {
-                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Replace", new[] { "System.String", "System.String" });
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "Replace", new[] { "System.String", "System.String" });
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.StartThread)
+            else if (node.TypeCall.Function == BuiltinFunctions.StartThread && node.InnerType == TypeSymbol.Thread)
             {
-                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Start", Array.Empty<string>());
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.Thread].FullName, "Start", Array.Empty<string>());
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.KillThread)
+            else if (node.TypeCall.Function == BuiltinFunctions.KillThread && node.InnerType == TypeSymbol.Thread)
             {
-                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Interrupt", Array.Empty<string>());
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.Thread].FullName, "Interrupt", Array.Empty<string>());
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.GetLength && (node.Variable.Type.isClassArray || node.Variable.Type.isArray))
+            else if (node.TypeCall.Function == BuiltinFunctions.GetLength && (node.InnerType.isClassArray || node.InnerType.isArray))
             {
                 ilProcessor.Emit(OpCodes.Ldlen);
             }
             else
             {
-                throw new Exception("Couldnt find TypeFunction: " + node.TypeCall.Function.Name);
+                throw new Exception("Couldnt find TypeFunction: " + node.TypeCall.Function.Name + " in Type '" + node.InnerType.Name + "'!");
             }
         }
 

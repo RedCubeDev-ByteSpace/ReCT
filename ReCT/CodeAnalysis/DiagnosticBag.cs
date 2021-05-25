@@ -298,5 +298,25 @@ namespace ReCT.CodeAnalysis
         {
             Report(location, $"Name '{text2}' can only be used once in Enum '{text1}'!");
         }
+
+        internal void ReportUnknownAccessSource(TextLocation location)
+        {
+            Report(location, $"Couldnt find the Value you were trying to Access!");
+        }
+
+        internal void ReportTypefunctionVarOnly(string name)
+        {
+            Report(default, $"Can only do Typefunction '{name}' on Variables!");
+        }
+
+        internal void ReportTypefunctionNotFound(TextLocation location, string text1, string text2)
+        {
+            Report(location, $"Couldnt find Typefunction '{text1}' for Datatype '{text2}'!");
+        }
+
+        internal void ReportClassSymbolNotFound(TextLocation location)
+        {
+            Report(default, $"Couldnt find Class to Access!");
+        }
     }
 }
