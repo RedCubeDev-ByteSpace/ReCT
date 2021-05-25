@@ -58,6 +58,14 @@ namespace ReCT.CodeAnalysis.Syntax
             return current;
         }
 
+        private void Rewind(SyntaxToken token)
+        {
+            while(Current != token)
+            {
+                _position--;
+            }
+        }
+
         private SyntaxToken MatchToken(SyntaxKind kind)
         {
             if (Current.Kind == kind)
@@ -208,6 +216,16 @@ namespace ReCT.CodeAnalysis.Syntax
             var length = ParseExpression();
             MatchToken(SyntaxKind.CloseParenthesisToken);
             return new ArrayCreationSyntax(_syntaxTree, type, length, package);
+        }
+
+        private ExpressionSyntax ParseArrayExpression()
+        {
+            var identifierToken = MatchToken(SyntaxKind.IdentifierToken);
+            MatchToken(SyntaxKind.OpenBracketToken);
+            var index = ParseExpression();
+            MatchToken(SyntaxKind.CloseBracketToken);
+
+            return new NameExpressionSyntax(_syntaxTree, identifierToken, index);
         }
 
         private ExpressionSyntax ParseObjectCreation()
@@ -514,17 +532,18 @@ namespace ReCT.CodeAnalysis.Syntax
             {
                 var identifierToken = NextToken();
                 MatchToken(SyntaxKind.OpenBracketToken);
-                var index = ParseAssignmentExpression();
+                var index = ParseExpression();
                 MatchToken(SyntaxKind.CloseBracketToken);
 
                 if (Peek(0).Kind == SyntaxKind.AssignToken)
                 {
                     var operatorToken = NextToken();
-                    var right = ParseAssignmentExpression();
+                    var right = ParseExpression();
                     return new AssignmentExpressionSyntax(_syntaxTree, identifierToken, operatorToken, right, index);
                 }
 
-                return new NameExpressionSyntax(_syntaxTree, identifierToken, index);
+                // if it didnt return that means the user actually just wanted the value
+                Rewind(identifierToken);
             }
 
             if (Peek(0).Kind == SyntaxKind.IdentifierToken &&
@@ -587,6 +606,8 @@ namespace ReCT.CodeAnalysis.Syntax
                 var right = ParseBinaryExpression(precedence);
                 left = new BinaryExpressionSyntax(_syntaxTree, left, operatorToken, right);
             }
+
+            if (Current.Kind == SyntaxKind.AccessToken) return ParseExpressionAccessExpression(left);
 
             return left;
         }
@@ -669,6 +690,11 @@ namespace ReCT.CodeAnalysis.Syntax
                 var call = (CallExpressionSyntax)ParseCallExpression();
                 call.Namespace = namespc.Text;
                 return call;
+            }
+
+            if (Current.Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.OpenBracketToken)
+            {
+                return ParseArrayExpression();
             }
 
             return ParseNameExpression();
@@ -768,6 +794,35 @@ namespace ReCT.CodeAnalysis.Syntax
             }
 
             return null;
+        }
+
+        ExpressionSyntax ParseExpressionAccessExpression(ExpressionSyntax expression)
+        {
+            MatchToken(SyntaxKind.AccessToken);
+            ExpressionSyntax exp = null;
+
+            if (Peek(1).Kind == SyntaxKind.OpenParenthesisToken)
+            {
+                var call = ParseCallExpression();
+                exp = new ObjectAccessExpression(_syntaxTree, null, ObjectAccessExpression.AccessType.Call, (CallExpressionSyntax)call, null, null, null, expression);
+            }
+            else if (Peek(1).Kind == SyntaxKind.AssignToken)
+            {
+                var propIdentifier = NextToken();
+                MatchToken(SyntaxKind.AssignToken);
+                var value = ParseExpression();
+                exp = new ObjectAccessExpression(_syntaxTree, null, ObjectAccessExpression.AccessType.Set, null, propIdentifier, value, null, expression);
+            }
+            else if (Current.Kind == SyntaxKind.IdentifierToken)
+            {
+                var propIdentifier = NextToken();
+                exp = new ObjectAccessExpression(_syntaxTree, null, ObjectAccessExpression.AccessType.Get, null, propIdentifier, null, null, expression);
+            }
+
+            if (Current.Kind == SyntaxKind.AccessToken)
+                return ParseExpressionAccessExpression(exp);
+
+            return exp;
         }
     }
 }
