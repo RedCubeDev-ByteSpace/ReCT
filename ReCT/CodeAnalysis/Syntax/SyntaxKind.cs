@@ -65,6 +65,7 @@ namespace ReCT.CodeAnalysis.Syntax
         MakeKeyword,
         ArrayKeyword,
         ClassKeyword,
+        EnumKeyword,
         ObjectKeyword,
         DllKeyword,
         PackageKeyword,

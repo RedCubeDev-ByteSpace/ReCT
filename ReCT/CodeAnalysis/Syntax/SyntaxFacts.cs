@@ -112,6 +112,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.UseKeyword;
                 case "class":
                     return SyntaxKind.ClassKeyword;
+                case "enum":
+                    return SyntaxKind.EnumKeyword;
                 case "dll":
                     return SyntaxKind.DllKeyword;
                 case "acs":
@@ -258,6 +260,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "use";
                 case SyntaxKind.ClassKeyword:
                     return "class";
+                case SyntaxKind.EnumKeyword:
+                    return "enum";
                 case SyntaxKind.DllKeyword:
                     return "dll";
                 case SyntaxKind.AccessKeyword:

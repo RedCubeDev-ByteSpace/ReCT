@@ -324,6 +324,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseReturnStatement();
                 case SyntaxKind.TryKeyword:
                     return ParseTryCatchStatement();
+                case SyntaxKind.EnumKeyword:
+                    return ParseEnumStatement();
                 default:
                     return ParseExpressionStatement();
             }
@@ -436,6 +438,31 @@ namespace ReCT.CodeAnalysis.Syntax
             var catchKeyword = MatchToken(SyntaxKind.CatchKeyword);
             var catchStatement = ParseStatement();
             return new TryCatchStatementSyntax(_syntaxTree, trykeyword, statement, catchKeyword, catchStatement);
+        }
+
+        private StatementSyntax ParseEnumStatement()
+        {
+            var enumKeyword = MatchToken(SyntaxKind.EnumKeyword);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            MatchToken(SyntaxKind.OpenBraceToken);
+            
+            List<SyntaxToken> names = new List<SyntaxToken>();
+            Dictionary<SyntaxToken, ExpressionSyntax> values = new Dictionary<SyntaxToken, ExpressionSyntax>();
+
+            while (Current.Kind != SyntaxKind.EndOfFileToken &&
+                   Current.Kind != SyntaxKind.CloseBraceToken)
+            {
+                var name = MatchToken(SyntaxKind.IdentifierToken);
+                names.Add(name);
+
+                if (Current.Kind == SyntaxKind.AssignToken)
+                {
+                    MatchToken(SyntaxKind.AssignToken);
+                    values.Add(name, ParseNumberLiteral());
+                }
+            }
+
+            return new EnumStatementSyntax(_syntaxTree, enumKeyword, names.ToArray(), values);
         }
 
         private ElseClauseSyntax ParseElseClause()
