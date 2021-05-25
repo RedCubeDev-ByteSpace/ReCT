@@ -113,6 +113,7 @@ namespace ReCT.CodeAnalysis.Syntax
         ThreadCreateExpression,
         ArrayCreateExpression,
         ObjectCreateExpression,
-        IncKeyword
+        IncKeyword,
+        EnumStatement
     }
 }

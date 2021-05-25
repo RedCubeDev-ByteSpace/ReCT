@@ -30,5 +30,6 @@ namespace ReCT.CodeAnalysis.Binding
         ArrayCreationExpression,
         TryCatchStatement,
         ObjectCreationExpression,
+        EnumStatement,
     }
 }

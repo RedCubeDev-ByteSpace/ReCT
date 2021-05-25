@@ -288,5 +288,15 @@ namespace ReCT.CodeAnalysis
         {
             Report(location, $"Can not make instance os static class '{text}'!");
         }
+
+        internal void ReportInvalidEnumType(TextLocation location, string text)
+        {
+            Report(location, $"Can only use Integers in Enum '{text}'!");
+        }
+
+        internal void ReportInvalidEnumNames(TextLocation location, string text1, string text2)
+        {
+            Report(location, $"Name '{text2}' can only be used once in Enum '{text1}'!");
+        }
     }
 }

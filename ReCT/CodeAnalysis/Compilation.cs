@@ -52,6 +52,7 @@ namespace ReCT.CodeAnalysis
         public ImmutableArray<VariableSymbol> Variables => GlobalScope.Variables;
         public ImmutableArray<ClassSymbol> Classes => GlobalScope.Classes;
         public ImmutableArray<Package.Package> Packages => Binder._packageNamespaces.ToImmutableArray();
+        public ImmutableArray<EnumSymbol> Enums => GlobalScope.Enums;
         public ImmutableArray<string> UsingPackages => Binder._usingPackages.ToImmutableArray();
 
         internal BoundGlobalScope GlobalScope

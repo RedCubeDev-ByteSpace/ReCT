@@ -8,6 +8,7 @@ namespace ReCT.CodeAnalysis.Symbols
         FunctionalVariable,
         Parameter,
         Type,
-        Class
+        Class,
+        Enum
     }
 }

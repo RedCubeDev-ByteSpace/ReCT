@@ -32,6 +32,9 @@ namespace ReCT.CodeAnalysis.Binding
         public bool TryDeclareClass(ClassSymbol _class)
             => TryDeclareSymbol(_class);
 
+        public bool TryDeclareEnum(EnumSymbol _enum)
+            => TryDeclareSymbol(_enum);
+
         private bool TryDeclareSymbol<TSymbol>(TSymbol symbol)
             where TSymbol : Symbol
         {
@@ -60,6 +63,9 @@ namespace ReCT.CodeAnalysis.Binding
 
         public ImmutableArray<FunctionSymbol> GetDeclaredFunctions()
             => GetDeclaredSymbols<FunctionSymbol>();
+
+        public ImmutableArray<EnumSymbol> GetDeclaredEnums()
+            => GetDeclaredSymbols<EnumSymbol>();
 
         private ImmutableArray<TSymbol> GetDeclaredSymbols<TSymbol>()
             where TSymbol : Symbol

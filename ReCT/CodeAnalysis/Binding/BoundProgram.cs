@@ -12,6 +12,7 @@ namespace ReCT.CodeAnalysis.Binding
                             ImmutableDictionary<FunctionSymbol, BoundBlockStatement> functions,
                             ImmutableDictionary<ClassSymbol, ImmutableDictionary<FunctionSymbol, BoundBlockStatement>> classes,
                             ImmutableArray<Package.Package> packages,
+                            ImmutableArray<EnumSymbol> enums,
                             string _namespace, string _type)
         {
             Previous = previous;
@@ -23,6 +24,7 @@ namespace ReCT.CodeAnalysis.Binding
             Packages = packages;
             Namespace = _namespace;
             Type = _type;
+            Enums = enums;
         }
 
         public BoundProgram Previous { get; }
@@ -32,6 +34,7 @@ namespace ReCT.CodeAnalysis.Binding
         public ImmutableDictionary<FunctionSymbol, BoundBlockStatement> Functions { get; }
         public ImmutableDictionary<ClassSymbol, ImmutableDictionary<FunctionSymbol, BoundBlockStatement>> Classes { get; }
         public ImmutableArray<Package.Package> Packages { get; }
+        public ImmutableArray<EnumSymbol> Enums { get; }
         public string Namespace { get; }
         public string Type { get; }
     }

@@ -54,6 +54,9 @@ namespace ReCT.CodeAnalysis.Binding
             var classDeclarations = syntaxTrees.SelectMany(st => st.Root.Members)
                                                   .OfType<ClassDeclarationSyntax>();
             
+            var enumDeclarations = syntaxTrees.SelectMany(st => st.Root.Members)
+                                                  .OfType<EnumDeclarationSyntax>();
+
             var globalStatements = syntaxTrees.SelectMany(st => st.Root.Members)
                 .OfType<GlobalStatementSyntax>();
             
@@ -72,7 +75,10 @@ namespace ReCT.CodeAnalysis.Binding
                 }
             }
 
-            //bind classes functions and class-functions
+            //bind enums classes functions and class-functions
+            foreach (var _enum in enumDeclarations)
+                binder.BindEnumDeclaration(_enum);
+
             foreach (var _class in classDeclarations)
                 binder.BindClassDeclaration(_class);
 
@@ -92,6 +98,9 @@ namespace ReCT.CodeAnalysis.Binding
                 var statement = binder.BindGlobalStatement(globalStatement.Statement);
                 statements.Add(statement);
             }
+
+            var retstmt = binder.BindReturnStatement(new ReturnStatementSyntax(null, null, null));
+            statements.Add(retstmt);
 
             // Check global statements
 
@@ -154,11 +163,12 @@ namespace ReCT.CodeAnalysis.Binding
             var diagnostics = binder.Diagnostics.ToImmutableArray();
             var variables = binder._scope.GetDeclaredVariables();
             var classes = binder._scope.GetDeclaredClasses();
+            var enums = binder._scope.GetDeclaredEnums();
 
             if (previous != null)
                 diagnostics = diagnostics.InsertRange(0, previous.Diagnostics);
 
-            return new BoundGlobalScope(previous, diagnostics, mainFunction, scriptFunction, functions, variables, statements.ToImmutable(), classes);
+            return new BoundGlobalScope(previous, diagnostics, mainFunction, scriptFunction, functions, variables, statements.ToImmutable(), classes, enums);
         }
 
         public static BoundProgram BindProgram(bool isScript, BoundProgram previous, BoundGlobalScope globalScope)
@@ -167,6 +177,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             var functionBodies = ImmutableDictionary.CreateBuilder<FunctionSymbol, BoundBlockStatement>();
             var classBodies = ImmutableDictionary.CreateBuilder<ClassSymbol, ImmutableDictionary<FunctionSymbol, BoundBlockStatement>>();
+            var enums = ImmutableArray.CreateBuilder<EnumSymbol>();
             var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
 
             //_packageNamespaces = new List<Package.Package>();
@@ -219,6 +230,11 @@ namespace ReCT.CodeAnalysis.Binding
                 functionBodies.Add(function, loweredBody);
             }
 
+            foreach (var _enum in globalScope.Enums)
+            {
+                enums.Add(_enum);
+            }
+
             diagnostics.AddRange(Binder._diagnostics);
 
             Binder._diagnostics = new DiagnosticBag();
@@ -254,6 +270,7 @@ namespace ReCT.CodeAnalysis.Binding
                                     functionBodies.ToImmutable(),
                                     classBodies.ToImmutable(),
                                     _packageNamespaces.ToImmutableArray(),
+                                    enums.ToImmutableArray(),
                                     _namespace, _type);
         }
 
@@ -330,6 +347,40 @@ namespace ReCT.CodeAnalysis.Binding
                     classArraySymbol.isClassArray = true;
                     TypeSymbol.Class.Add(new ClassSymbol(classSymbol.Name + "Arr", null, false), classArraySymbol);
                 }
+            }
+        }
+
+        private void BindEnumDeclaration(EnumDeclarationSyntax syntax)
+        {
+            int counter = 0;
+            Dictionary<string, int> values = new Dictionary<string, int>();
+
+            for (int i = 0; i < syntax.Names.Length; i++)
+            {
+                if (values.ContainsKey(syntax.Names[i].Text))
+                    _diagnostics.ReportInvalidEnumNames(syntax.Names[i].Location, syntax.EnumName.Text, syntax.Names[i].Text);
+
+                if (syntax.Values.ContainsKey(syntax.Names[i]))
+                {
+                    var literal = (BoundLiteralExpression)BindLiteralExpression((LiteralExpressionSyntax)syntax.Values[syntax.Names[i]]);
+                    if (literal.Type != TypeSymbol.Int)
+                    {
+                        _diagnostics.ReportInvalidEnumType(syntax.Names[i].Location, syntax.EnumName.Text);
+                    }
+                    values.Add(syntax.Names[i].Text, (int)literal.Value);
+                    counter = (int)literal.Value + 1;
+                    continue;
+                }
+
+                values.Add(syntax.Names[i].Text, counter);
+                counter++;
+            }
+
+            var enumSymbol = new EnumSymbol(syntax.EnumName.Text, values);
+
+            if (!_scope.TryDeclareEnum(enumSymbol))
+            {
+                _diagnostics.ReportSymbolAlreadyDeclared(syntax.EnumName.Location, enumSymbol.Name);
             }
         }
 
@@ -867,8 +918,7 @@ namespace ReCT.CodeAnalysis.Binding
             var name = syntax.IdentifierToken.Text;
             if (syntax.IdentifierToken.IsMissing)
             {
-                // This means the token was inserted by the parser. We already
-                // reported error so we can just return an error expression.
+                // This means the token was inserted by the parser. It already reported so it can just return an error expression.
                 return new BoundErrorExpression();
             }
 

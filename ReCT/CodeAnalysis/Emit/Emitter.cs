@@ -26,6 +26,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly TypeReference _doubleRef;
         private readonly TypeReference _StreamWriterRef;
         private readonly TypeReference _StreamReaderRef;
+        private readonly TypeReference _enumRef;
         private readonly MethodReference _objectConstructor;
         private readonly MethodReference _objectEqualsReference;
         private readonly MethodReference _consoleReadLineReference;
@@ -139,6 +140,7 @@ namespace ReCT.CodeAnalysis.Emit
             _doubleRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.Double").ToArray()[0]);
             _StreamWriterRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.IO.StreamWriter").ToArray()[0]);
             _StreamReaderRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.IO.StreamReader").ToArray()[0]);
+            _enumRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.Enum").ToArray()[0]);
 
 
             foreach (var (typeSymbol, metadataName) in builtInTypes)
@@ -361,7 +363,6 @@ namespace ReCT.CodeAnalysis.Emit
 
                     return s_assemblyDefinition.MainModule.ImportReference(method, genericType);
                 }
-
                 _diagnostics.ReportRequiredMethodNotFound(typeName, methodName, parameterTypeNames);
                 return null;
             }
@@ -483,6 +484,20 @@ namespace ReCT.CodeAnalysis.Emit
             var objectType = _knownTypes[TypeSymbol.Any];
             _typeDefinition = new TypeDefinition(program.Namespace, program.Type == "" ? "Program" : program.Type, TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.Public, objectType);
             _assemblyDefinition.MainModule.Types.Add(_typeDefinition);
+
+            //enums
+            //var enumDefinitions = new Dictionary<EnumSymbol, TypeDefinition>();
+            
+            foreach (var _enum in program.Enums)
+            {
+                var enumDefinition = new TypeDefinition(program.Namespace, _enum.Name, TypeAttributes.NestedPrivate | TypeAttributes.AnsiClass | TypeAttributes.Sealed, _enumRef);
+                enumDefinition.Fields.Add(new FieldDefinition("value__", FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName, _knownTypes[TypeSymbol.Int]));
+                foreach(var entry in _enum.Values)
+                {
+                    enumDefinition.Fields.Add(new FieldDefinition(entry.Key,FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal, enumDefinition) { Constant = entry.Value });
+                }
+                _typeDefinition.NestedTypes.Add(enumDefinition);
+            }
 
             //classes
             var classDefinitions = new Dictionary<KeyValuePair<ClassSymbol, ImmutableDictionary<FunctionSymbol, BoundBlockStatement>>, TypeDefinition>();
