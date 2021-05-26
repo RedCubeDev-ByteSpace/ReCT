@@ -208,6 +208,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return RewriteThreadCreateExpression((BoundThreadCreateExpression)node);
                 case BoundNodeKind.ArrayCreationExpression:
                     return RewriteArrayCreateExpression((BoundArrayCreationExpression)node);
+                 case BoundNodeKind.ArrayLiteralExpression:
+                    return RewriteArrayLiteralExpression((BoundArrayLiteralExpression)node);
                 case BoundNodeKind.ObjectCreationExpression:
                     return RewriteObjectCreateExpression((BoundObjectCreationExpression)node);
                 case BoundNodeKind.TernaryExpression:
@@ -227,6 +229,28 @@ namespace ReCT.CodeAnalysis.Binding
                 return node;
 
             return new BoundTernaryExpression(condition, left, right);
+        }
+
+        protected virtual BoundExpression RewriteArrayLiteralExpression(BoundArrayLiteralExpression node)
+        {
+            var change = false;
+            var values = node.Values;
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                var newval = RewriteExpression(values[i]);
+
+                if (newval != values[i])
+                {
+                    change = true;
+                    values[i] = newval;
+                }
+            }
+
+            if (!change)
+                return node;
+
+            return new BoundArrayLiteralExpression(node.ArrayType, node.Type, values);
         }
 
         private BoundExpression RewriteObjectCreateExpression(BoundObjectCreationExpression node)

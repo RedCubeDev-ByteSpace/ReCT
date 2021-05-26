@@ -94,7 +94,6 @@ namespace ReCT.CodeAnalysis.Emit
         private ClassSymbol inClass = null;
 
         private TypeDefinition _typeDefinition;
-        private FieldDefinition _randomFieldDefinition;
         private static List<AssemblyDefinition> s_assemblies;
         private static AssemblyDefinition s_assemblyDefinition;
         
@@ -1002,6 +1001,9 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundNodeKind.ArrayCreationExpression:
                     EmitArrayCreate(ilProcessor, (BoundArrayCreationExpression)node);
                     break;
+                case BoundNodeKind.ArrayLiteralExpression:
+                    EmitArrayLiteral(ilProcessor, (BoundArrayLiteralExpression)node);
+                    break;
                 case BoundNodeKind.ObjectCreationExpression:
                     EmitObjectCreate(ilProcessor, (BoundObjectCreationExpression)node);
                     break;
@@ -1045,6 +1047,30 @@ namespace ReCT.CodeAnalysis.Emit
         {
             EmitExpression(ilProcessor, node.Length);
             ilProcessor.Emit(OpCodes.Newarr, _knownTypes[node.ArrayType.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.ArrayType.Name) : node.ArrayType]);
+        }
+
+        private void EmitArrayLiteral(ILProcessor ilProcessor, BoundArrayLiteralExpression node)
+        {
+            ilProcessor.Emit(OpCodes.Ldc_I4, node.Values.Length);
+            ilProcessor.Emit(OpCodes.Newarr, _knownTypes[node.ArrayType.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.ArrayType.Name) : node.ArrayType]);
+            
+            for (int i = 0; i < node.Values.Length; i++)
+            {
+                ilProcessor.Emit(OpCodes.Dup);
+                ilProcessor.Emit(OpCodes.Ldc_I4, i);
+                EmitExpression(ilProcessor, node.Values[i]);
+
+                if (node.ArrayType == TypeSymbol.Bool)
+                    ilProcessor.Emit(OpCodes.Stelem_I1);
+                else if (node.ArrayType == TypeSymbol.Int)
+                    ilProcessor.Emit(OpCodes.Stelem_I4);
+                else if (node.ArrayType == TypeSymbol.Byte)
+                    ilProcessor.Emit(OpCodes.Stelem_I1);
+                else if (node.ArrayType == TypeSymbol.Float)
+                    ilProcessor.Emit(OpCodes.Stelem_R4);
+                else
+                    ilProcessor.Emit(OpCodes.Stelem_Ref);
+            }
         }
 
         private void EmitTernaryExpression(ILProcessor ilProcessor, BoundTernaryExpression node)
@@ -1748,7 +1774,7 @@ namespace ReCT.CodeAnalysis.Emit
             {
                 ilProcessor.Emit(OpCodes.Ldlen);
             }
-            if (node.TypeCall.Function == BuiltinFunctions.AtArr && (node.InnerType.isArray || node.InnerType.isClassArray))
+            else if (node.TypeCall.Function == BuiltinFunctions.AtArr && (node.InnerType.isArray || node.InnerType.isClassArray))
             {
                 if (isStatement) throw new Exception("Array Typefunction 'At' cant be used as a Statement!");
 
@@ -1768,7 +1794,7 @@ namespace ReCT.CodeAnalysis.Emit
             }
             else
             {
-                throw new Exception("Couldnt find TypeFunction: " + node.TypeCall.Function.Name + " in Type '" + node.InnerType.Name + "'!");
+                throw new Exception("Couldnt find TypeFunction: " + node.TypeCall.Function.Name + " in Type '" + node.InnerType.Name + "'! (arr: " + node.InnerType.isArray + ", class: " + node.InnerType.isClass + ")");
             }
         }
 

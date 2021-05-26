@@ -358,5 +358,10 @@ namespace ReCT.CodeAnalysis
         {
             Report(location, $"Datatypes inside of Ternary Expression have to be equal! (Left was '{name1}'; Right was '{name2}')");
         }
+
+        internal void ReportElementTypeDoesNotMatchArrayType(TextLocation location, string name1, string name2)
+        {
+            Report(location, $"Datatype of Element ('{name1}') does not match the Arrays Type ('{name2}')!");
+        }
     }
 }

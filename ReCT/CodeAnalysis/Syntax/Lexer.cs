@@ -297,6 +297,38 @@ namespace ReCT.CodeAnalysis.Syntax
                             done = true;
                         }
                         break;
+                    case '\\':
+                        if (Lookahead == '"')
+                        {
+                            sb.Append('"');
+                            _position += 2;
+                        }
+                        else if (Lookahead == 'n')
+                        {
+                            sb.Append('\n');
+                            _position += 2;
+                        }
+                        else if (Lookahead == 'r')
+                        {
+                            sb.Append('\r');
+                            _position += 2;
+                        }
+                        else if (Lookahead == 't')
+                        {
+                            sb.Append('\t');
+                            _position += 2;
+                        }
+                        else if (Lookahead == '\\')
+                        {
+                            sb.Append('\\');
+                            _position += 2;
+                        }
+                        else
+                        {
+                            sb.Append(Current);
+                            _position++;
+                        }
+                        break;
                     default:
                         sb.Append(Current);
                         _position++;

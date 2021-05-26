@@ -120,6 +120,7 @@ namespace ReCT.CodeAnalysis.Syntax
         PercentToken,
         QuestionMarkToken,
         ColonToken,
-        TernaryExpression
+        TernaryExpression,
+        ArrayLiteralExpression
     }
 }

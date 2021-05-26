@@ -32,5 +32,6 @@ namespace ReCT.CodeAnalysis.Binding
         ObjectCreationExpression,
         EnumStatement,
         TernaryExpression,
+        ArrayLiteralExpression,
     }
 }

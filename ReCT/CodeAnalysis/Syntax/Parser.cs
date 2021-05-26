@@ -245,10 +245,34 @@ namespace ReCT.CodeAnalysis.Syntax
 
             var type = MatchToken(SyntaxKind.IdentifierToken);
             var arrayKeyword = MatchToken(SyntaxKind.ArrayKeyword);
+
+            if (Current.Kind == SyntaxKind.OpenBraceToken)
+                return ParseArrayLiteral(package, type);
+
             MatchToken(SyntaxKind.OpenParenthesisToken);
             var length = ParseExpression();
             MatchToken(SyntaxKind.CloseParenthesisToken);
+
             return new ArrayCreationSyntax(_syntaxTree, type, length, package);
+        }
+
+        private ExpressionSyntax ParseArrayLiteral(SyntaxToken package, SyntaxToken type)
+        {
+            List<ExpressionSyntax> values = new List<ExpressionSyntax>();
+
+            MatchToken(SyntaxKind.OpenBraceToken);
+
+            while(Current.Kind != SyntaxKind.CloseBraceToken && Current.Kind != SyntaxKind.EndOfFileToken)
+            {
+                values.Add(ParseExpression());
+
+                if (Current.Kind != SyntaxKind.CloseBraceToken)
+                    MatchToken(SyntaxKind.CommaToken);
+            }
+
+            MatchToken(SyntaxKind.CloseBraceToken);
+
+            return new ArrayLiteralExpressionSyntax(_syntaxTree, type, package, values.ToArray());
         }
 
         private ExpressionSyntax ParseArrayExpression()
@@ -651,7 +675,7 @@ namespace ReCT.CodeAnalysis.Syntax
                 left = new BinaryExpressionSyntax(_syntaxTree, left, operatorToken, right);
             }
 
-            if (Current.Kind == SyntaxKind.AccessToken) return ParseExpressionAccessExpression(left);
+            if (Current.Kind == SyntaxKind.AccessToken && !inUnary) return ParseExpressionAccessExpression(left);
             if (Current.Kind == SyntaxKind.QuestionMarkToken && !inUnary && parentPrecedence == 0) return ParseTernaryExpression(left);
 
             return left;

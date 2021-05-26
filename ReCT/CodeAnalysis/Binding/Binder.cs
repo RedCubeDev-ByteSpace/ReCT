@@ -878,6 +878,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return BindThreadCreateExpression((ThreadCreationSyntax)syntax);
                 case SyntaxKind.ArrayCreateExpression:
                     return BindArrayCreationExpression((ArrayCreationSyntax)syntax);
+                case SyntaxKind.ArrayLiteralExpression:
+                    return BindArrayLiteralExpression((ArrayLiteralExpressionSyntax)syntax);
                 case SyntaxKind.ObjectCreateExpression:
                     return BindObjectCreationExpression((ObjectCreationSyntax)syntax);
                 case SyntaxKind.TernaryExpression:
@@ -1257,6 +1259,28 @@ namespace ReCT.CodeAnalysis.Binding
             var arrType = TypeToArray(type);
 
             return new BoundArrayCreationExpression(type, length, arrType);
+        }
+
+        private BoundExpression BindArrayLiteralExpression(ArrayLiteralExpressionSyntax syntax)
+        {
+            var type = LookupType(syntax.Type.Text);
+            var arrType = TypeToArray(type);
+
+            List<BoundExpression> values = new List<BoundExpression>();
+
+            foreach(var exp in syntax.Values)
+            {
+                var boundExp = BindExpression(exp);
+                values.Add(boundExp);
+
+                if (boundExp.Type != type)
+                {
+                    _diagnostics.ReportElementTypeDoesNotMatchArrayType(exp.Location, boundExp.Type.Name, type.Name);
+                    return new BoundErrorExpression();
+                }
+            }
+
+            return new BoundArrayLiteralExpression(type, arrType, values.ToArray());
         }
 
         private BoundExpression BindAssignmentExpression(AssignmentExpressionSyntax syntax)
