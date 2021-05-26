@@ -50,6 +50,11 @@ namespace ReCT.CodeAnalysis.Syntax
                     _kind = SyntaxKind.EndOfFileToken;
                     break;
 
+                case ':' when Lookahead != ':':
+                    _kind = SyntaxKind.ColonToken;
+                    _position++;
+                    break;
+
                 case ':' when Lookahead == ':':
                     _kind = SyntaxKind.NamespaceToken;
                     _value = null;
@@ -106,6 +111,10 @@ namespace ReCT.CodeAnalysis.Syntax
                     break;
                 case '/' when Lookahead != '/' && Lookahead != '*':
                     _kind = SyntaxKind.SlashToken;
+                    _position++;
+                    break;
+                case '%':
+                    _kind = SyntaxKind.PercentToken;
                     _position++;
                     break;
                 case '(':
@@ -203,6 +212,10 @@ namespace ReCT.CodeAnalysis.Syntax
                 case '<' when Lookahead == '<':
                     _kind = SyntaxKind.ShiftLeft;
                     _position+=2;
+                    break;
+                 case '?':
+                    _kind = SyntaxKind.QuestionMarkToken;
+                    _position++;
                     break;
                 case '"':
                     ReadString();

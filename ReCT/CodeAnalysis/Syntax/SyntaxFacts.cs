@@ -30,6 +30,7 @@ namespace ReCT.CodeAnalysis.Syntax
 
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:
+                case SyntaxKind.PercentToken:
                     return 5;
 
                 case SyntaxKind.EqualsToken:

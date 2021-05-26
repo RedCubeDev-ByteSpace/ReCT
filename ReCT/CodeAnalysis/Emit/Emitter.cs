@@ -1005,6 +1005,9 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundNodeKind.ObjectCreationExpression:
                     EmitObjectCreate(ilProcessor, (BoundObjectCreationExpression)node);
                     break;
+                case BoundNodeKind.TernaryExpression:
+                    EmitTernaryExpression(ilProcessor, (BoundTernaryExpression)node);
+                    break;
                 default:
                     throw new Exception($"Unexpected node kind {node.Kind}");
             }
@@ -1042,6 +1045,35 @@ namespace ReCT.CodeAnalysis.Emit
         {
             EmitExpression(ilProcessor, node.Length);
             ilProcessor.Emit(OpCodes.Newarr, _knownTypes[node.ArrayType.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.ArrayType.Name) : node.ArrayType]);
+        }
+
+        private void EmitTernaryExpression(ILProcessor ilProcessor, BoundTernaryExpression node)
+        {
+            var skip0 = ilProcessor.Create(OpCodes.Nop);
+            var skip1 = ilProcessor.Create(OpCodes.Nop);
+
+            EmitExpression(ilProcessor, node.Condition);
+            ilProcessor.Emit(OpCodes.Brtrue, skip0);
+
+            EmitExpression(ilProcessor, node.Right);
+            ilProcessor.Emit(OpCodes.Br, skip1);
+
+            ilProcessor.Append(skip0);
+            EmitExpression(ilProcessor, node.Left);
+
+
+            ilProcessor.Append(skip1);
+
+            // <condition>
+            // if true goto SKIP0
+            //
+            // <right>
+            // goto SKIP1
+            //
+            // SKIP0:
+            // <left>
+            //
+            // SKIP1
         }
 
         private void EmitThreadCreate(ILProcessor ilProcessor, BoundThreadCreateExpression node)
@@ -1438,6 +1470,9 @@ namespace ReCT.CodeAnalysis.Emit
                     break;
                 case BoundBinaryOperatorKind.Division:
                     ilProcessor.Emit(OpCodes.Div);
+                    break;
+                case BoundBinaryOperatorKind.Modulo:
+                    ilProcessor.Emit(OpCodes.Rem);
                     break;
                 // TODO: Implement short-circuit evaluation
                 case BoundBinaryOperatorKind.LogicalAnd:

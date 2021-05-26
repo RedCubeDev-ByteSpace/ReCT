@@ -348,5 +348,15 @@ namespace ReCT.CodeAnalysis
         {
             Report(location, $"Couldnt create {v} '{name}' because its Name includes the reserved Phrase 'Arr'!");
         }
+
+        internal void ReportWrongConditionType(TextLocation location, string name)
+        {
+            Report(location, $"Condition of Ternary Expression needs to be of Type 'Bool', instead got '{name}'!");
+        }
+
+        internal void ReportTernaryLeftAndRightTypesDontMatch(TextLocation location, string name1, string name2)
+        {
+            Report(location, $"Datatypes inside of Ternary Expression have to be equal! (Left was '{name1}'; Right was '{name2}')");
+        }
     }
 }

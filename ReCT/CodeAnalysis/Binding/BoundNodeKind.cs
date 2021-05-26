@@ -31,5 +31,6 @@ namespace ReCT.CodeAnalysis.Binding
         TryCatchStatement,
         ObjectCreationExpression,
         EnumStatement,
+        TernaryExpression,
     }
 }

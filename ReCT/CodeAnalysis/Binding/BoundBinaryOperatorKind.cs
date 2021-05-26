@@ -18,6 +18,7 @@ namespace ReCT.CodeAnalysis.Binding
         Greater,
         GreaterOrEquals,
         BitshiftLeft,
-        BitshiftRight
+        BitshiftRight,
+        Modulo
     }
 }

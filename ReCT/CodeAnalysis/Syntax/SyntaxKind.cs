@@ -116,6 +116,10 @@ namespace ReCT.CodeAnalysis.Syntax
         IncKeyword,
         EnumStatement,
         AliasKeyword,
-        AliasStatement
+        AliasStatement,
+        PercentToken,
+        QuestionMarkToken,
+        ColonToken,
+        TernaryExpression
     }
 }

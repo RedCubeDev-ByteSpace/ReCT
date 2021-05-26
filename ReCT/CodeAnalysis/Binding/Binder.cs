@@ -880,6 +880,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return BindArrayCreationExpression((ArrayCreationSyntax)syntax);
                 case SyntaxKind.ObjectCreateExpression:
                     return BindObjectCreationExpression((ObjectCreationSyntax)syntax);
+                case SyntaxKind.TernaryExpression:
+                    return BindTernaryExpression((TernaryExpressionSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -1215,6 +1217,30 @@ namespace ReCT.CodeAnalysis.Binding
             }
 
             return bac;
+        }
+
+         private BoundExpression BindTernaryExpression(TernaryExpressionSyntax syntax)
+        {
+            var condition = BindExpression(syntax.Condition);
+            var left = BindExpression(syntax.Left);
+            var right = BindExpression(syntax.Right);
+
+            if (condition is BoundErrorExpression || left is BoundErrorExpression || right is BoundErrorExpression)
+                return new BoundErrorExpression();
+
+            if (condition.Type != TypeSymbol.Bool)
+            {
+                _diagnostics.ReportWrongConditionType(syntax.Condition.Location, condition.Type.Name);
+                return new BoundErrorExpression();
+            }
+
+            if (left.Type != right.Type)
+            {
+                _diagnostics.ReportTernaryLeftAndRightTypesDontMatch(syntax.Location, left.Type.Name, right.Type.Name);
+                return new BoundErrorExpression();
+            }
+
+            return new BoundTernaryExpression(condition, left, right);
         }
 
         private BoundExpression BindArrayCreationExpression(ArrayCreationSyntax syntax)

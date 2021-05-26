@@ -210,9 +210,23 @@ namespace ReCT.CodeAnalysis.Binding
                     return RewriteArrayCreateExpression((BoundArrayCreationExpression)node);
                 case BoundNodeKind.ObjectCreationExpression:
                     return RewriteObjectCreateExpression((BoundObjectCreationExpression)node);
+                case BoundNodeKind.TernaryExpression:
+                    return RewriteTernaryExpression((BoundTernaryExpression)node);
                 default:
                     throw new Exception($"Unexpected node: {node.Kind}");
             }
+        }
+
+        protected virtual BoundExpression RewriteTernaryExpression(BoundTernaryExpression node)
+        {
+            var condition = RewriteExpression(node.Condition);
+            var left = RewriteExpression(node.Left);
+            var right = RewriteExpression(node.Right);
+
+            if (condition == node.Condition && left == node.Left && right == node.Right)
+                return node;
+
+            return new BoundTernaryExpression(condition, left, right);
         }
 
         private BoundExpression RewriteObjectCreateExpression(BoundObjectCreationExpression node)
@@ -258,6 +272,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             return new BoundAssignmentExpression(node.Variable, expression);
         }
+        
 
         protected virtual BoundExpression RewriteUnaryExpression(BoundUnaryExpression node)
         {

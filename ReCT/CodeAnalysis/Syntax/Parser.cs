@@ -625,14 +625,14 @@ namespace ReCT.CodeAnalysis.Syntax
             return ParseBinaryExpression();
         }
 
-        private ExpressionSyntax ParseBinaryExpression(int parentPrecedence = 0)
+        private ExpressionSyntax ParseBinaryExpression(int parentPrecedence = 0, bool inUnary = false)
         {
             ExpressionSyntax left;
             var unaryOperatorPrecedence = Current.Kind.GetUnaryOperatorPrecedence();
             if (unaryOperatorPrecedence != 0 && unaryOperatorPrecedence >= parentPrecedence)
             {
                 var operatorToken = NextToken();
-                var operand = ParseBinaryExpression(unaryOperatorPrecedence);
+                var operand = ParseBinaryExpression(unaryOperatorPrecedence, true);
                 left = new UnaryExpressionSyntax(_syntaxTree, operatorToken, operand);
             }
             else
@@ -652,6 +652,7 @@ namespace ReCT.CodeAnalysis.Syntax
             }
 
             if (Current.Kind == SyntaxKind.AccessToken) return ParseExpressionAccessExpression(left);
+            if (Current.Kind == SyntaxKind.QuestionMarkToken && !inUnary && parentPrecedence == 0) return ParseTernaryExpression(left);
 
             return left;
         }
@@ -867,6 +868,17 @@ namespace ReCT.CodeAnalysis.Syntax
                 return ParseExpressionAccessExpression(exp);
 
             return exp;
+        }
+
+        ExpressionSyntax ParseTernaryExpression(ExpressionSyntax condition)
+        {
+            MatchToken(SyntaxKind.QuestionMarkToken);
+            var left = ParseExpression();
+            MatchToken(SyntaxKind.ColonToken);
+            var right = ParseExpression();
+            
+
+            return new TernaryExpressionSyntax(_syntaxTree, condition, left, right);
         }
     }
 }
