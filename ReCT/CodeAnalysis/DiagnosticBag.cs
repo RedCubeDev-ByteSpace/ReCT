@@ -363,5 +363,15 @@ namespace ReCT.CodeAnalysis
         {
             Report(location, $"Datatype of Element ('{name1}') does not match the Arrays Type ('{name2}')!");
         }
+
+        internal void ReportCantThreadFunctionWithArgs(TextLocation location, string text)
+        {
+            Report(location, $"Cant Thread Function '{text}' because it has Arguments!");
+        }
+
+        internal void ReportCantActionFunctionWithArgs(TextLocation location, string text)
+        {
+            Report(location, $"Cant create Action for Function '{text}' because it has Arguments!");
+        }
     }
 }

@@ -121,6 +121,8 @@ namespace ReCT.CodeAnalysis.Syntax
         QuestionMarkToken,
         ColonToken,
         TernaryExpression,
-        ArrayLiteralExpression
+        ArrayLiteralExpression,
+        ActionKeyword,
+        ActionCreateExpression
     }
 }

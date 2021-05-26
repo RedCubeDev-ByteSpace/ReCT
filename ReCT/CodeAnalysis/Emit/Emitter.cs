@@ -63,6 +63,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _mathCeilReference;
         private readonly MethodReference _threadStartObjectReference;
         private readonly MethodReference _threadObjectReference;
+        private readonly MethodReference _actionObjectReference;
         private readonly MethodReference _IOReadAllTextReference;
         private readonly MethodReference _IOWriteAllTextReference;
         private readonly MethodReference _IOFileExistsReference;
@@ -128,7 +129,8 @@ namespace ReCT.CodeAnalysis.Emit
                 (TypeSymbol.String, "System.String"),
                 (TypeSymbol.Void, "System.Void"),
                 (TypeSymbol.Float, "System.Single"),
-                (TypeSymbol.Thread, "System.Threading.Thread")
+                (TypeSymbol.Thread, "System.Threading.Thread"),
+                (TypeSymbol.Action, "System.Action")
             };
 
             var assemblyName = new AssemblyNameDefinition(moduleName, new Version(1, 0));
@@ -231,6 +233,7 @@ namespace ReCT.CodeAnalysis.Emit
             _knownTypes.Add(TypeSymbol.StringArr, _knownTypes[TypeSymbol.String].MakeArrayType());
             _knownTypes.Add(TypeSymbol.FloatArr, _knownTypes[TypeSymbol.Float].MakeArrayType());
             _knownTypes.Add(TypeSymbol.ThreadArr, _knownTypes[TypeSymbol.Thread].MakeArrayType());
+            _knownTypes.Add(TypeSymbol.ActionArr, _knownTypes[TypeSymbol.Action].MakeArrayType());
 
             _objectConstructor = ResolveMethod("System.Object", ".ctor", Array.Empty<string>());
 
@@ -287,9 +290,12 @@ namespace ReCT.CodeAnalysis.Emit
             _mathFloorReference = ResolveMethod("System.Math", "Floor", new[] { "System.Double" });
             _mathCeilReference = ResolveMethod("System.Math", "Ceiling", new[] { "System.Double" });
 
-            //threading
+            //Threading
             _threadStartObjectReference = ResolveMethod("System.Threading.ThreadStart", ".ctor", new[] { "System.Object", "System.IntPtr" });
             _threadObjectReference = ResolveMethod("System.Threading.Thread", ".ctor", new[] { "System.Threading.ThreadStart" });
+
+            //Actions
+            _actionObjectReference = ResolveMethod("System.Action", ".ctor", new[] { "System.Object", "System.IntPtr" });
 
             //IO
             _IOReadAllTextReference = ResolveMethod("System.IO.File", "ReadAllText", new[] { "System.String" });
@@ -998,6 +1004,9 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundNodeKind.ThreadCreateExpression:
                     EmitThreadCreate(ilProcessor, (BoundThreadCreateExpression)node);
                     break;
+                case BoundNodeKind.ActionCreateExpression:
+                    EmitActionCreate(ilProcessor, (BoundActionCreateExpression)node);
+                    break;
                 case BoundNodeKind.ArrayCreationExpression:
                     EmitArrayCreate(ilProcessor, (BoundArrayCreationExpression)node);
                     break;
@@ -1108,6 +1117,13 @@ namespace ReCT.CodeAnalysis.Emit
             ilProcessor.Emit(OpCodes.Ldftn, inClass == null ? _methods[node.Function] : _classMethods[inClass][node.Function]);
             ilProcessor.Emit(OpCodes.Newobj, _threadStartObjectReference);
             ilProcessor.Emit(OpCodes.Newobj, _threadObjectReference);
+        }
+
+         private void EmitActionCreate(ILProcessor ilProcessor, BoundActionCreateExpression node)
+        {
+            ilProcessor.Emit(OpCodes.Ldnull);
+            ilProcessor.Emit(OpCodes.Ldftn, inClass == null ? _methods[node.Function] : _classMethods[inClass][node.Function]);
+            ilProcessor.Emit(OpCodes.Newobj, _actionObjectReference);
         }
 
         void LoadARef(ILProcessor ilProcessor, BoundObjectAccessExpression node)

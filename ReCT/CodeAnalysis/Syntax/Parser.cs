@@ -232,6 +232,15 @@ namespace ReCT.CodeAnalysis.Syntax
             return new ThreadCreationSyntax(_syntaxTree, identifier);
         }
 
+        private ExpressionSyntax ParseActionCreation()
+        {
+            var actionKeyword = MatchToken(SyntaxKind.ActionKeyword);
+            MatchToken(SyntaxKind.OpenParenthesisToken);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            MatchToken(SyntaxKind.CloseParenthesisToken);
+            return new ActionCreationSyntax(_syntaxTree, identifier);
+        }
+
         private ExpressionSyntax ParseArrayCreation()
         {
             var makeKeyword = MatchToken(SyntaxKind.MakeKeyword);
@@ -702,6 +711,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseStringLiteral();
                 case SyntaxKind.ThreadKeyword:
                     return ParseThreadCreation();
+                case SyntaxKind.ActionKeyword:
+                    return ParseActionCreation();
                 case SyntaxKind.MakeKeyword when Peek(2).Kind == SyntaxKind.ArrayKeyword || (Peek(4).Kind == SyntaxKind.ArrayKeyword && Peek(2).Kind == SyntaxKind.NamespaceToken):
                     return ParseArrayCreation();
                 case SyntaxKind.MakeKeyword when Peek(2).Kind == SyntaxKind.OpenParenthesisToken || (Peek(4).Kind == SyntaxKind.OpenParenthesisToken && Peek(2).Kind == SyntaxKind.NamespaceToken):

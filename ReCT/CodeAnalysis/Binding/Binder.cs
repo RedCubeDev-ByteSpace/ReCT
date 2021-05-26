@@ -876,6 +876,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return BindCallExpression((CallExpressionSyntax)syntax);
                 case SyntaxKind.ThreadCreateExpression:
                     return BindThreadCreateExpression((ThreadCreationSyntax)syntax);
+                case SyntaxKind.ActionCreateExpression:
+                    return BindActionCreateExpression((ActionCreationSyntax)syntax);
                 case SyntaxKind.ArrayCreateExpression:
                     return BindArrayCreationExpression((ArrayCreationSyntax)syntax);
                 case SyntaxKind.ArrayLiteralExpression:
@@ -1382,7 +1384,39 @@ namespace ReCT.CodeAnalysis.Binding
                 return new BoundErrorExpression();
             }
 
+            if (function.Parameters.Length > 0)
+            {
+                _diagnostics.ReportCantThreadFunctionWithArgs(syntax.Identifier.Location, syntax.Identifier.Text);
+                return new BoundErrorExpression();
+            }
+
             return new BoundThreadCreateExpression(function);
+        }
+
+        private BoundExpression BindActionCreateExpression(ActionCreationSyntax syntax)
+        {
+            var symbol = _scope.TryLookupSymbol(syntax.Identifier.Text);
+
+            if (symbol == null)
+            {
+                _diagnostics.ReportUndefinedFunction(syntax.Identifier.Location, syntax.Identifier.Text);
+                return new BoundErrorExpression();
+            }
+
+            var function = symbol as FunctionSymbol;
+            if (function == null)
+            {
+                _diagnostics.ReportNotAFunction(syntax.Identifier.Location, syntax.Identifier.Text);
+                return new BoundErrorExpression();
+            }
+
+            if (function.Parameters.Length > 0)
+            {
+                _diagnostics.ReportCantActionFunctionWithArgs(syntax.Identifier.Location, syntax.Identifier.Text);
+                return new BoundErrorExpression();
+            }
+
+            return new BoundActionCreateExpression(function);
         }
 
         private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
@@ -1653,6 +1687,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.Float;
                 case "thread":
                     return TypeSymbol.Thread;
+                case "action":
+                    return TypeSymbol.Action;
 
                 case "anyArr":
                     return TypeSymbol.AnyArr;
@@ -1668,6 +1704,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.FloatArr;
                 case "threadArr":
                     return TypeSymbol.ThreadArr;
+                case "actionArr":
+                    return TypeSymbol.ActionArr;
                 default:
                     if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
                     return TypeSymbol.Class.Values.FirstOrDefault(x => x.Name == name);;
@@ -1692,6 +1730,8 @@ namespace ReCT.CodeAnalysis.Binding
                 return TypeSymbol.FloatArr;
             else if (type == TypeSymbol.Thread)
                 return TypeSymbol.ThreadArr;
+            else if (type == TypeSymbol.Action)
+                return TypeSymbol.ActionArr;
             else if (type.isClass)
                 return TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == type.Name + "Arr").Value;
 
@@ -1713,6 +1753,8 @@ namespace ReCT.CodeAnalysis.Binding
                 return TypeSymbol.Float;
             else if (type == TypeSymbol.ThreadArr)
                 return TypeSymbol.Thread;
+            else if (type == TypeSymbol.ActionArr)
+                return TypeSymbol.Action;
             else if (type.isClass)
                 return TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == type.Name.Substring(0, type.Name.Length - 3)).Value;
 

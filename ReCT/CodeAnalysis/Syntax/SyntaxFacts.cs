@@ -95,6 +95,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.DoKeyword;
                 case "Thread":
                     return SyntaxKind.ThreadKeyword;
+                case "Action":
+                    return SyntaxKind.ActionKeyword;
                 case "make":
                     return SyntaxKind.MakeKeyword;
                 case "array":

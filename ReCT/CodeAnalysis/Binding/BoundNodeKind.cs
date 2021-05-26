@@ -33,5 +33,6 @@ namespace ReCT.CodeAnalysis.Binding
         EnumStatement,
         TernaryExpression,
         ArrayLiteralExpression,
+        ActionCreateExpression,
     }
 }

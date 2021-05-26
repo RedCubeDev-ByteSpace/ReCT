@@ -206,6 +206,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return RewriteConversionExpression((BoundConversionExpression)node);
                 case BoundNodeKind.ThreadCreateExpression:
                     return RewriteThreadCreateExpression((BoundThreadCreateExpression)node);
+                case BoundNodeKind.ActionCreateExpression:
+                    return RewriteActionCreateExpression((BoundActionCreateExpression)node);
                 case BoundNodeKind.ArrayCreationExpression:
                     return RewriteArrayCreateExpression((BoundArrayCreationExpression)node);
                  case BoundNodeKind.ArrayLiteralExpression:
@@ -264,6 +266,11 @@ namespace ReCT.CodeAnalysis.Binding
         }
 
         private BoundExpression RewriteThreadCreateExpression(BoundThreadCreateExpression node)
+        {
+            return node;
+        }
+
+        private BoundExpression RewriteActionCreateExpression(BoundActionCreateExpression node)
         {
             return node;
         }
