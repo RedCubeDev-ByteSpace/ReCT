@@ -43,6 +43,7 @@ namespace ReCT.CodeAnalysis.Syntax
         private SyntaxToken Peek(int offset)
         {
             var index = _position + offset;
+
             if (index >= _tokens.Length)
                 return _tokens[_tokens.Length - 1];
 
@@ -461,12 +462,14 @@ namespace ReCT.CodeAnalysis.Syntax
                 typeClause = ParseOptionalTypeClause();
 
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
+
+            if (Current.Kind != SyntaxKind.AssignmentExpression)
+                return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, null, null, null);
+
             var equals = MatchToken(SyntaxKind.AssignToken);
             var initializer = ParseExpression();
 
-            TypeSymbol returnType = null;
-
-            return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer, returnType);
+            return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer, null);
         }
 
         private TypeClauseSyntax ParseOptionalTypeClause()

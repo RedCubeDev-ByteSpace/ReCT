@@ -885,6 +885,9 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Body.Variables.Add(variableDefinition);
             }
 
+            if (node.Initializer == null)
+                return;
+
             if (inClass != null && !inClass.IsStatic && node.Variable.IsGlobal)
                 ilProcessor.Emit(OpCodes.Ldarg_0);
 

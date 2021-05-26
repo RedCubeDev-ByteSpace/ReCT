@@ -672,6 +672,12 @@ namespace ReCT.CodeAnalysis.Binding
         {
             var isReadOnly = false;
             var type = BindTypeClause(syntax.TypeClause);
+
+            if (syntax.Initializer == null)
+            {
+                return new BoundVariableDeclaration(BindVariableDeclaration(syntax.Identifier, isReadOnly, type ?? TypeSymbol.Any, syntax.Keyword.Kind), null);
+            }
+
             var initializer = BindExpression(syntax.Initializer);
             var variableType = type ?? initializer.Type;
             var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly, variableType, syntax.Keyword.Kind);

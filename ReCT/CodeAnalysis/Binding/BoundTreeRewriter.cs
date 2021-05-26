@@ -74,6 +74,8 @@ namespace ReCT.CodeAnalysis.Binding
 
         protected virtual BoundStatement RewriteVariableDeclaration(BoundVariableDeclaration node)
         {
+            if (node.Initializer == null) return node;
+
             var initializer = RewriteExpression(node.Initializer);
             if (initializer == node.Initializer)
                 return node;
