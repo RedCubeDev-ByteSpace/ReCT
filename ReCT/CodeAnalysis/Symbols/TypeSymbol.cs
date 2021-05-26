@@ -23,6 +23,9 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly TypeSymbol FloatArr = new TypeSymbol("floatArr", true);
         public static readonly TypeSymbol ThreadArr = new TypeSymbol("threadArr", true);
 
+        //special control typesymbol
+        public static readonly TypeSymbol ArrBase = new TypeSymbol("arrbase");
+
         public static Dictionary<ClassSymbol, TypeSymbol> Class;
         public static Dictionary<ClassSymbol, TypeSymbol> ClassArrays;
 

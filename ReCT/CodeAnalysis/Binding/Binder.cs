@@ -25,6 +25,7 @@ namespace ReCT.CodeAnalysis.Binding
         public static string _namespace = "";
         public static string _type = "";
         public static List<string> _usingPackages = new List<string>();
+        public static Dictionary<string,string> _packageAliases = new Dictionary<string,string>();
 
         public Binder(bool isScript, BoundScope parent, FunctionSymbol function, ClassSymbol inclass = null)
         {
@@ -73,6 +74,11 @@ namespace ReCT.CodeAnalysis.Binding
                     binder.BindGlobalStatement(u);
                     Console.WriteLine("using: " + u.Name.Text);
                 }
+                if (statement.Statement is AliasStatementSyntax a)
+                {
+                    binder.BindGlobalStatement(a);
+                    Console.WriteLine("aliasing: " + a.MapThis.Text);
+                }
             }
 
             //bind enums classes functions and class-functions
@@ -93,7 +99,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             foreach (var globalStatement in globalStatements)
             {
-                if (globalStatement.Statement is PackageStatementSyntax || globalStatement.Statement is UseStatementSyntax) continue;
+                if (globalStatement.Statement is PackageStatementSyntax || globalStatement.Statement is UseStatementSyntax|| globalStatement.Statement is AliasStatementSyntax) continue;
                 
                 var statement = binder.BindGlobalStatement(globalStatement.Statement);
                 statements.Add(statement);
@@ -325,6 +331,11 @@ namespace ReCT.CodeAnalysis.Binding
             var classSymbol = new ClassSymbol(syntax.Identifier.Text, syntax, syntax.isStatic, syntax.isIncluded);
             classSymbol.Scope = new BoundScope(CreateRootScope(), syntax.Identifier.Text);
 
+            if (classSymbol.Name.Contains("Arr"))
+            {
+                _diagnostics.ReportSymbolHasKeywordArr(syntax.Identifier.Location, "Class", classSymbol.Name);
+            }
+
             if (classSymbol.Declaration.Identifier.Text != null &&
                 !_scope.TryDeclareClass(classSymbol))
             {
@@ -384,6 +395,11 @@ namespace ReCT.CodeAnalysis.Binding
             
             var enumSymbol = new EnumSymbol(syntax.EnumName.Text, values, enumTypeSymbol);
             enumTypeSymbol.enumSymbol = enumSymbol;
+
+            if (enumSymbol.Name.Contains("Arr"))
+            {
+                _diagnostics.ReportSymbolHasKeywordArr(syntax.EnumName.Location, "Enum", enumSymbol.Name);
+            }
 
             TypeSymbol.Class.Add(new ClassSymbol(syntax.EnumName.Text, null, true), enumTypeSymbol);
 
@@ -516,6 +532,8 @@ namespace ReCT.CodeAnalysis.Binding
             {
                 case SyntaxKind.PackageStatement:
                     return BindPackageStatement((PackageStatementSyntax)syntax);
+                case SyntaxKind.AliasStatement:
+                    return BindAliasStatement((AliasStatementSyntax)syntax);
                 case SyntaxKind.NamespaceStatement:
                     return BindNamespaceStatement((NamespaceStatementSyntax)syntax);
                 case SyntaxKind.TypeStatement:
@@ -610,6 +628,27 @@ namespace ReCT.CodeAnalysis.Binding
                 _packageNamespaces.Add(Package.Packager.loadPackage(package + ".dll", true));
             else
                 _packageNamespaces.Add(Package.Packager.loadPackage(Package.Packager.systemPackages[package], false));
+            return null;
+        }
+
+        private BoundStatement BindAliasStatement(AliasStatementSyntax syntax)
+        {
+            var mapthis = _packageNamespaces.FirstOrDefault(x => x.name == syntax.MapThis.Text);
+            if (mapthis == null)
+            {
+                _diagnostics.ReportAliasSourceMissing(syntax.Location, syntax.MapThis.Text);
+                return null;
+            }
+
+            var tothis = _packageNamespaces.FirstOrDefault(x => x.name == syntax.ToThis.Text);
+            if (tothis != null)
+            {
+                _diagnostics.ReportAliasTargetAlreadyRegistered(syntax.Location, syntax.MapThis.Text, syntax.ToThis.Text);
+                return null;
+            }
+
+            _packageAliases.Add(syntax.ToThis.Text, syntax.MapThis.Text);
+            
             return null;
         }
 
@@ -853,6 +892,9 @@ namespace ReCT.CodeAnalysis.Binding
             if (syntax.Package != null)
                 package = _packageNamespaces.FirstOrDefault(x => x.name == syntax.Package.Text);
 
+            if (package != null && _packageAliases.ContainsKey(syntax.Package.Text))
+                package = _packageNamespaces.FirstOrDefault(x => x.name == _packageAliases[syntax.Package.Text]);
+
             ClassSymbol _class = (package == null ? ParentScope : package.scope).GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.Type.Text);
             
             if (_class == null)
@@ -968,6 +1010,9 @@ namespace ReCT.CodeAnalysis.Binding
                 {
                     package = _packageNamespaces.FirstOrDefault(x => x.name == syntax.Package.Text);
 
+                    if(package == null && _packageAliases.ContainsKey(syntax.Package.Text))
+                        package = _packageNamespaces.FirstOrDefault(x => x.name == _packageAliases[syntax.Package.Text]);
+
                     // if its found load the class / if not class is null
                     if (package != null)
                         staticClass = package.scope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
@@ -983,7 +1028,11 @@ namespace ReCT.CodeAnalysis.Binding
             foreach (string s in _usingPackages)
             {
                 pkg = _packageNamespaces.FirstOrDefault(x => x.scope.TryLookupSymbol(syntax.IdentifierToken.Text) != null);
-                if (pkg == null) continue;
+
+                if(pkg == null && _packageAliases.ContainsKey(s))
+                        pkg = _packageNamespaces.FirstOrDefault(x => x.name == _packageAliases[s]);
+
+                if (pkg != null) break;
             }
 
             // if the package exists look for the class
@@ -1039,6 +1088,7 @@ namespace ReCT.CodeAnalysis.Binding
                 }
             }
 
+            // check if the value requested is an Enum
             if (bac.Enum != null)
             {
                 if (syntax.Type != ObjectAccessExpression.AccessType.Get)
@@ -1074,7 +1124,7 @@ namespace ReCT.CodeAnalysis.Binding
             if (type != null)
             if (!type.isClass || type.isClassArray)
             {
-                var typeCall = BindCallExpression(syntax.Call, true);
+                var typeCall = BindTypeCallExpression(syntax, syntax.Call, type);
 
                 if (typeCall is BoundErrorExpression)
                 {
@@ -1084,7 +1134,7 @@ namespace ReCT.CodeAnalysis.Binding
 
                 type = typeCall.Type;
                 bac._type = type; 
-                bac.TypeCall = (BoundCallExpression)typeCall;
+                bac.TypeCall = (BoundTypeCallExpression)typeCall;
                 return bac;
             }
 
@@ -1128,7 +1178,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (syntax.Type == ObjectAccessExpression.AccessType.Get)
             {
-                var symbol = classsym.Scope.TryLookupSymbol(syntax.LookingFor.Text);
+                var symbol = classsym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
                 if (classsym.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.LookingFor.Text);
 
                 if (symbol == null || !(symbol is VariableSymbol))
@@ -1147,7 +1197,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (syntax.Type == ObjectAccessExpression.AccessType.Set)
             {
-                var symbol = classsym.Scope.TryLookupSymbol(syntax.LookingFor.Text);
+                var symbol = classsym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
                 if (classsym.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.LookingFor.Text);
 
                 if (symbol == null || !(symbol is VariableSymbol))
@@ -1171,6 +1221,13 @@ namespace ReCT.CodeAnalysis.Binding
         {
             var type = LookupType(syntax.Type.Text);
             var length = BindExpressionInternal(syntax.Length);
+
+            if (length is BoundErrorExpression)
+            {
+                _diagnostics.ReportUnknownArrayLength(syntax.Length.Location);
+                return new BoundErrorExpression();
+            }
+
             var arrType = TypeToArray(type);
 
             return new BoundArrayCreationExpression(type, length, arrType);
@@ -1278,25 +1335,26 @@ namespace ReCT.CodeAnalysis.Binding
             return new BoundThreadCreateExpression(function);
         }
 
-        private BoundExpression BindCallExpression(CallExpressionSyntax syntax, bool objectAccess = false)
+        private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
         {
             if (syntax == null)
             {
-                _diagnostics.ReportCustomeMessage("Call syntax was null (maybe wrong params?)");
+                _diagnostics.ReportCustomeMessage("Call syntax was null (this message should never be shown. if it was please file a bug report)");
                 return new BoundErrorExpression();
             }
 
             var _symbol = _scope.TryLookupSymbol(syntax.Identifier.Text);
-
-            if (syntax.Identifier.Text == "Write" && !objectAccess)
-                _symbol = null;
             
             if (_symbol == null)
             {
                 foreach (string s in _usingPackages)
                 {
-                    var pack = _packageNamespaces.FirstOrDefault(x => x.name == s);
-                    if (pack != null && pack.scope.TryLookupSymbol(syntax.Identifier.Text) != null)
+                    var pkg = _packageNamespaces.FirstOrDefault(x => x.name == s);
+
+                    if(pkg == null && _packageAliases.ContainsKey(s))
+                        pkg = _packageNamespaces.FirstOrDefault(x => x.name == _packageAliases[s]);
+
+                    if (pkg != null && pkg.scope.TryLookupSymbol(syntax.Identifier.Text) != null)
                     {
                         syntax.Namespace = s;
                         break;
@@ -1304,22 +1362,17 @@ namespace ReCT.CodeAnalysis.Binding
                 }
             }
 
+            Package.Package pack = null;
+
             if (syntax.Namespace != "")
             {
-                bool found = false;
+                pack = _packageNamespaces.FirstOrDefault(x => x.name == syntax.Namespace);
+                if (pack == null && _packageAliases.ContainsKey(syntax.Namespace))
+                    pack = _packageNamespaces.FirstOrDefault(x => x.name == _packageAliases[syntax.Namespace]);
+                
 
-                foreach (Package.Package p in _packageNamespaces)
+                if (pack == null)
                 {
-                    if (p.name == syntax.Namespace)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found)
-                {
-                    Console.WriteLine("namespace not found!");
                     _diagnostics.ReportNamespaceNotFound(syntax.Location, syntax.Namespace);
                     return new BoundErrorExpression();
                 }
@@ -1337,7 +1390,7 @@ namespace ReCT.CodeAnalysis.Binding
                 boundArguments.Add(boundArgument);
             }
 
-            var symbol = (syntax.Namespace == "" ? _scope : _packageNamespaces.FirstOrDefault(x => x.name == syntax.Namespace).scope).TryLookupSymbol(syntax.Identifier.Text);
+            var symbol = (syntax.Namespace == "" ? _scope : pack.scope).TryLookupSymbol(syntax.Identifier.Text);
             if (symbol == null)
             {
                 _diagnostics.ReportUndefinedFunction(syntax.Identifier.Location, syntax.Identifier.Text);
@@ -1392,6 +1445,74 @@ namespace ReCT.CodeAnalysis.Binding
             catch {_diagnostics.ReportCustomeMessage($"Parameter binding crashed on function {syntax.Identifier.Text}!"); return new BoundErrorExpression(); }
 
             return new BoundCallExpression(function, boundArguments.ToImmutable(), syntax.Namespace);
+        }
+
+        private BoundExpression BindTypeCallExpression(ObjectAccessExpression stmt, CallExpressionSyntax syntax, TypeSymbol etype)
+        {
+            if (syntax == null)
+            {
+                _diagnostics.ReportCustomeMessage("Call syntax was null (this message should never be shown. if it was please file a bug report)");
+                return new BoundErrorExpression();
+            }
+
+            var tfSyms = BuiltinFunctions.GetAllTypeFunctions().Where(x => x.Name == syntax.Identifier.Text).ToList();
+            var tfsym = tfSyms.FirstOrDefault(x => x.Childtype == etype);
+
+            if (tfsym == null && etype.isArray)
+            {
+                tfsym = tfSyms.FirstOrDefault(x => x.Childtype == TypeSymbol.AnyArr);
+            }
+
+            if (tfsym == null)
+            {
+                //should already be reported in BindAccessExpressionSuffix
+                //_diagnostics.ReportTypefunctionNotFound(syntax.Location, syntax.Identifier.Text, etype.Name);
+                return new BoundErrorExpression();
+            }
+
+            if (syntax.Arguments.Count == 1 && LookupType(syntax.Identifier.Text) is TypeSymbol type)
+                return BindConversion(syntax.Arguments[0], type, allowExplicit: true);
+
+            var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
+
+            foreach (var argument in syntax.Arguments)
+            {
+                var boundArgument = BindExpression(argument);
+                boundArguments.Add(boundArgument);
+            }
+
+            if (syntax.Arguments.Count != tfsym.Parameters.Length)
+            {
+                TextSpan span;
+                if (syntax.Arguments.Count > tfsym.Parameters.Length)
+                {
+                    SyntaxNode firstExceedingNode;
+                    if (tfsym.Parameters.Length > 0)
+                        firstExceedingNode = syntax.Arguments.GetSeparator(tfsym.Parameters.Length - 1);
+                    else
+                        firstExceedingNode = syntax.Arguments[0];
+                    var lastExceedingArgument = syntax.Arguments[syntax.Arguments.Count - 1];
+                    span = TextSpan.FromBounds(firstExceedingNode.Span.Start, lastExceedingArgument.Span.End);
+                }
+                else
+                {
+                    span = syntax.CloseParenthesisToken.Span;
+                }
+                var location = new TextLocation(syntax.SyntaxTree.Text, span);
+                _diagnostics.ReportWrongArgumentCount(location, tfsym.Name, tfsym.Parameters.Length, syntax.Arguments.Count);
+                return new BoundErrorExpression();
+            }
+
+            for (var i = 0; i < syntax.Arguments.Count; i++)
+            {
+                var argumentLocation = syntax.Arguments[i].Location;
+                var argument = boundArguments[i];
+                var parameter = tfsym.Parameters[i];
+                boundArguments[i] = BindConversion(argumentLocation, argument, parameter.Type);
+            }
+
+            // resolve array type if TypeSymbol.ArrBase was used
+            return new BoundTypeCallExpression(tfsym, boundArguments.ToImmutable(), syntax.Namespace, tfsym.Type == TypeSymbol.ArrBase ? ArrayToType(etype) : tfsym.Type);
         }
 
         private BoundExpression BindConversion(ExpressionSyntax syntax, TypeSymbol type, bool allowExplicit = false)

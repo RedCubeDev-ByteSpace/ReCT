@@ -114,6 +114,8 @@ namespace ReCT.CodeAnalysis.Syntax
         ArrayCreateExpression,
         ObjectCreateExpression,
         IncKeyword,
-        EnumStatement
+        EnumStatement,
+        AliasKeyword,
+        AliasStatement
     }
 }

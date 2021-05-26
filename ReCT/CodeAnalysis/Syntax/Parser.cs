@@ -330,6 +330,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParsePackageStatement();
                 case SyntaxKind.NamespaceKeyword:
                     return ParseNamespaceStatement();
+                case SyntaxKind.AliasKeyword:
+                    return ParseAliasStatement();
                 case SyntaxKind.TypeKeyword:
                     return ParseTypeStatement();
                 case SyntaxKind.UseKeyword:
@@ -368,6 +370,15 @@ namespace ReCT.CodeAnalysis.Syntax
             var name = NextToken();
 
             return new UseStatementSyntax(_syntaxTree, keyword, name);
+        }
+
+        private StatementSyntax ParseAliasStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.AliasKeyword);
+            var mapthis = NextToken();
+            var tothis = NextToken();
+
+            return new AliasStatementSyntax(_syntaxTree, keyword, mapthis, tothis);
         }
 
         private StatementSyntax ParseNamespaceStatement()

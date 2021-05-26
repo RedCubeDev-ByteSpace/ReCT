@@ -316,17 +316,37 @@ namespace ReCT.CodeAnalysis
 
         internal void ReportClassSymbolNotFound(TextLocation location)
         {
-            Report(default, $"Couldnt find Class to Access!");
+            Report(location, $"Couldnt find Class to Access!");
         }
 
         internal void ReportCanOnlyGetFromEnum(TextLocation location, string name, string v)
         {
-            Report(default, $"Enum '{name}' only supports Get Access! Tried to: '{v}'!");
+            Report(location, $"Enum '{name}' only supports Get Access! Tried to: '{v}'!");
         }
 
         internal void ReportEnumMemberNotFound(TextLocation location, string name, string text)
         {
-            Report(default, $"Enum '{name}' doesnt have a Member called '{text}'!");
+            Report(location, $"Enum '{name}' doesnt have a Member called '{text}'!");
+        }
+
+        internal void ReportAliasSourceMissing(TextLocation location, string text)
+        {
+            Report(location, $"Couldnt create Alias for Package '{text}' because it couldnt be found!");
+        }
+
+        internal void ReportAliasTargetAlreadyRegistered(TextLocation location, string text1, string text2)
+        {
+            Report(location, $"Couldnt Alias Package '{text1}' to '{text2}' because a Package called '{text2}' is already Registered!");
+        }
+
+        internal void ReportUnknownArrayLength(TextLocation location)
+        {
+            Report(location, $"Couldnt create Array because the Length is unknown!");
+        }
+
+        internal void ReportSymbolHasKeywordArr(TextLocation location, string v, string name)
+        {
+            Report(location, $"Couldnt create {v} '{name}' because its Name includes the reserved Phrase 'Arr'!");
         }
     }
 }

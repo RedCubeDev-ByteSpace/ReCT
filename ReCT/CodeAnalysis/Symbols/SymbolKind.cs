@@ -9,6 +9,7 @@ namespace ReCT.CodeAnalysis.Symbols
         Parameter,
         Type,
         Class,
-        Enum
+        Enum,
+        TypeFunction
     }
 }

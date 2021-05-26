@@ -110,6 +110,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.TypeKeyword;
                 case "use":
                     return SyntaxKind.UseKeyword;
+                case "alias":
+                    return SyntaxKind.AliasKeyword;
                 case "class":
                     return SyntaxKind.ClassKeyword;
                 case "enum":
@@ -258,6 +260,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "type";
                 case SyntaxKind.UseKeyword:
                     return "use";
+                 case SyntaxKind.AliasKeyword:
+                    return "alias";
                 case SyntaxKind.ClassKeyword:
                     return "class";
                 case SyntaxKind.EnumKeyword:

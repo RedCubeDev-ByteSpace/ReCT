@@ -773,6 +773,12 @@ namespace ReCT.CodeAnalysis.Emit
             method.Body.OptimizeMacros();
         }
 
+        /*private void EmitPushFunction(FunctionSymbol function, BoundBlockStatement body)
+        {
+            _pushDef = new MethodDefinition("$Push", MethodAttributes.Private | MethodAttributes.Static, );
+
+        }*/
+
         private void EmitStatement(ILProcessor ilProcessor, BoundStatement node)
         {
             if (node == null)
@@ -951,15 +957,18 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitExpressionStatement(ILProcessor ilProcessor, BoundExpressionStatement node)
         {
-            EmitExpression(ilProcessor, node.Expression);
+            EmitExpression(ilProcessor, node.Expression, true);
 
             if (node.Expression.Type != TypeSymbol.Void && !(node.Expression is BoundAssignmentExpression))
             {
+                if (node.Expression is BoundObjectAccessExpression boa)
+                    if (boa.TypeCall != null && boa.TypeCall.Function == BuiltinFunctions.Pop) return; //skip special un-poppable function
+
                 ilProcessor.Emit(OpCodes.Pop);
             }
         }
 
-        private void EmitExpression(ILProcessor ilProcessor, BoundExpression node)
+        private void EmitExpression(ILProcessor ilProcessor, BoundExpression node, bool isStatement = false)
         {
             switch (node.Kind)
             {
@@ -970,7 +979,7 @@ namespace ReCT.CodeAnalysis.Emit
                     EmitVariableExpression(ilProcessor, (BoundVariableExpression)node);
                     break;
                 case BoundNodeKind.ObjectAccessExpression:
-                    EmitObjectAccessExpression(ilProcessor, (BoundObjectAccessExpression)node);
+                    EmitObjectAccessExpression(ilProcessor, (BoundObjectAccessExpression)node, isStatement);
                     break;
                 case BoundNodeKind.AssignmentExpression:
                     EmitAssignmentExpression(ilProcessor, (BoundAssignmentExpression)node);
@@ -1097,13 +1106,13 @@ namespace ReCT.CodeAnalysis.Emit
             }
         }
         
-        private void EmitObjectAccessExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
+        private void EmitObjectAccessExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node, bool isStatement = false)
         {
             if ((node.Class == null || !node.Class.IsStatic) && node.Enum == null)
             {
                 if (node.TypeCall != null && node.TypeCall.Function == BuiltinFunctions.Push)
                     LoadARef(ilProcessor, node);
-                if (node.Expression == null)
+                if (node.Expression == null && node.TypeCall != null ? node.TypeCall.Function != BuiltinFunctions.Pop : true)
                 {
                     if (node.Variable is ParameterSymbol parameter)
                     {
@@ -1125,7 +1134,7 @@ namespace ReCT.CodeAnalysis.Emit
                         ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
                     }
                 }
-                else
+                else if (node.TypeCall != null ? node.TypeCall.Function != BuiltinFunctions.Pop : true)
                 {
                     EmitExpression(ilProcessor, node.Expression);
                 }
@@ -1133,7 +1142,7 @@ namespace ReCT.CodeAnalysis.Emit
 
             if (node.TypeCall != null)
             {
-                EmitTypeCallExpression(ilProcessor, node);
+                EmitTypeCallExpression(ilProcessor, node, isStatement);
                 return;
             }
 
@@ -1482,7 +1491,7 @@ namespace ReCT.CodeAnalysis.Emit
             }
         }
 
-        private void EmitTypeCallExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
+        private void EmitTypeCallExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node, bool isStatement = false)
         {
             if (node.TypeCall.Function == BuiltinFunctions.GetBit && node.InnerType == TypeSymbol.Byte)
             {
@@ -1598,6 +1607,64 @@ namespace ReCT.CodeAnalysis.Emit
                 return;
             }
 
+            else if (node.TypeCall.Function == BuiltinFunctions.Pop && (node.InnerType.isClassArray || node.InnerType.isArray))
+            {
+                if (node.Variable == null)
+                {
+                    _diagnostics.ReportTypefunctionVarOnly(BuiltinFunctions.Pop.Name);
+                    return;
+                }
+
+                var method = ResolveMethodPublic("System.Array", "Resize", new[] {"T[]&", "System.Int32"});
+                var mmm = new GenericInstanceMethod(method);
+                mmm.GenericArguments.Add(_knownTypes.FirstOrDefault(x => x.Key.Name == (node.Variable.Type.Name.EndsWith("Arr") ? node.Variable.Type.Name.Replace("Arr", "") : node.Variable.Type.Name)).Value);
+
+                LoadRef(ilProcessor, node);
+                LoadRef(ilProcessor, node);
+
+                // load len - 1 onto stack
+                ilProcessor.Emit(OpCodes.Ldlen);
+                ilProcessor.Emit(OpCodes.Conv_I4);
+                ilProcessor.Emit(OpCodes.Ldc_I4, 1);
+                ilProcessor.Emit(OpCodes.Sub);
+
+                var cType = _knownTypes.FirstOrDefault(x => x.Key.Name == (node.Variable.Type.Name.EndsWith("Arr") ? node.Variable.Type.Name.Replace("Arr", "") : node.Variable.Type.Name));
+                VariableDefinition temp = new VariableDefinition(cType.Value);
+                ilProcessor.Body.Variables.Add(temp);
+
+                // load last array element onto stack
+                if (cType.Key == TypeSymbol.Bool)
+                    ilProcessor.Emit(OpCodes.Ldelem_I1);
+                else if (cType.Key == TypeSymbol.Int)
+                    ilProcessor.Emit(OpCodes.Ldelem_I4);
+                else if (cType.Key == TypeSymbol.Byte)
+                    ilProcessor.Emit(OpCodes.Ldelem_I1);
+                else if (cType.Key == TypeSymbol.Float)
+                    ilProcessor.Emit(OpCodes.Ldelem_R4);
+                else
+                    ilProcessor.Emit(OpCodes.Ldelem_Ref);
+
+                ilProcessor.Emit(OpCodes.Stloc, temp);
+
+                LoadARef(ilProcessor, node);
+                LoadRef(ilProcessor, node);
+
+                // load len - 1 onto stack (again)
+                ilProcessor.Emit(OpCodes.Ldlen);
+                ilProcessor.Emit(OpCodes.Conv_I4);
+                ilProcessor.Emit(OpCodes.Ldc_I4, 1);
+                ilProcessor.Emit(OpCodes.Sub);
+
+                // call resize
+                ilProcessor.Emit(OpCodes.Call, mmm);
+
+                //load back the popped value
+                if (!isStatement)
+                    ilProcessor.Emit(OpCodes.Ldloc, temp);
+
+                return;
+            }
+
             foreach (var argument in node.TypeCall.Arguments)
                 EmitExpression(ilProcessor, argument);
 
@@ -1622,6 +1689,16 @@ namespace ReCT.CodeAnalysis.Emit
                 var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "Replace", new[] { "System.String", "System.String" });
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
+            if (node.TypeCall.Function == BuiltinFunctions.At && node.InnerType == TypeSymbol.String)
+            {
+                VariableDefinition temp = new VariableDefinition(_charRef);
+                ilProcessor.Body.Variables.Add(temp);
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "get_Chars", new[] { "System.Int32" });
+                ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+                ilProcessor.Emit(OpCodes.Stloc, temp);
+                ilProcessor.Emit(OpCodes.Ldloca, temp);
+                ilProcessor.Emit(OpCodes.Call, _charToString);
+            }
             else if (node.TypeCall.Function == BuiltinFunctions.StartThread && node.InnerType == TypeSymbol.Thread)
             {
                 var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.Thread].FullName, "Start", Array.Empty<string>());
@@ -1632,9 +1709,27 @@ namespace ReCT.CodeAnalysis.Emit
                 var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.Thread].FullName, "Interrupt", Array.Empty<string>());
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.GetLength && (node.InnerType.isClassArray || node.InnerType.isArray))
+            else if (node.TypeCall.Function == BuiltinFunctions.GetLengthArr && (node.InnerType.isClassArray || node.InnerType.isArray))
             {
                 ilProcessor.Emit(OpCodes.Ldlen);
+            }
+            if (node.TypeCall.Function == BuiltinFunctions.AtArr && (node.InnerType.isArray || node.InnerType.isClassArray))
+            {
+                if (isStatement) throw new Exception("Array Typefunction 'At' cant be used as a Statement!");
+
+                var cType = _knownTypes.FirstOrDefault(x => x.Key.Name == (node.InnerType.Name.EndsWith("Arr") ? node.InnerType.Name.Replace("Arr", "") : node.InnerType.Name));
+
+                // load last array element onto stack
+                if (cType.Key == TypeSymbol.Bool)
+                    ilProcessor.Emit(OpCodes.Ldelem_I1);
+                else if (cType.Key == TypeSymbol.Int)
+                    ilProcessor.Emit(OpCodes.Ldelem_I4);
+                else if (cType.Key == TypeSymbol.Byte)
+                    ilProcessor.Emit(OpCodes.Ldelem_I1);
+                else if (cType.Key == TypeSymbol.Float)
+                    ilProcessor.Emit(OpCodes.Ldelem_R4);
+                else
+                    ilProcessor.Emit(OpCodes.Ldelem_Ref);
             }
             else
             {

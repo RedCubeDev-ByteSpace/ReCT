@@ -7,7 +7,7 @@ namespace ReCT.CodeAnalysis.Binding
     internal sealed class BoundObjectAccessExpression : BoundExpression
     {
 
-        public BoundObjectAccessExpression(VariableSymbol variable, ObjectAccessExpression.AccessType accessType, FunctionSymbol function, ImmutableArray<BoundExpression> arguments, VariableSymbol property, TypeSymbol type, BoundExpression value, Package.Package package, ClassSymbol _class, BoundCallExpression typeCall, BoundExpression expression, TypeSymbol innerType)
+        public BoundObjectAccessExpression(VariableSymbol variable, ObjectAccessExpression.AccessType accessType, FunctionSymbol function, ImmutableArray<BoundExpression> arguments, VariableSymbol property, TypeSymbol type, BoundExpression value, Package.Package package, ClassSymbol _class, BoundTypeCallExpression typeCall, BoundExpression expression, TypeSymbol innerType)
         {
             Variable = variable;
             AccessType = accessType;
@@ -36,7 +36,7 @@ namespace ReCT.CodeAnalysis.Binding
         public ClassSymbol Class;
         public EnumSymbol Enum;
         public string EnumMember;
-        public BoundCallExpression TypeCall;
+        public BoundTypeCallExpression TypeCall;
         public BoundExpression Expression;
 
         public TypeSymbol _type;
