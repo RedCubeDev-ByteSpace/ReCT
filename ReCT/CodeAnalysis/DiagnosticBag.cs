@@ -345,6 +345,11 @@ namespace ReCT.CodeAnalysis
             Report(location, $"Cant create a Virtual function in the Main class!");
         }
 
+        internal void ReportFunctionCantBeCalledMain(TextLocation location)
+        {
+            Report(location, $"Cant create a Function called 'main'! This function name is reserved!");
+        }
+
         internal void ReportEnumMemberNotFound(TextLocation location, string name, string text)
         {
             Report(location, $"Enum '{name}' doesnt have a Member called '{text}'!");

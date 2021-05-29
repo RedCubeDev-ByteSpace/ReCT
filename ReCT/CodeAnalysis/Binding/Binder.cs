@@ -303,6 +303,9 @@ namespace ReCT.CodeAnalysis.Binding
             if (inClass != null && !inClass.IsAbstract && syntax.IsVirtual)
                 _diagnostics.ReportCantUseVirtFuncInNormalClass(syntax.Location);
 
+            if (syntax.Identifier.Text == "main")
+                _diagnostics.ReportFunctionCantBeCalledMain(syntax.Location);
+
             var parameters = ImmutableArray.CreateBuilder<ParameterSymbol>();
 
             var seenParameterNames = new HashSet<string>();

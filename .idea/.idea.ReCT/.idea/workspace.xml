@@ -79,8 +79,8 @@
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/SyntaxKind.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/Lexer.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" />
-      <option value="$PROJECT_DIR$/rctc/Properties/launchSettings.json" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/Parser.cs" />
+      <option value="$PROJECT_DIR$/rctc/Properties/launchSettings.json" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1lySmyqd4iCrCd9AA17VrRI6Hq7" />
@@ -162,6 +162,7 @@
       <workItem from="1617381676334" duration="11410000" />
       <workItem from="1622240489188" duration="274000" />
       <workItem from="1622247801874" duration="1595000" />
+      <workItem from="1622284453874" duration="1674000" />
     </task>
     <servers />
   </component>
@@ -267,17 +268,43 @@
           <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs</url>
-          <line>97</line>
-          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" initialLine="97" containingFunctionPresentation="method 'BindGlobalScope'">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Packager/Packager.cs</url>
+          <line>26</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Packager/Packager.cs" initialLine="26" containingFunctionPresentation="method 'loadPackage'">
             <startOffsets>
-              <option value="4048" />
+              <option value="767" />
             </startOffsets>
             <endOffsets>
-              <option value="4049" />
+              <option value="768" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="22" />
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Packager/Packager.cs</url>
+          <line>45</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Packager/Packager.cs" initialLine="45" containingFunctionPresentation="method 'loadPackage'">
+            <startOffsets>
+              <option value="1511" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1512" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Packager/Packager.cs</url>
+          <line>167</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Packager/Packager.cs" initialLine="167" containingFunctionPresentation="method 'loadPackage'">
+            <startOffsets>
+              <option value="8239" />
+            </startOffsets>
+            <endOffsets>
+              <option value="8279" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="26" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

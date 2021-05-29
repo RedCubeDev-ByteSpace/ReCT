@@ -38,19 +38,15 @@ namespace ReCT.CodeAnalysis.Package
             var types = AsmType.NestedTypes;
 
             List<string> TypesInThisPackage = new List<string>();
+            Dictionary<string, ClassSymbol> ClassesInThisPackage = new Dictionary<string, ClassSymbol>();
 
-            foreach (TypeDefinition t in types)
-                TypesInThisPackage.Add(t.Name);
+            if (TypeSymbol.Class == null) {TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>(); }
 
             foreach (TypeDefinition t in types)
             {
-                var classSymbol = new ClassSymbol(t.Name, null, t.IsSealed && t.IsAbstract);
-                var classMethods = t.Methods;
-                var classFields = t.Fields;
-                classSymbol.Scope = new BoundScope(scope);
+                TypesInThisPackage.Add(t.Name);
 
-                if (TypeSymbol.Class == null) {TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>(); }
-                
+                var classSymbol = new ClassSymbol(t.Name, null, t.IsSealed && t.IsAbstract);
                 var classTypeSymbol = new TypeSymbol(classSymbol.Name);
                 classTypeSymbol.isClass = true;
                 TypeSymbol.Class.Add(classSymbol, classTypeSymbol);
@@ -62,6 +58,15 @@ namespace ReCT.CodeAnalysis.Package
                     classArraySymbol.isClassArray = true;
                     TypeSymbol.Class.Add(new ClassSymbol(classSymbol.Name + "Arr", null, false), classArraySymbol);
                 }
+                ClassesInThisPackage.Add(t.Name, classSymbol);
+            }
+
+            foreach (TypeDefinition t in types)
+            {
+                var classSymbol = ClassesInThisPackage[t.Name];
+                var classMethods = t.Methods;
+                var classFields = t.Fields;
+                classSymbol.Scope = new BoundScope(scope);
 
                 Dictionary<string, FunctionSymbol> varGetters = new Dictionary<string, FunctionSymbol>();
                 Dictionary<string, FunctionSymbol> varSetters = new Dictionary<string, FunctionSymbol>();
