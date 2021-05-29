@@ -126,6 +126,8 @@ namespace ReCT.CodeAnalysis.Syntax
         ActionCreateExpression,
         AbstractKeyword,
         SerializableKeyword,
-        VirtualKeyword
+        VirtualKeyword,
+        BaseKeyword,
+        BaseStatement
     }
 }

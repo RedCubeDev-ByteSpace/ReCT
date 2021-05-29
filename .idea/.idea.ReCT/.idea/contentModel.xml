@@ -10,6 +10,7 @@
             <e p="BoundArrayCreationExpression.cs" t="Include" />
             <e p="BoundArrayLiteralExpression.cs" t="Include" />
             <e p="BoundAssignmentExpression.cs" t="Include" />
+            <e p="BoundBaseStatement.cs" t="Include" />
             <e p="BoundBinaryExpression.cs" t="Include" />
             <e p="BoundBinaryOperator.cs" t="Include" />
             <e p="BoundBinaryOperatorKind.cs" t="Include" />
@@ -89,6 +90,7 @@
             <e p="ArrayCreationSyntax.cs" t="Include" />
             <e p="ArrayLiteralExpressionSyntax.cs" t="Include" />
             <e p="AssignmentExpressionSyntax.cs" t="Include" />
+            <e p="BaseStatementSyntax.cs" t="Include" />
             <e p="BinaryExpressionSyntax.cs" t="Include" />
             <e p="BlockStatementSyntax.cs" t="Include" />
             <e p="BreakStatementSyntax.cs" t="Include" />

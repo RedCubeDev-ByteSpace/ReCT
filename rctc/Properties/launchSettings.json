@@ -2,7 +2,7 @@
   "profiles": {
     "rctc": {
       "commandName": "Project",
-      "commandLineArgs": "\"/home/redcube/Code/ReCT Tests/jimmy.rct\" -s -f"
+      "commandLineArgs": "\"/home/redcube/Code/ReCT Tests/modtest.rct\" -s -f"
     }
   }
 }

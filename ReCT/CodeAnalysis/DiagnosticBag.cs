@@ -395,14 +395,29 @@ namespace ReCT.CodeAnalysis
             Report(location, $"Datatype of Element ('{name1}') does not match the Arrays Type ('{name2}')!");
         }
 
+        internal void ReportCouldtFindClassToInheritFrom(TextLocation location, string text1, string text2)
+        {
+            Report(location, $"Couldnt Inherit class '{text1}' from class '{text2}'! Class '{text2}' couldnt be found!");
+        }
+
         internal void ReportCantThreadFunctionWithArgs(TextLocation location, string text)
         {
             Report(location, $"Cant Thread Function '{text}' because it has Arguments!");
         }
 
+        internal void ReportInheratingClassNeedsToBeAbstract(TextLocation location, string text)
+        {
+            Report(location, $"Cant inherit from Class '{text}' because its not Abstract!");
+        }
+
         internal void ReportPrefixedWithUnknownTarget(TextLocation location)
         {
             Report(location, $"Received Modifiers with an unknown Target!");
+        }
+
+        internal void ReportCantInheritWithAbstractClass(TextLocation location, string text)
+        {
+            Report(location, $"Cant make Class '{text}' Abstract because its inherating!");
         }
 
         internal void ReportCantActionFunctionWithArgs(TextLocation location, string text)
@@ -448,6 +463,31 @@ namespace ReCT.CodeAnalysis
         internal void ReportGloablClassVarsNeedToBePublic(TextLocation location, string text)
         {
             Report(location, $"Cant create Variable '{text}'. Only Public Variables are allowed to be in Global Space!");
+        }
+
+        internal void ReportBaseNotAllowedInMain(TextLocation location)
+        {
+            Report(location, $"The base Statement is not allowed in the Main Class!");
+        }
+
+        internal void ReportBaseConstructorCallRequired(TextLocation location, string text)
+        {
+            Report(location, $"Constructor of Inherating Class '{text}' needs to call 'base'! (its recommended to call it at the start of the Method)");
+        }
+
+        internal void ReportBaseNotAllowedInNonInheratingClass(TextLocation location)
+        {
+            Report(location, $"Base Statement isnt allowed in Non-Inherating Class!");
+        }
+
+        internal void ReportBaseNotAllowedInNonConstructorMethods(TextLocation location)
+        {
+            Report(location, $"Base Statement can only be used in the Constructor!");
+        }
+
+        internal void ReportWrongArgumentType(TextLocation location, string v, int i, string name0, string name1, string name2)
+        {
+            Report(location, $"Function '{v}' Argument {i} ('{name0}') needs to be of Type '{name1}'! Got '{name2}'!");
         }
     }
 }

@@ -85,7 +85,17 @@ namespace ReCT.CodeAnalysis.Binding
             foreach (var _enum in enumDeclarations)
                 binder.BindEnumDeclaration(_enum);
 
+            //abstract classes first
             foreach (var _class in classDeclarations)
+                if (_class.IsAbstract)
+                {
+                    Console.WriteLine("binding abs " + _class.Identifier.Text);
+                    binder.BindClassDeclaration(_class);
+                }
+
+            //others later bc they might inherit
+            foreach (var _class in classDeclarations)
+                if (!_class.IsAbstract)
                 binder.BindClassDeclaration(_class);
 
             foreach (var function in functionDeclarations)
@@ -340,14 +350,31 @@ namespace ReCT.CodeAnalysis.Binding
             if (syntax.IsStatic && syntax.IsAbstract)
                 _diagnostics.ReportClassCantBeAbstractAndStatic(syntax.Location, syntax.Identifier.Text);
 
-            var classSymbol = new ClassSymbol(syntax.Identifier.Text, syntax, syntax.IsStatic, syntax.IsIncluded, syntax.IsAbstract, syntax.IsSerializable);
+            ClassSymbol parentSym = null;
+
+            if (syntax.Inheritance != null)
+            {
+                var symbol = _scope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.Inheritance.Text);
+                if (symbol == null)
+                    _diagnostics.ReportCouldtFindClassToInheritFrom(syntax.Inheritance.Location, syntax.Identifier.Text, syntax.Inheritance.Text);
+                else if (!(symbol is ClassSymbol))
+                    _diagnostics.ReportCouldtFindClassToInheritFrom(syntax.Inheritance.Location, syntax.Identifier.Text, syntax.Inheritance.Text);
+                else
+                    parentSym = (ClassSymbol)symbol;
+
+                if (parentSym != null && !parentSym.IsAbstract)
+                    _diagnostics.ReportInheratingClassNeedsToBeAbstract(syntax.Inheritance.Location, syntax.Inheritance.Text);
+                if (parentSym != null && syntax.IsAbstract)
+                    _diagnostics.ReportCantInheritWithAbstractClass(syntax.Inheritance.Location, syntax.Identifier.Text);
+            }
+
+            var classSymbol = new ClassSymbol(syntax.Identifier.Text, syntax, syntax.IsStatic, syntax.IsIncluded, syntax.IsAbstract, syntax.IsSerializable, parentSym);
             classSymbol.Scope = new BoundScope(CreateRootScope(), syntax.Identifier.Text);
 
             if (classSymbol.Name.Contains("Arr"))
             {
                 _diagnostics.ReportSymbolHasKeywordArr(syntax.Identifier.Location, "Class", classSymbol.Name);
             }
-
             if (classSymbol.Declaration.Identifier.Text != null &&
                 !_scope.TryDeclareClass(classSymbol))
             {
@@ -470,6 +497,15 @@ namespace ReCT.CodeAnalysis.Binding
                             }
 
                         fsyntax.Body.Statements = bodyb.ToImmutable();
+
+                        if (_class.ParentSym != null)
+                        {
+                            var baseStatement = fsyntax.Body.Statements.FirstOrDefault(x => x.Kind == SyntaxKind.BaseStatement);
+                            if (baseStatement == null)
+                            {
+                                _diagnostics.ReportBaseConstructorCallRequired(fsyntax.Location, fsyntax.Identifier.Text);
+                            }
+                        }
                     }
 
                     var function = new FunctionSymbol(fsyntax.Identifier.Text, parameters.ToImmutable(), type, fsyntax, fsyntax.IsPublic, isVirtual: fsyntax.IsVirtual);
@@ -486,6 +522,18 @@ namespace ReCT.CodeAnalysis.Binding
             if (constructor == null)
             {
                 var builder = ImmutableArray.CreateBuilder<StatementSyntax>();
+
+                if (_class.ParentSym != null)
+                {
+                    var func = _class.ParentSym.Scope.GetDeclaredFunctions().FirstOrDefault(x => x.Name == "Constructor");
+
+                    if (func == null)
+                        builder.Add(new BaseStatementSyntax(null, null, new SeparatedSyntaxList<ExpressionSyntax>(ImmutableArray<SyntaxNode>.Empty)));
+                    else if (func.Parameters.Length == 0)
+                        builder.Add(new BaseStatementSyntax(null, null, new SeparatedSyntaxList<ExpressionSyntax>(ImmutableArray<SyntaxNode>.Empty)));
+                    else
+                        _diagnostics.ReportBaseConstructorCallRequired(_class.Declaration.Location, _class.Name);
+                }
 
                 foreach (MemberSyntax mem in syntax.Members)
                 if (mem is GlobalStatementSyntax gsyntax)
@@ -608,6 +656,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return BindExpressionStatement((ExpressionStatementSyntax)syntax);
                 case SyntaxKind.TryCatchStatement:
                     return BindTryCatchStatement((TryCatchStatementSyntax)syntax);
+                case SyntaxKind.BaseStatement:
+                    return BindBaseStatement((BaseStatementSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -755,6 +805,55 @@ namespace ReCT.CodeAnalysis.Binding
             var normalStatement = BindStatementInternal(syntax.NormalStatement);
             var exceptionStatement = BindStatementInternal(syntax.ExceptionSyntax);
             return new BoundTryCatchStatement(normalStatement, exceptionStatement);
+        }
+
+        private BoundStatement BindBaseStatement(BaseStatementSyntax syntax)
+        {
+            if (inClass == null)
+            {
+                _diagnostics.ReportBaseNotAllowedInMain(syntax.Location);
+                return BindErrorStatement();
+            }
+
+            if (inClass.ParentSym == null)
+            {
+                _diagnostics.ReportBaseNotAllowedInNonInheratingClass(syntax.Location);
+                return BindErrorStatement();
+            }
+
+            if (_function.Name != "Constructor")
+            {
+                _diagnostics.ReportBaseNotAllowedInNonConstructorMethods(syntax.Location);
+                return BindErrorStatement();
+            }
+
+            var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
+
+            foreach (var argument in syntax.Arguments)
+            {
+                var boundArgument = BindExpression(argument);
+                boundArguments.Add(boundArgument);
+            }
+
+            var func = inClass.ParentSym.Scope.GetDeclaredFunctions().FirstOrDefault(x => x.Name == "Constructor");
+            if (func == null)
+            {
+                if (boundArguments.Count != 0)
+                    _diagnostics.ReportWrongArgumentCount(syntax.Location, inClass.ParentSym.Name + "->Constructor", 0, boundArguments.Count);      
+            }
+            else if (boundArguments.Count != func.Parameters.Length)
+                _diagnostics.ReportWrongArgumentCount(syntax.Location, inClass.ParentSym.Name + "->Constructor", func.Parameters.Length, boundArguments.Count); 
+
+            if (func != null)
+            for (int i = 0; i < boundArguments.Count; i++)
+            {
+                if (boundArguments[i].Type != func.Parameters[i].Type)
+                {
+                    _diagnostics.ReportWrongArgumentType(syntax.Arguments[i].Location, inClass.ParentSym.Name + "->Constructor", i, func.Parameters[i].Name, func.Parameters[i].Type.Name, boundArguments[i].Type.Name);
+                }
+            }
+
+            return new BoundBaseStatement(boundArguments.ToImmutable());
         }
 
         private BoundStatement BindWhileStatement(WhileStatementSyntax syntax)

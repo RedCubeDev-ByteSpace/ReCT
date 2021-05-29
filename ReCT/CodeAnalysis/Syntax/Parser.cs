@@ -260,8 +260,18 @@ namespace ReCT.CodeAnalysis.Syntax
 
             var classKeyword = MatchToken(SyntaxKind.ClassKeyword);
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
+
+            SyntaxToken inheritance = null;
+
+            if (Current.Kind == SyntaxKind.OpenParenthesisToken)
+            {
+                MatchToken(SyntaxKind.OpenParenthesisToken);
+                inheritance = MatchToken(SyntaxKind.IdentifierToken);
+                MatchToken(SyntaxKind.CloseParenthesisToken);
+            }
+
             var members = ParseMembersInternal();
-            return new ClassDeclarationSyntax(_syntaxTree, classKeyword, identifier, members, isStatic, isIncluded, isAbstract, isSerializable);
+            return new ClassDeclarationSyntax(_syntaxTree, classKeyword, identifier, inheritance, members, isStatic, isIncluded, isAbstract, isSerializable);
         }
 
         private MemberSyntax ParseEnumDeclaration()
@@ -468,6 +478,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseReturnStatement();
                 case SyntaxKind.TryKeyword:
                     return ParseTryCatchStatement();
+                case SyntaxKind.BaseKeyword:
+                    return ParseBaseStatement();
                 case SyntaxKind.AbstractKeyword:
                 case SyntaxKind.SerializableKeyword:
                 case SyntaxKind.VirtualKeyword:
@@ -622,6 +634,16 @@ namespace ReCT.CodeAnalysis.Syntax
             var catchKeyword = MatchToken(SyntaxKind.CatchKeyword);
             var catchStatement = ParseStatement();
             return new TryCatchStatementSyntax(_syntaxTree, trykeyword, statement, catchKeyword, catchStatement);
+        }
+
+        private StatementSyntax ParseBaseStatement()
+        {
+            var baseKeyword = MatchToken(SyntaxKind.BaseKeyword);
+            var openParenthesisToken = MatchToken(SyntaxKind.OpenParenthesisToken);
+            var arguments = ParseArguments();
+            var closeParenthesisToken = MatchToken(SyntaxKind.CloseParenthesisToken);
+
+            return new BaseStatementSyntax(_syntaxTree, baseKeyword, arguments);
         }
 
         private ElseClauseSyntax ParseElseClause()

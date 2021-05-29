@@ -4,11 +4,12 @@ namespace ReCT.CodeAnalysis.Syntax
 {
     public sealed class ClassDeclarationSyntax : MemberSyntax
     {
-        public ClassDeclarationSyntax(SyntaxTree syntaxTree, SyntaxToken classKeyword, SyntaxToken identifier, ImmutableArray<MemberSyntax> members, bool isStatic, bool isIncluded, bool isAbstract, bool isSerializable)
+        public ClassDeclarationSyntax(SyntaxTree syntaxTree, SyntaxToken classKeyword, SyntaxToken identifier, SyntaxToken inheritance, ImmutableArray<MemberSyntax> members, bool isStatic, bool isIncluded, bool isAbstract, bool isSerializable)
             : base(syntaxTree)
         {
             ClassKeyword = classKeyword;
             Identifier = identifier;
+            Inheritance = inheritance;
             Members = members;
             IsAbstract = isAbstract;
             IsSerializable = isSerializable;
@@ -20,6 +21,7 @@ namespace ReCT.CodeAnalysis.Syntax
 
         public SyntaxToken ClassKeyword { get; }
         public SyntaxToken Identifier { get; }
+        public SyntaxToken Inheritance { get; }
         public ImmutableArray<MemberSyntax> Members { get; }
         public bool IsAbstract { get; }
         public bool IsSerializable { get; }

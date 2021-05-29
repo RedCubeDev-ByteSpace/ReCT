@@ -517,9 +517,42 @@ namespace ReCT.CodeAnalysis.Emit
             var classDefinitions = new Dictionary<KeyValuePair<ClassSymbol, ImmutableDictionary<FunctionSymbol, BoundBlockStatement>>, TypeDefinition>();
 
             //Register class names
+            //abstract
             foreach (var _class in program.Classes)
             {
+                if (!_class.Key.IsAbstract) continue;
                 var classDefinition = new TypeDefinition(program.Namespace, _class.Key.Name, (_class.Key.IsAbstract ? TypeAttributes.Abstract : (_class.Key.IsStatic ? (TypeAttributes.Abstract | TypeAttributes.Sealed) : 0)) | (_class.Key.IsIncluded ? TypeAttributes.NestedPublic : TypeAttributes.Public), objectType);
+
+                if (!_class.Key.IsIncluded)
+                    _assemblyDefinition.MainModule.Types.Add(classDefinition);
+                else
+                    _typeDefinition.NestedTypes.Add(classDefinition);
+
+                _classes.Add(_class.Key, classDefinition);
+
+                inType = classDefinition;
+                inClass = _class.Key;
+                _classGlobals.Add(classDefinition, new Dictionary<VariableSymbol, FieldDefinition>());
+                _knownTypes.Add(TypeSymbol.Class[_class.Key], classDefinition);
+                
+                if(!_class.Key.IsStatic)
+                    _knownTypes.Add(TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == _class.Key.Name + "Arr").Value , classDefinition.MakeArrayType());
+                
+                _classMethods.Add(_class.Key, new Dictionary<FunctionSymbol, MethodDefinition>());
+
+                classDefinitions.Add(_class, classDefinition);
+            }
+
+            //other
+            foreach (var _class in program.Classes)
+            {
+                if (_class.Key.IsAbstract) continue;
+                var baseType = objectType;
+
+                if (_class.Key.ParentSym != null)
+                    baseType = _classes[_class.Key.ParentSym];
+
+                var classDefinition = new TypeDefinition(program.Namespace, _class.Key.Name, (_class.Key.IsAbstract ? TypeAttributes.Abstract : (_class.Key.IsStatic ? (TypeAttributes.Abstract | TypeAttributes.Sealed) : 0)) | (_class.Key.IsIncluded ? TypeAttributes.NestedPublic : TypeAttributes.Public), baseType);
 
                 if (!_class.Key.IsIncluded)
                     _assemblyDefinition.MainModule.Types.Add(classDefinition);
@@ -581,7 +614,7 @@ namespace ReCT.CodeAnalysis.Emit
                     var function = functionSB.Key;
                     var body = functionSB.Value;
 
-                    Console.WriteLine("Emitting Fnction: " + function.Name + "; in: " + _class.Key.Name + "; virt: " + function.IsVirtual);
+                    //Console.WriteLine("Emitting Fnction: " + function.Name + "; in: " + _class.Key.Name + "; virt: " + function.IsVirtual);
 
                     //decleration
                     var functionType = _knownTypes[function.Type.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == function.Type.Name) : function.Type];
@@ -630,9 +663,14 @@ namespace ReCT.CodeAnalysis.Emit
 
                     var ilProcessor = method.Body.GetILProcessor();
 
-                    ilProcessor.Emit(OpCodes.Ldarg_0);
-                    ilProcessor.Emit(OpCodes.Call, _objectConstructor);
-                    ilProcessor.Emit(OpCodes.Nop);
+
+    
+                    if (inClass.ParentSym == null)
+                    {
+                        ilProcessor.Emit(OpCodes.Ldarg_0);
+                        ilProcessor.Emit(OpCodes.Call, _objectConstructor);
+                        ilProcessor.Emit(OpCodes.Nop);
+                    }
 
                     foreach (var statement in body.Statements)
                         EmitStatement(ilProcessor, statement);
@@ -723,14 +761,16 @@ namespace ReCT.CodeAnalysis.Emit
 
                     var ilProcessor = method.Body.GetILProcessor();
 
-                    ilProcessor.Emit(OpCodes.Ldarg_0);
-                    ilProcessor.Emit(OpCodes.Call, _objectConstructor);
-
-                    foreach (var variable in _classGlobals[classDefinition])
+                    if (inClass.ParentSym != null)
                     {
-                        
+                        ilProcessor.Emit(OpCodes.Ldarg_0);
+                        ilProcessor.Emit(OpCodes.Call, _objectConstructor);
                     }
-
+                    else
+                    {
+                        ilProcessor.Emit(OpCodes.Ldarg_0);
+                        ilProcessor.Emit(OpCodes.Call, _objectConstructor);
+                    }
                     ilProcessor.Emit(OpCodes.Nop);
                     ilProcessor.Emit(OpCodes.Ret);
 
@@ -828,9 +868,23 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundNodeKind.BlockStatement:
                     EmitBlockStatement(ilProcessor, (BoundBlockStatement)node);
                     break;
+                case BoundNodeKind.BaseStatement:
+                    EmitBaseStatement(ilProcessor, (BoundBaseStatement)node);
+                    break;
                 default:
                     throw new Exception($"Unexpected node kind {node.Kind}");
             }
+        }
+
+        private void EmitBaseStatement(ILProcessor ilProcessor, BoundBaseStatement node)
+        {
+            ilProcessor.Emit(OpCodes.Ldarg_0);
+
+            foreach(var arg in node.Arguments)
+                EmitExpression(ilProcessor, arg);
+
+            var func = _classes[inClass.ParentSym].Methods.FirstOrDefault(x => x.Name == ".ctor");
+            ilProcessor.Emit(OpCodes.Call, func);
         }
 
         private void EmitBlockStatement(ILProcessor ilProcessor, BoundBlockStatement node)
