@@ -92,7 +92,7 @@ namespace ReCT.CodeAnalysis.Binding
                 binder.BindFunctionDeclaration(function);
 
             foreach (var _class in binder._scope.GetDeclaredClasses())
-                binder.BindClassFunctionDeclaration(_class.Declaration, _class);
+                binder.BindClassMemberDeclaration(_class.Declaration, _class);
             
 
             var statements = ImmutableArray.CreateBuilder<BoundStatement>();
@@ -198,7 +198,7 @@ namespace ReCT.CodeAnalysis.Binding
                 if (symbol != null && symbol is FunctionSymbol fs)
                 {
                     var binder = new Binder(isScript, _class.Scope, fs, _class);
-                    var body = binder.BindStatement(fs.Declaration.Body);
+                    var body = (BoundBlockStatement)binder.BindStatement(fs.Declaration.Body);
                     var loweredBody = Lowerer.Lower(fs, body);
 
                     if (fs.Type != TypeSymbol.Void && !ControlFlowGraph.AllPathsReturn(loweredBody))
@@ -297,6 +297,12 @@ namespace ReCT.CodeAnalysis.Binding
 
         private void BindFunctionDeclaration(FunctionDeclarationSyntax syntax)
         {
+            if (inClass == null && syntax.IsVirtual)
+                _diagnostics.ReportVirtualFunctionInMain(syntax.Location);
+
+            if (inClass != null && !inClass.IsAbstract && syntax.IsVirtual)
+                _diagnostics.ReportCantUseVirtFuncInNormalClass(syntax.Location);
+
             var parameters = ImmutableArray.CreateBuilder<ParameterSymbol>();
 
             var seenParameterNames = new HashSet<string>();
@@ -318,7 +324,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             var type = BindTypeClause(syntax.Type) ?? TypeSymbol.Void;
 
-            var function = new FunctionSymbol(syntax.Identifier.Text, parameters.ToImmutable(), type, syntax, syntax.IsPublic);
+            var function = new FunctionSymbol(syntax.Identifier.Text, parameters.ToImmutable(), type, syntax, syntax.IsPublic, isVirtual: syntax.IsVirtual);
             if (function.Declaration.Identifier.Text != null &&
                 !_scope.TryDeclareFunction(function))
             {
@@ -328,7 +334,10 @@ namespace ReCT.CodeAnalysis.Binding
 
         private void BindClassDeclaration(ClassDeclarationSyntax syntax)
         {
-            var classSymbol = new ClassSymbol(syntax.Identifier.Text, syntax, syntax.isStatic, syntax.isIncluded);
+            if (syntax.IsStatic && syntax.IsAbstract)
+                _diagnostics.ReportClassCantBeAbstractAndStatic(syntax.Location, syntax.Identifier.Text);
+
+            var classSymbol = new ClassSymbol(syntax.Identifier.Text, syntax, syntax.IsStatic, syntax.IsIncluded, syntax.IsAbstract, syntax.IsSerializable);
             classSymbol.Scope = new BoundScope(CreateRootScope(), syntax.Identifier.Text);
 
             if (classSymbol.Name.Contains("Arr"))
@@ -409,12 +418,18 @@ namespace ReCT.CodeAnalysis.Binding
             }
         }
 
-        private void BindClassFunctionDeclaration(ClassDeclarationSyntax syntax, ClassSymbol _class)
+        private void BindClassMemberDeclaration(ClassDeclarationSyntax syntax, ClassSymbol _class)
         {
             foreach (MemberSyntax m in syntax.Members)
             {
                 if (m is FunctionDeclarationSyntax fsyntax)
                 {
+                    if (!_class.IsAbstract && fsyntax.IsVirtual)
+                        _diagnostics.ReportCantUseVirtFuncInNormalClass(syntax.Location);
+
+                        if (fsyntax.IsVirtual && !fsyntax.IsPublic)
+                        _diagnostics.ReportVirtualFunctionsNeedToBePublic(syntax.Location);
+
                     var parameters = ImmutableArray.CreateBuilder<ParameterSymbol>();
 
                     var seenParameterNames = new HashSet<string>();
@@ -436,22 +451,48 @@ namespace ReCT.CodeAnalysis.Binding
 
                     var type = BindTypeClause(fsyntax.Type) ?? TypeSymbol.Void;
 
-                    var function = new FunctionSymbol(fsyntax.Identifier.Text, parameters.ToImmutable(), type, fsyntax, fsyntax.IsPublic);
+                    if (fsyntax.Identifier.Text == "Constructor")
+                    {
+                        var index = 0;
+                        var bodyb = fsyntax.Body.Statements.ToBuilder();
+
+                        foreach (MemberSyntax mem in syntax.Members)
+                            if (mem is GlobalStatementSyntax gsyntax)
+                            {
+                                if (gsyntax.Statement is VariableDeclarationSyntax)
+                                {
+                                    bodyb.Insert(index, gsyntax.Statement);
+                                    index++;
+                                }
+                            }
+
+                        fsyntax.Body.Statements = bodyb.ToImmutable();
+                    }
+
+                    var function = new FunctionSymbol(fsyntax.Identifier.Text, parameters.ToImmutable(), type, fsyntax, fsyntax.IsPublic, isVirtual: fsyntax.IsVirtual);
                     if (function.Declaration.Identifier.Text != null &&
                         !_class.Scope.TryDeclareFunction(function))
                     {
                         _diagnostics.ReportSymbolAlreadyDeclared(fsyntax.Identifier.Location, function.Name);
                     }
-
-                    if (function.Name == "Constructor")
-                    {
-                        _diagnostics.Report(default, "BINDING CONSTRUCTOR");
-                        var binder = new Binder(false, _class.Scope, function, _class);
-                        binder.BindStatement(function.Declaration.Body);
-
-                        _diagnostics.removeRangeBefore("BINDING CONSTRUCTOR");
-                    }
                 }
+            }
+
+            //register constructor if not registered
+            var constructor = _class.Scope.GetDeclaredFunctions().FirstOrDefault(x => x.Name == "Constructor");
+            if (constructor == null)
+            {
+                var builder = ImmutableArray.CreateBuilder<StatementSyntax>();
+
+                foreach (MemberSyntax mem in syntax.Members)
+                if (mem is GlobalStatementSyntax gsyntax)
+                    if (gsyntax.Statement is VariableDeclarationSyntax)
+                        builder.Add(gsyntax.Statement);
+
+                var dec = new FunctionDeclarationSyntax(null, null, null, null, null, null, null, new BlockStatementSyntax(null, null, builder.ToImmutable(), null), true, false);
+
+                var function = new FunctionSymbol("Constructor", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void, dec, true);
+                _class.Scope.TryDeclareFunction(function);
             }
         }
 
@@ -675,12 +716,12 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (syntax.Initializer == null)
             {
-                return new BoundVariableDeclaration(BindVariableDeclaration(syntax.Identifier, isReadOnly, type ?? TypeSymbol.Any, syntax.Keyword.Kind), null);
+                return new BoundVariableDeclaration(BindVariableDeclaration(syntax.Identifier, isReadOnly, type ?? TypeSymbol.Any, syntax.Keyword.Kind, syntax.IsVirtual), null);
             }
 
             var initializer = BindExpression(syntax.Initializer);
             var variableType = type ?? initializer.Type;
-            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly, variableType, syntax.Keyword.Kind);
+            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly, variableType, syntax.Keyword.Kind, syntax.IsVirtual);
             var convertedInitializer = BindConversion(syntax.Initializer.Location, initializer, syntax.ExternalType == null ? variableType : syntax.ExternalType);
 
             return new BoundVariableDeclaration(variable, convertedInitializer);
@@ -749,7 +790,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             _scope = new BoundScope(_scope);
 
-            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly: true, TypeSymbol.Int, syntax.Keyword.Kind);
+            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly: true, TypeSymbol.Int, syntax.Keyword.Kind, false);
             var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
 
             _scope = _scope.Parent;
@@ -936,6 +977,12 @@ namespace ReCT.CodeAnalysis.Binding
             if (_class.IsStatic)
             {
                 _diagnostics.ReportCantMakeInstanceOfStaticClass(syntax.Type.Location, syntax.Type.Text);
+                return new BoundErrorExpression();
+            }
+
+            if (_class.IsAbstract)
+            {
+                _diagnostics.ReportCantMakeInstanceOfAbstractClass(syntax.Type.Location, syntax.Type.Text);
                 return new BoundErrorExpression();
             }
 
@@ -1634,17 +1681,25 @@ namespace ReCT.CodeAnalysis.Binding
             return new BoundConversionExpression(type, expression);
         }
 
-        private VariableSymbol BindVariableDeclaration(SyntaxToken identifier, bool isReadOnly, TypeSymbol type, SyntaxKind syntax)
+        private VariableSymbol BindVariableDeclaration(SyntaxToken identifier, bool isReadOnly, TypeSymbol type, SyntaxKind syntax, bool isVirtual)
         {
             var name = identifier.Text ?? "?";
             var declare = !identifier.IsMissing;
             var variable = syntax == SyntaxKind.SetKeyword
-                                ? (VariableSymbol)new GlobalVariableSymbol(name, isReadOnly, type)
+                                ? isVirtual 
+                                    ? (VariableSymbol)new FunctionalVariableSymbol(name, isReadOnly, type, isVirtual)
+                                    : (VariableSymbol)new GlobalVariableSymbol(name, isReadOnly, type)
                                 : new LocalVariableSymbol(name, isReadOnly, type);
 
             //Console.WriteLine($"VAR: {name} | {declare} | {variable} | {(variable.IsGlobal ? getClassScope() : _scope).Name}");
 
-            if (declare && variable.IsGlobal ? !getClassScope().TryDeclareVariable(variable) : !_scope.TryDeclareVariable(variable))
+            if (inClass == null && isVirtual)
+                _diagnostics.ReportVirtualVarInMain(identifier.Location);
+
+            if (inClass != null && !inClass.IsAbstract && isVirtual)
+                _diagnostics.ReportCantUseVirtVarInNormalClass(identifier.Location);
+
+            if (declare &&  variable.IsGlobal ? !getClassScope().TryDeclareVariable(variable) : !_scope.TryDeclareVariable(variable))
                 _diagnostics.ReportSymbolAlreadyDeclared(identifier.Location, name);
 
             return variable;

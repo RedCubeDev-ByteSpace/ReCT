@@ -101,6 +101,17 @@ namespace ReCT
                 }
                 
                 SyntaxTree syntaxTree = SyntaxTree.Parse(code);
+
+                ImmutableArray<Diagnostic> parserDiagnostics = syntaxTree.Diagnostics;
+
+                if (parserDiagnostics.Length != 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Error.WriteDiagnostics(parserDiagnostics);
+                    Console.ForegroundColor = ConsoleColor.White;
+                    return;
+                }
+
                 syntaxTrees[pathIndex] = syntaxTree;
             }
 

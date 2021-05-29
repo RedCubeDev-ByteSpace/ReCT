@@ -148,6 +148,22 @@ namespace ReCT.CodeAnalysis
             Report(location, message);
         }
 
+        internal void ReportFunctionCantBeAbstract(TextLocation location)
+        {
+            var message = $"Functions arent allowed to be Abstract! (if you are looking to override use 'virt' instead)";
+            Report(location, message);
+        }
+
+        internal void ReportMemberCantUseModifier(TextLocation location, string v, string text)
+        {
+            Report(location, $"The current '{v}' Member cant use the '{text}' modifier!");
+        }
+
+        internal void ReportMemberAlreadyRecieved(TextLocation location, string text)
+        {
+            Report(location, $"The current Member already has the '{text}' modifier!");
+        }
+
         public void ReportExpressionMustHaveValue(TextLocation location)
         {
             var message = "Expression must have a value.";
@@ -286,7 +302,7 @@ namespace ReCT.CodeAnalysis
 
         internal void ReportCantMakeInstanceOfStaticClass(TextLocation location, string text)
         {
-            Report(location, $"Can not make instance os static class '{text}'!");
+            Report(location, $"Can not make instance of static class '{text}'!");
         }
 
         internal void ReportInvalidEnumType(TextLocation location, string text)
@@ -324,6 +340,11 @@ namespace ReCT.CodeAnalysis
             Report(location, $"Enum '{name}' only supports Get Access! Tried to: '{v}'!");
         }
 
+        internal void ReportVirtualFunctionInMain(TextLocation location)
+        {
+            Report(location, $"Cant create a Virtual function in the Main class!");
+        }
+
         internal void ReportEnumMemberNotFound(TextLocation location, string name, string text)
         {
             Report(location, $"Enum '{name}' doesnt have a Member called '{text}'!");
@@ -354,6 +375,11 @@ namespace ReCT.CodeAnalysis
             Report(location, $"Condition of Ternary Expression needs to be of Type 'Bool', instead got '{name}'!");
         }
 
+        internal void ReportClassCantBeAbstractAndStatic(TextLocation location, string text)
+        {
+            Report(location, $"Class '{text}' cant be Abstract and Static at the same time!");
+        }
+
         internal void ReportTernaryLeftAndRightTypesDontMatch(TextLocation location, string name1, string name2)
         {
             Report(location, $"Datatypes inside of Ternary Expression have to be equal! (Left was '{name1}'; Right was '{name2}')");
@@ -369,9 +395,54 @@ namespace ReCT.CodeAnalysis
             Report(location, $"Cant Thread Function '{text}' because it has Arguments!");
         }
 
+        internal void ReportPrefixedWithUnknownTarget(TextLocation location)
+        {
+            Report(location, $"Received Modifiers with an unknown Target!");
+        }
+
         internal void ReportCantActionFunctionWithArgs(TextLocation location, string text)
         {
             Report(location, $"Cant create Action for Function '{text}' because it has Arguments!");
+        }
+
+        internal void ReportModifierInFunction(TextLocation location, string text)
+        {
+            Report(location, $"Cant use the '{text}' Modifier in a function!");
+        }
+
+        internal void ReportLocalVariableCantBeVirtual(TextLocation location)
+        {
+            Report(location, $"Local Variables cant be Virtual!");
+        }
+
+        internal void ReportVirtualVarInMain(TextLocation location)
+        {
+            Report(location, $"Cant create a Virtual variable in the Main class!");
+        }
+
+        internal void ReportCantMakeInstanceOfAbstractClass(TextLocation location, string text)
+        {
+            Report(location, $"Can not make instance of abstract class '{text}'!");
+        }
+
+        internal void ReportCantUseVirtVarInNormalClass(TextLocation location)
+        {
+            Report(location, $"Cant create Virtual Variable in Non-Abstract Class!");
+        }
+
+        internal void ReportCantUseVirtFuncInNormalClass(TextLocation location)
+        {
+            Report(location, $"Cant create Virtual Function in Non-Abstract Class!");
+        }
+
+        internal void ReportVirtualFunctionsNeedToBePublic(TextLocation location)
+        {
+            Report(location, $"Virtual Functions need to be Public!");
+        }
+
+        internal void ReportGloablClassVarsNeedToBePublic(TextLocation location, string text)
+        {
+            Report(location, $"Cant create Variable '{text}'. Only Public Variables are allowed to be in Global Space!");
         }
     }
 }

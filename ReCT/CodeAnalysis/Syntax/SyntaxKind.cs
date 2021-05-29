@@ -123,6 +123,9 @@ namespace ReCT.CodeAnalysis.Syntax
         TernaryExpression,
         ArrayLiteralExpression,
         ActionKeyword,
-        ActionCreateExpression
+        ActionCreateExpression,
+        AbstractKeyword,
+        SerializableKeyword,
+        VirtualKeyword
     }
 }

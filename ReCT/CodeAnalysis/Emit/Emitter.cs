@@ -519,7 +519,7 @@ namespace ReCT.CodeAnalysis.Emit
             //Register class names
             foreach (var _class in program.Classes)
             {
-                var classDefinition = new TypeDefinition(program.Namespace, _class.Key.Name, (_class.Key.IsStatic ? (TypeAttributes.Abstract | TypeAttributes.Sealed) : 0) | (_class.Key.IsIncluded ? TypeAttributes.NestedPublic : TypeAttributes.Public), objectType);
+                var classDefinition = new TypeDefinition(program.Namespace, _class.Key.Name, (_class.Key.IsAbstract ? TypeAttributes.Abstract : (_class.Key.IsStatic ? (TypeAttributes.Abstract | TypeAttributes.Sealed) : 0)) | (_class.Key.IsIncluded ? TypeAttributes.NestedPublic : TypeAttributes.Public), objectType);
 
                 if (!_class.Key.IsIncluded)
                     _assemblyDefinition.MainModule.Types.Add(classDefinition);
@@ -554,7 +554,12 @@ namespace ReCT.CodeAnalysis.Emit
 
                 foreach (var field in variables)
                 {
-                    if (field.IsGlobal)
+                    if (field.IsFunctional)
+                    {
+                        var actualField = EmitFunctionalVarFromSymbol(field);
+                        _classGlobals[inType].Add(field, actualField);
+                    }
+                    else if (field.IsGlobal)
                     {
                         var actualField = EmitGlobalVarFromSymbol(field);
                         _classGlobals[inType].Add(field, actualField);
@@ -576,9 +581,11 @@ namespace ReCT.CodeAnalysis.Emit
                     var function = functionSB.Key;
                     var body = functionSB.Value;
 
+                    Console.WriteLine("Emitting Fnction: " + function.Name + "; in: " + _class.Key.Name + "; virt: " + function.IsVirtual);
+
                     //decleration
                     var functionType = _knownTypes[function.Type.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == function.Type.Name) : function.Type];
-                    var method = new MethodDefinition(function.Name, (_class.Key.IsStatic ? MethodAttributes.Static : 0) | (function.IsPublic ? MethodAttributes.Public : MethodAttributes.Private), functionType);
+                    var method = new MethodDefinition(function.Name, (_class.Key.IsStatic ? MethodAttributes.Static : 0) | (function.IsVirtual ? MethodAttributes.Virtual : 0) | (function.IsPublic ? MethodAttributes.Public : MethodAttributes.Private), functionType);
 
                     if (function.Name == "Constructor")
                     {
@@ -718,6 +725,12 @@ namespace ReCT.CodeAnalysis.Emit
 
                     ilProcessor.Emit(OpCodes.Ldarg_0);
                     ilProcessor.Emit(OpCodes.Call, _objectConstructor);
+
+                    foreach (var variable in _classGlobals[classDefinition])
+                    {
+                        
+                    }
+
                     ilProcessor.Emit(OpCodes.Nop);
                     ilProcessor.Emit(OpCodes.Ret);
 
@@ -868,7 +881,11 @@ namespace ReCT.CodeAnalysis.Emit
             var variableDefinition = new VariableDefinition(typeReference);
             FieldDefinition field = null;
 
-            if (node.Variable.IsGlobal)
+            if (node.Variable.IsFunctional)
+            {
+                field = _classGlobals[inType][node.Variable];
+            }
+            else if (node.Variable.IsGlobal)
             {
                 if (inType == null)
                 {
@@ -932,6 +949,34 @@ namespace ReCT.CodeAnalysis.Emit
                 _knownTypes[_knownTypes.Keys.FirstOrDefault(x => x.Name == varSym.Type.Name)]
             );
             inType.Fields.Add(_globalField);
+            return _globalField;
+        }
+
+        private FieldDefinition EmitFunctionalVarFromSymbol(VariableSymbol varSym)
+        {
+            var _globalField = new FieldDefinition(
+                "$" + varSym.Name, FieldAttributes.Public,
+                _knownTypes[_knownTypes.Keys.FirstOrDefault(x => x.Name == varSym.Type.Name)]
+            );
+            inType.Fields.Add(_globalField);
+
+            MethodDefinition getter = new MethodDefinition("get_$" + varSym.Name, MethodAttributes.Public | MethodAttributes.Virtual, _knownTypes[_knownTypes.Keys.FirstOrDefault(x => x.Name == varSym.Type.Name)]);
+                var gil = getter.Body.GetILProcessor();
+                    gil.Emit(OpCodes.Ldarg_0);
+                    gil.Emit(OpCodes.Ldfld, _globalField);
+                    gil.Emit(OpCodes.Ret);
+
+            MethodDefinition setter = new MethodDefinition("set_$" + varSym.Name, MethodAttributes.Public | MethodAttributes.Virtual, _knownTypes[TypeSymbol.Void]);
+            setter.Parameters.Add(new ParameterDefinition(_knownTypes[_knownTypes.Keys.FirstOrDefault(x => x.Name == varSym.Type.Name)]));
+                var sil = setter.Body.GetILProcessor();
+                    sil.Emit(OpCodes.Ldarg_0);
+                    sil.Emit(OpCodes.Ldarg_1);
+                    sil.Emit(OpCodes.Stfld, _globalField);
+                    sil.Emit(OpCodes.Ret);
+
+            inType.Methods.Add(getter);
+            inType.Methods.Add(setter);
+
             return _globalField;
         }
 

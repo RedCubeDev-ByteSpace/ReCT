@@ -94,5 +94,10 @@ namespace ReCT.CodeAnalysis.Binding
                 _symbols.Remove(symsToDed.Dequeue().Key);
             }
         }
+
+        internal void UpdateSymbol(ClassSymbol @class)
+        {
+            _symbols[@class.Name] = @class;
+        }
     }
 }

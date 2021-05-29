@@ -121,8 +121,12 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.EnumKeyword;
                 case "dll":
                     return SyntaxKind.DllKeyword;
-                case "acs":
-                    return SyntaxKind.AccessKeyword;
+                case "abs":
+                    return SyntaxKind.AbstractKeyword;
+                case "ser":
+                    return SyntaxKind.SerializableKeyword;
+                case "virt":
+                    return SyntaxKind.VirtualKeyword;
                 case "null":
                 case "nil":
                     return SyntaxKind.NullKeyword;
@@ -271,8 +275,12 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "enum";
                 case SyntaxKind.DllKeyword:
                     return "dll";
-                case SyntaxKind.AccessKeyword:
-                    return "acs";
+                case SyntaxKind.AbstractKeyword:
+                    return "abs";
+                case SyntaxKind.SerializableKeyword:
+                    return "ser";
+                case SyntaxKind.VirtualKeyword:
+                    return "virt";
                 case SyntaxKind.NullKeyword:
                     return "null";
                 case SyntaxKind.IncKeyword:

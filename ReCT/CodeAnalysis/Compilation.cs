@@ -40,6 +40,7 @@ namespace ReCT.CodeAnalysis
             Binder._diagnostics = new DiagnosticBag();
             Binder._packageNamespaces.Clear();
             Binder._usingPackages.Clear();
+            Binder._packageAliases.Clear();
             Binder._namespace = "";
             Binder._type = "";
         }

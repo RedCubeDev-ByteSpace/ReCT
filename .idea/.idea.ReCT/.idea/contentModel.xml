@@ -6,7 +6,9 @@
         <e p="CodeAnalysis" t="Include">
           <e p="Binding" t="Include">
             <e p="Binder.cs" t="Include" />
+            <e p="BoundActionCreateExpression.cs" t="Include" />
             <e p="BoundArrayCreationExpression.cs" t="Include" />
+            <e p="BoundArrayLiteralExpression.cs" t="Include" />
             <e p="BoundAssignmentExpression.cs" t="Include" />
             <e p="BoundBinaryExpression.cs" t="Include" />
             <e p="BoundBinaryOperator.cs" t="Include" />
@@ -37,9 +39,11 @@
             <e p="BoundReturnStatement.cs" t="Include" />
             <e p="BoundScope.cs" t="Include" />
             <e p="BoundStatement.cs" t="Include" />
+            <e p="BoundTernaryExpression.cs" t="Include" />
             <e p="BoundThreadCreateExpression.cs" t="Include" />
             <e p="BoundTreeRewriter.cs" t="Include" />
             <e p="BoundTryCatchStatement.cs" t="Include" />
+            <e p="BoundTypeCallExpression.cs" t="Include" />
             <e p="BoundUnaryExpression.cs" t="Include" />
             <e p="BoundUnaryOperator.cs" t="Include" />
             <e p="BoundUnaryOperatorKind.cs" t="Include" />
@@ -66,6 +70,7 @@
           <e p="Symbols" t="Include">
             <e p="BuiltinFunctions.cs" t="Include" />
             <e p="ClassSymbol.cs" t="Include" />
+            <e p="EnumSymbol.cs" t="Include" />
             <e p="FunctionSymbol.cs" t="Include" />
             <e p="FunctionalVariable.cs" t="Include" />
             <e p="GlobalVariableSymbol.cs" t="Include" />
@@ -74,11 +79,15 @@
             <e p="Symbol.cs" t="Include" />
             <e p="SymbolKind.cs" t="Include" />
             <e p="SymbolPrinter.cs" t="Include" />
+            <e p="TypeFunctionSymbol.cs" t="Include" />
             <e p="TypeSymbol.cs" t="Include" />
             <e p="VariableSymbol.cs" t="Include" />
           </e>
           <e p="Syntax" t="Include">
+            <e p="ActionCreationSyntax.cs" t="Include" />
+            <e p="AliasStatementSyntax.cs" t="Include" />
             <e p="ArrayCreationSyntax.cs" t="Include" />
+            <e p="ArrayLiteralExpressionSyntax.cs" t="Include" />
             <e p="AssignmentExpressionSyntax.cs" t="Include" />
             <e p="BinaryExpressionSyntax.cs" t="Include" />
             <e p="BlockStatementSyntax.cs" t="Include" />
@@ -89,6 +98,7 @@
             <e p="ContinueStatementSyntax.cs" t="Include" />
             <e p="DoWhileStatementSyntax.cs" t="Include" />
             <e p="ElseClauseSyntax.cs" t="Include" />
+            <e p="EnumStatementSyntax.cs" t="Include" />
             <e p="ExpressionStatementSyntax.cs" t="Include" />
             <e p="ExpressionSyntax.cs" t="Include" />
             <e p="ForStatementSyntax.cs" t="Include" />
@@ -115,6 +125,7 @@
             <e p="SyntaxNode.cs" t="Include" />
             <e p="SyntaxToken.cs" t="Include" />
             <e p="SyntaxTree.cs" t="Include" />
+            <e p="TernaryExpressionSyntax.cs" t="Include" />
             <e p="ThreadCreationSyntax.cs" t="Include" />
             <e p="TryCatchStatement.cs" t="Include" />
             <e p="TypeClauseSyntax.cs" t="Include" />
@@ -134,6 +145,7 @@
         <e p="IO" t="Include">
           <e p="TextWriterExtensions.cs" t="Include" />
         </e>
+        <e p="README.md" t="Include" />
         <e p="ReCT.csproj" t="IncludeRecursive" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="info.cs" t="Include" />
@@ -155,6 +167,7 @@
           </e>
           <e p="launchSettings.json" t="Include" />
         </e>
+        <e p="README.md" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">

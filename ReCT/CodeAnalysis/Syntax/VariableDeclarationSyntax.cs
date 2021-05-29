@@ -4,7 +4,7 @@ namespace ReCT.CodeAnalysis.Syntax
 {
     public sealed class VariableDeclarationSyntax : StatementSyntax
     {
-        public VariableDeclarationSyntax(SyntaxTree syntaxTree, SyntaxToken keyword, SyntaxToken identifier, TypeClauseSyntax typeClause, SyntaxToken equalsToken, ExpressionSyntax initializer, TypeSymbol externalType)
+        public VariableDeclarationSyntax(SyntaxTree syntaxTree, SyntaxToken keyword, SyntaxToken identifier, TypeClauseSyntax typeClause, SyntaxToken equalsToken, ExpressionSyntax initializer, TypeSymbol externalType, bool isVirtual)
             : base(syntaxTree)
         {
             Keyword = keyword;
@@ -13,6 +13,7 @@ namespace ReCT.CodeAnalysis.Syntax
             EqualsToken = equalsToken;
             Initializer = initializer;
             ExternalType = externalType;
+            IsVirtual = isVirtual;
         }
 
         public override SyntaxKind Kind => SyntaxKind.VariableDeclaration;
@@ -22,5 +23,6 @@ namespace ReCT.CodeAnalysis.Syntax
         public SyntaxToken EqualsToken { get; }
         public ExpressionSyntax Initializer { get; }
         public TypeSymbol ExternalType { get; }
+        public bool IsVirtual { get; }
     }
 }

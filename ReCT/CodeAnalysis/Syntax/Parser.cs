@@ -123,39 +123,89 @@ namespace ReCT.CodeAnalysis.Syntax
             return members.ToImmutable();
         }
 
-        private MemberSyntax ParseMember()
-        {
-            if (Current.Kind == SyntaxKind.FunctionKeyword)
-                return ParseFunctionDeclaration(false);
-
-            if (Current.Kind == SyntaxKind.SetKeyword && Peek(1).Kind == SyntaxKind.FunctionKeyword)
-                return ParseFunctionDeclaration(true);
+        private MemberSyntax ParseMember(List<SyntaxToken> prefixes = null)
+        {   
+            prefixes = prefixes ?? new List<SyntaxToken>();
 
             if (Current.Kind == SyntaxKind.EnumKeyword)
-                return ParseEnumDeclaration();
+                if (prefixes.Count == 0)
+                    return ParseEnumDeclaration();
+                else {
+                    foreach (var pre in prefixes)
+                    _diagnostics.ReportMemberCantUseModifier(pre.Location, "Enum", pre.Text);
+                    return null;
+                }
+
+            if (Current.Kind == SyntaxKind.SetKeyword && Peek(1).Kind != SyntaxKind.IdentifierToken)
+            {
+                prefixes.Add(MatchToken(SyntaxKind.SetKeyword));
+                return ParseMember(prefixes);
+            }
+
+            if (Current.Kind == SyntaxKind.IncKeyword) {
+                prefixes.Add(MatchToken(SyntaxKind.IncKeyword));
+                return ParseMember(prefixes);
+            }
+
+            if (Current.Kind == SyntaxKind.AbstractKeyword) {
+                prefixes.Add(MatchToken(SyntaxKind.AbstractKeyword));
+                return ParseMember(prefixes);
+            }
+
+            if (Current.Kind == SyntaxKind.VirtualKeyword) {
+                prefixes.Add(MatchToken(SyntaxKind.VirtualKeyword));
+                return ParseMember(prefixes);
+            }
+
+            if (Current.Kind == SyntaxKind.SerializableKeyword) {
+                prefixes.Add(MatchToken(SyntaxKind.SerializableKeyword));
+                return ParseMember(prefixes);
+            }
+
+            if (Current.Kind == SyntaxKind.FunctionKeyword)
+                return ParseFunctionDeclaration(prefixes);
 
             if (Current.Kind == SyntaxKind.ClassKeyword)
-                return ParseClassDeclaration(false, false);
+                return ParseClassDeclaration(prefixes);
 
-            if (Current.Kind == SyntaxKind.SetKeyword && Peek(1).Kind == SyntaxKind.ClassKeyword)
-                return ParseClassDeclaration(true, false);
+            if (Current.Kind == SyntaxKind.IdentifierToken && prefixes.Count != 0) {
+                foreach(var prefix in prefixes)
+                    _diagnostics.ReportPrefixedWithUnknownTarget(prefix.Location);
+                return null;
+            }
 
-            if (Current.Kind == SyntaxKind.IncKeyword && Peek(1).Kind == SyntaxKind.ClassKeyword)
-                return ParseClassDeclaration(false, true);
-
-            if (Current.Kind == SyntaxKind.SetKeyword && Peek(1).Kind == SyntaxKind.IncKeyword && Peek(2).Kind == SyntaxKind.ClassKeyword)
-                return ParseClassDeclaration(true, true);
-
-            if (Current.Kind == SyntaxKind.IncKeyword && Peek(1).Kind == SyntaxKind.SetKeyword && Peek(2).Kind == SyntaxKind.ClassKeyword)
-                return ParseClassDeclaration(true, true);
-
-            return ParseGlobalStatement();
+            return ParseGlobalStatement(prefixes);
         }
 
-        private MemberSyntax ParseFunctionDeclaration(bool isPublic)
+        private MemberSyntax ParseFunctionDeclaration(List<SyntaxToken> prefixes)
         {
-            if (isPublic)
-                MatchToken(SyntaxKind.SetKeyword);
+            var isPublic = false;
+            var isVirtual = false;
+
+            foreach(SyntaxToken s in prefixes)
+            {
+                switch(s.Kind)
+                {
+                    case SyntaxKind.SetKeyword:
+                        if (!isPublic)
+                            isPublic = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    case SyntaxKind.VirtualKeyword:
+                        if (!isVirtual)
+                            isVirtual = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    case SyntaxKind.AbstractKeyword:
+                        _diagnostics.ReportFunctionCantBeAbstract(s.Location);
+                        break;
+                    default:
+                        _diagnostics.ReportMemberCantUseModifier(s.Location, "Class", s.Text);
+                        break;
+                }
+            }
 
             var functionKeyword = MatchToken(SyntaxKind.FunctionKeyword);
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
@@ -164,34 +214,54 @@ namespace ReCT.CodeAnalysis.Syntax
             var closeParenthesisToken = MatchToken(SyntaxKind.CloseParenthesisToken);
             var type = ParseOptionalTypeClause();
             var body = ParseBlockStatement();
-            return new FunctionDeclarationSyntax(_syntaxTree, functionKeyword, identifier, openParenthesisToken, parameters, closeParenthesisToken, type, body, isPublic);
+            return new FunctionDeclarationSyntax(_syntaxTree, functionKeyword, identifier, openParenthesisToken, parameters, closeParenthesisToken, type, body, isPublic, isVirtual);
         }
 
-        private MemberSyntax ParseClassDeclaration(bool isStatic, bool isIncluded)
+        private MemberSyntax ParseClassDeclaration(List<SyntaxToken> prefixes)
         {
-            if (isStatic || isIncluded)
+            var isStatic = false;
+            var isIncluded = false;
+            var isAbstract = false;
+            var isSerializable = false;
+
+            foreach(SyntaxToken s in prefixes)
             {
-                if (Current.Kind == SyntaxKind.SetKeyword)
+                switch(s.Kind)
                 {
-                    MatchToken(SyntaxKind.SetKeyword);
-
-                    if (isIncluded)
-                        MatchToken(SyntaxKind.IncKeyword);
-                }
-                else if (Current.Kind == SyntaxKind.IncKeyword)
-                {
-                    MatchToken(SyntaxKind.IncKeyword);
-
-                    if (isStatic)
-                        MatchToken(SyntaxKind.SetKeyword);
+                    case SyntaxKind.SetKeyword:
+                        if (!isStatic)
+                            isStatic = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    case SyntaxKind.IncKeyword:
+                        if (!isIncluded)
+                            isIncluded = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    case SyntaxKind.AbstractKeyword:
+                        if (!isAbstract)
+                            isAbstract = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    case SyntaxKind.SerializableKeyword:
+                        if (!isSerializable)
+                            isSerializable = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    default:
+                        _diagnostics.ReportMemberCantUseModifier(s.Location, "Class", s.Text);
+                        break;
                 }
             }
-
 
             var classKeyword = MatchToken(SyntaxKind.ClassKeyword);
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
             var members = ParseMembersInternal();
-            return new ClassDeclarationSyntax(_syntaxTree, classKeyword, identifier, members, isStatic, isIncluded);
+            return new ClassDeclarationSyntax(_syntaxTree, classKeyword, identifier, members, isStatic, isIncluded, isAbstract, isSerializable);
         }
 
         private MemberSyntax ParseEnumDeclaration()
@@ -350,14 +420,19 @@ namespace ReCT.CodeAnalysis.Syntax
             return new ParameterSyntax(_syntaxTree, identifier, type);
         }
 
-        private MemberSyntax ParseGlobalStatement()
+        private MemberSyntax ParseGlobalStatement(List<SyntaxToken> prefixes)
         {
-            var statement = ParseStatement();
+            var statement = ParseStatement(prefixes);
             return new GlobalStatementSyntax(_syntaxTree, statement);
         }
 
-        private StatementSyntax ParseStatement()
+        private StatementSyntax ParseStatement(List<SyntaxToken> prefixes = null)
         {
+            prefixes = prefixes ?? new List<SyntaxToken>();
+
+            if (prefixes.Count != 0 && (Current.Kind != SyntaxKind.SetKeyword && Current.Kind != SyntaxKind.VarKeyword))
+                _diagnostics.ReportPrefixedWithUnknownTarget(prefixes[0].Location);
+
             switch (Current.Kind)
             {
                 case SyntaxKind.PackageKeyword:
@@ -374,7 +449,7 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseBlockStatement();
                 case SyntaxKind.SetKeyword:
                 case SyntaxKind.VarKeyword:
-                    return ParseVariableDeclaration();
+                    return ParseVariableDeclaration(prefixes);
                 case SyntaxKind.IfKeyword:
                     return ParseIfStatement();
                 case SyntaxKind.WhileKeyword:
@@ -393,6 +468,12 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseReturnStatement();
                 case SyntaxKind.TryKeyword:
                     return ParseTryCatchStatement();
+                case SyntaxKind.AbstractKeyword:
+                case SyntaxKind.SerializableKeyword:
+                case SyntaxKind.VirtualKeyword:
+                case SyntaxKind.IncKeyword:
+                    _diagnostics.ReportModifierInFunction(Current.Location, Current.Text);
+                    return null;
                 default:
                     return ParseExpressionStatement();
             }
@@ -452,10 +533,35 @@ namespace ReCT.CodeAnalysis.Syntax
             return new BlockStatementSyntax(_syntaxTree, openBraceToken, statements.ToImmutable(), closeBraceToken);
         }
 
-        private StatementSyntax ParseVariableDeclaration()
+        private StatementSyntax ParseVariableDeclaration(List<SyntaxToken> prefixes = null)
         {
+            prefixes = prefixes ?? new List<SyntaxToken>();
+
+            var isVirtual = false;
             var expected = Current.Kind == SyntaxKind.SetKeyword ? SyntaxKind.SetKeyword : SyntaxKind.VarKeyword;
             var keyword = MatchToken(expected);
+
+            foreach(SyntaxToken s in prefixes)
+            {
+                switch(s.Kind)
+                {
+                    case SyntaxKind.VirtualKeyword:
+                        if (keyword.Kind == SyntaxKind.VarKeyword) {
+                            _diagnostics.ReportLocalVariableCantBeVirtual(s.Location);
+                            break;
+                        }
+
+                        if (!isVirtual)
+                            isVirtual = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    default:
+                        _diagnostics.ReportMemberCantUseModifier(s.Location, "Variable", s.Text);
+                        break;
+                }
+            }
+
             var typeClause = (TypeClauseSyntax)null;
 
             if (Current.Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.IdentifierToken)
@@ -463,13 +569,13 @@ namespace ReCT.CodeAnalysis.Syntax
 
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
 
-            if (Current.Kind != SyntaxKind.AssignmentExpression)
-                return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, null, null, null);
+            if (Current.Kind != SyntaxKind.AssignToken)
+                return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, null, null, null, isVirtual);
 
             var equals = MatchToken(SyntaxKind.AssignToken);
             var initializer = ParseExpression();
 
-            return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer, null);
+            return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer, null,isVirtual);
         }
 
         private TypeClauseSyntax ParseOptionalTypeClause()

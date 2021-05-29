@@ -14,7 +14,7 @@ namespace ReCT.CodeAnalysis.Syntax
 
         public override SyntaxKind Kind => SyntaxKind.BlockStatement;
         public SyntaxToken OpenBraceToken { get; }
-        public ImmutableArray<StatementSyntax> Statements { get; }
+        public ImmutableArray<StatementSyntax> Statements;
         public SyntaxToken CloseBraceToken { get; }
     }
 }
