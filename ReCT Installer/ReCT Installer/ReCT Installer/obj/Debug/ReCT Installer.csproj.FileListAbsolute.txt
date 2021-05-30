@@ -8,3 +8,13 @@ C:\Users\User\source\repos\ReCT\ReCT\ReCT Installer\ReCT Installer\ReCT Installe
 C:\Users\User\source\repos\ReCT\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT Installer.csproj.CoreCompileInputs.cache
 C:\Users\User\source\repos\ReCT\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT Installer.exe
 C:\Users\User\source\repos\ReCT\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT Installer.pdb
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\bin\Debug\ReCT Installer.exe.config
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\bin\Debug\ReCT Installer.exe
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\bin\Debug\ReCT Installer.pdb
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT Installer.csprojAssemblyReference.cache
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT_Installer.Form1.resources
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT_Installer.Properties.Resources.resources
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT Installer.csproj.GenerateResource.cache
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT Installer.csproj.CoreCompileInputs.cache
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT Installer.exe
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT Installer\ReCT Installer\ReCT Installer\obj\Debug\ReCT Installer.pdb

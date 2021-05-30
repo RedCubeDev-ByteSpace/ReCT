@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
+using System.IO;
 
 namespace ReCT_Installer
 {
@@ -43,8 +45,31 @@ namespace ReCT_Installer
         {
             if (!checkBox1.Checked)
                 return;
+            var strCmdText = "/C cd" + Directory.GetCurrentDirectory() + "Bolt && Bolt -i -p rect -d \"D:\\ReccInstaller\\\" && pause";
+            Process.Start("CMD.exe ", strCmdText);
 
+            richTextBox1.Text = "Installing";
+            Process p = Process.Start(new ProcessStartInfo(Directory.GetCurrentDirectory() + "/Bolt/Bolt.exe")
+            {
+                Arguments = "-i -p rect -d " + textBox1.Text,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                
+            });
 
+            p.WaitForExit();
+            richTextBox1.Text = "Done";
+
+            MessageBox.Show("ReCT Installation Finished", "The ReCT Ide has been installed");
+            
+            Application.Exit();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }
