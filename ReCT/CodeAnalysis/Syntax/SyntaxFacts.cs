@@ -30,6 +30,7 @@ namespace ReCT.CodeAnalysis.Syntax
 
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:
+                case SyntaxKind.PercentToken:
                     return 5;
 
                 case SyntaxKind.EqualsToken:
@@ -94,6 +95,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.DoKeyword;
                 case "Thread":
                     return SyntaxKind.ThreadKeyword;
+                case "Action":
+                    return SyntaxKind.ActionKeyword;
                 case "make":
                     return SyntaxKind.MakeKeyword;
                 case "array":
@@ -110,12 +113,22 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.TypeKeyword;
                 case "use":
                     return SyntaxKind.UseKeyword;
+                case "alias":
+                    return SyntaxKind.AliasKeyword;
                 case "class":
                     return SyntaxKind.ClassKeyword;
+                case "enum":
+                    return SyntaxKind.EnumKeyword;
                 case "dll":
                     return SyntaxKind.DllKeyword;
-                case "acs":
-                    return SyntaxKind.AccessKeyword;
+                case "abs":
+                    return SyntaxKind.AbstractKeyword;
+                case "ser":
+                    return SyntaxKind.SerializableKeyword;
+                case "virt":
+                    return SyntaxKind.VirtualKeyword;
+                case "base":
+                    return SyntaxKind.BaseKeyword;
                 case "null":
                 case "nil":
                     return SyntaxKind.NullKeyword;
@@ -256,12 +269,22 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "type";
                 case SyntaxKind.UseKeyword:
                     return "use";
+                 case SyntaxKind.AliasKeyword:
+                    return "alias";
                 case SyntaxKind.ClassKeyword:
                     return "class";
+                case SyntaxKind.EnumKeyword:
+                    return "enum";
                 case SyntaxKind.DllKeyword:
                     return "dll";
-                case SyntaxKind.AccessKeyword:
-                    return "acs";
+                case SyntaxKind.AbstractKeyword:
+                    return "abs";
+                case SyntaxKind.SerializableKeyword:
+                    return "ser";
+                case SyntaxKind.VirtualKeyword:
+                    return "virt";
+                case SyntaxKind.BaseKeyword:
+                    return "base";
                 case SyntaxKind.NullKeyword:
                     return "null";
                 case SyntaxKind.IncKeyword:

@@ -32,6 +32,9 @@ namespace ReCT.CodeAnalysis.Binding
         public bool TryDeclareClass(ClassSymbol _class)
             => TryDeclareSymbol(_class);
 
+        public bool TryDeclareEnum(EnumSymbol _enum)
+            => TryDeclareSymbol(_enum);
+
         private bool TryDeclareSymbol<TSymbol>(TSymbol symbol)
             where TSymbol : Symbol
         {
@@ -44,11 +47,12 @@ namespace ReCT.CodeAnalysis.Binding
             return true;
         }
 
-        public Symbol TryLookupSymbol(string name)
+        public Symbol TryLookupSymbol(string name, bool noParent = false)
         {
             if (_symbols != null && _symbols.TryGetValue(name, out var symbol))
                 return symbol;
 
+            if (noParent) return null;
             return Parent?.TryLookupSymbol(name);
         }
 
@@ -60,6 +64,9 @@ namespace ReCT.CodeAnalysis.Binding
 
         public ImmutableArray<FunctionSymbol> GetDeclaredFunctions()
             => GetDeclaredSymbols<FunctionSymbol>();
+
+        public ImmutableArray<EnumSymbol> GetDeclaredEnums()
+            => GetDeclaredSymbols<EnumSymbol>();
 
         private ImmutableArray<TSymbol> GetDeclaredSymbols<TSymbol>()
             where TSymbol : Symbol
@@ -86,6 +93,11 @@ namespace ReCT.CodeAnalysis.Binding
             {
                 _symbols.Remove(symsToDed.Dequeue().Key);
             }
+        }
+
+        internal void UpdateSymbol(ClassSymbol @class)
+        {
+            _symbols[@class.Name] = @class;
         }
     }
 }

@@ -43,6 +43,7 @@ namespace ReCT.CodeAnalysis.Syntax
         private SyntaxToken Peek(int offset)
         {
             var index = _position + offset;
+
             if (index >= _tokens.Length)
                 return _tokens[_tokens.Length - 1];
 
@@ -56,6 +57,14 @@ namespace ReCT.CodeAnalysis.Syntax
             var current = Current;
             _position++;
             return current;
+        }
+
+        private void Rewind(SyntaxToken token)
+        {
+            while(Current != token)
+            {
+                _position--;
+            }
         }
 
         private SyntaxToken MatchToken(SyntaxKind kind)
@@ -114,36 +123,89 @@ namespace ReCT.CodeAnalysis.Syntax
             return members.ToImmutable();
         }
 
-        private MemberSyntax ParseMember()
-        {
-            if (Current.Kind == SyntaxKind.FunctionKeyword)
-                return ParseFunctionDeclaration(false);
+        private MemberSyntax ParseMember(List<SyntaxToken> prefixes = null)
+        {   
+            prefixes = prefixes ?? new List<SyntaxToken>();
 
-            if (Current.Kind == SyntaxKind.SetKeyword && Peek(1).Kind == SyntaxKind.FunctionKeyword)
-                return ParseFunctionDeclaration(true);
+            if (Current.Kind == SyntaxKind.EnumKeyword)
+                if (prefixes.Count == 0)
+                    return ParseEnumDeclaration();
+                else {
+                    foreach (var pre in prefixes)
+                    _diagnostics.ReportMemberCantUseModifier(pre.Location, "Enum", pre.Text);
+                    return null;
+                }
+
+            if (Current.Kind == SyntaxKind.SetKeyword && Peek(1).Kind != SyntaxKind.IdentifierToken)
+            {
+                prefixes.Add(MatchToken(SyntaxKind.SetKeyword));
+                return ParseMember(prefixes);
+            }
+
+            if (Current.Kind == SyntaxKind.IncKeyword) {
+                prefixes.Add(MatchToken(SyntaxKind.IncKeyword));
+                return ParseMember(prefixes);
+            }
+
+            if (Current.Kind == SyntaxKind.AbstractKeyword) {
+                prefixes.Add(MatchToken(SyntaxKind.AbstractKeyword));
+                return ParseMember(prefixes);
+            }
+
+            if (Current.Kind == SyntaxKind.VirtualKeyword) {
+                prefixes.Add(MatchToken(SyntaxKind.VirtualKeyword));
+                return ParseMember(prefixes);
+            }
+
+            if (Current.Kind == SyntaxKind.SerializableKeyword) {
+                prefixes.Add(MatchToken(SyntaxKind.SerializableKeyword));
+                return ParseMember(prefixes);
+            }
+
+            if (Current.Kind == SyntaxKind.FunctionKeyword)
+                return ParseFunctionDeclaration(prefixes);
 
             if (Current.Kind == SyntaxKind.ClassKeyword)
-                return ParseClassDeclaration(false, false);
+                return ParseClassDeclaration(prefixes);
 
-            if (Current.Kind == SyntaxKind.SetKeyword && Peek(1).Kind == SyntaxKind.ClassKeyword)
-                return ParseClassDeclaration(true, false);
+            if (Current.Kind == SyntaxKind.IdentifierToken && prefixes.Count != 0) {
+                foreach(var prefix in prefixes)
+                    _diagnostics.ReportPrefixedWithUnknownTarget(prefix.Location);
+                return null;
+            }
 
-            if (Current.Kind == SyntaxKind.IncKeyword && Peek(1).Kind == SyntaxKind.ClassKeyword)
-                return ParseClassDeclaration(false, true);
-
-            if (Current.Kind == SyntaxKind.SetKeyword && Peek(1).Kind == SyntaxKind.IncKeyword && Peek(2).Kind == SyntaxKind.ClassKeyword)
-                return ParseClassDeclaration(true, true);
-
-            if (Current.Kind == SyntaxKind.IncKeyword && Peek(1).Kind == SyntaxKind.SetKeyword && Peek(2).Kind == SyntaxKind.ClassKeyword)
-                return ParseClassDeclaration(true, true);
-
-            return ParseGlobalStatement();
+            return ParseGlobalStatement(prefixes);
         }
 
-        private MemberSyntax ParseFunctionDeclaration(bool isPublic)
+        private MemberSyntax ParseFunctionDeclaration(List<SyntaxToken> prefixes)
         {
-            if (isPublic)
-                MatchToken(SyntaxKind.SetKeyword);
+            var isPublic = false;
+            var isVirtual = false;
+
+            foreach(SyntaxToken s in prefixes)
+            {
+                switch(s.Kind)
+                {
+                    case SyntaxKind.SetKeyword:
+                        if (!isPublic)
+                            isPublic = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    case SyntaxKind.VirtualKeyword:
+                        if (!isVirtual)
+                            isVirtual = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    case SyntaxKind.AbstractKeyword:
+                        _diagnostics.ReportFunctionCantBeAbstract(s.Location);
+                        break;
+                    default:
+                        _diagnostics.ReportMemberCantUseModifier(s.Location, "Class", s.Text);
+                        break;
+                }
+            }
 
             var functionKeyword = MatchToken(SyntaxKind.FunctionKeyword);
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
@@ -152,34 +214,94 @@ namespace ReCT.CodeAnalysis.Syntax
             var closeParenthesisToken = MatchToken(SyntaxKind.CloseParenthesisToken);
             var type = ParseOptionalTypeClause();
             var body = ParseBlockStatement();
-            return new FunctionDeclarationSyntax(_syntaxTree, functionKeyword, identifier, openParenthesisToken, parameters, closeParenthesisToken, type, body, isPublic);
+            return new FunctionDeclarationSyntax(_syntaxTree, functionKeyword, identifier, openParenthesisToken, parameters, closeParenthesisToken, type, body, isPublic, isVirtual);
         }
 
-        private MemberSyntax ParseClassDeclaration(bool isStatic, bool isIncluded)
+        private MemberSyntax ParseClassDeclaration(List<SyntaxToken> prefixes)
         {
-            if (isStatic || isIncluded)
+            var isStatic = false;
+            var isIncluded = false;
+            var isAbstract = false;
+            var isSerializable = false;
+
+            foreach(SyntaxToken s in prefixes)
             {
-                if (Current.Kind == SyntaxKind.SetKeyword)
+                switch(s.Kind)
                 {
-                    MatchToken(SyntaxKind.SetKeyword);
-
-                    if (isIncluded)
-                        MatchToken(SyntaxKind.IncKeyword);
-                }
-                else if (Current.Kind == SyntaxKind.IncKeyword)
-                {
-                    MatchToken(SyntaxKind.IncKeyword);
-
-                    if (isStatic)
-                        MatchToken(SyntaxKind.SetKeyword);
+                    case SyntaxKind.SetKeyword:
+                        if (!isStatic)
+                            isStatic = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    case SyntaxKind.IncKeyword:
+                        if (!isIncluded)
+                            isIncluded = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    case SyntaxKind.AbstractKeyword:
+                        if (!isAbstract)
+                            isAbstract = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    case SyntaxKind.SerializableKeyword:
+                        if (!isSerializable)
+                            isSerializable = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    default:
+                        _diagnostics.ReportMemberCantUseModifier(s.Location, "Class", s.Text);
+                        break;
                 }
             }
 
-
             var classKeyword = MatchToken(SyntaxKind.ClassKeyword);
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
+
+            SyntaxToken inheritance = null;
+
+            if (Current.Kind == SyntaxKind.OpenParenthesisToken)
+            {
+                MatchToken(SyntaxKind.OpenParenthesisToken);
+                inheritance = MatchToken(SyntaxKind.IdentifierToken);
+                MatchToken(SyntaxKind.CloseParenthesisToken);
+            }
+
             var members = ParseMembersInternal();
-            return new ClassDeclarationSyntax(_syntaxTree, classKeyword, identifier, members, isStatic, isIncluded);
+            return new ClassDeclarationSyntax(_syntaxTree, classKeyword, identifier, inheritance, members, isStatic, isIncluded, isAbstract, isSerializable);
+        }
+
+        private MemberSyntax ParseEnumDeclaration()
+        {
+            var enumKeyword = MatchToken(SyntaxKind.EnumKeyword);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            MatchToken(SyntaxKind.OpenBraceToken);
+            
+            List<SyntaxToken> names = new List<SyntaxToken>();
+            Dictionary<SyntaxToken, ExpressionSyntax> values = new Dictionary<SyntaxToken, ExpressionSyntax>();
+
+            while (Current.Kind != SyntaxKind.EndOfFileToken &&
+                   Current.Kind != SyntaxKind.CloseBraceToken)
+            {
+                var name = MatchToken(SyntaxKind.IdentifierToken);
+                names.Add(name);
+
+                if (Current.Kind == SyntaxKind.AssignToken)
+                {
+                    MatchToken(SyntaxKind.AssignToken);
+                    values.Add(name, ParseNumberLiteral());
+                }
+
+                if (Current.Kind != SyntaxKind.CommaToken) break;
+                MatchToken(SyntaxKind.CommaToken);
+            }
+
+            MatchToken(SyntaxKind.CloseBraceToken);
+
+            return new EnumDeclarationSyntax(_syntaxTree, identifier, names.ToArray(), values);
         }
 
         private ExpressionSyntax ParseThreadCreation()
@@ -189,6 +311,15 @@ namespace ReCT.CodeAnalysis.Syntax
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
             MatchToken(SyntaxKind.CloseParenthesisToken);
             return new ThreadCreationSyntax(_syntaxTree, identifier);
+        }
+
+        private ExpressionSyntax ParseActionCreation()
+        {
+            var actionKeyword = MatchToken(SyntaxKind.ActionKeyword);
+            MatchToken(SyntaxKind.OpenParenthesisToken);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            MatchToken(SyntaxKind.CloseParenthesisToken);
+            return new ActionCreationSyntax(_syntaxTree, identifier);
         }
 
         private ExpressionSyntax ParseArrayCreation()
@@ -204,10 +335,44 @@ namespace ReCT.CodeAnalysis.Syntax
 
             var type = MatchToken(SyntaxKind.IdentifierToken);
             var arrayKeyword = MatchToken(SyntaxKind.ArrayKeyword);
+
+            if (Current.Kind == SyntaxKind.OpenBraceToken)
+                return ParseArrayLiteral(package, type);
+
             MatchToken(SyntaxKind.OpenParenthesisToken);
             var length = ParseExpression();
             MatchToken(SyntaxKind.CloseParenthesisToken);
+
             return new ArrayCreationSyntax(_syntaxTree, type, length, package);
+        }
+
+        private ExpressionSyntax ParseArrayLiteral(SyntaxToken package, SyntaxToken type)
+        {
+            List<ExpressionSyntax> values = new List<ExpressionSyntax>();
+
+            MatchToken(SyntaxKind.OpenBraceToken);
+
+            while(Current.Kind != SyntaxKind.CloseBraceToken && Current.Kind != SyntaxKind.EndOfFileToken)
+            {
+                values.Add(ParseExpression());
+
+                if (Current.Kind != SyntaxKind.CloseBraceToken)
+                    MatchToken(SyntaxKind.CommaToken);
+            }
+
+            MatchToken(SyntaxKind.CloseBraceToken);
+
+            return new ArrayLiteralExpressionSyntax(_syntaxTree, type, package, values.ToArray());
+        }
+
+        private ExpressionSyntax ParseArrayExpression()
+        {
+            var identifierToken = MatchToken(SyntaxKind.IdentifierToken);
+            MatchToken(SyntaxKind.OpenBracketToken);
+            var index = ParseExpression();
+            MatchToken(SyntaxKind.CloseBracketToken);
+
+            return new NameExpressionSyntax(_syntaxTree, identifierToken, index);
         }
 
         private ExpressionSyntax ParseObjectCreation()
@@ -265,20 +430,27 @@ namespace ReCT.CodeAnalysis.Syntax
             return new ParameterSyntax(_syntaxTree, identifier, type);
         }
 
-        private MemberSyntax ParseGlobalStatement()
+        private MemberSyntax ParseGlobalStatement(List<SyntaxToken> prefixes)
         {
-            var statement = ParseStatement();
+            var statement = ParseStatement(prefixes);
             return new GlobalStatementSyntax(_syntaxTree, statement);
         }
 
-        private StatementSyntax ParseStatement()
+        private StatementSyntax ParseStatement(List<SyntaxToken> prefixes = null)
         {
+            prefixes = prefixes ?? new List<SyntaxToken>();
+
+            if (prefixes.Count != 0 && (Current.Kind != SyntaxKind.SetKeyword && Current.Kind != SyntaxKind.VarKeyword))
+                _diagnostics.ReportPrefixedWithUnknownTarget(prefixes[0].Location);
+
             switch (Current.Kind)
             {
                 case SyntaxKind.PackageKeyword:
                     return ParsePackageStatement();
                 case SyntaxKind.NamespaceKeyword:
                     return ParseNamespaceStatement();
+                case SyntaxKind.AliasKeyword:
+                    return ParseAliasStatement();
                 case SyntaxKind.TypeKeyword:
                     return ParseTypeStatement();
                 case SyntaxKind.UseKeyword:
@@ -287,7 +459,7 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseBlockStatement();
                 case SyntaxKind.SetKeyword:
                 case SyntaxKind.VarKeyword:
-                    return ParseVariableDeclaration();
+                    return ParseVariableDeclaration(prefixes);
                 case SyntaxKind.IfKeyword:
                     return ParseIfStatement();
                 case SyntaxKind.WhileKeyword:
@@ -306,6 +478,14 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseReturnStatement();
                 case SyntaxKind.TryKeyword:
                     return ParseTryCatchStatement();
+                case SyntaxKind.BaseKeyword:
+                    return ParseBaseStatement();
+                case SyntaxKind.AbstractKeyword:
+                case SyntaxKind.SerializableKeyword:
+                case SyntaxKind.VirtualKeyword:
+                case SyntaxKind.IncKeyword:
+                    _diagnostics.ReportModifierInFunction(Current.Location, Current.Text);
+                    return null;
                 default:
                     return ParseExpressionStatement();
             }
@@ -317,6 +497,15 @@ namespace ReCT.CodeAnalysis.Syntax
             var name = NextToken();
 
             return new UseStatementSyntax(_syntaxTree, keyword, name);
+        }
+
+        private StatementSyntax ParseAliasStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.AliasKeyword);
+            var mapthis = NextToken();
+            var tothis = NextToken();
+
+            return new AliasStatementSyntax(_syntaxTree, keyword, mapthis, tothis);
         }
 
         private StatementSyntax ParseNamespaceStatement()
@@ -356,22 +545,49 @@ namespace ReCT.CodeAnalysis.Syntax
             return new BlockStatementSyntax(_syntaxTree, openBraceToken, statements.ToImmutable(), closeBraceToken);
         }
 
-        private StatementSyntax ParseVariableDeclaration()
+        private StatementSyntax ParseVariableDeclaration(List<SyntaxToken> prefixes = null)
         {
+            prefixes = prefixes ?? new List<SyntaxToken>();
+
+            var isVirtual = false;
             var expected = Current.Kind == SyntaxKind.SetKeyword ? SyntaxKind.SetKeyword : SyntaxKind.VarKeyword;
             var keyword = MatchToken(expected);
+
+            foreach(SyntaxToken s in prefixes)
+            {
+                switch(s.Kind)
+                {
+                    case SyntaxKind.VirtualKeyword:
+                        if (keyword.Kind == SyntaxKind.VarKeyword) {
+                            _diagnostics.ReportLocalVariableCantBeVirtual(s.Location);
+                            break;
+                        }
+
+                        if (!isVirtual)
+                            isVirtual = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    default:
+                        _diagnostics.ReportMemberCantUseModifier(s.Location, "Variable", s.Text);
+                        break;
+                }
+            }
+
             var typeClause = (TypeClauseSyntax)null;
 
             if (Current.Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.IdentifierToken)
                 typeClause = ParseOptionalTypeClause();
 
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
+
+            if (Current.Kind != SyntaxKind.AssignToken)
+                return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, null, null, null, isVirtual);
+
             var equals = MatchToken(SyntaxKind.AssignToken);
             var initializer = ParseExpression();
 
-            TypeSymbol returnType = null;
-
-            return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer, returnType);
+            return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer, null,isVirtual);
         }
 
         private TypeClauseSyntax ParseOptionalTypeClause()
@@ -418,6 +634,16 @@ namespace ReCT.CodeAnalysis.Syntax
             var catchKeyword = MatchToken(SyntaxKind.CatchKeyword);
             var catchStatement = ParseStatement();
             return new TryCatchStatementSyntax(_syntaxTree, trykeyword, statement, catchKeyword, catchStatement);
+        }
+
+        private StatementSyntax ParseBaseStatement()
+        {
+            var baseKeyword = MatchToken(SyntaxKind.BaseKeyword);
+            var openParenthesisToken = MatchToken(SyntaxKind.OpenParenthesisToken);
+            var arguments = ParseArguments();
+            var closeParenthesisToken = MatchToken(SyntaxKind.CloseParenthesisToken);
+
+            return new BaseStatementSyntax(_syntaxTree, baseKeyword, arguments);
         }
 
         private ElseClauseSyntax ParseElseClause()
@@ -514,17 +740,18 @@ namespace ReCT.CodeAnalysis.Syntax
             {
                 var identifierToken = NextToken();
                 MatchToken(SyntaxKind.OpenBracketToken);
-                var index = ParseAssignmentExpression();
+                var index = ParseExpression();
                 MatchToken(SyntaxKind.CloseBracketToken);
 
                 if (Peek(0).Kind == SyntaxKind.AssignToken)
                 {
                     var operatorToken = NextToken();
-                    var right = ParseAssignmentExpression();
+                    var right = ParseExpression();
                     return new AssignmentExpressionSyntax(_syntaxTree, identifierToken, operatorToken, right, index);
                 }
 
-                return new NameExpressionSyntax(_syntaxTree, identifierToken, index);
+                // if it didnt return that means the user actually just wanted the value
+                Rewind(identifierToken);
             }
 
             if (Peek(0).Kind == SyntaxKind.IdentifierToken &&
@@ -562,14 +789,14 @@ namespace ReCT.CodeAnalysis.Syntax
             return ParseBinaryExpression();
         }
 
-        private ExpressionSyntax ParseBinaryExpression(int parentPrecedence = 0)
+        private ExpressionSyntax ParseBinaryExpression(int parentPrecedence = 0, bool inUnary = false)
         {
             ExpressionSyntax left;
             var unaryOperatorPrecedence = Current.Kind.GetUnaryOperatorPrecedence();
             if (unaryOperatorPrecedence != 0 && unaryOperatorPrecedence >= parentPrecedence)
             {
                 var operatorToken = NextToken();
-                var operand = ParseBinaryExpression(unaryOperatorPrecedence);
+                var operand = ParseBinaryExpression(unaryOperatorPrecedence, true);
                 left = new UnaryExpressionSyntax(_syntaxTree, operatorToken, operand);
             }
             else
@@ -587,6 +814,9 @@ namespace ReCT.CodeAnalysis.Syntax
                 var right = ParseBinaryExpression(precedence);
                 left = new BinaryExpressionSyntax(_syntaxTree, left, operatorToken, right);
             }
+
+            if (Current.Kind == SyntaxKind.AccessToken && !inUnary) return ParseExpressionAccessExpression(left);
+            if (Current.Kind == SyntaxKind.QuestionMarkToken && !inUnary && parentPrecedence == 0) return ParseTernaryExpression(left);
 
             return left;
         }
@@ -612,6 +842,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseStringLiteral();
                 case SyntaxKind.ThreadKeyword:
                     return ParseThreadCreation();
+                case SyntaxKind.ActionKeyword:
+                    return ParseActionCreation();
                 case SyntaxKind.MakeKeyword when Peek(2).Kind == SyntaxKind.ArrayKeyword || (Peek(4).Kind == SyntaxKind.ArrayKeyword && Peek(2).Kind == SyntaxKind.NamespaceToken):
                     return ParseArrayCreation();
                 case SyntaxKind.MakeKeyword when Peek(2).Kind == SyntaxKind.OpenParenthesisToken || (Peek(4).Kind == SyntaxKind.OpenParenthesisToken && Peek(2).Kind == SyntaxKind.NamespaceToken):
@@ -669,6 +901,11 @@ namespace ReCT.CodeAnalysis.Syntax
                 var call = (CallExpressionSyntax)ParseCallExpression();
                 call.Namespace = namespc.Text;
                 return call;
+            }
+
+            if (Current.Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.OpenBracketToken)
+            {
+                return ParseArrayExpression();
             }
 
             return ParseNameExpression();
@@ -768,6 +1005,46 @@ namespace ReCT.CodeAnalysis.Syntax
             }
 
             return null;
+        }
+
+        ExpressionSyntax ParseExpressionAccessExpression(ExpressionSyntax expression)
+        {
+            MatchToken(SyntaxKind.AccessToken);
+            ExpressionSyntax exp = null;
+
+            if (Peek(1).Kind == SyntaxKind.OpenParenthesisToken)
+            {
+                var call = ParseCallExpression();
+                exp = new ObjectAccessExpression(_syntaxTree, null, ObjectAccessExpression.AccessType.Call, (CallExpressionSyntax)call, null, null, null, expression);
+            }
+            else if (Peek(1).Kind == SyntaxKind.AssignToken)
+            {
+                var propIdentifier = NextToken();
+                MatchToken(SyntaxKind.AssignToken);
+                var value = ParseExpression();
+                exp = new ObjectAccessExpression(_syntaxTree, null, ObjectAccessExpression.AccessType.Set, null, propIdentifier, value, null, expression);
+            }
+            else if (Current.Kind == SyntaxKind.IdentifierToken)
+            {
+                var propIdentifier = NextToken();
+                exp = new ObjectAccessExpression(_syntaxTree, null, ObjectAccessExpression.AccessType.Get, null, propIdentifier, null, null, expression);
+            }
+
+            if (Current.Kind == SyntaxKind.AccessToken)
+                return ParseExpressionAccessExpression(exp);
+
+            return exp;
+        }
+
+        ExpressionSyntax ParseTernaryExpression(ExpressionSyntax condition)
+        {
+            MatchToken(SyntaxKind.QuestionMarkToken);
+            var left = ParseExpression();
+            MatchToken(SyntaxKind.ColonToken);
+            var right = ParseExpression();
+            
+
+            return new TernaryExpressionSyntax(_syntaxTree, condition, left, right);
         }
     }
 }

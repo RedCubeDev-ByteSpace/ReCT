@@ -26,6 +26,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly TypeReference _doubleRef;
         private readonly TypeReference _StreamWriterRef;
         private readonly TypeReference _StreamReaderRef;
+        private readonly TypeReference _enumRef;
         private readonly MethodReference _objectConstructor;
         private readonly MethodReference _objectEqualsReference;
         private readonly MethodReference _consoleReadLineReference;
@@ -62,6 +63,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _mathCeilReference;
         private readonly MethodReference _threadStartObjectReference;
         private readonly MethodReference _threadObjectReference;
+        private readonly MethodReference _actionObjectReference;
         private readonly MethodReference _IOReadAllTextReference;
         private readonly MethodReference _IOWriteAllTextReference;
         private readonly MethodReference _IOFileExistsReference;
@@ -71,6 +73,9 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _IODirCreateReference;
         private readonly MethodReference _IOGetFilesInDirReference;
         private readonly MethodReference _IOGetDirsInDirReference;
+        private readonly MethodReference _typeOfReference;
+        private readonly MethodReference _enumParse;
+        private readonly MethodReference _toString;
         private readonly MethodReference _envDie;
         private readonly AssemblyDefinition _assemblyDefinition;
         private readonly Dictionary<FunctionSymbol, MethodDefinition> _methods = new Dictionary<FunctionSymbol, MethodDefinition>();
@@ -90,7 +95,6 @@ namespace ReCT.CodeAnalysis.Emit
         private ClassSymbol inClass = null;
 
         private TypeDefinition _typeDefinition;
-        private FieldDefinition _randomFieldDefinition;
         private static List<AssemblyDefinition> s_assemblies;
         private static AssemblyDefinition s_assemblyDefinition;
         
@@ -125,7 +129,8 @@ namespace ReCT.CodeAnalysis.Emit
                 (TypeSymbol.String, "System.String"),
                 (TypeSymbol.Void, "System.Void"),
                 (TypeSymbol.Float, "System.Single"),
-                (TypeSymbol.Thread, "System.Threading.Thread")
+                (TypeSymbol.Thread, "System.Threading.Thread"),
+                (TypeSymbol.Action, "System.Action")
             };
 
             var assemblyName = new AssemblyNameDefinition(moduleName, new Version(1, 0));
@@ -139,6 +144,7 @@ namespace ReCT.CodeAnalysis.Emit
             _doubleRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.Double").ToArray()[0]);
             _StreamWriterRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.IO.StreamWriter").ToArray()[0]);
             _StreamReaderRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.IO.StreamReader").ToArray()[0]);
+            _enumRef = _assemblyDefinition.MainModule.ImportReference(assemblies.SelectMany(a => a.Modules).SelectMany(m => m.Types).Where(t => t.FullName == "System.Enum").ToArray()[0]);
 
 
             foreach (var (typeSymbol, metadataName) in builtInTypes)
@@ -227,6 +233,7 @@ namespace ReCT.CodeAnalysis.Emit
             _knownTypes.Add(TypeSymbol.StringArr, _knownTypes[TypeSymbol.String].MakeArrayType());
             _knownTypes.Add(TypeSymbol.FloatArr, _knownTypes[TypeSymbol.Float].MakeArrayType());
             _knownTypes.Add(TypeSymbol.ThreadArr, _knownTypes[TypeSymbol.Thread].MakeArrayType());
+            _knownTypes.Add(TypeSymbol.ActionArr, _knownTypes[TypeSymbol.Action].MakeArrayType());
 
             _objectConstructor = ResolveMethod("System.Object", ".ctor", Array.Empty<string>());
 
@@ -283,9 +290,12 @@ namespace ReCT.CodeAnalysis.Emit
             _mathFloorReference = ResolveMethod("System.Math", "Floor", new[] { "System.Double" });
             _mathCeilReference = ResolveMethod("System.Math", "Ceiling", new[] { "System.Double" });
 
-            //threading
+            //Threading
             _threadStartObjectReference = ResolveMethod("System.Threading.ThreadStart", ".ctor", new[] { "System.Object", "System.IntPtr" });
             _threadObjectReference = ResolveMethod("System.Threading.Thread", ".ctor", new[] { "System.Threading.ThreadStart" });
+
+            //Actions
+            _actionObjectReference = ResolveMethod("System.Action", ".ctor", new[] { "System.Object", "System.IntPtr" });
 
             //IO
             _IOReadAllTextReference = ResolveMethod("System.IO.File", "ReadAllText", new[] { "System.String" });
@@ -301,6 +311,11 @@ namespace ReCT.CodeAnalysis.Emit
 
             _IOGetFilesInDirReference = ResolveMethod("System.IO.Directory", "GetFiles", new[] { "System.String" });
             _IOGetDirsInDirReference = ResolveMethod("System.IO.Directory", "GetDirectories", new[] { "System.String" });
+
+            //Enum stuff
+            _typeOfReference = ResolveMethod("System.Type", "GetTypeFromHandle", new[] { "System.RuntimeTypeHandle" });
+            _enumParse = ResolveMethod("System.Enum", "Parse", new[] { "System.Type", "System.String" });
+            _toString = ResolveMethod("System.Object", "ToString", new string[] { });
 
             //die
             _envDie = ResolveMethod("System.Environment", "Exit", new[] { "System.Int32" });
@@ -361,7 +376,6 @@ namespace ReCT.CodeAnalysis.Emit
 
                     return s_assemblyDefinition.MainModule.ImportReference(method, genericType);
                 }
-
                 _diagnostics.ReportRequiredMethodNotFound(typeName, methodName, parameterTypeNames);
                 return null;
             }
@@ -484,13 +498,61 @@ namespace ReCT.CodeAnalysis.Emit
             _typeDefinition = new TypeDefinition(program.Namespace, program.Type == "" ? "Program" : program.Type, TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.Public, objectType);
             _assemblyDefinition.MainModule.Types.Add(_typeDefinition);
 
+            //enums
+            //var enumDefinitions = new Dictionary<EnumSymbol, TypeDefinition>();
+            
+            foreach (var _enum in program.Enums)
+            {
+                var enumDefinition = new TypeDefinition(program.Namespace, _enum.Name, TypeAttributes.NestedPrivate | TypeAttributes.AnsiClass | TypeAttributes.Sealed, _enumRef);
+                enumDefinition.Fields.Add(new FieldDefinition("value__", FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName, _knownTypes[TypeSymbol.Int]));
+                foreach(var entry in _enum.Values)
+                {
+                    enumDefinition.Fields.Add(new FieldDefinition(entry.Key,FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal, enumDefinition) { Constant = entry.Value });
+                }
+                _typeDefinition.NestedTypes.Add(enumDefinition);
+                _knownTypes.Add(_enum.Type, enumDefinition);
+            }
+
             //classes
             var classDefinitions = new Dictionary<KeyValuePair<ClassSymbol, ImmutableDictionary<FunctionSymbol, BoundBlockStatement>>, TypeDefinition>();
 
             //Register class names
+            //abstract
             foreach (var _class in program.Classes)
             {
-                var classDefinition = new TypeDefinition(program.Namespace, _class.Key.Name, (_class.Key.IsStatic ? (TypeAttributes.Abstract | TypeAttributes.Sealed) : 0) | (_class.Key.IsIncluded ? TypeAttributes.NestedPublic : TypeAttributes.Public), objectType);
+                if (!_class.Key.IsAbstract) continue;
+                var classDefinition = new TypeDefinition(program.Namespace, _class.Key.Name, (_class.Key.IsAbstract ? TypeAttributes.Abstract : (_class.Key.IsStatic ? (TypeAttributes.Abstract | TypeAttributes.Sealed) : 0)) | (_class.Key.IsIncluded ? TypeAttributes.NestedPublic : TypeAttributes.Public), objectType);
+
+                if (!_class.Key.IsIncluded)
+                    _assemblyDefinition.MainModule.Types.Add(classDefinition);
+                else
+                    _typeDefinition.NestedTypes.Add(classDefinition);
+
+                _classes.Add(_class.Key, classDefinition);
+
+                inType = classDefinition;
+                inClass = _class.Key;
+                _classGlobals.Add(classDefinition, new Dictionary<VariableSymbol, FieldDefinition>());
+                _knownTypes.Add(TypeSymbol.Class[_class.Key], classDefinition);
+                
+                if(!_class.Key.IsStatic)
+                    _knownTypes.Add(TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == _class.Key.Name + "Arr").Value , classDefinition.MakeArrayType());
+                
+                _classMethods.Add(_class.Key, new Dictionary<FunctionSymbol, MethodDefinition>());
+
+                classDefinitions.Add(_class, classDefinition);
+            }
+
+            //other
+            foreach (var _class in program.Classes)
+            {
+                if (_class.Key.IsAbstract) continue;
+                var baseType = objectType;
+
+                if (_class.Key.ParentSym != null)
+                    baseType = _classes[_class.Key.ParentSym];
+
+                var classDefinition = new TypeDefinition(program.Namespace, _class.Key.Name, (_class.Key.IsAbstract ? TypeAttributes.Abstract : (_class.Key.IsStatic ? (TypeAttributes.Abstract | TypeAttributes.Sealed) : 0)) | (_class.Key.IsIncluded ? TypeAttributes.NestedPublic : TypeAttributes.Public), baseType);
 
                 if (!_class.Key.IsIncluded)
                     _assemblyDefinition.MainModule.Types.Add(classDefinition);
@@ -525,7 +587,12 @@ namespace ReCT.CodeAnalysis.Emit
 
                 foreach (var field in variables)
                 {
-                    if (field.IsGlobal)
+                    if (field.IsFunctional)
+                    {
+                        var actualField = EmitFunctionalVarFromSymbol(field);
+                        _classGlobals[inType].Add(field, actualField);
+                    }
+                    else if (field.IsGlobal)
                     {
                         var actualField = EmitGlobalVarFromSymbol(field);
                         _classGlobals[inType].Add(field, actualField);
@@ -547,9 +614,11 @@ namespace ReCT.CodeAnalysis.Emit
                     var function = functionSB.Key;
                     var body = functionSB.Value;
 
+                    //Console.WriteLine("Emitting Fnction: " + function.Name + "; in: " + _class.Key.Name + "; virt: " + function.IsVirtual);
+
                     //decleration
                     var functionType = _knownTypes[function.Type.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == function.Type.Name) : function.Type];
-                    var method = new MethodDefinition(function.Name, (_class.Key.IsStatic ? MethodAttributes.Static : 0) | (function.IsPublic ? MethodAttributes.Public : MethodAttributes.Private), functionType);
+                    var method = new MethodDefinition(function.Name, (_class.Key.IsStatic ? MethodAttributes.Static : 0) | (function.IsVirtual ? MethodAttributes.Virtual : 0) | (function.IsPublic ? MethodAttributes.Public : MethodAttributes.Private), functionType);
 
                     if (function.Name == "Constructor")
                     {
@@ -594,9 +663,14 @@ namespace ReCT.CodeAnalysis.Emit
 
                     var ilProcessor = method.Body.GetILProcessor();
 
-                    ilProcessor.Emit(OpCodes.Ldarg_0);
-                    ilProcessor.Emit(OpCodes.Call, _objectConstructor);
-                    ilProcessor.Emit(OpCodes.Nop);
+
+    
+                    if (inClass.ParentSym == null)
+                    {
+                        ilProcessor.Emit(OpCodes.Ldarg_0);
+                        ilProcessor.Emit(OpCodes.Call, _objectConstructor);
+                        ilProcessor.Emit(OpCodes.Nop);
+                    }
 
                     foreach (var statement in body.Statements)
                         EmitStatement(ilProcessor, statement);
@@ -687,8 +761,16 @@ namespace ReCT.CodeAnalysis.Emit
 
                     var ilProcessor = method.Body.GetILProcessor();
 
-                    ilProcessor.Emit(OpCodes.Ldarg_0);
-                    ilProcessor.Emit(OpCodes.Call, _objectConstructor);
+                    if (inClass.ParentSym != null)
+                    {
+                        ilProcessor.Emit(OpCodes.Ldarg_0);
+                        ilProcessor.Emit(OpCodes.Call, _objectConstructor);
+                    }
+                    else
+                    {
+                        ilProcessor.Emit(OpCodes.Ldarg_0);
+                        ilProcessor.Emit(OpCodes.Call, _objectConstructor);
+                    }
                     ilProcessor.Emit(OpCodes.Nop);
                     ilProcessor.Emit(OpCodes.Ret);
 
@@ -749,6 +831,12 @@ namespace ReCT.CodeAnalysis.Emit
             method.Body.OptimizeMacros();
         }
 
+        /*private void EmitPushFunction(FunctionSymbol function, BoundBlockStatement body)
+        {
+            _pushDef = new MethodDefinition("$Push", MethodAttributes.Private | MethodAttributes.Static, );
+
+        }*/
+
         private void EmitStatement(ILProcessor ilProcessor, BoundStatement node)
         {
             if (node == null)
@@ -780,9 +868,23 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundNodeKind.BlockStatement:
                     EmitBlockStatement(ilProcessor, (BoundBlockStatement)node);
                     break;
+                case BoundNodeKind.BaseStatement:
+                    EmitBaseStatement(ilProcessor, (BoundBaseStatement)node);
+                    break;
                 default:
                     throw new Exception($"Unexpected node kind {node.Kind}");
             }
+        }
+
+        private void EmitBaseStatement(ILProcessor ilProcessor, BoundBaseStatement node)
+        {
+            ilProcessor.Emit(OpCodes.Ldarg_0);
+
+            foreach(var arg in node.Arguments)
+                EmitExpression(ilProcessor, arg);
+
+            var func = _classes[inClass.ParentSym].Methods.FirstOrDefault(x => x.Name == ".ctor");
+            ilProcessor.Emit(OpCodes.Call, func);
         }
 
         private void EmitBlockStatement(ILProcessor ilProcessor, BoundBlockStatement node)
@@ -833,7 +935,11 @@ namespace ReCT.CodeAnalysis.Emit
             var variableDefinition = new VariableDefinition(typeReference);
             FieldDefinition field = null;
 
-            if (node.Variable.IsGlobal)
+            if (node.Variable.IsFunctional)
+            {
+                field = _classGlobals[inType][node.Variable];
+            }
+            else if (node.Variable.IsGlobal)
             {
                 if (inType == null)
                 {
@@ -849,6 +955,9 @@ namespace ReCT.CodeAnalysis.Emit
                 _locals.Add(node.Variable, variableDefinition);
                 ilProcessor.Body.Variables.Add(variableDefinition);
             }
+
+            if (node.Initializer == null)
+                return;
 
             if (inClass != null && !inClass.IsStatic && node.Variable.IsGlobal)
                 ilProcessor.Emit(OpCodes.Ldarg_0);
@@ -897,6 +1006,34 @@ namespace ReCT.CodeAnalysis.Emit
             return _globalField;
         }
 
+        private FieldDefinition EmitFunctionalVarFromSymbol(VariableSymbol varSym)
+        {
+            var _globalField = new FieldDefinition(
+                "$" + varSym.Name, FieldAttributes.Public,
+                _knownTypes[_knownTypes.Keys.FirstOrDefault(x => x.Name == varSym.Type.Name)]
+            );
+            inType.Fields.Add(_globalField);
+
+            MethodDefinition getter = new MethodDefinition("get_$" + varSym.Name, MethodAttributes.Public | MethodAttributes.Virtual, _knownTypes[_knownTypes.Keys.FirstOrDefault(x => x.Name == varSym.Type.Name)]);
+                var gil = getter.Body.GetILProcessor();
+                    gil.Emit(OpCodes.Ldarg_0);
+                    gil.Emit(OpCodes.Ldfld, _globalField);
+                    gil.Emit(OpCodes.Ret);
+
+            MethodDefinition setter = new MethodDefinition("set_$" + varSym.Name, MethodAttributes.Public | MethodAttributes.Virtual, _knownTypes[TypeSymbol.Void]);
+            setter.Parameters.Add(new ParameterDefinition(_knownTypes[_knownTypes.Keys.FirstOrDefault(x => x.Name == varSym.Type.Name)]));
+                var sil = setter.Body.GetILProcessor();
+                    sil.Emit(OpCodes.Ldarg_0);
+                    sil.Emit(OpCodes.Ldarg_1);
+                    sil.Emit(OpCodes.Stfld, _globalField);
+                    sil.Emit(OpCodes.Ret);
+
+            inType.Methods.Add(getter);
+            inType.Methods.Add(setter);
+
+            return _globalField;
+        }
+
         private void EmitLabelStatement(ILProcessor ilProcessor, BoundLabelStatement node)
         {
             _labels.Add(node.Label, ilProcessor.Body.Instructions.Count);
@@ -927,15 +1064,18 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitExpressionStatement(ILProcessor ilProcessor, BoundExpressionStatement node)
         {
-            EmitExpression(ilProcessor, node.Expression);
+            EmitExpression(ilProcessor, node.Expression, true);
 
             if (node.Expression.Type != TypeSymbol.Void && !(node.Expression is BoundAssignmentExpression))
             {
+                if (node.Expression is BoundObjectAccessExpression boa)
+                    if (boa.TypeCall != null && boa.TypeCall.Function == BuiltinFunctions.Pop) return; //skip special un-poppable function
+
                 ilProcessor.Emit(OpCodes.Pop);
             }
         }
 
-        private void EmitExpression(ILProcessor ilProcessor, BoundExpression node)
+        private void EmitExpression(ILProcessor ilProcessor, BoundExpression node, bool isStatement = false)
         {
             switch (node.Kind)
             {
@@ -946,7 +1086,7 @@ namespace ReCT.CodeAnalysis.Emit
                     EmitVariableExpression(ilProcessor, (BoundVariableExpression)node);
                     break;
                 case BoundNodeKind.ObjectAccessExpression:
-                    EmitObjectAccessExpression(ilProcessor, (BoundObjectAccessExpression)node);
+                    EmitObjectAccessExpression(ilProcessor, (BoundObjectAccessExpression)node, isStatement);
                     break;
                 case BoundNodeKind.AssignmentExpression:
                     EmitAssignmentExpression(ilProcessor, (BoundAssignmentExpression)node);
@@ -966,11 +1106,20 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundNodeKind.ThreadCreateExpression:
                     EmitThreadCreate(ilProcessor, (BoundThreadCreateExpression)node);
                     break;
+                case BoundNodeKind.ActionCreateExpression:
+                    EmitActionCreate(ilProcessor, (BoundActionCreateExpression)node);
+                    break;
                 case BoundNodeKind.ArrayCreationExpression:
                     EmitArrayCreate(ilProcessor, (BoundArrayCreationExpression)node);
                     break;
+                case BoundNodeKind.ArrayLiteralExpression:
+                    EmitArrayLiteral(ilProcessor, (BoundArrayLiteralExpression)node);
+                    break;
                 case BoundNodeKind.ObjectCreationExpression:
                     EmitObjectCreate(ilProcessor, (BoundObjectCreationExpression)node);
+                    break;
+                case BoundNodeKind.TernaryExpression:
+                    EmitTernaryExpression(ilProcessor, (BoundTernaryExpression)node);
                     break;
                 default:
                     throw new Exception($"Unexpected node kind {node.Kind}");
@@ -1011,12 +1160,72 @@ namespace ReCT.CodeAnalysis.Emit
             ilProcessor.Emit(OpCodes.Newarr, _knownTypes[node.ArrayType.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.ArrayType.Name) : node.ArrayType]);
         }
 
+        private void EmitArrayLiteral(ILProcessor ilProcessor, BoundArrayLiteralExpression node)
+        {
+            ilProcessor.Emit(OpCodes.Ldc_I4, node.Values.Length);
+            ilProcessor.Emit(OpCodes.Newarr, _knownTypes[node.ArrayType.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.ArrayType.Name) : node.ArrayType]);
+            
+            for (int i = 0; i < node.Values.Length; i++)
+            {
+                ilProcessor.Emit(OpCodes.Dup);
+                ilProcessor.Emit(OpCodes.Ldc_I4, i);
+                EmitExpression(ilProcessor, node.Values[i]);
+
+                if (node.ArrayType == TypeSymbol.Bool)
+                    ilProcessor.Emit(OpCodes.Stelem_I1);
+                else if (node.ArrayType == TypeSymbol.Int)
+                    ilProcessor.Emit(OpCodes.Stelem_I4);
+                else if (node.ArrayType == TypeSymbol.Byte)
+                    ilProcessor.Emit(OpCodes.Stelem_I1);
+                else if (node.ArrayType == TypeSymbol.Float)
+                    ilProcessor.Emit(OpCodes.Stelem_R4);
+                else
+                    ilProcessor.Emit(OpCodes.Stelem_Ref);
+            }
+        }
+
+        private void EmitTernaryExpression(ILProcessor ilProcessor, BoundTernaryExpression node)
+        {
+            var skip0 = ilProcessor.Create(OpCodes.Nop);
+            var skip1 = ilProcessor.Create(OpCodes.Nop);
+
+            EmitExpression(ilProcessor, node.Condition);
+            ilProcessor.Emit(OpCodes.Brtrue, skip0);
+
+            EmitExpression(ilProcessor, node.Right);
+            ilProcessor.Emit(OpCodes.Br, skip1);
+
+            ilProcessor.Append(skip0);
+            EmitExpression(ilProcessor, node.Left);
+
+
+            ilProcessor.Append(skip1);
+
+            // <condition>
+            // if true goto SKIP0
+            //
+            // <right>
+            // goto SKIP1
+            //
+            // SKIP0:
+            // <left>
+            //
+            // SKIP1
+        }
+
         private void EmitThreadCreate(ILProcessor ilProcessor, BoundThreadCreateExpression node)
         {
             ilProcessor.Emit(OpCodes.Ldnull);
             ilProcessor.Emit(OpCodes.Ldftn, inClass == null ? _methods[node.Function] : _classMethods[inClass][node.Function]);
             ilProcessor.Emit(OpCodes.Newobj, _threadStartObjectReference);
             ilProcessor.Emit(OpCodes.Newobj, _threadObjectReference);
+        }
+
+         private void EmitActionCreate(ILProcessor ilProcessor, BoundActionCreateExpression node)
+        {
+            ilProcessor.Emit(OpCodes.Ldnull);
+            ilProcessor.Emit(OpCodes.Ldftn, inClass == null ? _methods[node.Function] : _classMethods[inClass][node.Function]);
+            ilProcessor.Emit(OpCodes.Newobj, _actionObjectReference);
         }
 
         void LoadARef(ILProcessor ilProcessor, BoundObjectAccessExpression node)
@@ -1073,13 +1282,13 @@ namespace ReCT.CodeAnalysis.Emit
             }
         }
         
-        private void EmitObjectAccessExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
+        private void EmitObjectAccessExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node, bool isStatement = false)
         {
-            if (node.Class == null || !node.Class.IsStatic)
+            if ((node.Class == null || !node.Class.IsStatic) && node.Enum == null)
             {
                 if (node.TypeCall != null && node.TypeCall.Function == BuiltinFunctions.Push)
                     LoadARef(ilProcessor, node);
-                if (node.Expression == null)
+                if (node.Expression == null && node.TypeCall != null ? node.TypeCall.Function != BuiltinFunctions.Pop : true)
                 {
                     if (node.Variable is ParameterSymbol parameter)
                     {
@@ -1101,7 +1310,7 @@ namespace ReCT.CodeAnalysis.Emit
                         ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
                     }
                 }
-                else
+                else if (node.TypeCall != null ? node.TypeCall.Function != BuiltinFunctions.Pop : true)
                 {
                     EmitExpression(ilProcessor, node.Expression);
                 }
@@ -1109,7 +1318,13 @@ namespace ReCT.CodeAnalysis.Emit
 
             if (node.TypeCall != null)
             {
-                EmitTypeCallExpression(ilProcessor, node);
+                EmitTypeCallExpression(ilProcessor, node, isStatement);
+                return;
+            }
+
+            if (node.Enum != null)
+            {
+                ilProcessor.Emit(OpCodes.Ldc_I4, node.Enum.Values[node.EnumMember]);
                 return;
             }
 
@@ -1400,6 +1615,9 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundBinaryOperatorKind.Division:
                     ilProcessor.Emit(OpCodes.Div);
                     break;
+                case BoundBinaryOperatorKind.Modulo:
+                    ilProcessor.Emit(OpCodes.Rem);
+                    break;
                 // TODO: Implement short-circuit evaluation
                 case BoundBinaryOperatorKind.LogicalAnd:
                 case BoundBinaryOperatorKind.BitwiseAnd:
@@ -1452,9 +1670,9 @@ namespace ReCT.CodeAnalysis.Emit
             }
         }
 
-        private void EmitTypeCallExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node)
+        private void EmitTypeCallExpression(ILProcessor ilProcessor, BoundObjectAccessExpression node, bool isStatement = false)
         {
-            if (node.TypeCall.Function == BuiltinFunctions.GetBit && node.Variable.Type == TypeSymbol.Byte)
+            if (node.TypeCall.Function == BuiltinFunctions.GetBit && node.InnerType == TypeSymbol.Byte)
             {
                 ilProcessor.Emit(OpCodes.Ldc_I4_1);
                 EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
@@ -1465,8 +1683,14 @@ namespace ReCT.CodeAnalysis.Emit
 
                 return;
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.SetBit && node.Variable.Type == TypeSymbol.Byte)
+            else if (node.TypeCall.Function == BuiltinFunctions.SetBit && node.InnerType == TypeSymbol.Byte)
             {
+                if (node.Variable == null)
+                {
+                    _diagnostics.ReportTypefunctionVarOnly(BuiltinFunctions.SetBit.Name);
+                    return;
+                }
+
                 ilProcessor.Emit(OpCodes.Ldc_I4_1);
                 EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
                 ilProcessor.Emit(OpCodes.Shl);
@@ -1512,8 +1736,14 @@ namespace ReCT.CodeAnalysis.Emit
 
                 return;
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.Push && (node.Variable.Type.isClassArray || node.Variable.Type.isArray))
+            else if (node.TypeCall.Function == BuiltinFunctions.Push && (node.InnerType.isClassArray || node.InnerType.isArray))
             {
+                if (node.Variable == null)
+                {
+                    _diagnostics.ReportTypefunctionVarOnly(BuiltinFunctions.Push.Name);
+                    return;
+                }
+
                 var type = _knownTypes[node.Variable.Type.isClass
                     ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.Variable.Type.Name)
                     : node.Variable.Type];
@@ -1556,47 +1786,133 @@ namespace ReCT.CodeAnalysis.Emit
                 return;
             }
 
+            else if (node.TypeCall.Function == BuiltinFunctions.Pop && (node.InnerType.isClassArray || node.InnerType.isArray))
+            {
+                if (node.Variable == null)
+                {
+                    _diagnostics.ReportTypefunctionVarOnly(BuiltinFunctions.Pop.Name);
+                    return;
+                }
+
+                var method = ResolveMethodPublic("System.Array", "Resize", new[] {"T[]&", "System.Int32"});
+                var mmm = new GenericInstanceMethod(method);
+                mmm.GenericArguments.Add(_knownTypes.FirstOrDefault(x => x.Key.Name == (node.Variable.Type.Name.EndsWith("Arr") ? node.Variable.Type.Name.Replace("Arr", "") : node.Variable.Type.Name)).Value);
+
+                LoadRef(ilProcessor, node);
+                LoadRef(ilProcessor, node);
+
+                // load len - 1 onto stack
+                ilProcessor.Emit(OpCodes.Ldlen);
+                ilProcessor.Emit(OpCodes.Conv_I4);
+                ilProcessor.Emit(OpCodes.Ldc_I4, 1);
+                ilProcessor.Emit(OpCodes.Sub);
+
+                var cType = _knownTypes.FirstOrDefault(x => x.Key.Name == (node.Variable.Type.Name.EndsWith("Arr") ? node.Variable.Type.Name.Replace("Arr", "") : node.Variable.Type.Name));
+                VariableDefinition temp = new VariableDefinition(cType.Value);
+                ilProcessor.Body.Variables.Add(temp);
+
+                // load last array element onto stack
+                if (cType.Key == TypeSymbol.Bool)
+                    ilProcessor.Emit(OpCodes.Ldelem_I1);
+                else if (cType.Key == TypeSymbol.Int)
+                    ilProcessor.Emit(OpCodes.Ldelem_I4);
+                else if (cType.Key == TypeSymbol.Byte)
+                    ilProcessor.Emit(OpCodes.Ldelem_I1);
+                else if (cType.Key == TypeSymbol.Float)
+                    ilProcessor.Emit(OpCodes.Ldelem_R4);
+                else
+                    ilProcessor.Emit(OpCodes.Ldelem_Ref);
+
+                ilProcessor.Emit(OpCodes.Stloc, temp);
+
+                LoadARef(ilProcessor, node);
+                LoadRef(ilProcessor, node);
+
+                // load len - 1 onto stack (again)
+                ilProcessor.Emit(OpCodes.Ldlen);
+                ilProcessor.Emit(OpCodes.Conv_I4);
+                ilProcessor.Emit(OpCodes.Ldc_I4, 1);
+                ilProcessor.Emit(OpCodes.Sub);
+
+                // call resize
+                ilProcessor.Emit(OpCodes.Call, mmm);
+
+                //load back the popped value
+                if (!isStatement)
+                    ilProcessor.Emit(OpCodes.Ldloc, temp);
+
+                return;
+            }
+
             foreach (var argument in node.TypeCall.Arguments)
                 EmitExpression(ilProcessor, argument);
 
-            if (node.TypeCall.Function == BuiltinFunctions.GetLength && node.Variable.Type == TypeSymbol.String)
+            if (node.TypeCall.Function == BuiltinFunctions.GetLength && node.InnerType == TypeSymbol.String)
             {
-                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "get_Length", Array.Empty<string>());
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "get_Length", Array.Empty<string>());
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.Substring)
+            else if (node.TypeCall.Function == BuiltinFunctions.Substring && node.InnerType == TypeSymbol.String)
             {
-                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Substring", new[] { "System.Int32", "System.Int32" });
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "Substring", new[] { "System.Int32", "System.Int32" });
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.Split)
+            else if (node.TypeCall.Function == BuiltinFunctions.Split && node.InnerType == TypeSymbol.String)
             {
                 ilProcessor.Emit(OpCodes.Ldc_I4_0);
-                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Split", new[] { "System.String", "System.StringSplitOptions" });
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "Split", new[] { "System.String", "System.StringSplitOptions" });
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.Replace)
+            else if (node.TypeCall.Function == BuiltinFunctions.Replace && node.InnerType == TypeSymbol.String)
             {
-                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Replace", new[] { "System.String", "System.String" });
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "Replace", new[] { "System.String", "System.String" });
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.StartThread)
+            if (node.TypeCall.Function == BuiltinFunctions.At && node.InnerType == TypeSymbol.String)
             {
-                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Start", Array.Empty<string>());
+                VariableDefinition temp = new VariableDefinition(_charRef);
+                ilProcessor.Body.Variables.Add(temp);
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "get_Chars", new[] { "System.Int32" });
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+                ilProcessor.Emit(OpCodes.Stloc, temp);
+                ilProcessor.Emit(OpCodes.Ldloca, temp);
+                ilProcessor.Emit(OpCodes.Call, _charToString);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.KillThread)
+            else if (node.TypeCall.Function == BuiltinFunctions.StartThread && node.InnerType == TypeSymbol.Thread)
             {
-                var nameSpaceRef = ResolveMethodPublic(_knownTypes[node.Variable.Type].FullName, "Interrupt", Array.Empty<string>());
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.Thread].FullName, "Start", Array.Empty<string>());
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
-            else if (node.TypeCall.Function == BuiltinFunctions.GetLength && (node.Variable.Type.isClassArray || node.Variable.Type.isArray))
+            else if (node.TypeCall.Function == BuiltinFunctions.KillThread && node.InnerType == TypeSymbol.Thread)
+            {
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.Thread].FullName, "Interrupt", Array.Empty<string>());
+                ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.GetLengthArr && (node.InnerType.isClassArray || node.InnerType.isArray))
             {
                 ilProcessor.Emit(OpCodes.Ldlen);
             }
+            else if (node.TypeCall.Function == BuiltinFunctions.AtArr && (node.InnerType.isArray || node.InnerType.isClassArray))
+            {
+                if (isStatement) throw new Exception("Array Typefunction 'At' cant be used as a Statement!");
+
+                var cType = _knownTypes.FirstOrDefault(x => x.Key.Name == (node.InnerType.Name.EndsWith("Arr") ? node.InnerType.Name.Replace("Arr", "") : node.InnerType.Name));
+
+                // load last array element onto stack
+                if (cType.Key == TypeSymbol.Bool)
+                    ilProcessor.Emit(OpCodes.Ldelem_I1);
+                else if (cType.Key == TypeSymbol.Int)
+                    ilProcessor.Emit(OpCodes.Ldelem_I4);
+                else if (cType.Key == TypeSymbol.Byte)
+                    ilProcessor.Emit(OpCodes.Ldelem_I1);
+                else if (cType.Key == TypeSymbol.Float)
+                    ilProcessor.Emit(OpCodes.Ldelem_R4);
+                else
+                    ilProcessor.Emit(OpCodes.Ldelem_Ref);
+            }
             else
             {
-                throw new Exception("Couldnt find TypeFunction: " + node.TypeCall.Function.Name);
+                throw new Exception("Couldnt find TypeFunction: " + node.TypeCall.Function.Name + " in Type '" + node.InnerType.Name + "'! (arr: " + node.InnerType.isArray + ", class: " + node.InnerType.isClass + ")");
             }
         }
 
@@ -1638,6 +1954,13 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitConversionExpression(ILProcessor ilProcessor, BoundConversionExpression node)
         {
+            if (node.Expression.Type == TypeSymbol.String && node.Type.isEnum)
+            {
+                var def = _knownTypes.FirstOrDefault(x => x.Key.Name == node.Type.Name && x.Key.isEnum).Value;
+                ilProcessor.Emit(OpCodes.Ldtoken, def);
+                ilProcessor.Emit(OpCodes.Call, _typeOfReference);
+            }
+
             EmitExpression(ilProcessor, node.Expression);
             var needsBoxing = node.Expression.Type == TypeSymbol.Bool ||
                               node.Expression.Type == TypeSymbol.Int ||
@@ -1650,6 +1973,29 @@ namespace ReCT.CodeAnalysis.Emit
                               node.Expression.Type == TypeSymbol.BoolArr ||
                               node.Expression.Type == TypeSymbol.ThreadArr ||
                               node.Expression.Type.isClass;
+
+            if (node.Expression.Type.isEnum && node.Type == TypeSymbol.Int) return;
+            if (node.Expression.Type == TypeSymbol.Int && node.Type.isEnum) return;
+            if (node.Expression.Type == TypeSymbol.String && node.Type.isEnum)
+            {
+                ilProcessor.Emit(OpCodes.Call, _enumParse);
+                ilProcessor.Emit(OpCodes.Call, _convertToInt32Reference);
+                return;
+            }
+            if (node.Expression.Type.isEnum && node.Type == TypeSymbol.String)
+            {
+                var def = _knownTypes.FirstOrDefault(x => x.Key.Name == node.Expression.Type.Name && x.Key.isEnum).Value;
+                VariableDefinition var = new VariableDefinition(_knownTypes[TypeSymbol.Int]);
+
+                ilProcessor.Body.Variables.Add(var);
+
+                ilProcessor.Emit(OpCodes.Stloc, var);
+                ilProcessor.Emit(OpCodes.Ldloca, var);
+                ilProcessor.Emit(OpCodes.Constrained, def);
+                ilProcessor.Emit(OpCodes.Callvirt, _toString);
+                return;
+            }
+
 
             if (needsBoxing)
                 ilProcessor.Emit(OpCodes.Box, _knownTypes[node.Expression.Type.isClass ? _knownTypes.Keys.FirstOrDefault(x => x.Name == node.Expression.Type.Name) : node.Expression.Type]);

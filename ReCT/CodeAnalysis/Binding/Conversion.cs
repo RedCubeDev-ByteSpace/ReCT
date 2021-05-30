@@ -39,6 +39,22 @@ namespace ReCT.CodeAnalysis.Binding
                 return Conversion.Explicit;
             }
 
+            if (from.isEnum)
+                if (to == TypeSymbol.Int)
+                    return Conversion.Implicit;
+
+            if (from.isEnum)
+                if (to == TypeSymbol.String)
+                    return Conversion.Explicit;
+
+            if (from == TypeSymbol.Int)
+                if (to.isEnum)
+                    return Conversion.Explicit;
+
+            if (from == TypeSymbol.String)
+                if (to.isEnum)
+                    return Conversion.Explicit;
+
             if (from == TypeSymbol.Int)
                 if (to == TypeSymbol.Byte)
                     return Conversion.Implicit;

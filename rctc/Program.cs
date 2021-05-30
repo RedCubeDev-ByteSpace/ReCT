@@ -18,7 +18,7 @@ namespace ReCT
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("-------------------------------");
             Console.WriteLine("ReCT Standalone Compiler " + info.Version);
-            Console.WriteLine("-------------------------------");
+            Console.WriteLine("-------------------------------\n");
             Console.ForegroundColor = ConsoleColor.White;
 
             string outputPath = default;
@@ -48,13 +48,17 @@ namespace ReCT
             options.Parse(args);
 
             if (helpRequested)
+            {
                 options.WriteOptionDescriptions(Console.Out);
+                return;
+            }
 
             if (sourcePaths.Count == 0)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Error.WriteLine("Error: need at least one source file");
                 Console.ForegroundColor = ConsoleColor.White;
+                return;
             }
             else
                 Console.WriteLine("Source: " + sourcePaths[0]);
@@ -97,6 +101,17 @@ namespace ReCT
                 }
                 
                 SyntaxTree syntaxTree = SyntaxTree.Parse(code);
+
+                ImmutableArray<Diagnostic> parserDiagnostics = syntaxTree.Diagnostics;
+
+                if (parserDiagnostics.Length != 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Error.WriteDiagnostics(parserDiagnostics);
+                    Console.ForegroundColor = ConsoleColor.White;
+                    return;
+                }
+
                 syntaxTrees[pathIndex] = syntaxTree;
             }
 
@@ -169,6 +184,10 @@ namespace ReCT
                     SearchOption.AllDirectories))
                     File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath), true);
             }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\n=> Compilation Complete!");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         static void referenceStandardAssemblies(ref List<string> references)

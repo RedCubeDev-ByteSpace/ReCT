@@ -77,10 +77,10 @@
       <option value="$PROJECT_DIR$/ReCT/info.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/SyntaxFacts.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/SyntaxKind.cs" />
-      <option value="$PROJECT_DIR$/rctc/Properties/launchSettings.json" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/Lexer.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" />
       <option value="$PROJECT_DIR$/ReCT/CodeAnalysis/Syntax/Parser.cs" />
+      <option value="$PROJECT_DIR$/rctc/Properties/launchSettings.json" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1lySmyqd4iCrCd9AA17VrRI6Hq7" />
@@ -89,7 +89,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.3502455" />
+    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.35008192" />
     <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.0" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
@@ -160,6 +160,10 @@
       <workItem from="1613823983491" duration="3796000" />
       <workItem from="1614096352214" duration="7968000" />
       <workItem from="1617381676334" duration="11410000" />
+      <workItem from="1622240489188" duration="274000" />
+      <workItem from="1622247801874" duration="1595000" />
+      <workItem from="1622284453874" duration="1674000" />
+      <workItem from="1622310120993" duration="281000" />
     </task>
     <servers />
   </component>
@@ -182,5 +186,206 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs</url>
+          <line>546</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs" initialLine="546" containingFunctionPresentation="method 'Emit'">
+            <startOffsets>
+              <option value="28796" />
+            </startOffsets>
+            <endOffsets>
+              <option value="28823" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs</url>
+          <line>552</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs" initialLine="552" containingFunctionPresentation="method 'Emit'">
+            <startOffsets>
+              <option value="28977" />
+            </startOffsets>
+            <endOffsets>
+              <option value="29030" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs</url>
+          <line>554</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs" initialLine="554" containingFunctionPresentation="method 'Emit'">
+            <startOffsets>
+              <option value="29048" />
+            </startOffsets>
+            <endOffsets>
+              <option value="29080" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs</url>
+          <line>557</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs" initialLine="557" containingFunctionPresentation="method 'Emit'">
+            <startOffsets>
+              <option value="29163" />
+            </startOffsets>
+            <endOffsets>
+              <option value="29164" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs</url>
+          <line>562</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs" initialLine="562" containingFunctionPresentation="method 'Emit'">
+            <startOffsets>
+              <option value="29401" />
+            </startOffsets>
+            <endOffsets>
+              <option value="29402" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs</url>
+          <line>547</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Emit/Emitter.cs" initialLine="547" containingFunctionPresentation="method 'Emit'">
+            <startOffsets>
+              <option value="28840" />
+            </startOffsets>
+            <endOffsets>
+              <option value="28878" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs</url>
+          <line>811</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" initialLine="811" containingFunctionPresentation="method 'BindBaseStatement'">
+            <startOffsets>
+              <option value="35470" />
+            </startOffsets>
+            <endOffsets>
+              <option value="35490" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs</url>
+          <line>817</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" initialLine="817" containingFunctionPresentation="method 'BindBaseStatement'">
+            <startOffsets>
+              <option value="35651" />
+            </startOffsets>
+            <endOffsets>
+              <option value="35720" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs</url>
+          <line>819</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" initialLine="819" containingFunctionPresentation="method 'BindBaseStatement'">
+            <startOffsets>
+              <option value="35734" />
+            </startOffsets>
+            <endOffsets>
+              <option value="35776" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs</url>
+          <line>826</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" initialLine="826" containingFunctionPresentation="method 'BindBaseStatement'">
+            <startOffsets>
+              <option value="36047" />
+            </startOffsets>
+            <endOffsets>
+              <option value="36064" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="30" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs</url>
+          <line>825</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" initialLine="825" containingFunctionPresentation="method 'BindBaseStatement'">
+            <startOffsets>
+              <option value="35931" />
+            </startOffsets>
+            <endOffsets>
+              <option value="36034" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="31" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs</url>
+          <line>835</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" initialLine="835" containingFunctionPresentation="method 'BindBaseStatement'">
+            <startOffsets>
+              <option value="36567" />
+            </startOffsets>
+            <endOffsets>
+              <option value="36627" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="32" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs</url>
+          <line>827</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" initialLine="827" containingFunctionPresentation="method 'BindBaseStatement'">
+            <startOffsets>
+              <option value="36077" />
+            </startOffsets>
+            <endOffsets>
+              <option value="36078" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="33" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs</url>
+          <line>831</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" initialLine="831" containingFunctionPresentation="method 'BindBaseStatement'">
+            <startOffsets>
+              <option value="36296" />
+            </startOffsets>
+            <endOffsets>
+              <option value="36347" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs</url>
+          <line>832</line>
+          <properties documentPath="$PROJECT_DIR$/ReCT/CodeAnalysis/Binding/Binder.cs" initialLine="832" containingFunctionPresentation="method 'BindBaseStatement'">
+            <startOffsets>
+              <option value="36364" />
+            </startOffsets>
+            <endOffsets>
+              <option value="36394" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="35" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

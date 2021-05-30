@@ -148,6 +148,22 @@ namespace ReCT.CodeAnalysis
             Report(location, message);
         }
 
+        internal void ReportFunctionCantBeAbstract(TextLocation location)
+        {
+            var message = $"Functions arent allowed to be Abstract! (if you are looking to override use 'virt' instead)";
+            Report(location, message);
+        }
+
+        internal void ReportMemberCantUseModifier(TextLocation location, string v, string text)
+        {
+            Report(location, $"The current '{v}' Member cant use the '{text}' modifier!");
+        }
+
+        internal void ReportMemberAlreadyRecieved(TextLocation location, string text)
+        {
+            Report(location, $"The current Member already has the '{text}' modifier!");
+        }
+
         public void ReportExpressionMustHaveValue(TextLocation location)
         {
             var message = "Expression must have a value.";
@@ -286,7 +302,192 @@ namespace ReCT.CodeAnalysis
 
         internal void ReportCantMakeInstanceOfStaticClass(TextLocation location, string text)
         {
-            Report(location, $"Can not make instance os static class '{text}'!");
+            Report(location, $"Can not make instance of static class '{text}'!");
+        }
+
+        internal void ReportInvalidEnumType(TextLocation location, string text)
+        {
+            Report(location, $"Can only use Integers in Enum '{text}'!");
+        }
+
+        internal void ReportInvalidEnumNames(TextLocation location, string text1, string text2)
+        {
+            Report(location, $"Name '{text2}' can only be used once in Enum '{text1}'!");
+        }
+
+        internal void ReportUnknownAccessSource(TextLocation location)
+        {
+            Report(location, $"Couldnt find the Value you were trying to Access!");
+        }
+
+        internal void ReportTypefunctionVarOnly(string name)
+        {
+            Report(default, $"Can only do Typefunction '{name}' on Variables!");
+        }
+
+        internal void ReportTypefunctionNotFound(TextLocation location, string text1, string text2)
+        {
+            Report(location, $"Couldnt find Typefunction '{text1}' for Datatype '{text2}'!");
+        }
+
+        internal void ReportClassSymbolNotFound(TextLocation location)
+        {
+            Report(location, $"Couldnt find Class to Access!");
+        }
+
+        internal void ReportCanOnlyGetFromEnum(TextLocation location, string name, string v)
+        {
+            Report(location, $"Enum '{name}' only supports Get Access! Tried to: '{v}'!");
+        }
+
+        internal void ReportVirtualFunctionInMain(TextLocation location)
+        {
+            Report(location, $"Cant create a Virtual function in the Main class!");
+        }
+
+        internal void ReportFunctionCantBeCalledMain(TextLocation location)
+        {
+            Report(location, $"Cant create a Function called 'main'! This function name is reserved!");
+        }
+
+        internal void ReportEnumMemberNotFound(TextLocation location, string name, string text)
+        {
+            Report(location, $"Enum '{name}' doesnt have a Member called '{text}'!");
+        }
+
+        internal void ReportAliasSourceMissing(TextLocation location, string text)
+        {
+            Report(location, $"Couldnt create Alias for Package '{text}' because it couldnt be found!");
+        }
+
+        internal void ReportAliasTargetAlreadyRegistered(TextLocation location, string text1, string text2)
+        {
+            Report(location, $"Couldnt Alias Package '{text1}' to '{text2}' because a Package called '{text2}' is already Registered!");
+        }
+
+        internal void ReportUnknownArrayLength(TextLocation location)
+        {
+            Report(location, $"Couldnt create Array because the Length is unknown!");
+        }
+
+        internal void ReportSymbolHasKeywordArr(TextLocation location, string v, string name)
+        {
+            Report(location, $"Couldnt create {v} '{name}' because its Name includes the reserved Phrase 'Arr'!");
+        }
+
+        internal void ReportWrongConditionType(TextLocation location, string name)
+        {
+            Report(location, $"Condition of Ternary Expression needs to be of Type 'Bool', instead got '{name}'!");
+        }
+
+        internal void ReportClassCantBeAbstractAndStatic(TextLocation location, string text)
+        {
+            Report(location, $"Class '{text}' cant be Abstract and Static at the same time!");
+        }
+
+        internal void ReportTernaryLeftAndRightTypesDontMatch(TextLocation location, string name1, string name2)
+        {
+            Report(location, $"Datatypes inside of Ternary Expression have to be equal! (Left was '{name1}'; Right was '{name2}')");
+        }
+
+        internal void ReportElementTypeDoesNotMatchArrayType(TextLocation location, string name1, string name2)
+        {
+            Report(location, $"Datatype of Element ('{name1}') does not match the Arrays Type ('{name2}')!");
+        }
+
+        internal void ReportCouldtFindClassToInheritFrom(TextLocation location, string text1, string text2)
+        {
+            Report(location, $"Couldnt Inherit class '{text1}' from class '{text2}'! Class '{text2}' couldnt be found!");
+        }
+
+        internal void ReportCantThreadFunctionWithArgs(TextLocation location, string text)
+        {
+            Report(location, $"Cant Thread Function '{text}' because it has Arguments!");
+        }
+
+        internal void ReportInheratingClassNeedsToBeAbstract(TextLocation location, string text)
+        {
+            Report(location, $"Cant inherit from Class '{text}' because its not Abstract!");
+        }
+
+        internal void ReportPrefixedWithUnknownTarget(TextLocation location)
+        {
+            Report(location, $"Received Modifiers with an unknown Target!");
+        }
+
+        internal void ReportCantInheritWithAbstractClass(TextLocation location, string text)
+        {
+            Report(location, $"Cant make Class '{text}' Abstract because its inherating!");
+        }
+
+        internal void ReportCantActionFunctionWithArgs(TextLocation location, string text)
+        {
+            Report(location, $"Cant create Action for Function '{text}' because it has Arguments!");
+        }
+
+        internal void ReportModifierInFunction(TextLocation location, string text)
+        {
+            Report(location, $"Cant use the '{text}' Modifier in a function!");
+        }
+
+        internal void ReportLocalVariableCantBeVirtual(TextLocation location)
+        {
+            Report(location, $"Local Variables cant be Virtual!");
+        }
+
+        internal void ReportVirtualVarInMain(TextLocation location)
+        {
+            Report(location, $"Cant create a Virtual variable in the Main class!");
+        }
+
+        internal void ReportCantMakeInstanceOfAbstractClass(TextLocation location, string text)
+        {
+            Report(location, $"Can not make instance of abstract class '{text}'!");
+        }
+
+        internal void ReportCantUseVirtVarInNormalClass(TextLocation location)
+        {
+            Report(location, $"Cant create Virtual Variable in Non-Abstract Class!");
+        }
+
+        internal void ReportCantUseVirtFuncInNormalClass(TextLocation location)
+        {
+            Report(location, $"Cant create Virtual Function in Non-Abstract Class!");
+        }
+
+        internal void ReportVirtualFunctionsNeedToBePublic(TextLocation location)
+        {
+            Report(location, $"Virtual Functions need to be Public!");
+        }
+
+        internal void ReportGloablClassVarsNeedToBePublic(TextLocation location, string text)
+        {
+            Report(location, $"Cant create Variable '{text}'. Only Public Variables are allowed to be in Global Space!");
+        }
+
+        internal void ReportBaseNotAllowedInMain(TextLocation location)
+        {
+            Report(location, $"The base Statement is not allowed in the Main Class!");
+        }
+
+        internal void ReportBaseConstructorCallRequired(TextLocation location, string text)
+        {
+            Report(location, $"Constructor of Inherating Class '{text}' needs to call 'base'! (its recommended to call it at the start of the Method)");
+        }
+
+        internal void ReportBaseNotAllowedInNonInheratingClass(TextLocation location)
+        {
+            Report(location, $"Base Statement isnt allowed in Non-Inherating Class!");
+        }
+
+        internal void ReportBaseNotAllowedInNonConstructorMethods(TextLocation location)
+        {
+            Report(location, $"Base Statement can only be used in the Constructor!");
+        }
+
+        internal void ReportWrongArgumentType(TextLocation location, string v, int i, string name0, string name1, string name2)
+        {
+            Report(location, $"Function '{v}' Argument {i} ('{name0}') needs to be of Type '{name1}'! Got '{name2}'!");
         }
     }
 }

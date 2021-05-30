@@ -38,9 +38,40 @@ namespace ReCT.CodeAnalysis.Binding
                     return RewriteExpressionStatement((BoundExpressionStatement)node);
                 case BoundNodeKind.TryCatchStatement:
                     return RewriteTryCatchStatement((BoundTryCatchStatement)node);
+                case BoundNodeKind.BaseStatement:
+                    return RewriteBaseStatement((BoundBaseStatement)node);
                 default:
                     throw new Exception($"Unexpected node: {node.Kind}");
             }
+        }
+
+        protected virtual BoundStatement RewriteBaseStatement(BoundBaseStatement node)
+        {
+            ImmutableArray<BoundExpression>.Builder builder = null;
+
+            for (var i = 0; i< node.Arguments.Length; i++)
+            {
+                var oldArgument = node.Arguments[i];
+                var newArgument = RewriteExpression(oldArgument);
+                if (newArgument != oldArgument)
+                {
+                    if (builder == null)
+                    {
+                        builder = ImmutableArray.CreateBuilder<BoundExpression>(node.Arguments.Length);
+
+                        for (var j = 0; j < i; j++)
+                            builder.Add(node.Arguments[j]);
+                    }
+                }
+
+                if (builder != null)
+                    builder.Add(newArgument);
+            }
+
+            if (builder == null)
+                return node;
+
+            return new BoundBaseStatement(builder.ToImmutable());
         }
 
         protected virtual BoundStatement RewriteBlockStatement(BoundBlockStatement node)
@@ -74,6 +105,8 @@ namespace ReCT.CodeAnalysis.Binding
 
         protected virtual BoundStatement RewriteVariableDeclaration(BoundVariableDeclaration node)
         {
+            if (node.Initializer == null) return node;
+
             var initializer = RewriteExpression(node.Initializer);
             if (initializer == node.Initializer)
                 return node;
@@ -206,13 +239,53 @@ namespace ReCT.CodeAnalysis.Binding
                     return RewriteConversionExpression((BoundConversionExpression)node);
                 case BoundNodeKind.ThreadCreateExpression:
                     return RewriteThreadCreateExpression((BoundThreadCreateExpression)node);
+                case BoundNodeKind.ActionCreateExpression:
+                    return RewriteActionCreateExpression((BoundActionCreateExpression)node);
                 case BoundNodeKind.ArrayCreationExpression:
                     return RewriteArrayCreateExpression((BoundArrayCreationExpression)node);
+                 case BoundNodeKind.ArrayLiteralExpression:
+                    return RewriteArrayLiteralExpression((BoundArrayLiteralExpression)node);
                 case BoundNodeKind.ObjectCreationExpression:
                     return RewriteObjectCreateExpression((BoundObjectCreationExpression)node);
+                case BoundNodeKind.TernaryExpression:
+                    return RewriteTernaryExpression((BoundTernaryExpression)node);
                 default:
                     throw new Exception($"Unexpected node: {node.Kind}");
             }
+        }
+
+        protected virtual BoundExpression RewriteTernaryExpression(BoundTernaryExpression node)
+        {
+            var condition = RewriteExpression(node.Condition);
+            var left = RewriteExpression(node.Left);
+            var right = RewriteExpression(node.Right);
+
+            if (condition == node.Condition && left == node.Left && right == node.Right)
+                return node;
+
+            return new BoundTernaryExpression(condition, left, right);
+        }
+
+        protected virtual BoundExpression RewriteArrayLiteralExpression(BoundArrayLiteralExpression node)
+        {
+            var change = false;
+            var values = node.Values;
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                var newval = RewriteExpression(values[i]);
+
+                if (newval != values[i])
+                {
+                    change = true;
+                    values[i] = newval;
+                }
+            }
+
+            if (!change)
+                return node;
+
+            return new BoundArrayLiteralExpression(node.ArrayType, node.Type, values);
         }
 
         private BoundExpression RewriteObjectCreateExpression(BoundObjectCreationExpression node)
@@ -226,6 +299,11 @@ namespace ReCT.CodeAnalysis.Binding
         }
 
         private BoundExpression RewriteThreadCreateExpression(BoundThreadCreateExpression node)
+        {
+            return node;
+        }
+
+        private BoundExpression RewriteActionCreateExpression(BoundActionCreateExpression node)
         {
             return node;
         }
@@ -258,6 +336,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             return new BoundAssignmentExpression(node.Variable, expression);
         }
+        
 
         protected virtual BoundExpression RewriteUnaryExpression(BoundUnaryExpression node)
         {

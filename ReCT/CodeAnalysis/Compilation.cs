@@ -40,6 +40,7 @@ namespace ReCT.CodeAnalysis
             Binder._diagnostics = new DiagnosticBag();
             Binder._packageNamespaces.Clear();
             Binder._usingPackages.Clear();
+            Binder._packageAliases.Clear();
             Binder._namespace = "";
             Binder._type = "";
         }
@@ -52,6 +53,7 @@ namespace ReCT.CodeAnalysis
         public ImmutableArray<VariableSymbol> Variables => GlobalScope.Variables;
         public ImmutableArray<ClassSymbol> Classes => GlobalScope.Classes;
         public ImmutableArray<Package.Package> Packages => Binder._packageNamespaces.ToImmutableArray();
+        public ImmutableArray<EnumSymbol> Enums => GlobalScope.Enums;
         public ImmutableArray<string> UsingPackages => Binder._usingPackages.ToImmutableArray();
 
         internal BoundGlobalScope GlobalScope

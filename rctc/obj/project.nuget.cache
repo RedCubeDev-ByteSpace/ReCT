@@ -1,12 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "9+HnfgFxToe107RH9a/NQQ1MhvsegCc0EgilBAMRkSLLHXvd1rCAhE2ScFStDvqwJ/yh3V/kQqUJ3dz+Em4p3w==",
+  "dgSpecHash": "t2hGgWsx95QlnbD4/2Jx/tYDZmQlmldGiypIPYzqwdA7SxIrxrLmnK/8wA+lH+An5B7LaHNfhfa4bcmt95LCTw==",
   "success": true,
-  "projectFilePath": "E:\\GitRepos\\ReCT\\rctc\\rctc.csproj",
+  "projectFilePath": "/external/GitRepos/ReCT/rctc/rctc.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Salami\\.nuget\\packages\\mono.cecil\\0.11.2\\mono.cecil.0.11.2.nupkg.sha512",
-    "C:\\Users\\Salami\\.nuget\\packages\\mono.options\\6.6.0.161\\mono.options.6.6.0.161.nupkg.sha512",
-    "C:\\Users\\Salami\\.nuget\\packages\\system.collections.immutable\\1.5.0\\system.collections.immutable.1.5.0.nupkg.sha512"
+    "/home/redcube/.nuget/packages/mono.cecil/0.11.2/mono.cecil.0.11.2.nupkg.sha512",
+    "/home/redcube/.nuget/packages/mono.options/6.6.0.161/mono.options.6.6.0.161.nupkg.sha512",
+    "/home/redcube/.nuget/packages/system.collections.immutable/1.5.0/system.collections.immutable.1.5.0.nupkg.sha512",
+    "/home/redcube/.nuget/packages/microsoft.aspnetcore.app.ref/3.1.10/microsoft.aspnetcore.app.ref.3.1.10.nupkg.sha512",
+    "/home/redcube/.nuget/packages/microsoft.netcore.app.host.linux-x64/3.1.15/microsoft.netcore.app.host.linux-x64.3.1.15.nupkg.sha512"
   ],
   "logs": []
 }

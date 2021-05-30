@@ -12,7 +12,8 @@ namespace ReCT.CodeAnalysis.Binding
                                 ImmutableArray<FunctionSymbol> functions,
                                 ImmutableArray<VariableSymbol> variables,
                                 ImmutableArray<BoundStatement> statements,
-                                ImmutableArray<ClassSymbol> classes)
+                                ImmutableArray<ClassSymbol> classes,
+                                ImmutableArray<EnumSymbol> enums)
         {
             Previous = previous;
             Diagnostics = diagnostics;
@@ -22,6 +23,7 @@ namespace ReCT.CodeAnalysis.Binding
             Variables = variables;
             Statements = statements;
             Classes = classes;
+            Enums = enums;
         }
 
         public BoundGlobalScope Previous { get; }
@@ -32,5 +34,6 @@ namespace ReCT.CodeAnalysis.Binding
         public ImmutableArray<VariableSymbol> Variables { get; }
         public ImmutableArray<BoundStatement> Statements { get; }
         public ImmutableArray<ClassSymbol> Classes { get; }
+        public ImmutableArray<EnumSymbol> Enums { get; }
     }
 }

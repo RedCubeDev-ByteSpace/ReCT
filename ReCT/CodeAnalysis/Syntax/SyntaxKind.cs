@@ -65,6 +65,7 @@ namespace ReCT.CodeAnalysis.Syntax
         MakeKeyword,
         ArrayKeyword,
         ClassKeyword,
+        EnumKeyword,
         ObjectKeyword,
         DllKeyword,
         PackageKeyword,
@@ -112,6 +113,21 @@ namespace ReCT.CodeAnalysis.Syntax
         ThreadCreateExpression,
         ArrayCreateExpression,
         ObjectCreateExpression,
-        IncKeyword
+        IncKeyword,
+        EnumStatement,
+        AliasKeyword,
+        AliasStatement,
+        PercentToken,
+        QuestionMarkToken,
+        ColonToken,
+        TernaryExpression,
+        ArrayLiteralExpression,
+        ActionKeyword,
+        ActionCreateExpression,
+        AbstractKeyword,
+        SerializableKeyword,
+        VirtualKeyword,
+        BaseKeyword,
+        BaseStatement
     }
 }

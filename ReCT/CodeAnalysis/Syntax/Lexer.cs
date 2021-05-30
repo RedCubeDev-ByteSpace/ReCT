@@ -50,6 +50,11 @@ namespace ReCT.CodeAnalysis.Syntax
                     _kind = SyntaxKind.EndOfFileToken;
                     break;
 
+                case ':' when Lookahead != ':':
+                    _kind = SyntaxKind.ColonToken;
+                    _position++;
+                    break;
+
                 case ':' when Lookahead == ':':
                     _kind = SyntaxKind.NamespaceToken;
                     _value = null;
@@ -106,6 +111,10 @@ namespace ReCT.CodeAnalysis.Syntax
                     break;
                 case '/' when Lookahead != '/' && Lookahead != '*':
                     _kind = SyntaxKind.SlashToken;
+                    _position++;
+                    break;
+                case '%':
+                    _kind = SyntaxKind.PercentToken;
                     _position++;
                     break;
                 case '(':
@@ -204,6 +213,10 @@ namespace ReCT.CodeAnalysis.Syntax
                     _kind = SyntaxKind.ShiftLeft;
                     _position+=2;
                     break;
+                 case '?':
+                    _kind = SyntaxKind.QuestionMarkToken;
+                    _position++;
+                    break;
                 case '"':
                     ReadString();
                     break;
@@ -282,6 +295,38 @@ namespace ReCT.CodeAnalysis.Syntax
                         {
                             _position++;
                             done = true;
+                        }
+                        break;
+                    case '\\':
+                        if (Lookahead == '"')
+                        {
+                            sb.Append('"');
+                            _position += 2;
+                        }
+                        else if (Lookahead == 'n')
+                        {
+                            sb.Append('\n');
+                            _position += 2;
+                        }
+                        else if (Lookahead == 'r')
+                        {
+                            sb.Append('\r');
+                            _position += 2;
+                        }
+                        else if (Lookahead == 't')
+                        {
+                            sb.Append('\t');
+                            _position += 2;
+                        }
+                        else if (Lookahead == '\\')
+                        {
+                            sb.Append('\\');
+                            _position += 2;
+                        }
+                        else
+                        {
+                            sb.Append(Current);
+                            _position++;
                         }
                         break;
                     default:

@@ -8,55 +8,34 @@ namespace ReCT.CodeAnalysis.Symbols
 {
     internal static class BuiltinFunctions
     {
-        //this all needs to go - (what a mess)
-        //sys is gon
-        //net is next
-        //all gon
+        
 
-        //Networking
-        //public static readonly FunctionSymbol ConnectTCPClient = new FunctionSymbol("ConnectTCPClient", ImmutableArray.Create(new ParameterSymbol("address", TypeSymbol.String, 0), new ParameterSymbol("port", TypeSymbol.Int, 0)), TypeSymbol.TCPClient);
-        //public static readonly FunctionSymbol ListenOnTCPPort = new FunctionSymbol("ListenOnTCPPort", ImmutableArray.Create(new ParameterSymbol("port", TypeSymbol.Int, 0)), TypeSymbol.TCPListener);
+        //TypeFunctions
 
-        ////Math
-        //public static readonly FunctionSymbol Random = new FunctionSymbol("Random", ImmutableArray.Create(new ParameterSymbol("max", TypeSymbol.Int, 0)), TypeSymbol.Int);
-        //public static readonly FunctionSymbol Floor = new FunctionSymbol("Floor", ImmutableArray.Create(new ParameterSymbol("num", TypeSymbol.Float, 0)), TypeSymbol.Int);
-        //public static readonly FunctionSymbol Ceil = new FunctionSymbol("Ceil", ImmutableArray.Create(new ParameterSymbol("num", TypeSymbol.Float, 0)), TypeSymbol.Int);
-
-        //IO
-        //public static readonly FunctionSymbol ReadFile = new FunctionSymbol("ReadFile", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.String);
-        //public static readonly FunctionSymbol WriteFile = new FunctionSymbol("WriteFile", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0), new ParameterSymbol("text", TypeSymbol.String, 0)), TypeSymbol.Void);
-        //public static readonly FunctionSymbol FileExists = new FunctionSymbol("FileExists", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Bool);
-        //public static readonly FunctionSymbol DirectoryExists = new FunctionSymbol("DirectoryExists", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Bool);
-        //public static readonly FunctionSymbol DeleteFile = new FunctionSymbol("DeleteFile", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Void);
-        //public static readonly FunctionSymbol DeleteDirectory = new FunctionSymbol("DeleteDirectory", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Void);
-        //public static readonly FunctionSymbol CreateDirectory = new FunctionSymbol("CreateDirectory", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.Void);
-        //public static readonly FunctionSymbol GetFilesInDir = new FunctionSymbol("GetFilesInDirectory", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.StringArr);
-        //public static readonly FunctionSymbol GetDirectoriesInDir = new FunctionSymbol("GetDirsInDirectory", ImmutableArray.Create(new ParameterSymbol("path", TypeSymbol.String, 0)), TypeSymbol.StringArr);
-
-        //Other stuff
-        public static readonly FunctionSymbol Version = new FunctionSymbol("Version", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
-        //public static readonly FunctionSymbol Sleep = new FunctionSymbol("Sleep", ImmutableArray.Create(new ParameterSymbol("int", TypeSymbol.Int, 0)), TypeSymbol.Void);   |in sys package now
-        //public static readonly FunctionSymbol Char = new FunctionSymbol("Char", ImmutableArray.Create(new ParameterSymbol("int", TypeSymbol.Int, 0)), TypeSymbol.String);   |
-
-        //String funcs
-        public static readonly FunctionSymbol GetLength = new FunctionSymbol("GetLength", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Int);
-        public static readonly FunctionSymbol Split = new FunctionSymbol("Split", ImmutableArray.Create(new ParameterSymbol("seperator", TypeSymbol.String, 0)), TypeSymbol.StringArr);
-        public static readonly FunctionSymbol Replace = new FunctionSymbol("Replace", ImmutableArray.Create(new ParameterSymbol("original", TypeSymbol.String, 0), new ParameterSymbol("replacement", TypeSymbol.String, 1)), TypeSymbol.String);
-        public static readonly FunctionSymbol Substring = new FunctionSymbol("Substring", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0), new ParameterSymbol("length", TypeSymbol.Int, 0)), TypeSymbol.String);
+        //String functions
+        public static readonly TypeFunctionSymbol GetLength = new TypeFunctionSymbol("GetLength", ImmutableArray<ParameterSymbol>.Empty,  TypeSymbol.String, TypeSymbol.Int);
+        public static readonly TypeFunctionSymbol Split = new TypeFunctionSymbol("Split", ImmutableArray.Create(new ParameterSymbol("seperator", TypeSymbol.String, 0)), TypeSymbol.String, TypeSymbol.StringArr);
+        public static readonly TypeFunctionSymbol Replace = new TypeFunctionSymbol("Replace", ImmutableArray.Create(new ParameterSymbol("original", TypeSymbol.String, 0), new ParameterSymbol("replacement", TypeSymbol.String, 1)), TypeSymbol.String, TypeSymbol.String);
+        public static readonly TypeFunctionSymbol Substring = new TypeFunctionSymbol("Substring", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0), new ParameterSymbol("length", TypeSymbol.Int, 0)), TypeSymbol.String, TypeSymbol.String);
+        public static readonly TypeFunctionSymbol At = new TypeFunctionSymbol("At", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0)), TypeSymbol.String, TypeSymbol.String);
 
         //Thread functions
-        public static readonly FunctionSymbol StartThread = new FunctionSymbol("StartThread", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
-        public static readonly FunctionSymbol KillThread = new FunctionSymbol("KillThread", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
+        public static readonly TypeFunctionSymbol StartThread = new TypeFunctionSymbol("StartThread", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Thread, TypeSymbol.Void);
+        public static readonly TypeFunctionSymbol KillThread = new TypeFunctionSymbol("KillThread", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Thread, TypeSymbol.Void);
 
         //Byte functions
-        public static readonly FunctionSymbol GetBit = new FunctionSymbol("GetBit", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0)), TypeSymbol.Int);
-        public static readonly FunctionSymbol SetBit = new FunctionSymbol("SetBit", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0), new ParameterSymbol("value", TypeSymbol.Int, 0)), TypeSymbol.Void);
+        public static readonly TypeFunctionSymbol GetBit = new TypeFunctionSymbol("GetBit", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0)), TypeSymbol.Byte, TypeSymbol.Int);
+        public static readonly TypeFunctionSymbol SetBit = new TypeFunctionSymbol("SetBit", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0), new ParameterSymbol("value", TypeSymbol.Int, 0)), TypeSymbol.Byte, TypeSymbol.Void);
 
         //Arr functions
-        public static readonly FunctionSymbol Push = new FunctionSymbol("Push", ImmutableArray.Create(new ParameterSymbol("object", TypeSymbol.Any, 0)), TypeSymbol.Void);
-
-        //Cube functions
+        public static readonly TypeFunctionSymbol GetLengthArr = new TypeFunctionSymbol("GetLength", ImmutableArray<ParameterSymbol>.Empty,  TypeSymbol.AnyArr, TypeSymbol.Int);
+        public static readonly TypeFunctionSymbol Push = new TypeFunctionSymbol("Push", ImmutableArray.Create(new ParameterSymbol("object", TypeSymbol.Any, 0)), TypeSymbol.AnyArr, TypeSymbol.Void);
+        public static readonly TypeFunctionSymbol Pop = new TypeFunctionSymbol("Pop", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.AnyArr, TypeSymbol.ArrBase);
+        public static readonly TypeFunctionSymbol AtArr = new TypeFunctionSymbol("At", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0)), TypeSymbol.AnyArr, TypeSymbol.ArrBase);
+        
+        //Builtint functions
         public static readonly FunctionSymbol Die = new FunctionSymbol("die", ImmutableArray.Create(new ParameterSymbol("exitCode", TypeSymbol.Int, 0)), TypeSymbol.Void);
+        public static readonly FunctionSymbol Version = new FunctionSymbol("Version", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
 
         //borger
         public static readonly FunctionSymbol Borger = new FunctionSymbol("borger", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
@@ -65,6 +44,12 @@ namespace ReCT.CodeAnalysis.Symbols
             => typeof(BuiltinFunctions).GetFields(BindingFlags.Public | BindingFlags.Static)
                                        .Where(f => f.FieldType == typeof(FunctionSymbol))
                                        .Select(f => (FunctionSymbol)f.GetValue(null));
+
+        
+        internal static IEnumerable<TypeFunctionSymbol> GetAllTypeFunctions()
+            => typeof(BuiltinFunctions).GetFields(BindingFlags.Public | BindingFlags.Static)
+                                        .Where(f => f.FieldType == typeof(TypeFunctionSymbol))
+                                        .Select(f => (TypeFunctionSymbol)f.GetValue(null));
         internal static IEnumerable<string> GetAllNames()
         {
             foreach(FunctionSymbol fs in GetAll())

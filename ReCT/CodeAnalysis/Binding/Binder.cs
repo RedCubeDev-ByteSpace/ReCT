@@ -25,6 +25,7 @@ namespace ReCT.CodeAnalysis.Binding
         public static string _namespace = "";
         public static string _type = "";
         public static List<string> _usingPackages = new List<string>();
+        public static Dictionary<string,string> _packageAliases = new Dictionary<string,string>();
 
         public Binder(bool isScript, BoundScope parent, FunctionSymbol function, ClassSymbol inclass = null)
         {
@@ -54,6 +55,9 @@ namespace ReCT.CodeAnalysis.Binding
             var classDeclarations = syntaxTrees.SelectMany(st => st.Root.Members)
                                                   .OfType<ClassDeclarationSyntax>();
             
+            var enumDeclarations = syntaxTrees.SelectMany(st => st.Root.Members)
+                                                  .OfType<EnumDeclarationSyntax>();
+
             var globalStatements = syntaxTrees.SelectMany(st => st.Root.Members)
                 .OfType<GlobalStatementSyntax>();
             
@@ -70,28 +74,49 @@ namespace ReCT.CodeAnalysis.Binding
                     binder.BindGlobalStatement(u);
                     Console.WriteLine("using: " + u.Name.Text);
                 }
+                if (statement.Statement is AliasStatementSyntax a)
+                {
+                    binder.BindGlobalStatement(a);
+                    Console.WriteLine("aliasing: " + a.MapThis.Text);
+                }
             }
 
-            //bind classes functions and class-functions
+            //bind enums classes functions and class-functions
+            foreach (var _enum in enumDeclarations)
+                binder.BindEnumDeclaration(_enum);
+
+            //abstract classes first
             foreach (var _class in classDeclarations)
+                if (_class.IsAbstract)
+                {
+                    Console.WriteLine("binding abs " + _class.Identifier.Text);
+                    binder.BindClassDeclaration(_class);
+                }
+
+            //others later bc they might inherit
+            foreach (var _class in classDeclarations)
+                if (!_class.IsAbstract)
                 binder.BindClassDeclaration(_class);
 
             foreach (var function in functionDeclarations)
                 binder.BindFunctionDeclaration(function);
 
             foreach (var _class in binder._scope.GetDeclaredClasses())
-                binder.BindClassFunctionDeclaration(_class.Declaration, _class);
+                binder.BindClassMemberDeclaration(_class.Declaration, _class);
             
 
             var statements = ImmutableArray.CreateBuilder<BoundStatement>();
 
             foreach (var globalStatement in globalStatements)
             {
-                if (globalStatement.Statement is PackageStatementSyntax || globalStatement.Statement is UseStatementSyntax) continue;
+                if (globalStatement.Statement is PackageStatementSyntax || globalStatement.Statement is UseStatementSyntax|| globalStatement.Statement is AliasStatementSyntax) continue;
                 
                 var statement = binder.BindGlobalStatement(globalStatement.Statement);
                 statements.Add(statement);
             }
+
+            var retstmt = binder.BindReturnStatement(new ReturnStatementSyntax(null, null, null));
+            statements.Add(retstmt);
 
             // Check global statements
 
@@ -154,11 +179,12 @@ namespace ReCT.CodeAnalysis.Binding
             var diagnostics = binder.Diagnostics.ToImmutableArray();
             var variables = binder._scope.GetDeclaredVariables();
             var classes = binder._scope.GetDeclaredClasses();
+            var enums = binder._scope.GetDeclaredEnums();
 
             if (previous != null)
                 diagnostics = diagnostics.InsertRange(0, previous.Diagnostics);
 
-            return new BoundGlobalScope(previous, diagnostics, mainFunction, scriptFunction, functions, variables, statements.ToImmutable(), classes);
+            return new BoundGlobalScope(previous, diagnostics, mainFunction, scriptFunction, functions, variables, statements.ToImmutable(), classes, enums);
         }
 
         public static BoundProgram BindProgram(bool isScript, BoundProgram previous, BoundGlobalScope globalScope)
@@ -167,6 +193,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             var functionBodies = ImmutableDictionary.CreateBuilder<FunctionSymbol, BoundBlockStatement>();
             var classBodies = ImmutableDictionary.CreateBuilder<ClassSymbol, ImmutableDictionary<FunctionSymbol, BoundBlockStatement>>();
+            var enums = ImmutableArray.CreateBuilder<EnumSymbol>();
             var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
 
             //_packageNamespaces = new List<Package.Package>();
@@ -181,7 +208,7 @@ namespace ReCT.CodeAnalysis.Binding
                 if (symbol != null && symbol is FunctionSymbol fs)
                 {
                     var binder = new Binder(isScript, _class.Scope, fs, _class);
-                    var body = binder.BindStatement(fs.Declaration.Body);
+                    var body = (BoundBlockStatement)binder.BindStatement(fs.Declaration.Body);
                     var loweredBody = Lowerer.Lower(fs, body);
 
                     if (fs.Type != TypeSymbol.Void && !ControlFlowGraph.AllPathsReturn(loweredBody))
@@ -219,6 +246,11 @@ namespace ReCT.CodeAnalysis.Binding
                 functionBodies.Add(function, loweredBody);
             }
 
+            foreach (var _enum in globalScope.Enums)
+            {
+                enums.Add(_enum);
+            }
+
             diagnostics.AddRange(Binder._diagnostics);
 
             Binder._diagnostics = new DiagnosticBag();
@@ -254,6 +286,7 @@ namespace ReCT.CodeAnalysis.Binding
                                     functionBodies.ToImmutable(),
                                     classBodies.ToImmutable(),
                                     _packageNamespaces.ToImmutableArray(),
+                                    enums.ToImmutableArray(),
                                     _namespace, _type);
         }
 
@@ -274,6 +307,15 @@ namespace ReCT.CodeAnalysis.Binding
 
         private void BindFunctionDeclaration(FunctionDeclarationSyntax syntax)
         {
+            if (inClass == null && syntax.IsVirtual)
+                _diagnostics.ReportVirtualFunctionInMain(syntax.Location);
+
+            if (inClass != null && !inClass.IsAbstract && syntax.IsVirtual)
+                _diagnostics.ReportCantUseVirtFuncInNormalClass(syntax.Location);
+
+            if (syntax.Identifier.Text == "main")
+                _diagnostics.ReportFunctionCantBeCalledMain(syntax.Location);
+
             var parameters = ImmutableArray.CreateBuilder<ParameterSymbol>();
 
             var seenParameterNames = new HashSet<string>();
@@ -295,7 +337,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             var type = BindTypeClause(syntax.Type) ?? TypeSymbol.Void;
 
-            var function = new FunctionSymbol(syntax.Identifier.Text, parameters.ToImmutable(), type, syntax, syntax.IsPublic);
+            var function = new FunctionSymbol(syntax.Identifier.Text, parameters.ToImmutable(), type, syntax, syntax.IsPublic, isVirtual: syntax.IsVirtual);
             if (function.Declaration.Identifier.Text != null &&
                 !_scope.TryDeclareFunction(function))
             {
@@ -305,9 +347,34 @@ namespace ReCT.CodeAnalysis.Binding
 
         private void BindClassDeclaration(ClassDeclarationSyntax syntax)
         {
-            var classSymbol = new ClassSymbol(syntax.Identifier.Text, syntax, syntax.isStatic, syntax.isIncluded);
+            if (syntax.IsStatic && syntax.IsAbstract)
+                _diagnostics.ReportClassCantBeAbstractAndStatic(syntax.Location, syntax.Identifier.Text);
+
+            ClassSymbol parentSym = null;
+
+            if (syntax.Inheritance != null)
+            {
+                var symbol = _scope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.Inheritance.Text);
+                if (symbol == null)
+                    _diagnostics.ReportCouldtFindClassToInheritFrom(syntax.Inheritance.Location, syntax.Identifier.Text, syntax.Inheritance.Text);
+                else if (!(symbol is ClassSymbol))
+                    _diagnostics.ReportCouldtFindClassToInheritFrom(syntax.Inheritance.Location, syntax.Identifier.Text, syntax.Inheritance.Text);
+                else
+                    parentSym = (ClassSymbol)symbol;
+
+                if (parentSym != null && !parentSym.IsAbstract)
+                    _diagnostics.ReportInheratingClassNeedsToBeAbstract(syntax.Inheritance.Location, syntax.Inheritance.Text);
+                if (parentSym != null && syntax.IsAbstract)
+                    _diagnostics.ReportCantInheritWithAbstractClass(syntax.Inheritance.Location, syntax.Identifier.Text);
+            }
+
+            var classSymbol = new ClassSymbol(syntax.Identifier.Text, syntax, syntax.IsStatic, syntax.IsIncluded, syntax.IsAbstract, syntax.IsSerializable, parentSym);
             classSymbol.Scope = new BoundScope(CreateRootScope(), syntax.Identifier.Text);
 
+            if (classSymbol.Name.Contains("Arr"))
+            {
+                _diagnostics.ReportSymbolHasKeywordArr(syntax.Identifier.Location, "Class", classSymbol.Name);
+            }
             if (classSymbol.Declaration.Identifier.Text != null &&
                 !_scope.TryDeclareClass(classSymbol))
             {
@@ -333,12 +400,66 @@ namespace ReCT.CodeAnalysis.Binding
             }
         }
 
-        private void BindClassFunctionDeclaration(ClassDeclarationSyntax syntax, ClassSymbol _class)
+        private void BindEnumDeclaration(EnumDeclarationSyntax syntax)
+        {
+            int counter = 0;
+            Dictionary<string, int> values = new Dictionary<string, int>();
+
+            for (int i = 0; i < syntax.Names.Length; i++)
+            {
+                if (values.ContainsKey(syntax.Names[i].Text))
+                    _diagnostics.ReportInvalidEnumNames(syntax.Names[i].Location, syntax.EnumName.Text, syntax.Names[i].Text);
+
+                if (syntax.Values.ContainsKey(syntax.Names[i]))
+                {
+                    var literal = (BoundLiteralExpression)BindLiteralExpression((LiteralExpressionSyntax)syntax.Values[syntax.Names[i]]);
+                    if (literal.Type != TypeSymbol.Int)
+                    {
+                        _diagnostics.ReportInvalidEnumType(syntax.Names[i].Location, syntax.EnumName.Text);
+                    }
+                    values.Add(syntax.Names[i].Text, (int)literal.Value);
+                    counter = (int)literal.Value + 1;
+                    continue;
+                }
+
+                values.Add(syntax.Names[i].Text, counter);
+                counter++;
+            }
+
+            if (TypeSymbol.Class == null) {TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>(); }
+
+            var enumTypeSymbol = new TypeSymbol(syntax.EnumName.Text);
+            enumTypeSymbol.isClass = true;
+            enumTypeSymbol.isEnum = true;
+            
+            var enumSymbol = new EnumSymbol(syntax.EnumName.Text, values, enumTypeSymbol);
+            enumTypeSymbol.enumSymbol = enumSymbol;
+
+            if (enumSymbol.Name.Contains("Arr"))
+            {
+                _diagnostics.ReportSymbolHasKeywordArr(syntax.EnumName.Location, "Enum", enumSymbol.Name);
+            }
+
+            TypeSymbol.Class.Add(new ClassSymbol(syntax.EnumName.Text, null, true), enumTypeSymbol);
+
+            if (!_scope.TryDeclareEnum(enumSymbol))
+            {
+                _diagnostics.ReportSymbolAlreadyDeclared(syntax.EnumName.Location, enumSymbol.Name);
+            }
+        }
+
+        private void BindClassMemberDeclaration(ClassDeclarationSyntax syntax, ClassSymbol _class)
         {
             foreach (MemberSyntax m in syntax.Members)
             {
                 if (m is FunctionDeclarationSyntax fsyntax)
                 {
+                    if (!_class.IsAbstract && fsyntax.IsVirtual)
+                        _diagnostics.ReportCantUseVirtFuncInNormalClass(syntax.Location);
+
+                        if (fsyntax.IsVirtual && !fsyntax.IsPublic)
+                        _diagnostics.ReportVirtualFunctionsNeedToBePublic(syntax.Location);
+
                     var parameters = ImmutableArray.CreateBuilder<ParameterSymbol>();
 
                     var seenParameterNames = new HashSet<string>();
@@ -360,22 +481,69 @@ namespace ReCT.CodeAnalysis.Binding
 
                     var type = BindTypeClause(fsyntax.Type) ?? TypeSymbol.Void;
 
-                    var function = new FunctionSymbol(fsyntax.Identifier.Text, parameters.ToImmutable(), type, fsyntax, fsyntax.IsPublic);
+                    if (fsyntax.Identifier.Text == "Constructor")
+                    {
+                        var index = 0;
+                        var bodyb = fsyntax.Body.Statements.ToBuilder();
+
+                        foreach (MemberSyntax mem in syntax.Members)
+                            if (mem is GlobalStatementSyntax gsyntax)
+                            {
+                                if (gsyntax.Statement is VariableDeclarationSyntax)
+                                {
+                                    bodyb.Insert(index, gsyntax.Statement);
+                                    index++;
+                                }
+                            }
+
+                        fsyntax.Body.Statements = bodyb.ToImmutable();
+
+                        if (_class.ParentSym != null)
+                        {
+                            var baseStatement = fsyntax.Body.Statements.FirstOrDefault(x => x.Kind == SyntaxKind.BaseStatement);
+                            if (baseStatement == null)
+                            {
+                                _diagnostics.ReportBaseConstructorCallRequired(fsyntax.Location, fsyntax.Identifier.Text);
+                            }
+                        }
+                    }
+
+                    var function = new FunctionSymbol(fsyntax.Identifier.Text, parameters.ToImmutable(), type, fsyntax, fsyntax.IsPublic, isVirtual: fsyntax.IsVirtual);
                     if (function.Declaration.Identifier.Text != null &&
                         !_class.Scope.TryDeclareFunction(function))
                     {
                         _diagnostics.ReportSymbolAlreadyDeclared(fsyntax.Identifier.Location, function.Name);
                     }
-
-                    if (function.Name == "Constructor")
-                    {
-                        _diagnostics.Report(default, "BINDING CONSTRUCTOR");
-                        var binder = new Binder(false, _class.Scope, function, _class);
-                        binder.BindStatement(function.Declaration.Body);
-
-                        _diagnostics.removeRangeBefore("BINDING CONSTRUCTOR");
-                    }
                 }
+            }
+
+            //register constructor if not registered
+            var constructor = _class.Scope.GetDeclaredFunctions().FirstOrDefault(x => x.Name == "Constructor");
+            if (constructor == null)
+            {
+                var builder = ImmutableArray.CreateBuilder<StatementSyntax>();
+
+                if (_class.ParentSym != null)
+                {
+                    var func = _class.ParentSym.Scope.GetDeclaredFunctions().FirstOrDefault(x => x.Name == "Constructor");
+
+                    if (func == null)
+                        builder.Add(new BaseStatementSyntax(null, null, new SeparatedSyntaxList<ExpressionSyntax>(ImmutableArray<SyntaxNode>.Empty)));
+                    else if (func.Parameters.Length == 0)
+                        builder.Add(new BaseStatementSyntax(null, null, new SeparatedSyntaxList<ExpressionSyntax>(ImmutableArray<SyntaxNode>.Empty)));
+                    else
+                        _diagnostics.ReportBaseConstructorCallRequired(_class.Declaration.Location, _class.Name);
+                }
+
+                foreach (MemberSyntax mem in syntax.Members)
+                if (mem is GlobalStatementSyntax gsyntax)
+                    if (gsyntax.Statement is VariableDeclarationSyntax)
+                        builder.Add(gsyntax.Statement);
+
+                var dec = new FunctionDeclarationSyntax(null, null, null, null, null, null, null, new BlockStatementSyntax(null, null, builder.ToImmutable(), null), true, false);
+
+                var function = new FunctionSymbol("Constructor", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void, dec, true);
+                _class.Scope.TryDeclareFunction(function);
             }
         }
 
@@ -456,6 +624,8 @@ namespace ReCT.CodeAnalysis.Binding
             {
                 case SyntaxKind.PackageStatement:
                     return BindPackageStatement((PackageStatementSyntax)syntax);
+                case SyntaxKind.AliasStatement:
+                    return BindAliasStatement((AliasStatementSyntax)syntax);
                 case SyntaxKind.NamespaceStatement:
                     return BindNamespaceStatement((NamespaceStatementSyntax)syntax);
                 case SyntaxKind.TypeStatement:
@@ -486,6 +656,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return BindExpressionStatement((ExpressionStatementSyntax)syntax);
                 case SyntaxKind.TryCatchStatement:
                     return BindTryCatchStatement((TryCatchStatementSyntax)syntax);
+                case SyntaxKind.BaseStatement:
+                    return BindBaseStatement((BaseStatementSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -553,6 +725,27 @@ namespace ReCT.CodeAnalysis.Binding
             return null;
         }
 
+        private BoundStatement BindAliasStatement(AliasStatementSyntax syntax)
+        {
+            var mapthis = _packageNamespaces.FirstOrDefault(x => x.name == syntax.MapThis.Text);
+            if (mapthis == null)
+            {
+                _diagnostics.ReportAliasSourceMissing(syntax.Location, syntax.MapThis.Text);
+                return null;
+            }
+
+            var tothis = _packageNamespaces.FirstOrDefault(x => x.name == syntax.ToThis.Text);
+            if (tothis != null)
+            {
+                _diagnostics.ReportAliasTargetAlreadyRegistered(syntax.Location, syntax.MapThis.Text, syntax.ToThis.Text);
+                return null;
+            }
+
+            _packageAliases.Add(syntax.ToThis.Text, syntax.MapThis.Text);
+            
+            return null;
+        }
+
         private BoundStatement BindBlockStatement(BlockStatementSyntax syntax)
         {
             var statements = ImmutableArray.CreateBuilder<BoundStatement>();
@@ -573,9 +766,15 @@ namespace ReCT.CodeAnalysis.Binding
         {
             var isReadOnly = false;
             var type = BindTypeClause(syntax.TypeClause);
+
+            if (syntax.Initializer == null)
+            {
+                return new BoundVariableDeclaration(BindVariableDeclaration(syntax.Identifier, isReadOnly, type ?? TypeSymbol.Any, syntax.Keyword.Kind, syntax.IsVirtual), null);
+            }
+
             var initializer = BindExpression(syntax.Initializer);
             var variableType = type ?? initializer.Type;
-            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly, variableType, syntax.Keyword.Kind);
+            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly, variableType, syntax.Keyword.Kind, syntax.IsVirtual);
             var convertedInitializer = BindConversion(syntax.Initializer.Location, initializer, syntax.ExternalType == null ? variableType : syntax.ExternalType);
 
             return new BoundVariableDeclaration(variable, convertedInitializer);
@@ -606,6 +805,55 @@ namespace ReCT.CodeAnalysis.Binding
             var normalStatement = BindStatementInternal(syntax.NormalStatement);
             var exceptionStatement = BindStatementInternal(syntax.ExceptionSyntax);
             return new BoundTryCatchStatement(normalStatement, exceptionStatement);
+        }
+
+        private BoundStatement BindBaseStatement(BaseStatementSyntax syntax)
+        {
+            if (inClass == null)
+            {
+                _diagnostics.ReportBaseNotAllowedInMain(syntax.Location);
+                return BindErrorStatement();
+            }
+
+            if (inClass.ParentSym == null)
+            {
+                _diagnostics.ReportBaseNotAllowedInNonInheratingClass(syntax.Location);
+                return BindErrorStatement();
+            }
+
+            if (_function.Name != "Constructor")
+            {
+                _diagnostics.ReportBaseNotAllowedInNonConstructorMethods(syntax.Location);
+                return BindErrorStatement();
+            }
+
+            var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
+
+            foreach (var argument in syntax.Arguments)
+            {
+                var boundArgument = BindExpression(argument);
+                boundArguments.Add(boundArgument);
+            }
+
+            var func = inClass.ParentSym.Scope.GetDeclaredFunctions().FirstOrDefault(x => x.Name == "Constructor");
+            if (func == null)
+            {
+                if (boundArguments.Count != 0)
+                    _diagnostics.ReportWrongArgumentCount(syntax.Location, inClass.ParentSym.Name + "->Constructor", 0, boundArguments.Count);      
+            }
+            else if (boundArguments.Count != func.Parameters.Length)
+                _diagnostics.ReportWrongArgumentCount(syntax.Location, inClass.ParentSym.Name + "->Constructor", func.Parameters.Length, boundArguments.Count); 
+
+            if (func != null)
+            for (int i = 0; i < boundArguments.Count; i++)
+            {
+                if (boundArguments[i].Type != func.Parameters[i].Type)
+                {
+                    _diagnostics.ReportWrongArgumentType(syntax.Arguments[i].Location, inClass.ParentSym.Name + "->Constructor", i, func.Parameters[i].Name, func.Parameters[i].Type.Name, boundArguments[i].Type.Name);
+                }
+            }
+
+            return new BoundBaseStatement(boundArguments.ToImmutable());
         }
 
         private BoundStatement BindWhileStatement(WhileStatementSyntax syntax)
@@ -644,7 +892,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             _scope = new BoundScope(_scope);
 
-            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly: true, TypeSymbol.Int, syntax.Keyword.Kind);
+            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly: true, TypeSymbol.Int, syntax.Keyword.Kind, false);
             var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
 
             _scope = _scope.Parent;
@@ -777,10 +1025,16 @@ namespace ReCT.CodeAnalysis.Binding
                     return BindCallExpression((CallExpressionSyntax)syntax);
                 case SyntaxKind.ThreadCreateExpression:
                     return BindThreadCreateExpression((ThreadCreationSyntax)syntax);
+                case SyntaxKind.ActionCreateExpression:
+                    return BindActionCreateExpression((ActionCreationSyntax)syntax);
                 case SyntaxKind.ArrayCreateExpression:
                     return BindArrayCreationExpression((ArrayCreationSyntax)syntax);
+                case SyntaxKind.ArrayLiteralExpression:
+                    return BindArrayLiteralExpression((ArrayLiteralExpressionSyntax)syntax);
                 case SyntaxKind.ObjectCreateExpression:
                     return BindObjectCreationExpression((ObjectCreationSyntax)syntax);
+                case SyntaxKind.TernaryExpression:
+                    return BindTernaryExpression((TernaryExpressionSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -792,6 +1046,9 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (syntax.Package != null)
                 package = _packageNamespaces.FirstOrDefault(x => x.name == syntax.Package.Text);
+
+            if (package != null && _packageAliases.ContainsKey(syntax.Package.Text))
+                package = _packageNamespaces.FirstOrDefault(x => x.name == _packageAliases[syntax.Package.Text]);
 
             ClassSymbol _class = (package == null ? ParentScope : package.scope).GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.Type.Text);
             
@@ -822,6 +1079,12 @@ namespace ReCT.CodeAnalysis.Binding
             if (_class.IsStatic)
             {
                 _diagnostics.ReportCantMakeInstanceOfStaticClass(syntax.Type.Location, syntax.Type.Text);
+                return new BoundErrorExpression();
+            }
+
+            if (_class.IsAbstract)
+            {
+                _diagnostics.ReportCantMakeInstanceOfAbstractClass(syntax.Type.Location, syntax.Type.Text);
                 return new BoundErrorExpression();
             }
 
@@ -867,8 +1130,7 @@ namespace ReCT.CodeAnalysis.Binding
             var name = syntax.IdentifierToken.Text;
             if (syntax.IdentifierToken.IsMissing)
             {
-                // This means the token was inserted by the parser. We already
-                // reported error so we can just return an error expression.
+                // This means the token was inserted by the parser. It already reported so it can just return an error expression.
                 return new BoundErrorExpression();
             }
 
@@ -885,142 +1147,173 @@ namespace ReCT.CodeAnalysis.Binding
             return new BoundVariableExpression(variable);
         }
 
-        // TODO: Fix this RedCube, tf is this?? // refactoring VERY MUCH needed
         private BoundExpression BindObjectAccessExpression(ObjectAccessExpression syntax)
         {
-            FunctionSymbol function = null;
-            BoundCallExpression typeCall = null;
-            ImmutableArray<BoundExpression> arguments = new ImmutableArray<BoundExpression>();
-            VariableSymbol property = null;
-            TypeSymbol type = TypeSymbol.Any;
-            BoundExpression value = null;
-            Package.Package package = null;
-            BoundExpression Expression = null;
-            ClassSymbol staticClass = null;
-
             if (syntax.Expression != null)
             {
-                Expression = BindExpression(syntax.Expression);
-                goto SKIP1; //noo redcube gotos just make it messier
-            }
-
-            if (syntax.IdentifierToken.Text == "Main")
-            {
-                staticClass = new ClassSymbol("Main", null , true);
-                staticClass.Scope = new BoundScope(null);
-                goto SKIP1;
+                return BindExpressionAccessExpression(syntax);
             }
 
             if (syntax.IdentifierToken.Text == null)
             {
+                //if its not an expression and still null we dont have any value to access
                 _diagnostics.ReportUndefinedVariable(syntax.IdentifierToken.Location, syntax.IdentifierToken.Text);
                 return new BoundErrorExpression();
             }
-
-            staticClass = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
-
-            if (syntax.Package != null)
-            {
-                package = _packageNamespaces.FirstOrDefault(x => x.name == syntax.Package.Text);
-
-                if (package == null)
-                    goto SKIP0;
-
-                staticClass = package.scope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
-            }
-
-            SKIP0:
-
-            if (syntax.Package == null && staticClass == null)
-            {
-                foreach (string s in _usingPackages)
-                {
-                    package = _packageNamespaces.FirstOrDefault(x => x.scope.TryLookupSymbol(syntax.IdentifierToken.Text) != null);
-                    if (package == null) continue;
-
-                    //var sym = package.scope.TryLookupSymbol(syntax.IdentifierToken.Text);
-
-                }
-
-                if (package == null) goto SKIP1;
-
-                staticClass = package.scope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
-            }
-
-            SKIP1:
-
-            VariableSymbol variable = null;
-            ClassSymbol _class = null;
-
-            if (staticClass == null)
-            {
-                if (syntax.Expression == null)
-                {
-                    variable = BindVariableReference(syntax.IdentifierToken);
-
-                    if (variable == null)
-                    {
-                        _diagnostics.ReportUndefinedVariable(syntax.IdentifierToken.Location,
-                            syntax.IdentifierToken.Text);
-                        return new BoundErrorExpression();
-                    }
-
-                    if (!variable.Type.isClass || variable.Type.isClassArray)
-                    {
-                        typeCall = (BoundCallExpression) BindCallExpression(syntax.Call, true);
-                        type = typeCall.Type;
-                        return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property,
-                            type, value, package, _class, typeCall, Expression);
-                    }
-                    
-                    _class = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == variable.Type.Name);
-                }
-                else
-                {
-                    variable = new LocalVariableSymbol("", true, Expression.Type);
-                    
-                    if (!Expression.Type.isClass)
-                    {
-                        typeCall = (BoundCallExpression) BindCallExpression(syntax.Call);
-                        type = typeCall.Type;
-                        return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property,
-                            type, value, package, _class, typeCall, Expression);
-                    }
-
-                    _class = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == Expression.Type.Name);
-                }
-            }
             else
-                _class = staticClass;
-
-            if (_class == null)
             {
-                _class = _packageNamespaces.SelectMany(x => x.scope.GetDeclaredClasses()).FirstOrDefault(x => x.Name == variable.Type.Name);
+                var staticClass = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
+                if (staticClass != null) return BindAccessExpressionSuffix(syntax, new BoundObjectAccessExpression(null, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, null, staticClass, null, null, null), null, staticClass, null);
+                Package.Package package = null;
 
-                if (_class != null)
-                    package = _packageNamespaces.FirstOrDefault(x => x.scope.TryLookupSymbol(_class.Name) != null);
+                // if accessing from a package look for the package
+                if (syntax.Package != null)
+                {
+                    package = _packageNamespaces.FirstOrDefault(x => x.name == syntax.Package.Text);
+
+                    if(package == null && _packageAliases.ContainsKey(syntax.Package.Text))
+                        package = _packageNamespaces.FirstOrDefault(x => x.name == _packageAliases[syntax.Package.Text]);
+
+                    // if its found load the class / if not class is null
+                    if (package != null)
+                        staticClass = package.scope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
+                }
+
+                if (staticClass != null) return BindAccessExpressionSuffix(syntax, new BoundObjectAccessExpression(null, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, package, staticClass, null, null, null), null, staticClass, package);
             }
 
-            if (_class == null)
+            // check used packages and see if the class can be found there
+            ClassSymbol sClass = null;
+            Package.Package pkg = null;
+
+            foreach (string s in _usingPackages)
             {
-                _diagnostics.ReportCustomeMessage("Requested class was null!");
-                return new BoundErrorExpression();
+                pkg = _packageNamespaces.FirstOrDefault(x => x.scope.TryLookupSymbol(syntax.IdentifierToken.Text) != null);
+
+                if(pkg == null && _packageAliases.ContainsKey(s))
+                        pkg = _packageNamespaces.FirstOrDefault(x => x.name == _packageAliases[s]);
+
+                if (pkg != null) break;
+            }
+
+            // if the package exists look for the class
+            if (pkg != null)
+                    sClass = pkg.scope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
+
+            // if class found return
+            if (sClass != null) return BindAccessExpressionSuffix(syntax, new BoundObjectAccessExpression(null, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, pkg, sClass, null, null, null), null, sClass, pkg);
+
+
+            // check if enum with that name exists
+            var _enum = ParentScope.GetDeclaredEnums().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
+            if (_enum != null)
+            {
+                var bac = new BoundObjectAccessExpression(null, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, null, null, null, null, null);
+                bac.Enum = _enum;
+                return BindAccessExpressionSuffix(syntax, bac, null, null, null);
+            }
+
+            VariableSymbol variable = BindVariableReference(syntax.IdentifierToken);
+
+            if (variable != null)
+                return BindVariableAccessExpression(syntax, variable);
+
+            _diagnostics.ReportUnknownAccessSource(syntax.Location);
+            return new BoundErrorExpression();
+        }
+
+        private BoundExpression BindExpressionAccessExpression(ObjectAccessExpression syntax)
+        {
+            var exp = BindExpression(syntax.Expression);
+            return BindAccessExpressionSuffix(syntax, new BoundObjectAccessExpression(null, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, null, null, null, exp,exp.Type), exp.Type, exp.Type.isClass ? TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == exp.Type.Name).Key : null, null);
+        }
+
+        private BoundExpression BindVariableAccessExpression(ObjectAccessExpression syntax, VariableSymbol variable)
+        {
+            return BindAccessExpressionSuffix(syntax, new BoundObjectAccessExpression(variable, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, null, null, null, null, variable.Type),  variable.Type, variable.Type.isClass ? TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == variable.Type.Name).Key : null, null);
+        }
+
+        private BoundExpression BindAccessExpressionSuffix(ObjectAccessExpression syntax, BoundObjectAccessExpression bac, TypeSymbol type, ClassSymbol classsym, Package.Package package)
+        {
+            if (classsym == null && bac.Enum == null)
+            {
+                if (type == null)
+                {
+                    _diagnostics.ReportClassSymbolNotFound(syntax.Location);
+                    return new BoundErrorExpression();
+                }
+                else if (type.isClass)
+                {
+                    _diagnostics.ReportClassSymbolNotFound(syntax.Location);
+                    return new BoundErrorExpression();
+                }
+            }
+
+            // check if the value requested is an Enum
+            if (bac.Enum != null)
+            {
+                if (syntax.Type != ObjectAccessExpression.AccessType.Get)
+                {
+                    _diagnostics.ReportCanOnlyGetFromEnum(syntax.Location, bac.Enum.Name, syntax.Type.ToString());
+                    return new BoundErrorExpression();
+                }
+
+                var enumEntry = bac.Enum.Values.FirstOrDefault(x => x.Key == syntax.LookingFor.Text).Key;
+
+                if (enumEntry == null)
+                {
+                    _diagnostics.ReportEnumMemberNotFound(syntax.Location, bac.Enum.Name, syntax.LookingFor.Text);
+                    return new BoundErrorExpression();
+                }
+
+                var enumTypesymbol = TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == bac.Enum.Name).Value;
+
+                if (enumTypesymbol == null)
+                {
+                    _diagnostics.ReportCustomeMessage($"Couldnt find Typesymbol for Enum '{bac.Enum.Name}' (if you see this error message, something went wrong pretty badly internally. Please file a bug report)");
+                    return new BoundErrorExpression();
+                }
+
+                bac.EnumMember = enumEntry;
+                bac._type = enumTypesymbol;
+
+                return bac;
+            }
+
+            bac.Class = classsym;
+
+            if (type != null)
+            if (!type.isClass || type.isClassArray)
+            {
+                var typeCall = BindTypeCallExpression(syntax, syntax.Call, type);
+
+                if (typeCall is BoundErrorExpression)
+                {
+                    _diagnostics.ReportTypefunctionNotFound(syntax.Location, syntax.Call.Identifier.Text, type.Name);
+                    return new BoundErrorExpression();
+                }
+
+                type = typeCall.Type;
+                bac._type = type; 
+                bac.TypeCall = (BoundTypeCallExpression)typeCall;
+                return bac;
             }
 
             if (syntax.Type == ObjectAccessExpression.AccessType.Call)
             {
-                Symbol symbol = _class.Scope.TryLookupSymbol(syntax.Call.Identifier.Text);
-
-                if (_class.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.Call.Identifier.Text);
+                Symbol symbol = classsym.Scope.TryLookupSymbol(syntax.Call.Identifier.Text, true);
+                if (classsym.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.Call.Identifier.Text);
 
                 if (symbol == null || !(symbol is FunctionSymbol))
                 {
-                    _diagnostics.ReportFunctionNotFoundInObject(syntax.Call.Location, syntax.Call.Identifier.Text, _class.Name);
+                    _diagnostics.ReportFunctionNotFoundInObject(syntax.Call.Location, syntax.Call.Identifier.Text, classsym.Name);
                     return new BoundErrorExpression();
                 }
 
-                function = symbol as FunctionSymbol;
-                type = function.Type;
+                var function = symbol as FunctionSymbol;
+                var rtype = function.Type;
+
+                Console.WriteLine(function.Name);
 
                 var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
 
@@ -1030,58 +1323,121 @@ namespace ReCT.CodeAnalysis.Binding
                     boundArguments.Add(boundArgument);
                 }
 
-                arguments = boundArguments.ToImmutable();
+                var arguments = boundArguments.ToImmutable();
 
                 if (function.Parameters.Length != boundArguments.Count)
                 {
-                    _diagnostics.ReportFunctionInObjectHasDifferentParams(syntax.Call.Location, syntax.Call.Identifier.Text, _class.Name, boundArguments.Count);
+                    _diagnostics.ReportFunctionInObjectHasDifferentParams(syntax.Call.Location, syntax.Call.Identifier.Text, classsym.Name, boundArguments.Count);
                     return new BoundErrorExpression();
                 }
+
+                bac.Function = function;
+                bac._type = rtype;
+                bac.Arguments = arguments;
+                return bac;
             }
 
             if (syntax.Type == ObjectAccessExpression.AccessType.Get)
             {
-                var symbol = _class.Scope.TryLookupSymbol(syntax.LookingFor.Text);
-                if (_class.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.LookingFor.Text);
+                var symbol = classsym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
+                if (classsym.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.LookingFor.Text);
 
                 if (symbol == null || !(symbol is VariableSymbol))
                 {
-                    _diagnostics.ReportVariableNotFoundInObject(syntax.LookingFor.Location, syntax.LookingFor.Text, _class.Name);
+                    _diagnostics.ReportVariableNotFoundInObject(syntax.LookingFor.Location, syntax.LookingFor.Text, classsym.Name);
                     return new BoundErrorExpression();
                 }
 
-                property = symbol as VariableSymbol;
-                type = property.Type;
+                var property = symbol as VariableSymbol;
+                var rtype = property.Type;
+
+                bac.Property = property;
+                bac._type = rtype;
+                return bac;
             }
 
             if (syntax.Type == ObjectAccessExpression.AccessType.Set)
             {
-                var symbol = _class.Scope.TryLookupSymbol(syntax.LookingFor.Text);
-                if (_class.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.LookingFor.Text);
+                var symbol = classsym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
+                if (classsym.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.LookingFor.Text);
 
                 if (symbol == null || !(symbol is VariableSymbol))
                 {
-                    _diagnostics.ReportVariableNotFoundInObject(syntax.LookingFor.Location, syntax.LookingFor.Text, _class.Name);
+                    _diagnostics.ReportVariableNotFoundInObject(syntax.LookingFor.Location, syntax.LookingFor.Text, classsym.Name);
                     return new BoundErrorExpression();
                 }
 
-                property = symbol as VariableSymbol;
-                type = property.Type;
-                value = BindExpression(syntax.Value);
-                value = BindConversion(syntax.Value.Location, value, type);
-                type = TypeSymbol.Void;
+                bac.Property = symbol as VariableSymbol;
+                var value = BindExpression(syntax.Value);
+                bac.Value = BindConversion(syntax.Value.Location, value, bac.Property.Type);
+                bac._type = TypeSymbol.Void;
+                
+                return bac;
             }
 
-            return new BoundObjectAccessExpression(variable, syntax.Type, function, arguments, property, type, value, package, _class, typeCall, Expression);
+            return bac;
+        }
+
+         private BoundExpression BindTernaryExpression(TernaryExpressionSyntax syntax)
+        {
+            var condition = BindExpression(syntax.Condition);
+            var left = BindExpression(syntax.Left);
+            var right = BindExpression(syntax.Right);
+
+            if (condition is BoundErrorExpression || left is BoundErrorExpression || right is BoundErrorExpression)
+                return new BoundErrorExpression();
+
+            if (condition.Type != TypeSymbol.Bool)
+            {
+                _diagnostics.ReportWrongConditionType(syntax.Condition.Location, condition.Type.Name);
+                return new BoundErrorExpression();
+            }
+
+            if (left.Type != right.Type)
+            {
+                _diagnostics.ReportTernaryLeftAndRightTypesDontMatch(syntax.Location, left.Type.Name, right.Type.Name);
+                return new BoundErrorExpression();
+            }
+
+            return new BoundTernaryExpression(condition, left, right);
         }
 
         private BoundExpression BindArrayCreationExpression(ArrayCreationSyntax syntax)
         {
             var type = LookupType(syntax.Type.Text);
             var length = BindExpressionInternal(syntax.Length);
+
+            if (length is BoundErrorExpression)
+            {
+                _diagnostics.ReportUnknownArrayLength(syntax.Length.Location);
+                return new BoundErrorExpression();
+            }
+
             var arrType = TypeToArray(type);
 
             return new BoundArrayCreationExpression(type, length, arrType);
+        }
+
+        private BoundExpression BindArrayLiteralExpression(ArrayLiteralExpressionSyntax syntax)
+        {
+            var type = LookupType(syntax.Type.Text);
+            var arrType = TypeToArray(type);
+
+            List<BoundExpression> values = new List<BoundExpression>();
+
+            foreach(var exp in syntax.Values)
+            {
+                var boundExp = BindExpression(exp);
+                values.Add(boundExp);
+
+                if (boundExp.Type != type)
+                {
+                    _diagnostics.ReportElementTypeDoesNotMatchArrayType(exp.Location, boundExp.Type.Name, type.Name);
+                    return new BoundErrorExpression();
+                }
+            }
+
+            return new BoundArrayLiteralExpression(type, arrType, values.ToArray());
         }
 
         private BoundExpression BindAssignmentExpression(AssignmentExpressionSyntax syntax)
@@ -1183,28 +1539,61 @@ namespace ReCT.CodeAnalysis.Binding
                 return new BoundErrorExpression();
             }
 
+            if (function.Parameters.Length > 0)
+            {
+                _diagnostics.ReportCantThreadFunctionWithArgs(syntax.Identifier.Location, syntax.Identifier.Text);
+                return new BoundErrorExpression();
+            }
+
             return new BoundThreadCreateExpression(function);
         }
 
-        private BoundExpression BindCallExpression(CallExpressionSyntax syntax, bool objectAccess = false)
+        private BoundExpression BindActionCreateExpression(ActionCreationSyntax syntax)
+        {
+            var symbol = _scope.TryLookupSymbol(syntax.Identifier.Text);
+
+            if (symbol == null)
+            {
+                _diagnostics.ReportUndefinedFunction(syntax.Identifier.Location, syntax.Identifier.Text);
+                return new BoundErrorExpression();
+            }
+
+            var function = symbol as FunctionSymbol;
+            if (function == null)
+            {
+                _diagnostics.ReportNotAFunction(syntax.Identifier.Location, syntax.Identifier.Text);
+                return new BoundErrorExpression();
+            }
+
+            if (function.Parameters.Length > 0)
+            {
+                _diagnostics.ReportCantActionFunctionWithArgs(syntax.Identifier.Location, syntax.Identifier.Text);
+                return new BoundErrorExpression();
+            }
+
+            return new BoundActionCreateExpression(function);
+        }
+
+        private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
         {
             if (syntax == null)
             {
-                _diagnostics.ReportCustomeMessage("Call syntax was null (maybe wrong params?)");
+                _diagnostics.ReportCustomeMessage("Call syntax was null (this message should never be shown. if it was please file a bug report)");
                 return new BoundErrorExpression();
             }
 
             var _symbol = _scope.TryLookupSymbol(syntax.Identifier.Text);
-
-            if (syntax.Identifier.Text == "Write" && !objectAccess)
-                _symbol = null;
             
             if (_symbol == null)
             {
                 foreach (string s in _usingPackages)
                 {
-                    var pack = _packageNamespaces.FirstOrDefault(x => x.name == s);
-                    if (pack != null && pack.scope.TryLookupSymbol(syntax.Identifier.Text) != null)
+                    var pkg = _packageNamespaces.FirstOrDefault(x => x.name == s);
+
+                    if(pkg == null && _packageAliases.ContainsKey(s))
+                        pkg = _packageNamespaces.FirstOrDefault(x => x.name == _packageAliases[s]);
+
+                    if (pkg != null && pkg.scope.TryLookupSymbol(syntax.Identifier.Text) != null)
                     {
                         syntax.Namespace = s;
                         break;
@@ -1212,22 +1601,17 @@ namespace ReCT.CodeAnalysis.Binding
                 }
             }
 
+            Package.Package pack = null;
+
             if (syntax.Namespace != "")
             {
-                bool found = false;
+                pack = _packageNamespaces.FirstOrDefault(x => x.name == syntax.Namespace);
+                if (pack == null && _packageAliases.ContainsKey(syntax.Namespace))
+                    pack = _packageNamespaces.FirstOrDefault(x => x.name == _packageAliases[syntax.Namespace]);
+                
 
-                foreach (Package.Package p in _packageNamespaces)
+                if (pack == null)
                 {
-                    if (p.name == syntax.Namespace)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found)
-                {
-                    Console.WriteLine("namespace not found!");
                     _diagnostics.ReportNamespaceNotFound(syntax.Location, syntax.Namespace);
                     return new BoundErrorExpression();
                 }
@@ -1245,7 +1629,7 @@ namespace ReCT.CodeAnalysis.Binding
                 boundArguments.Add(boundArgument);
             }
 
-            var symbol = (syntax.Namespace == "" ? _scope : _packageNamespaces.FirstOrDefault(x => x.name == syntax.Namespace).scope).TryLookupSymbol(syntax.Identifier.Text);
+            var symbol = (syntax.Namespace == "" ? _scope : pack.scope).TryLookupSymbol(syntax.Identifier.Text);
             if (symbol == null)
             {
                 _diagnostics.ReportUndefinedFunction(syntax.Identifier.Location, syntax.Identifier.Text);
@@ -1302,6 +1686,74 @@ namespace ReCT.CodeAnalysis.Binding
             return new BoundCallExpression(function, boundArguments.ToImmutable(), syntax.Namespace);
         }
 
+        private BoundExpression BindTypeCallExpression(ObjectAccessExpression stmt, CallExpressionSyntax syntax, TypeSymbol etype)
+        {
+            if (syntax == null)
+            {
+                _diagnostics.ReportCustomeMessage("Call syntax was null (this message should never be shown. if it was please file a bug report)");
+                return new BoundErrorExpression();
+            }
+
+            var tfSyms = BuiltinFunctions.GetAllTypeFunctions().Where(x => x.Name == syntax.Identifier.Text).ToList();
+            var tfsym = tfSyms.FirstOrDefault(x => x.Childtype == etype);
+
+            if (tfsym == null && etype.isArray)
+            {
+                tfsym = tfSyms.FirstOrDefault(x => x.Childtype == TypeSymbol.AnyArr);
+            }
+
+            if (tfsym == null)
+            {
+                //should already be reported in BindAccessExpressionSuffix
+                //_diagnostics.ReportTypefunctionNotFound(syntax.Location, syntax.Identifier.Text, etype.Name);
+                return new BoundErrorExpression();
+            }
+
+            if (syntax.Arguments.Count == 1 && LookupType(syntax.Identifier.Text) is TypeSymbol type)
+                return BindConversion(syntax.Arguments[0], type, allowExplicit: true);
+
+            var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
+
+            foreach (var argument in syntax.Arguments)
+            {
+                var boundArgument = BindExpression(argument);
+                boundArguments.Add(boundArgument);
+            }
+
+            if (syntax.Arguments.Count != tfsym.Parameters.Length)
+            {
+                TextSpan span;
+                if (syntax.Arguments.Count > tfsym.Parameters.Length)
+                {
+                    SyntaxNode firstExceedingNode;
+                    if (tfsym.Parameters.Length > 0)
+                        firstExceedingNode = syntax.Arguments.GetSeparator(tfsym.Parameters.Length - 1);
+                    else
+                        firstExceedingNode = syntax.Arguments[0];
+                    var lastExceedingArgument = syntax.Arguments[syntax.Arguments.Count - 1];
+                    span = TextSpan.FromBounds(firstExceedingNode.Span.Start, lastExceedingArgument.Span.End);
+                }
+                else
+                {
+                    span = syntax.CloseParenthesisToken.Span;
+                }
+                var location = new TextLocation(syntax.SyntaxTree.Text, span);
+                _diagnostics.ReportWrongArgumentCount(location, tfsym.Name, tfsym.Parameters.Length, syntax.Arguments.Count);
+                return new BoundErrorExpression();
+            }
+
+            for (var i = 0; i < syntax.Arguments.Count; i++)
+            {
+                var argumentLocation = syntax.Arguments[i].Location;
+                var argument = boundArguments[i];
+                var parameter = tfsym.Parameters[i];
+                boundArguments[i] = BindConversion(argumentLocation, argument, parameter.Type);
+            }
+
+            // resolve array type if TypeSymbol.ArrBase was used
+            return new BoundTypeCallExpression(tfsym, boundArguments.ToImmutable(), syntax.Namespace, tfsym.Type == TypeSymbol.ArrBase ? ArrayToType(etype) : tfsym.Type);
+        }
+
         private BoundExpression BindConversion(ExpressionSyntax syntax, TypeSymbol type, bool allowExplicit = false)
         {
             var expression = BindExpression(syntax);
@@ -1331,17 +1783,25 @@ namespace ReCT.CodeAnalysis.Binding
             return new BoundConversionExpression(type, expression);
         }
 
-        private VariableSymbol BindVariableDeclaration(SyntaxToken identifier, bool isReadOnly, TypeSymbol type, SyntaxKind syntax)
+        private VariableSymbol BindVariableDeclaration(SyntaxToken identifier, bool isReadOnly, TypeSymbol type, SyntaxKind syntax, bool isVirtual)
         {
             var name = identifier.Text ?? "?";
             var declare = !identifier.IsMissing;
             var variable = syntax == SyntaxKind.SetKeyword
-                                ? (VariableSymbol)new GlobalVariableSymbol(name, isReadOnly, type)
+                                ? isVirtual 
+                                    ? (VariableSymbol)new FunctionalVariableSymbol(name, isReadOnly, type, isVirtual)
+                                    : (VariableSymbol)new GlobalVariableSymbol(name, isReadOnly, type)
                                 : new LocalVariableSymbol(name, isReadOnly, type);
 
             //Console.WriteLine($"VAR: {name} | {declare} | {variable} | {(variable.IsGlobal ? getClassScope() : _scope).Name}");
 
-            if (declare && variable.IsGlobal ? !getClassScope().TryDeclareVariable(variable) : !_scope.TryDeclareVariable(variable))
+            if (inClass == null && isVirtual)
+                _diagnostics.ReportVirtualVarInMain(identifier.Location);
+
+            if (inClass != null && !inClass.IsAbstract && isVirtual)
+                _diagnostics.ReportCantUseVirtVarInNormalClass(identifier.Location);
+
+            if (declare &&  variable.IsGlobal ? !getClassScope().TryDeclareVariable(variable) : !_scope.TryDeclareVariable(variable))
                 _diagnostics.ReportSymbolAlreadyDeclared(identifier.Location, name);
 
             return variable;
@@ -1390,6 +1850,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.Float;
                 case "thread":
                     return TypeSymbol.Thread;
+                case "action":
+                    return TypeSymbol.Action;
 
                 case "anyArr":
                     return TypeSymbol.AnyArr;
@@ -1405,6 +1867,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.FloatArr;
                 case "threadArr":
                     return TypeSymbol.ThreadArr;
+                case "actionArr":
+                    return TypeSymbol.ActionArr;
                 default:
                     if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
                     return TypeSymbol.Class.Values.FirstOrDefault(x => x.Name == name);;
@@ -1429,6 +1893,8 @@ namespace ReCT.CodeAnalysis.Binding
                 return TypeSymbol.FloatArr;
             else if (type == TypeSymbol.Thread)
                 return TypeSymbol.ThreadArr;
+            else if (type == TypeSymbol.Action)
+                return TypeSymbol.ActionArr;
             else if (type.isClass)
                 return TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == type.Name + "Arr").Value;
 
@@ -1450,6 +1916,8 @@ namespace ReCT.CodeAnalysis.Binding
                 return TypeSymbol.Float;
             else if (type == TypeSymbol.ThreadArr)
                 return TypeSymbol.Thread;
+            else if (type == TypeSymbol.ActionArr)
+                return TypeSymbol.Action;
             else if (type.isClass)
                 return TypeSymbol.Class.FirstOrDefault(x => x.Key.Name == type.Name.Substring(0, type.Name.Length - 3)).Value;
 

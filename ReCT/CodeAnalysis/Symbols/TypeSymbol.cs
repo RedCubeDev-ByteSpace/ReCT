@@ -13,6 +13,7 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly TypeSymbol Void = new TypeSymbol("void");
         public static readonly TypeSymbol Float = new TypeSymbol("float");
         public static readonly TypeSymbol Thread = new TypeSymbol("thread");
+        public static readonly TypeSymbol Action = new TypeSymbol("action");
 
         //arrays
         public static readonly TypeSymbol AnyArr = new TypeSymbol("anyArr", true);
@@ -22,6 +23,10 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly TypeSymbol StringArr = new TypeSymbol("stringArr", true);
         public static readonly TypeSymbol FloatArr = new TypeSymbol("floatArr", true);
         public static readonly TypeSymbol ThreadArr = new TypeSymbol("threadArr", true);
+        public static readonly TypeSymbol ActionArr = new TypeSymbol("actionArr", true);
+
+        //special control typesymbol
+        public static readonly TypeSymbol ArrBase = new TypeSymbol("arrbase");
 
         public static Dictionary<ClassSymbol, TypeSymbol> Class;
         public static Dictionary<ClassSymbol, TypeSymbol> ClassArrays;
@@ -32,6 +37,9 @@ namespace ReCT.CodeAnalysis.Symbols
             isArray = array;
         }
 
+        public EnumSymbol enumSymbol;
+        public bool isEnum;
+        public bool isFunc;
         public bool isClass;
         public bool isClassArray;
         public bool isArray;
