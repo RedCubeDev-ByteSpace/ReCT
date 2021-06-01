@@ -452,6 +452,7 @@ namespace ReCT.CodeAnalysis.Binding
         {
             foreach (MemberSyntax m in syntax.Members)
             {
+                
                 if (m is FunctionDeclarationSyntax fsyntax)
                 {
                     if (!_class.IsAbstract && fsyntax.IsVirtual)
