@@ -534,7 +534,7 @@ namespace ReCT.CodeAnalysis.Binding
                         }
                     }
 
-                    var function = new FunctionSymbol(fsyntax.Identifier.Text, parameters.ToImmutable(), type, fsyntax, fsyntax.IsPublic, isVirtual: fsyntax.IsVirtual);
+                    var function = new FunctionSymbol(fsyntax.Identifier.Text, parameters.ToImmutable(), type, fsyntax, fsyntax.IsPublic, isVirtual: fsyntax.IsVirtual, isOverride: fsyntax.IsOverride);
                     if (function.Declaration.Identifier.Text != null &&
                         !_class.Scope.TryDeclareFunction(function))
                     {
@@ -795,12 +795,12 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (syntax.Initializer == null)
             {
-                return new BoundVariableDeclaration(BindVariableDeclaration(syntax.Identifier, isReadOnly, type ?? TypeSymbol.Any, syntax.Keyword.Kind, syntax.IsVirtual), null);
+                return new BoundVariableDeclaration(BindVariableDeclaration(syntax.Identifier, isReadOnly, type ?? TypeSymbol.Any, syntax.Keyword.Kind, syntax.IsVirtual, syntax.IsOverride), null);
             }
 
             var initializer = BindExpression(syntax.Initializer);
             var variableType = type ?? initializer.Type;
-            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly, variableType, syntax.Keyword.Kind, syntax.IsVirtual);
+            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly, variableType, syntax.Keyword.Kind, syntax.IsVirtual, syntax.IsOverride);
             var convertedInitializer = BindConversion(syntax.Initializer.Location, initializer, syntax.ExternalType == null ? variableType : syntax.ExternalType);
 
             return new BoundVariableDeclaration(variable, convertedInitializer);
@@ -918,7 +918,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             _scope = new BoundScope(_scope);
 
-            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly: true, TypeSymbol.Int, syntax.Keyword.Kind, false);
+            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly: true, TypeSymbol.Int, syntax.Keyword.Kind, false, false);
             var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
 
             _scope = _scope.Parent;
@@ -1160,17 +1160,33 @@ namespace ReCT.CodeAnalysis.Binding
                 return new BoundErrorExpression();
             }
 
-            var variable = BindVariableReference(syntax.IdentifierToken);
+            ClassSymbol _class = null;
+            var variable = BindVariableReference(syntax.IdentifierToken, true);
+            if (variable == null && inClass != null && inClass.ParentSym != null)
+            {
+                var baseVar = inClass.ParentSym.Scope.TryLookupSymbol(syntax.IdentifierToken.Text);
+                if (baseVar != null && baseVar is VariableSymbol v)
+                    variable = v;
+
+                _class = inClass.ParentSym;
+            }
+
             if (variable == null)
+            {
+                _diagnostics.ReportUndefinedVariable(syntax.IdentifierToken.Location, syntax.IdentifierToken.Text);
                 return new BoundErrorExpression();
+            }
+
+            if (variable.IsFunctional && inClass != null && inClass.ParentSym != null)
+                _class = inClass.ParentSym;
 
             if (syntax.isArray)
             {
                 var index = BindExpressionInternal(syntax.Index);
-                return new BoundVariableExpression(variable, index, ArrayToType(variable.Type));
+                return new BoundVariableExpression(variable, index, ArrayToType(variable.Type), _class);
             }
 
-            return new BoundVariableExpression(variable);
+            return new BoundVariableExpression(variable, _class);
         }
 
         private BoundExpression BindObjectAccessExpression(ObjectAccessExpression syntax)
@@ -1485,9 +1501,25 @@ namespace ReCT.CodeAnalysis.Binding
             var name = syntax.IdentifierToken.Text;
             var boundExpression = BindExpression(syntax.Expression);
 
-            var variable = BindVariableReference(syntax.IdentifierToken);
+            ClassSymbol _class = null;
+            var variable = BindVariableReference(syntax.IdentifierToken, true);
+            if (variable == null && inClass != null && inClass.ParentSym != null)
+            {
+                var baseVar = inClass.ParentSym.Scope.TryLookupSymbol(syntax.IdentifierToken.Text);
+                if (baseVar != null && baseVar is VariableSymbol v)
+                    variable = v;
+
+                _class = inClass.ParentSym;
+            }
+
             if (variable == null)
-                return boundExpression;
+            {
+                _diagnostics.ReportUndefinedVariable(syntax.IdentifierToken.Location, syntax.IdentifierToken.Text);
+                return new BoundErrorExpression();
+            }
+
+            if (variable.IsFunctional && inClass != null && inClass.ParentSym != null)
+                _class = inClass.ParentSym;
 
             if (variable.IsReadOnly)
                 _diagnostics.ReportCannotAssign(syntax.EqualsToken.Location, name);
@@ -1496,12 +1528,12 @@ namespace ReCT.CodeAnalysis.Binding
             {
                 var cExpression = BindConversion(syntax.Expression.Location, boundExpression, ArrayToType(variable.Type));
                 var boundIndex = BindExpression(syntax.Index);
-                return new BoundAssignmentExpression(variable, cExpression, boundIndex);
+                return new BoundAssignmentExpression(variable, cExpression, boundIndex, _class);
             }
 
             var convertedExpression = BindConversion(syntax.Expression.Location, boundExpression, variable.Type);
 
-            return new BoundAssignmentExpression(variable, convertedExpression);
+            return new BoundAssignmentExpression(variable, convertedExpression, _class);
         }
 
         private BoundExpression BindUnaryExpression(UnaryExpressionSyntax syntax)
@@ -1670,6 +1702,19 @@ namespace ReCT.CodeAnalysis.Binding
             }
 
             var symbol = (syntax.Namespace == "" ? _scope : pack.scope).TryLookupSymbol(syntax.Identifier.Text);
+            ClassSymbol _class = null;
+            if (symbol == null && inClass != null && inClass.ParentSym != null)
+            {
+                var baseFunc = inClass.ParentSym.Scope.TryLookupSymbol(syntax.Identifier.Text);
+
+                if (baseFunc != null && baseFunc is FunctionSymbol)
+                {
+                    symbol = baseFunc;
+                }
+
+                _class = inClass.ParentSym;
+            }
+
             if (symbol == null)
             {
                 _diagnostics.ReportUndefinedFunction(syntax.Identifier.Location, syntax.Identifier.Text);
@@ -1681,6 +1726,16 @@ namespace ReCT.CodeAnalysis.Binding
             {
                 _diagnostics.ReportNotAFunction(syntax.Identifier.Location, syntax.Identifier.Text);
                 return new BoundErrorExpression();
+            }
+
+            if ((function.IsOverride || function.IsVirtual )&& inClass != null && inClass.ParentSym != null)
+            {
+                _class = inClass.ParentSym;
+            }
+
+            if ((function.IsOverride || function.IsVirtual )&& inClass != null && inClass.IsAbstract)
+            {
+                _class = inClass;
             }
 
             if (syntax.Arguments.Count != function.Parameters.Length)
@@ -1723,7 +1778,13 @@ namespace ReCT.CodeAnalysis.Binding
             }
             catch {_diagnostics.ReportCustomeMessage($"Parameter binding crashed on function {syntax.Identifier.Text}!"); return new BoundErrorExpression(); }
 
-            return new BoundCallExpression(function, boundArguments.ToImmutable(), syntax.Namespace);
+            // Console.WriteLine("fnc: " + function.Name);
+            // Console.WriteLine("ovr: " + function.IsOverride);
+            // Console.WriteLine("virt: " + function.IsVirtual);
+            // Console.WriteLine("inClass: " + inClass);
+            // Console.WriteLine("parent: " + inClass.ParentSym);
+
+            return new BoundCallExpression(function, boundArguments.ToImmutable(), syntax.Namespace, _class);
         }
 
         private BoundExpression BindTypeCallExpression(ObjectAccessExpression stmt, CallExpressionSyntax syntax, TypeSymbol etype)
@@ -1823,13 +1884,13 @@ namespace ReCT.CodeAnalysis.Binding
             return new BoundConversionExpression(type, expression);
         }
 
-        private VariableSymbol BindVariableDeclaration(SyntaxToken identifier, bool isReadOnly, TypeSymbol type, SyntaxKind syntax, bool isVirtual)
+        private VariableSymbol BindVariableDeclaration(SyntaxToken identifier, bool isReadOnly, TypeSymbol type, SyntaxKind syntax, bool isVirtual, bool isOverride)
         {
             var name = identifier.Text ?? "?";
             var declare = !identifier.IsMissing;
             var variable = syntax == SyntaxKind.SetKeyword
-                                ? isVirtual 
-                                    ? (VariableSymbol)new FunctionalVariableSymbol(name, isReadOnly, type, isVirtual)
+                                ? isVirtual || isOverride
+                                    ? (VariableSymbol)new FunctionalVariableSymbol(name, isReadOnly, type, isVirtual, isOverride)
                                     : (VariableSymbol)new GlobalVariableSymbol(name, isReadOnly, type)
                                 : new LocalVariableSymbol(name, isReadOnly, type);
 
@@ -1841,13 +1902,27 @@ namespace ReCT.CodeAnalysis.Binding
             if (inClass != null && !inClass.IsAbstract && isVirtual)
                 _diagnostics.ReportCantUseVirtVarInNormalClass(identifier.Location);
 
+            if (inClass == null && isOverride)
+                _diagnostics.ReportOverrideVarInMain(identifier.Location);
+
+            if (inClass != null && inClass.ParentSym == null && isOverride)
+                _diagnostics.ReportCantUseOvrVarInNormalClass(identifier.Location);
+
+            if (inClass != null && inClass.ParentSym != null)
+            {   
+                var sym = inClass.ParentSym.Scope.TryLookupSymbol(identifier.Text);
+
+                if (sym == null || !(sym is VariableSymbol))
+                    _diagnostics.ReportCantFindVarToOverride(identifier.Location, identifier.Text);
+            }
+
             if (declare &&  variable.IsGlobal ? !getClassScope().TryDeclareVariable(variable) : !_scope.TryDeclareVariable(variable))
                 _diagnostics.ReportSymbolAlreadyDeclared(identifier.Location, name);
 
             return variable;
         }
 
-        private VariableSymbol BindVariableReference(SyntaxToken identifierToken)
+        private VariableSymbol BindVariableReference(SyntaxToken identifierToken, bool allowedToFail = false)
         {
             var name = identifierToken.Text;
             object var = _scope.TryLookupSymbol(name);
@@ -1860,11 +1935,13 @@ namespace ReCT.CodeAnalysis.Binding
                     return variable;
 
                 case null:
-                    _diagnostics.ReportUndefinedVariable(identifierToken.Location, name);
+                    if (!allowedToFail)
+                        _diagnostics.ReportUndefinedVariable(identifierToken.Location, name);
                     return null;
 
                 default:
-                    _diagnostics.ReportNotAVariable(identifierToken.Location, name);
+                    if (!allowedToFail)
+                        _diagnostics.ReportNotAVariable(identifierToken.Location, name);
                     return null;
             }
         }

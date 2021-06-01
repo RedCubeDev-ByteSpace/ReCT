@@ -562,6 +562,7 @@ namespace ReCT.CodeAnalysis.Syntax
             prefixes = prefixes ?? new List<SyntaxToken>();
 
             var isVirtual = false;
+            var isOverride = false;
             var expected = Current.Kind == SyntaxKind.SetKeyword ? SyntaxKind.SetKeyword : SyntaxKind.VarKeyword;
             var keyword = MatchToken(expected);
 
@@ -580,6 +581,17 @@ namespace ReCT.CodeAnalysis.Syntax
                         else
                             _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
                         break;
+                    case SyntaxKind.OverrideKeyword:
+                        if (keyword.Kind == SyntaxKind.VarKeyword) {
+                            _diagnostics.ReportLocalVariableCantBeOverride(s.Location);
+                            break;
+                        }
+
+                        if (!isOverride)
+                            isOverride = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
                     default:
                         _diagnostics.ReportMemberCantUseModifier(s.Location, "Variable", s.Text);
                         break;
@@ -594,12 +606,12 @@ namespace ReCT.CodeAnalysis.Syntax
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
 
             if (Current.Kind != SyntaxKind.AssignToken)
-                return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, null, null, null, isVirtual);
+                return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, null, null, null, isVirtual, isOverride);
 
             var equals = MatchToken(SyntaxKind.AssignToken);
             var initializer = ParseExpression();
 
-            return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer, null,isVirtual);
+            return new VariableDeclarationSyntax(_syntaxTree, keyword, identifier, typeClause, equals, initializer, null, isVirtual, isOverride);
         }
 
         private TypeClauseSyntax ParseOptionalTypeClause()

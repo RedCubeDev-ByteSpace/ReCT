@@ -121,7 +121,7 @@ namespace ReCT.CodeAnalysis.Package
                 foreach (var get in varGetters)
                 {
                     bool isReadonly = !varSetters.Keys.Contains(get.Key);
-                    classSymbol.Scope.TryDeclareVariable(new FunctionalVariableSymbol(get.Key, isReadonly, get.Value.Type, false));
+                    classSymbol.Scope.TryDeclareVariable(new FunctionalVariableSymbol(get.Key, isReadonly, get.Value.Type, false, false));
                     //Console.WriteLine("Declaring FunctionalVariable: " + get.Key + "; Readonly: " + isReadonly);
                 }
                 

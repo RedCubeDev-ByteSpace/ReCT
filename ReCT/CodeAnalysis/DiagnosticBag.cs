@@ -514,5 +514,25 @@ namespace ReCT.CodeAnalysis
         {
             Report(location, $"Cant override function '{text}' because its Return-Type doesnt match up with the Return-Type of the one in the Base Class!");
         }
+
+        internal void ReportLocalVariableCantBeOverride(TextLocation location)
+        {
+            Report(location, $"Local Variables cant be Overrides!");
+        }
+
+        internal void ReportOverrideVarInMain(TextLocation location)
+        {
+            Report(location, $"Cant create an Overriding variable in the Main class!");
+        }
+
+        internal void ReportCantUseOvrVarInNormalClass(TextLocation location)
+        {
+            Report(location, $"Cant create Overriding Variable in Non-Inherating Class!");
+        }
+
+        internal void ReportCantFindVarToOverride(TextLocation location, string text)
+        {
+            Report(location, $"Cant create overriding Variable '{text}' because it couldnt be found in the Base Class!");
+        }
     }
 }
