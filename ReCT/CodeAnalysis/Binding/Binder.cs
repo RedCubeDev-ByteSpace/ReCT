@@ -450,8 +450,20 @@ namespace ReCT.CodeAnalysis.Binding
 
         private void BindClassMemberDeclaration(ClassDeclarationSyntax syntax, ClassSymbol _class)
         {
+            inClass = _class;
+            var prevScope = _scope;
+            _scope = _class.Scope;
+            
             foreach (MemberSyntax m in syntax.Members)
             {
+                if (m is GlobalStatementSyntax glsyntax)
+                {
+                    if (glsyntax.Statement is VariableDeclarationSyntax vsyntax)
+                    {
+                        BindVariableDeclaration(vsyntax);
+                    }
+                }
+
                 if (m is FunctionDeclarationSyntax fsyntax)
                 {
                     if (!_class.IsAbstract && fsyntax.IsVirtual)
@@ -542,6 +554,10 @@ namespace ReCT.CodeAnalysis.Binding
                     }
                 }
             }
+
+            _class.Scope = _scope;
+            _scope = prevScope;
+            inClass = null;
 
             //register constructor if not registered
             var constructor = _class.Scope.GetDeclaredFunctions().FirstOrDefault(x => x.Name == "Constructor");
@@ -1398,6 +1414,17 @@ namespace ReCT.CodeAnalysis.Binding
                 var symbol = classsym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
                 if (classsym.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.LookingFor.Text);
 
+                //check if virtual func for it exists
+                if (symbol == null && classsym.ParentSym != null)
+                {
+                    symbol = classsym.ParentSym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
+                    
+                    foreach(var a in classsym.ParentSym.Scope.GetDeclaredVariables())
+                        Console.WriteLine("var: " + a.Name);
+
+                    bac.Class = classsym.ParentSym;
+                }
+
                 if (symbol == null || !(symbol is VariableSymbol))
                 {
                     _diagnostics.ReportVariableNotFoundInObject(syntax.LookingFor.Location, syntax.LookingFor.Text, classsym.Name);
@@ -1416,6 +1443,14 @@ namespace ReCT.CodeAnalysis.Binding
             {
                 var symbol = classsym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
                 if (classsym.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.LookingFor.Text);
+
+                //check if virtual func for it exists
+                if (symbol == null && classsym.ParentSym != null)
+                {
+                    symbol = classsym.ParentSym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
+                    Console.WriteLine("sym: " + symbol);
+                    bac.Class = classsym.ParentSym;
+                }
 
                 if (symbol == null || !(symbol is VariableSymbol))
                 {
