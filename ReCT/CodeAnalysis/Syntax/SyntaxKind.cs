@@ -128,6 +128,8 @@ namespace ReCT.CodeAnalysis.Syntax
         SerializableKeyword,
         VirtualKeyword,
         BaseKeyword,
-        BaseStatement
+        BaseStatement,
+        OverrideKeyword
+        
     }
 }

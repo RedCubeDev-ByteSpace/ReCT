@@ -489,5 +489,15 @@ namespace ReCT.CodeAnalysis
         {
             Report(location, $"Function '{v}' Argument {i} ('{name0}') needs to be of Type '{name1}'! Got '{name2}'!");
         }
+
+        internal void ReportCantUseOvrFuncInNormalClass(TextLocation location)
+        {
+            Report(location, $"Cant use Override in a Non-Inherating Class!");
+        }
+
+        internal void ReportOverridingFunctionsNeedToBePublic(TextLocation location)
+        {
+            Report(location, $"Cant use Override with a Private Function!");
+        }
     }
 }

@@ -162,6 +162,11 @@ namespace ReCT.CodeAnalysis.Syntax
                 return ParseMember(prefixes);
             }
 
+            if (Current.Kind == SyntaxKind.OverrideKeyword) {
+                prefixes.Add(MatchToken(SyntaxKind.OverrideKeyword));
+                return ParseMember(prefixes);
+            }
+
             if (Current.Kind == SyntaxKind.FunctionKeyword)
                 return ParseFunctionDeclaration(prefixes);
 
@@ -181,6 +186,7 @@ namespace ReCT.CodeAnalysis.Syntax
         {
             var isPublic = false;
             var isVirtual = false;
+            var isOverride = false;
 
             foreach(SyntaxToken s in prefixes)
             {
@@ -195,6 +201,12 @@ namespace ReCT.CodeAnalysis.Syntax
                     case SyntaxKind.VirtualKeyword:
                         if (!isVirtual)
                             isVirtual = true;
+                        else
+                            _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
+                        break;
+                    case SyntaxKind.OverrideKeyword:
+                        if (!isOverride)
+                            isOverride = true;
                         else
                             _diagnostics.ReportMemberAlreadyRecieved(s.Location, s.Text);
                         break;
@@ -214,7 +226,7 @@ namespace ReCT.CodeAnalysis.Syntax
             var closeParenthesisToken = MatchToken(SyntaxKind.CloseParenthesisToken);
             var type = ParseOptionalTypeClause();
             var body = ParseBlockStatement();
-            return new FunctionDeclarationSyntax(_syntaxTree, functionKeyword, identifier, openParenthesisToken, parameters, closeParenthesisToken, type, body, isPublic, isVirtual);
+            return new FunctionDeclarationSyntax(_syntaxTree, functionKeyword, identifier, openParenthesisToken, parameters, closeParenthesisToken, type, body, isPublic, isVirtual, isOverride);
         }
 
         private MemberSyntax ParseClassDeclaration(List<SyntaxToken> prefixes)

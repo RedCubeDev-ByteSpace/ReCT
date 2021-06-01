@@ -457,8 +457,14 @@ namespace ReCT.CodeAnalysis.Binding
                     if (!_class.IsAbstract && fsyntax.IsVirtual)
                         _diagnostics.ReportCantUseVirtFuncInNormalClass(syntax.Location);
 
-                        if (fsyntax.IsVirtual && !fsyntax.IsPublic)
+                    if (fsyntax.IsVirtual && !fsyntax.IsPublic)
                         _diagnostics.ReportVirtualFunctionsNeedToBePublic(syntax.Location);
+
+                    if (_class.ParentSym != null && fsyntax.IsOverride)
+                        _diagnostics.ReportCantUseOvrFuncInNormalClass(syntax.Location);
+
+                    if (fsyntax.IsVirtual && !fsyntax.IsPublic)
+                        _diagnostics.ReportOverridingFunctionsNeedToBePublic(syntax.Location);
 
                     var parameters = ImmutableArray.CreateBuilder<ParameterSymbol>();
 
@@ -540,7 +546,7 @@ namespace ReCT.CodeAnalysis.Binding
                     if (gsyntax.Statement is VariableDeclarationSyntax)
                         builder.Add(gsyntax.Statement);
 
-                var dec = new FunctionDeclarationSyntax(null, null, null, null, null, null, null, new BlockStatementSyntax(null, null, builder.ToImmutable(), null), true, false);
+                var dec = new FunctionDeclarationSyntax(null, null, null, null, null, null, null, new BlockStatementSyntax(null, null, builder.ToImmutable(), null), true, false, false);
 
                 var function = new FunctionSymbol("Constructor", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void, dec, true);
                 _class.Scope.TryDeclareFunction(function);

@@ -127,6 +127,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.SerializableKeyword;
                 case "virt":
                     return SyntaxKind.VirtualKeyword;
+                case "ovr":
+                    return SyntaxKind.OverrideKeyword;
                 case "base":
                     return SyntaxKind.BaseKeyword;
                 case "null":
@@ -283,6 +285,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "ser";
                 case SyntaxKind.VirtualKeyword:
                     return "virt";
+                case SyntaxKind.OverrideKeyword:
+                    return "ovr";
                 case SyntaxKind.BaseKeyword:
                     return "base";
                 case SyntaxKind.NullKeyword:
