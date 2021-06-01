@@ -337,7 +337,7 @@ namespace ReCT.CodeAnalysis.Binding
 
             var type = BindTypeClause(syntax.Type) ?? TypeSymbol.Void;
 
-            var function = new FunctionSymbol(syntax.Identifier.Text, parameters.ToImmutable(), type, syntax, syntax.IsPublic, isVirtual: syntax.IsVirtual);
+            var function = new FunctionSymbol(syntax.Identifier.Text, parameters.ToImmutable(), type, syntax, syntax.IsPublic, isVirtual: syntax.IsVirtual, isOverride: syntax.IsOverride);
             if (function.Declaration.Identifier.Text != null &&
                 !_scope.TryDeclareFunction(function))
             {
@@ -452,7 +452,6 @@ namespace ReCT.CodeAnalysis.Binding
         {
             foreach (MemberSyntax m in syntax.Members)
             {
-                
                 if (m is FunctionDeclarationSyntax fsyntax)
                 {
                     if (!_class.IsAbstract && fsyntax.IsVirtual)
@@ -464,8 +463,24 @@ namespace ReCT.CodeAnalysis.Binding
                     if (_class.ParentSym != null && fsyntax.IsOverride)
                         _diagnostics.ReportCantUseOvrFuncInNormalClass(syntax.Location);
 
-                    if (fsyntax.IsVirtual && !fsyntax.IsPublic)
+                    if (fsyntax.IsOverride && !fsyntax.IsPublic)
                         _diagnostics.ReportOverridingFunctionsNeedToBePublic(syntax.Location);
+
+                    FunctionSymbol overriding = null;
+                    if (fsyntax.IsOverride)
+                    {
+                        //look for function its supposed to replace
+                        var replacing = _class.ParentSym.Scope.TryLookupSymbol(fsyntax.Identifier.Text);
+                        if (replacing == null)
+                            _diagnostics.ReportFunctionToOverrideNotFound(syntax.Location, fsyntax.Identifier.Text);
+                        if (!(replacing is FunctionSymbol))
+                            _diagnostics.ReportFunctionToOverrideNotFound(syntax.Location, fsyntax.Identifier.Text);
+
+                        if (fsyntax.Parameters.Count != (replacing as FunctionSymbol).Parameters.Length)
+                            _diagnostics.ReportOverridingFunctionsParametersNeedToBeTheSame(syntax.Location, fsyntax.Identifier.Text);
+                        
+                        overriding = replacing as FunctionSymbol;
+                    }
 
                     var parameters = ImmutableArray.CreateBuilder<ParameterSymbol>();
 
@@ -487,6 +502,10 @@ namespace ReCT.CodeAnalysis.Binding
                     }
 
                     var type = BindTypeClause(fsyntax.Type) ?? TypeSymbol.Void;
+
+                    if (fsyntax.IsOverride)
+                        if (type != overriding.Type)
+                            _diagnostics.ReportOverridingFunctionsTypeNeedsToBeTheSame(syntax.Location, fsyntax.Identifier.Text);
 
                     if (fsyntax.Identifier.Text == "Constructor")
                     {
@@ -1320,7 +1339,14 @@ namespace ReCT.CodeAnalysis.Binding
                 var function = symbol as FunctionSymbol;
                 var rtype = function.Type;
 
-                Console.WriteLine(function.Name);
+                if (function.IsOverride)
+                {
+                    var virtFunction = classsym.ParentSym.Scope.TryLookupSymbol(function.Name);
+                    if (virtFunction == null)
+                        _diagnostics.ReportCustomeMessage("override parent function missing! (this is a serious backend error! if this was displayed to you please file a bug report!)");
+                    
+                    function = virtFunction as FunctionSymbol;
+                }
 
                 var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
 

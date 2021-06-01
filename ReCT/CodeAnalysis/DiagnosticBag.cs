@@ -499,5 +499,20 @@ namespace ReCT.CodeAnalysis
         {
             Report(location, $"Cant use Override with a Private Function!");
         }
+
+        internal void ReportFunctionToOverrideNotFound(TextLocation location, string text)
+        {
+            Report(location, $"Cant override function '{text}' because it wasnt found in the Base Class!");
+        }
+
+        internal void ReportOverridingFunctionsParametersNeedToBeTheSame(TextLocation location, string text)
+        {
+            Report(location, $"Cant override function '{text}' because its Parameters dont match up with the one in the Base Class!");
+        }
+
+        internal void ReportOverridingFunctionsTypeNeedsToBeTheSame(TextLocation location, string text)
+        {
+            Report(location, $"Cant override function '{text}' because its Return-Type doesnt match up with the Return-Type of the one in the Base Class!");
+        }
     }
 }

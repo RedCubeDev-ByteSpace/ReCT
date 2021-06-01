@@ -5,7 +5,7 @@ namespace ReCT.CodeAnalysis.Symbols
 {
     public sealed class FunctionSymbol : Symbol
     {
-        public FunctionSymbol(string name, ImmutableArray<ParameterSymbol> parameters, TypeSymbol type, FunctionDeclarationSyntax declaration = null, bool isPublic = false, string package = "", bool isVirtual = false)
+        public FunctionSymbol(string name, ImmutableArray<ParameterSymbol> parameters, TypeSymbol type, FunctionDeclarationSyntax declaration = null, bool isPublic = false, string package = "", bool isVirtual = false, bool isOverride = false)
             : base(name)
         {
             Parameters = parameters;
@@ -14,6 +14,7 @@ namespace ReCT.CodeAnalysis.Symbols
             IsPublic = isPublic;
             Package = package;
             IsVirtual = isVirtual;
+            IsOverride = isOverride;
         }
 
         public override SymbolKind Kind => SymbolKind.Function;
@@ -21,6 +22,7 @@ namespace ReCT.CodeAnalysis.Symbols
         public bool IsPublic { get; }
         public string Package { get; }
         public bool IsVirtual { get; }
+        public bool IsOverride { get; }
         public ImmutableArray<ParameterSymbol> Parameters { get; }
         public TypeSymbol Type { get; }
     }
