@@ -460,7 +460,7 @@ namespace ReCT.CodeAnalysis.Binding
                     if (fsyntax.IsVirtual && !fsyntax.IsPublic)
                         _diagnostics.ReportVirtualFunctionsNeedToBePublic(syntax.Location);
 
-                    if (_class.ParentSym != null && fsyntax.IsOverride)
+                    if (_class.ParentSym == null && fsyntax.IsOverride)
                         _diagnostics.ReportCantUseOvrFuncInNormalClass(syntax.Location);
 
                     if (fsyntax.IsOverride && !fsyntax.IsPublic)
@@ -1329,6 +1329,13 @@ namespace ReCT.CodeAnalysis.Binding
             {
                 Symbol symbol = classsym.Scope.TryLookupSymbol(syntax.Call.Identifier.Text, true);
                 if (classsym.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.Call.Identifier.Text);
+
+                //check if virtual func for it exists
+                if (symbol == null && classsym.ParentSym != null)
+                {
+                    symbol = classsym.ParentSym.Scope.TryLookupSymbol(syntax.Call.Identifier.Text, true);
+                    bac.Class = classsym.ParentSym;
+                }
 
                 if (symbol == null || !(symbol is FunctionSymbol))
                 {
