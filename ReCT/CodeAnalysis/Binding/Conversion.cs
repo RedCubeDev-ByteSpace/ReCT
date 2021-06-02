@@ -1,3 +1,4 @@
+using System.Linq;
 using ReCT.CodeAnalysis.Symbols;
 
 namespace ReCT.CodeAnalysis.Binding
@@ -28,6 +29,14 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (from.isClass && to.isClass && from.Name == to.Name)
                 return Conversion.Identity;
+
+            if (from.isClass && to.isClass && TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == from.Name).Key.ParentSym != null && TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == from.Name).Key.ParentSym.Name == to.Name)
+                return Conversion.Implicit;
+
+            if (from.isClass && to.isClass && TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == from.Name).Key.IsAbstract &&
+                TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == to.Name).Key.ParentSym != null &&
+                TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == to.Name).Key.ParentSym.Name == from.Name)
+                return Conversion.Explicit;
 
             if (from != TypeSymbol.Void && to == TypeSymbol.Any)
             {

@@ -6,6 +6,6 @@ namespace ReCT
 {
     public static class info
     {
-        public static string Version = "v2.3.test"; // <- DJs semicolon
+        public static string Version = "v2.3.test.1"; // <- DJs semicolon
     }
 }

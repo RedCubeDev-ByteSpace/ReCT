@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "dotnet",
-            "args": ["${workspaceFolder}/rctc/bin/Debug/<target-framework>/<project-name.dll>", "~/Code/ReCT Tests/modtest.rct", "-s", "-f"],
+            "args": ["${workspaceFolder}/rctc/bin/Debug/<target-framework>/<project-name.dll>", "'~/Code/ReCT Tests/abs.rct'", "-s", "-f"],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"

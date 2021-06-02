@@ -1330,7 +1330,7 @@ namespace ReCT.CodeAnalysis.Emit
             {
                 if (node.TypeCall != null && node.TypeCall.Function == BuiltinFunctions.Push)
                     LoadARef(ilProcessor, node);
-                if (node.Expression == null && node.TypeCall != null ? node.TypeCall.Function != BuiltinFunctions.Pop : true)
+                if (node.Expression == null && (node.TypeCall != null ? node.TypeCall.Function != BuiltinFunctions.Pop : true))
                 {
                     if (node.Variable is ParameterSymbol parameter)
                     {
@@ -1912,6 +1912,7 @@ namespace ReCT.CodeAnalysis.Emit
             foreach (var argument in node.TypeCall.Arguments)
                 EmitExpression(ilProcessor, argument);
 
+
             if (node.TypeCall.Function == BuiltinFunctions.GetLength && node.InnerType == TypeSymbol.String)
             {
                 var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "get_Length", Array.Empty<string>());
@@ -1933,7 +1934,7 @@ namespace ReCT.CodeAnalysis.Emit
                 var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "Replace", new[] { "System.String", "System.String" });
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
-            if (node.TypeCall.Function == BuiltinFunctions.At && node.InnerType == TypeSymbol.String)
+            else if (node.TypeCall.Function == BuiltinFunctions.At && node.InnerType == TypeSymbol.String)
             {
                 VariableDefinition temp = new VariableDefinition(_charRef);
                 ilProcessor.Body.Variables.Add(temp);

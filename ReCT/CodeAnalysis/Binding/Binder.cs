@@ -88,10 +88,7 @@ namespace ReCT.CodeAnalysis.Binding
             //abstract classes first
             foreach (var _class in classDeclarations)
                 if (_class.IsAbstract)
-                {
-                    Console.WriteLine("binding abs " + _class.Identifier.Text);
                     binder.BindClassDeclaration(_class);
-                }
 
             //others later bc they might inherit
             foreach (var _class in classDeclarations)
@@ -1277,7 +1274,14 @@ namespace ReCT.CodeAnalysis.Binding
         private BoundExpression BindExpressionAccessExpression(ObjectAccessExpression syntax)
         {
             var exp = BindExpression(syntax.Expression);
-            return BindAccessExpressionSuffix(syntax, new BoundObjectAccessExpression(null, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, null, null, null, exp,exp.Type), exp.Type, exp.Type.isClass ? TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == exp.Type.Name).Key : null, null);
+
+            if (exp is BoundErrorExpression)
+            {
+                _diagnostics.ReportCustomeMessage("expression came out to be an error expression!");
+                return exp;
+            }
+
+            return BindAccessExpressionSuffix(syntax, new BoundObjectAccessExpression(null, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, null, null, null, exp,exp.Type), exp.Type, TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == exp.Type.Name).Key, null);
         }
 
         private BoundExpression BindVariableAccessExpression(ObjectAccessExpression syntax, VariableSymbol variable)
@@ -1412,9 +1416,6 @@ namespace ReCT.CodeAnalysis.Binding
                 if (symbol == null && classsym.ParentSym != null)
                 {
                     symbol = classsym.ParentSym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
-                    
-                    foreach(var a in classsym.ParentSym.Scope.GetDeclaredVariables())
-                        Console.WriteLine("var: " + a.Name);
 
                     bac.Class = classsym.ParentSym;
                 }
@@ -1442,7 +1443,6 @@ namespace ReCT.CodeAnalysis.Binding
                 if (symbol == null && classsym.ParentSym != null)
                 {
                     symbol = classsym.ParentSym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
-                    Console.WriteLine("sym: " + symbol);
                     bac.Class = classsym.ParentSym;
                 }
 
@@ -1842,7 +1842,7 @@ namespace ReCT.CodeAnalysis.Binding
             var tfSyms = BuiltinFunctions.GetAllTypeFunctions().Where(x => x.Name == syntax.Identifier.Text).ToList();
             var tfsym = tfSyms.FirstOrDefault(x => x.Childtype == etype);
 
-            if (tfsym == null && etype.isArray)
+            if (tfsym == null && (etype.isArray || etype.isClassArray))
             {
                 tfsym = tfSyms.FirstOrDefault(x => x.Childtype == TypeSymbol.AnyArr);
             }
