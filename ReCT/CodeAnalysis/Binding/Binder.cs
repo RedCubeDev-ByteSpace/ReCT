@@ -13,7 +13,7 @@ namespace ReCT.CodeAnalysis.Binding
     {
         public static DiagnosticBag _diagnostics = new DiagnosticBag();
         private readonly bool _isScript;
-        private readonly FunctionSymbol _function;
+        private FunctionSymbol _function;
 
         private Stack<(BoundLabel BreakLabel, BoundLabel ContinueLabel)> _loopStack = new Stack<(BoundLabel BreakLabel, BoundLabel ContinueLabel)>();
         private int _labelCounter;
@@ -1489,7 +1489,10 @@ namespace ReCT.CodeAnalysis.Binding
         
         private BoundExpression BindLambdaExpression(LambdaExpressionSyntax syntax)
         {
+            var prev = _function;
+            _function = new FunctionSymbol("anon", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
             var boundBlock = BindBlockStatement((BlockStatementSyntax)syntax.Block);
+            _function = prev;
 
             return new BoundLambdaExpression(boundBlock);
         }
