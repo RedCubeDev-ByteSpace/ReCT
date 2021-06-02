@@ -367,6 +367,16 @@ namespace ReCT.CodeAnalysis.Syntax
 
         private void ReadNumber()
         {
+            if (Current == '0' && Peek(1) == 'x')
+            {
+                _position+=2; ReadNumberHex(); return;
+            }
+
+            if (Current == '0' && Peek(1) == 'b')
+            {
+                _position+=2; ReadNumberBinary(); return;
+            }
+
             bool isFloat = false;
 
             while (char.IsDigit(Current) || Current == '.')
@@ -403,6 +413,46 @@ namespace ReCT.CodeAnalysis.Syntax
             }
 
             _value = value;
+            _kind = SyntaxKind.NumberToken;
+        }
+
+        private void ReadNumberHex()
+        {
+            while (char.IsLetterOrDigit(Current))
+                _position++;
+
+            var length = _position - _start - 2;
+            var text = _text.ToString(_start + 2, length);
+
+            if (!int.TryParse(text, System.Globalization.NumberStyles.HexNumber, null, out var value))
+            {
+                var span = new TextSpan(_start, length);
+                var location = new TextLocation(_text, span);
+                _diagnostics.ReportInvalidHexNumber(location, text);
+            }
+
+            _value = value;
+            _kind = SyntaxKind.NumberToken;
+        }
+
+        private void ReadNumberBinary()
+        {
+            while (Current == '0' || Current =='1')
+                _position++;
+
+            var length = _position - _start - 2;
+            var text = _text.ToString(_start + 2, length);
+
+            if (text.Length == 0)
+                _diagnostics.ReportInvalidBinaryNumber(new TextLocation(_text, new TextSpan(_start+2, length)), text);
+
+            var value = Convert.ToInt32(text, 2);
+
+            if (text.Length == 8)
+                _value = (byte)value;
+            else
+                _value = value;
+
             _kind = SyntaxKind.NumberToken;
         }
 

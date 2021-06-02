@@ -52,6 +52,18 @@ namespace ReCT.CodeAnalysis
             Report(location, message);
         }
 
+        internal void ReportInvalidHexNumber(TextLocation location, string text)
+        {
+            var message = $"The number {text} isn't valid Hex.";
+            Report(location, message);
+        }
+
+        internal void ReportInvalidBinaryNumber(TextLocation location, string text)
+        {
+            var message = $"The number {text} isn't valid Binary.";
+            Report(location, message);
+        }
+
         public void ReportBadCharacter(TextLocation location, char character)
         {
             var message = $"Bad character input: '{character}'.";
@@ -369,6 +381,7 @@ namespace ReCT.CodeAnalysis
         {
             Report(location, $"Couldnt create Array because the Length is unknown!");
         }
+
 
         internal void ReportSymbolHasKeywordArr(TextLocation location, string v, string name)
         {

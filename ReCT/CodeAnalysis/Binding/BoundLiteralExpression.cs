@@ -13,6 +13,8 @@ namespace ReCT.CodeAnalysis.Binding
                 Type = TypeSymbol.Bool;
             else if (value is int)
                 Type = TypeSymbol.Int;
+            else if (value is byte)
+                Type = TypeSymbol.Byte;
             else if (value is string)
                 Type = TypeSymbol.String;
             else if (value is float)
