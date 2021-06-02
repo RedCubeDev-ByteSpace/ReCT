@@ -707,27 +707,19 @@ namespace ReCT.CodeAnalysis.Binding
 
         private BoundStatement BindUseStatement(UseStatementSyntax syntax)
         {
-            bool found = false;
-            bool alreadyFound = false;
+            var found = _packageNamespaces.FirstOrDefault(x => x.name == syntax.Name.Text);
+            var alreadyFound = _usingPackages.FirstOrDefault(x => x == syntax.Name.Text);
 
-            foreach(Package.Package p in _packageNamespaces)
-            {
-                if (p.name == syntax.Name.Text)
-                    found = true;
-            }
-            foreach(string s in _usingPackages)
-            {
-                if (s == syntax.Name.Text)
-                    alreadyFound = true;
-            }
+            if (found == null && _packageAliases.ContainsKey(syntax.Name.Text))
+                found = _packageNamespaces.FirstOrDefault(x => x.name == _packageAliases[syntax.Name.Text]);
 
-            if (!found)
+            if (found == null)
             {
                 _diagnostics.ReportNamespaceNotFound(syntax.Location, syntax.Name.Text);
                 return BindErrorStatement();
             }
 
-            if (alreadyFound)
+            if (alreadyFound != null)
             {
                 _diagnostics.NamespaceCantBeUsedTwice(syntax.Location, syntax.Name.Text);
                 return BindErrorStatement();
@@ -1077,6 +1069,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return BindObjectCreationExpression((ObjectCreationSyntax)syntax);
                 case SyntaxKind.TernaryExpression:
                     return BindTernaryExpression((TernaryExpressionSyntax)syntax);
+                case SyntaxKind.LambdaExpression:
+                    return BindLambdaExpression((LambdaExpressionSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -1469,7 +1463,7 @@ namespace ReCT.CodeAnalysis.Binding
             return bac;
         }
 
-         private BoundExpression BindTernaryExpression(TernaryExpressionSyntax syntax)
+        private BoundExpression BindTernaryExpression(TernaryExpressionSyntax syntax)
         {
             var condition = BindExpression(syntax.Condition);
             var left = BindExpression(syntax.Left);
@@ -1492,7 +1486,13 @@ namespace ReCT.CodeAnalysis.Binding
 
             return new BoundTernaryExpression(condition, left, right);
         }
+        
+        private BoundExpression BindLambdaExpression(LambdaExpressionSyntax syntax)
+        {
+            var boundBlock = BindBlockStatement((BlockStatementSyntax)syntax.Block);
 
+            return new BoundLambdaExpression(boundBlock);
+        }
         private BoundExpression BindArrayCreationExpression(ArrayCreationSyntax syntax)
         {
             var type = LookupType(syntax.Type.Text);
@@ -1675,6 +1675,12 @@ namespace ReCT.CodeAnalysis.Binding
             if (function.Parameters.Length > 0)
             {
                 _diagnostics.ReportCantActionFunctionWithArgs(syntax.Identifier.Location, syntax.Identifier.Text);
+                return new BoundErrorExpression();
+            }
+
+            if (function.Type != TypeSymbol.Void)
+            {
+                _diagnostics.ReportCanOnlyActionVoids(syntax.Identifier.Location, syntax.Identifier.Text);
                 return new BoundErrorExpression();
             }
 

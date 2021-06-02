@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.IO;
 
 namespace ReCT.CodeAnalysis.Binding
 {
@@ -11,5 +12,12 @@ namespace ReCT.CodeAnalysis.Binding
 
         public override BoundNodeKind Kind => BoundNodeKind.BlockStatement;
         public ImmutableArray<BoundStatement> Statements { get; }
+
+        public string StmtContent()
+        {
+            var writer = new StringWriter();
+            BoundNodePrinter.WriteTo(this, writer);
+            return writer.ToString();
+        }
     }
 }

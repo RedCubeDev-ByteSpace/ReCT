@@ -33,7 +33,10 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly TypeFunctionSymbol Pop = new TypeFunctionSymbol("Pop", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.AnyArr, TypeSymbol.ArrBase);
         public static readonly TypeFunctionSymbol AtArr = new TypeFunctionSymbol("At", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0)), TypeSymbol.AnyArr, TypeSymbol.ArrBase);
         
-        //Builtint functions
+        //Action functions
+        public static readonly TypeFunctionSymbol Run = new TypeFunctionSymbol("Run", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Action, TypeSymbol.Void);
+        
+        //Builtin functions
         public static readonly FunctionSymbol Die = new FunctionSymbol("die", ImmutableArray.Create(new ParameterSymbol("exitCode", TypeSymbol.Int, 0)), TypeSymbol.Void);
         public static readonly FunctionSymbol Version = new FunctionSymbol("Version", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
 

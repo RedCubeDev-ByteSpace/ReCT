@@ -21,6 +21,7 @@ namespace ReCT.CodeAnalysis.Emit
         private DiagnosticBag _diagnostics = new DiagnosticBag();
 
         private readonly Dictionary<TypeSymbol, TypeReference> _knownTypes;
+        private Random rnd;
         private readonly TypeReference _consoleKeyInfoRef;
         private readonly TypeReference _charRef;
         private readonly TypeReference _doubleRef;
@@ -64,6 +65,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly MethodReference _threadStartObjectReference;
         private readonly MethodReference _threadObjectReference;
         private readonly MethodReference _actionObjectReference;
+        private readonly MethodReference _actionInvokeReference;
         private readonly MethodReference _IOReadAllTextReference;
         private readonly MethodReference _IOWriteAllTextReference;
         private readonly MethodReference _IOFileExistsReference;
@@ -90,6 +92,7 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly Dictionary<VariableSymbol, FieldDefinition> _globals = new Dictionary<VariableSymbol, FieldDefinition>();
         private readonly Dictionary<TypeDefinition, Dictionary<VariableSymbol, FieldDefinition>> _classGlobals = new Dictionary<TypeDefinition, Dictionary<VariableSymbol, FieldDefinition>>();
         private readonly Dictionary<BoundLabel, int> _labels = new Dictionary<BoundLabel, int>();
+        private readonly Dictionary<string, MethodDefinition> _anons = new Dictionary<string, MethodDefinition>();
         private readonly List<(int InstructionIndex, BoundLabel Target)> _fixups = new List<(int InstructionIndex, BoundLabel Target)>();
         
         private TypeDefinition inType = null;
@@ -105,6 +108,7 @@ namespace ReCT.CodeAnalysis.Emit
         private Emitter(string moduleName, string[] references)
         {
             var assemblies = new List<AssemblyDefinition>();
+            rnd = new Random();
 
             foreach (var reference in references)
             {
@@ -297,6 +301,7 @@ namespace ReCT.CodeAnalysis.Emit
 
             //Actions
             _actionObjectReference = ResolveMethod("System.Action", ".ctor", new[] { "System.Object", "System.IntPtr" });
+            _actionInvokeReference = ResolveMethod("System.Action", "Invoke", Array.Empty<string>());
 
             //IO
             _IOReadAllTextReference = ResolveMethod("System.IO.File", "ReadAllText", new[] { "System.String" });
@@ -615,7 +620,7 @@ namespace ReCT.CodeAnalysis.Emit
                     var function = functionSB.Key;
                     var body = functionSB.Value;
 
-                    Console.WriteLine("Emitting Fnction: " + function.Name + "; in: " + _class.Key.Name + "; virt: " + function.IsVirtual + "; ovr: " + function.IsOverride);
+                    //Console.WriteLine("Emitting Fnction: " + function.Name + "; in: " + _class.Key.Name + "; virt: " + function.IsVirtual + "; ovr: " + function.IsOverride);
 
                     //decleration
                     
@@ -1127,6 +1132,9 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundNodeKind.TernaryExpression:
                     EmitTernaryExpression(ilProcessor, (BoundTernaryExpression)node);
                     break;
+                case BoundNodeKind.LambdaExpression:
+                    EmitLambdaExpression(ilProcessor, (BoundLambdaExpression)node);
+                    break;
                 default:
                     throw new Exception($"Unexpected node kind {node.Kind}");
             }
@@ -1217,6 +1225,34 @@ namespace ReCT.CodeAnalysis.Emit
             // <left>
             //
             // SKIP1
+        }
+
+        private void EmitLambdaExpression(ILProcessor ilProcessor, BoundLambdaExpression node)
+        {
+            var stmts = (node.Block as BoundBlockStatement).StmtContent();
+            if (_anons.ContainsKey(stmts))
+            {
+                ilProcessor.Emit(OpCodes.Ldnull);
+                ilProcessor.Emit(OpCodes.Ldftn, _anons[stmts]);
+                ilProcessor.Emit(OpCodes.Newobj, _actionObjectReference);
+                return;
+            }
+
+            var name = "";
+            do {
+                name = "$anon_" + rnd.Next(0, 99999999);
+            } while (_typeDefinition.Methods.FirstOrDefault(x => x.Name == name) != null);
+
+            MethodDefinition anon = new MethodDefinition(name, MethodAttributes.Public | MethodAttributes.Static, _knownTypes[TypeSymbol.Void]);
+            var il = anon.Body.GetILProcessor();        
+            EmitBlockStatement(il, (BoundBlockStatement)node.Block);
+            il.Emit(OpCodes.Ret);
+
+            _typeDefinition.Methods.Add(anon);
+            ilProcessor.Emit(OpCodes.Ldnull);
+            ilProcessor.Emit(OpCodes.Ldftn, anon);
+            ilProcessor.Emit(OpCodes.Newobj, _actionObjectReference);
+            _anons.Add(stmts, anon);
         }
 
         private void EmitThreadCreate(ILProcessor ilProcessor, BoundThreadCreateExpression node)
@@ -1865,6 +1901,11 @@ namespace ReCT.CodeAnalysis.Emit
                 if (!isStatement)
                     ilProcessor.Emit(OpCodes.Ldloc, temp);
 
+                return;
+            }
+            else if (node.TypeCall.Function == BuiltinFunctions.Run && node.InnerType == TypeSymbol.Action)
+            {
+                ilProcessor.Emit(OpCodes.Callvirt, _actionInvokeReference);
                 return;
             }
 

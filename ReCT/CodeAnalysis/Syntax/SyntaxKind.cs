@@ -129,7 +129,8 @@ namespace ReCT.CodeAnalysis.Syntax
         VirtualKeyword,
         BaseKeyword,
         BaseStatement,
-        OverrideKeyword
-        
+        OverrideKeyword,
+        LambdaKeyword,
+        LambdaExpression
     }
 }

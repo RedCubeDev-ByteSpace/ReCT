@@ -131,6 +131,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.OverrideKeyword;
                 case "base":
                     return SyntaxKind.BaseKeyword;
+                case "lambda":
+                    return SyntaxKind.LambdaKeyword;
                 case "null":
                 case "nil":
                     return SyntaxKind.NullKeyword;
@@ -293,6 +295,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "null";
                 case SyntaxKind.IncKeyword:
                     return "inc";
+                case SyntaxKind.LambdaKeyword:
+                    return "lambda";
                 default:
                     return null;
             }

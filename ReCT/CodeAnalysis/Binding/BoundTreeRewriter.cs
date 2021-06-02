@@ -249,6 +249,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return RewriteObjectCreateExpression((BoundObjectCreationExpression)node);
                 case BoundNodeKind.TernaryExpression:
                     return RewriteTernaryExpression((BoundTernaryExpression)node);
+                case BoundNodeKind.LambdaExpression:
+                    return RewriteLambdaExpression((BoundLambdaExpression)node);
                 default:
                     throw new Exception($"Unexpected node: {node.Kind}");
             }
@@ -286,6 +288,11 @@ namespace ReCT.CodeAnalysis.Binding
                 return node;
 
             return new BoundArrayLiteralExpression(node.ArrayType, node.Type, values);
+        }
+
+        private BoundExpression RewriteLambdaExpression(BoundLambdaExpression node)
+        {
+            return node;
         }
 
         private BoundExpression RewriteObjectCreateExpression(BoundObjectCreationExpression node)

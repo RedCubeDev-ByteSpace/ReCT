@@ -547,5 +547,10 @@ namespace ReCT.CodeAnalysis
         {
             Report(location, $"Cant create overriding Variable '{text}' because it couldnt be found in the Base Class!");
         }
+
+        internal void ReportCanOnlyActionVoids(TextLocation location, string text)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

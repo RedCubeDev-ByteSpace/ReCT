@@ -874,6 +874,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return ParseObjectCreation();
                 case SyntaxKind.AccessKeyword:
                     return ParseObjectAccessExpression();
+                case SyntaxKind.LambdaKeyword:
+                    return ParseLambdaExpression();
                 case SyntaxKind.IdentifierToken:
                 default:
                     return ParseNameOrCallExpression();
@@ -1069,6 +1071,15 @@ namespace ReCT.CodeAnalysis.Syntax
             
 
             return new TernaryExpressionSyntax(_syntaxTree, condition, left, right);
+        }
+
+        ExpressionSyntax ParseLambdaExpression()
+        {
+            MatchToken(SyntaxKind.LambdaKeyword);
+            var block = ParseBlockStatement();
+            
+
+            return new LambdaExpressionSyntax(_syntaxTree, block);
         }
     }
 }
