@@ -550,7 +550,22 @@ namespace ReCT.CodeAnalysis
 
         internal void ReportCanOnlyActionVoids(TextLocation location, string text)
         {
-            throw new NotImplementedException();
+            Report(location, $"Cant action Function '{text}' because it needs to be pf Return-Type 'void'!");
+        }
+
+        internal void ReportInstanceTestTypeNeedsToBeInheratingClass(TextLocation location, string text)
+        {
+            Report(location, $"Cant do IsInstance check with Type '{text}' because it needs to be an inherating Class!");
+        }
+
+        internal void ReportInstanceTestTypeNeedsToInherateFromSameClass(TextLocation location, string name1, string name2)
+        {
+            Report(location, $"Cant do IsInstance check with Type '{name1}' and '{name2}' because they arent connected through an Abstract Class!");
+        }
+
+        internal void ReportInstanceTestTypeNeedsToBeAbstractOrInheratingClass(TextLocation location, string name)
+        {
+            Report(location, $"Cant do IsInstance check with Type '{name}' because it needs to be an inherating or abstract Class!");
         }
     }
 }

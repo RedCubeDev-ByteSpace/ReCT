@@ -131,6 +131,8 @@ namespace ReCT.CodeAnalysis.Syntax
         BaseStatement,
         OverrideKeyword,
         LambdaKeyword,
-        LambdaExpression
+        LambdaExpression,
+        IsKeyword,
+        IsExpression
     }
 }

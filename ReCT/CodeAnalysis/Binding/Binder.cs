@@ -1068,6 +1068,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return BindTernaryExpression((TernaryExpressionSyntax)syntax);
                 case SyntaxKind.LambdaExpression:
                     return BindLambdaExpression((LambdaExpressionSyntax)syntax);
+                case SyntaxKind.IsExpression:
+                    return BindIsExpression((IsExpressionSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -1496,6 +1498,49 @@ namespace ReCT.CodeAnalysis.Binding
 
             return new BoundLambdaExpression(boundBlock);
         }
+
+        private BoundExpression BindIsExpression(IsExpressionSyntax syntax)
+        {
+            var left = BindExpression(syntax.Left);
+            var type = LookupType(syntax.Type.Text);
+
+            if (left is BoundErrorExpression)
+                return new BoundErrorExpression();
+
+            if (type == null)
+            {
+                _diagnostics.ReportUndefinedType(syntax.Type.Location, syntax.Type.Text);
+                return new BoundErrorExpression();
+            }
+
+            if (!type.isClass || (type.isClass && TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == type.Name).Key.ParentSym == null))
+            {
+                _diagnostics.ReportInstanceTestTypeNeedsToBeInheratingClass(syntax.Type.Location, syntax.Type.Text);
+                return new BoundErrorExpression();
+            }
+
+            var typeClass = TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == type.Name).Key;
+
+            if (!left.Type.isClass ||
+                ((left.Type.isClass && !TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == left.Type.Name).Key.IsAbstract) &&
+                (left.Type.isClass && TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == left.Type.Name).Key.ParentSym == null)))
+            {
+                _diagnostics.ReportInstanceTestTypeNeedsToBeAbstractOrInheratingClass(syntax.Left.Location, left.Type.Name);
+                return new BoundErrorExpression();
+            }
+
+            var leftClass = TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == left.Type.Name).Key;
+
+            if ((!leftClass.IsAbstract && typeClass.ParentSym.Name != leftClass.ParentSym.Name) ||
+               (leftClass.IsAbstract && typeClass.ParentSym.Name != leftClass.Name))
+            {
+               _diagnostics.ReportInstanceTestTypeNeedsToInherateFromSameClass(syntax.Location, type.Name, left.Type.Name);
+               return new BoundErrorExpression();
+            }
+
+            return new BoundIsExpression(left, type);
+        }
+
         private BoundExpression BindArrayCreationExpression(ArrayCreationSyntax syntax)
         {
             var type = LookupType(syntax.Type.Text);

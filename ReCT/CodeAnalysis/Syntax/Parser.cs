@@ -840,6 +840,7 @@ namespace ReCT.CodeAnalysis.Syntax
             }
 
             if (Current.Kind == SyntaxKind.AccessToken && !inUnary) return ParseExpressionAccessExpression(left);
+            if (Current.Kind == SyntaxKind.IsKeyword && !inUnary) return ParseIsExpression(left);
             if (Current.Kind == SyntaxKind.QuestionMarkToken && !inUnary && parentPrecedence == 0) return ParseTernaryExpression(left);
 
             return left;
@@ -1077,9 +1078,16 @@ namespace ReCT.CodeAnalysis.Syntax
         {
             MatchToken(SyntaxKind.LambdaKeyword);
             var block = ParseBlockStatement();
-            
 
             return new LambdaExpressionSyntax(_syntaxTree, block);
+        }
+
+        ExpressionSyntax ParseIsExpression(ExpressionSyntax left)
+        {
+            MatchToken(SyntaxKind.IsKeyword);
+            var type = MatchToken(SyntaxKind.IdentifierToken);
+
+            return new IsExpressionSyntax(_syntaxTree, left, type);
         }
     }
 }

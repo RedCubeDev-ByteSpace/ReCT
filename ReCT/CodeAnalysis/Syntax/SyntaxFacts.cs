@@ -133,6 +133,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return SyntaxKind.BaseKeyword;
                 case "lambda":
                     return SyntaxKind.LambdaKeyword;
+                case "is":
+                    return SyntaxKind.IsKeyword;
                 case "null":
                 case "nil":
                     return SyntaxKind.NullKeyword;
@@ -297,6 +299,8 @@ namespace ReCT.CodeAnalysis.Syntax
                     return "inc";
                 case SyntaxKind.LambdaKeyword:
                     return "lambda";
+                case SyntaxKind.IsKeyword:
+                    return "is";
                 default:
                     return null;
             }

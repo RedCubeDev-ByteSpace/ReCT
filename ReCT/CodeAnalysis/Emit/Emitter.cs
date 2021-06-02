@@ -1135,6 +1135,9 @@ namespace ReCT.CodeAnalysis.Emit
                 case BoundNodeKind.LambdaExpression:
                     EmitLambdaExpression(ilProcessor, (BoundLambdaExpression)node);
                     break;
+                case BoundNodeKind.IsExpression:
+                    EmitIsExpression(ilProcessor, (BoundIsExpression)node);
+                    break;
                 default:
                     throw new Exception($"Unexpected node kind {node.Kind}");
             }
@@ -1253,6 +1256,14 @@ namespace ReCT.CodeAnalysis.Emit
             ilProcessor.Emit(OpCodes.Ldftn, anon);
             ilProcessor.Emit(OpCodes.Newobj, _actionObjectReference);
             _anons.Add(stmts, anon);
+        }
+
+        private void EmitIsExpression(ILProcessor ilProcessor, BoundIsExpression node)
+        {
+            EmitExpression(ilProcessor, node.Left);
+            ilProcessor.Emit(OpCodes.Isinst, _knownTypes.FirstOrDefault(x => x.Key.Name == node.Class.Name).Value);
+            ilProcessor.Emit(OpCodes.Ldnull);
+            ilProcessor.Emit(OpCodes.Cgt_Un);
         }
 
         private void EmitThreadCreate(ILProcessor ilProcessor, BoundThreadCreateExpression node)

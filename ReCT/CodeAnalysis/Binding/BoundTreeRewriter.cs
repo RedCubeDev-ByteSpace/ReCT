@@ -251,6 +251,8 @@ namespace ReCT.CodeAnalysis.Binding
                     return RewriteTernaryExpression((BoundTernaryExpression)node);
                 case BoundNodeKind.LambdaExpression:
                     return RewriteLambdaExpression((BoundLambdaExpression)node);
+                case BoundNodeKind.IsExpression:
+                    return RewriteIsExpression((BoundIsExpression)node);
                 default:
                     throw new Exception($"Unexpected node: {node.Kind}");
             }
@@ -291,6 +293,11 @@ namespace ReCT.CodeAnalysis.Binding
         }
 
         private BoundExpression RewriteLambdaExpression(BoundLambdaExpression node)
+        {
+            return node;
+        }
+
+        private BoundExpression RewriteIsExpression(BoundIsExpression node)
         {
             return node;
         }

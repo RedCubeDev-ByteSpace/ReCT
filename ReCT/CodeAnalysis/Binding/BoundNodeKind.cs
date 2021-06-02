@@ -36,5 +36,6 @@ namespace ReCT.CodeAnalysis.Binding
         ActionCreateExpression,
         BaseStatement,
         LambdaExpression,
+        IsExpression,
     }
 }
