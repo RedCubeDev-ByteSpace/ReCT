@@ -6,6 +6,7 @@ IDEX ReCT/node_modules/
 .idea
 .vs
 .vscode
+.editorconfig
 *.exe
 *.cache
 *.cache
