@@ -1,10 +1,11 @@
 rctc/obj/
 rctc/bin/
-rcti/obj/
-rcti/bin/
 IDEX ReCT/bin/
 IDEX ReCT/obj/
 IDEX ReCT/node_modules/
+.idea
+.vs
+.vscode
 *.exe
 *.cache
 *.cache
