@@ -1,16 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Mono.Options" Version="6.6.0.161" />
+    <PackageReference Include="Mono.Options" Version="6.6.0.161"/>
+    <PackageReference Include="Json.Net" Version="1.0.33"/>
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\ReCT\ReCT.csproj" />
+    <ProjectReference Include="..\ReCT\ReCT.csproj"/>
   </ItemGroup>
-
 </Project>

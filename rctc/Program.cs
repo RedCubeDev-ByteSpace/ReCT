@@ -8,6 +8,8 @@ using ReCT.IO;
 using Mono.Options;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
+using System.Text.Json;
+using System.Diagnostics;
 
 namespace ReCT
 {
@@ -15,11 +17,14 @@ namespace ReCT
     {
         private static void Main(string[] args)
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("-------------------------------");
-            Console.WriteLine("ReCT Standalone Compiler " + info.Version);
-            Console.WriteLine("-------------------------------\n");
-            Console.ForegroundColor = ConsoleColor.White;
+            if (args[0] != "run")
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine("ReCT Standalone Compiler " + info.Version);
+                Console.WriteLine("-------------------------------\n");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
 
             string outputPath = default;
             string moduleName = default;
@@ -44,6 +49,16 @@ namespace ReCT
                 { "?|h|help", "Prints help", v => helpRequested = true },
                 { "<>", v => sourcePaths.Add(v) }
             };
+
+            if (args[0] == "create") {
+                projectActions(args);
+                return;
+            }
+
+            if (args[0] == "run") {
+                projectRun();
+                return;
+            }
 
             options.Parse(args);
 
@@ -190,6 +205,154 @@ namespace ReCT
             Console.ForegroundColor = ConsoleColor.White;
         }
 
+        static void projectRun()
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("RCTC ");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine(">> Project Run");
+            Console.ForegroundColor = ConsoleColor.White;
+            var rcp = Directory.GetFiles("./").FirstOrDefault(x => x.EndsWith(".rcp"));
+
+            if (rcp == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Couldnt find Project File (.rcp)!");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+
+            var rcpText = File.ReadAllText(rcp);
+            var data = JsonSerializer.Deserialize<ReCTProject>(rcpText);
+
+            if (File.Exists($"./Build/{data.Name}.dll"))
+                File.Delete($"./Build/{data.Name}.dll");
+
+            Process process = Process.Start(new ProcessStartInfo
+            {
+                FileName = "rctc",
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                Arguments = $"./Classes/{data.MainClass} -s -f -o ./Build/{data.Name}.dll"
+            });
+            process.WaitForExit();
+
+            if (File.Exists($"./Build/{data.Name}.dll"))
+            {
+                var proc = Process.Start("dotnet", $"./Build/{data.Name}.dll");
+                proc.WaitForExit();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Build has Failed!");
+                    Console.WriteLine(process.StandardError.ReadToEnd());
+            }
+        }
+
+        static void projectActions(string[] args)
+        {
+            Console.WriteLine("Project Generator");
+            args = args.Skip(1).ToArray();
+
+            var projectPath = "./";
+            var newDir = false;
+            var vscodeConfig = false;
+            var helpRequested = false;
+            var name = "";
+
+            OptionSet projectOptions = new OptionSet
+            {
+                "usage: rctc create <name> [options]",
+                { "d=", "The {path} to create the Project at", v => projectPath = v },
+                { "n|newdir", "Will create a new Directory for the Project", v => newDir = true },
+                { "v|vscode", "Will generate .vscode folder with Run-Config", v => vscodeConfig = true },
+                { "?|h|help", "Prints help", v => helpRequested = true },
+                { "<>", v => name = v }
+            };
+
+            projectOptions.Parse(args);
+
+            if (helpRequested){
+                projectOptions.WriteOptionDescriptions(Console.Out); return;
+            }
+
+            if (name == "")
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Please provide a name for the Project!");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+
+            if (!Directory.Exists(projectPath))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Given Directory doesnt exist!");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+
+            if (newDir)
+            {
+                var dirname = Path.Combine(projectPath, name);
+                var index = 0;
+                while (Directory.Exists(dirname))
+                    dirname = Path.Combine(projectPath, name + index++);
+
+                Directory.CreateDirectory(Path.Combine(projectPath, dirname));
+                projectPath = Path.Combine(projectPath, dirname);
+            }
+
+            if (Directory.Exists(Path.Combine(projectPath, "Classes")))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Couldnt create 'Classes' folder! (already exists)");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+
+            if (Directory.Exists(Path.Combine(projectPath, "Build")))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Couldnt create 'Build' folder! (already exists)");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+
+            Console.WriteLine("Creating 'Classes' dir...");
+            Directory.CreateDirectory(Path.Combine(projectPath, "Classes"));
+            Console.WriteLine("Creating 'Build' dir...");
+            Directory.CreateDirectory(Path.Combine(projectPath, "Build"));
+            Console.WriteLine("Creating 'Classes/main.rct' file...");
+            File.WriteAllText(Path.Combine(projectPath, "Classes/main.rct"), $"// {name} - ReCT v{info.Version} \npackage sys; use sys;\n\nPrint(\"Hello World!\");");
+            Console.WriteLine("Creating 'build.sh' file...");
+            File.WriteAllText(Path.Combine(projectPath, "build.sh"), $"rm './Build/{name}.dll'\nrctc ./Classes/main.rct -s -f -o './Build/{name}.dll'\necho '-- [ReCT Program] --'\necho ''\ndotnet './Build/{name}.dll'");
+            Console.WriteLine("Creating 'build.cmd' file...");
+            File.WriteAllText(Path.Combine(projectPath, "build.cmd"), $"del './Build/{name}.dll'\nrctc ./Classes/main.rct -s -f -o './Build/{name}.dll'\necho -- [ReCT Program] --\necho \ndotnet './Build/{name}.dll'");
+        
+            Console.WriteLine("Creating '"+name+".rct' file...");
+            File.WriteAllText(Path.Combine(projectPath, $"{name}.rcp"), "{\"Name\": \""+name+"\", \"Icon\": \"\", \"MainClass\": \"main.rct\"}");
+
+            if (vscodeConfig)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("\nGenerating VSCode files..");
+                Console.ForegroundColor = ConsoleColor.White;
+
+                Console.WriteLine("Creating '.vscode' dir..."); Directory.CreateDirectory(Path.Combine(projectPath, ".vscode"));
+                Console.WriteLine("Creating '.vscode/launch.json' file...");
+                File.WriteAllText(Path.Combine(projectPath, ".vscode/launch.json"), "{\"version\": \"0.2.0\",\"configurations\": [{\"name\": \".NET Core Launch (console)\",\"type\": \"coreclr\",\"request\": \"launch\",\"preLaunchTask\": \"buildrect\",\"program\": \"dotnet\",\"args\": [\"${workspaceFolder}/Build/"+name+".dll\"],\"cwd\": \"${workspaceFolder}\",\"stopAtEntry\": false,\"console\": \"internalConsole\"}]}");
+                Console.WriteLine("Creating '.vscode/tasks.json' file...");
+                File.WriteAllText(Path.Combine(projectPath, ".vscode/tasks.json"), "{\"version\": \"2.0.0\",\"tasks\": [{\"label\": \"buildrect\",\"command\": \"rctc\",\"type\": \"shell\",\"args\": [\"./Classes/main.rct\", \"-s\", \"-f\", \"-o\", \"./Build/"+name+".dll\"],\"presentation\": {\"reveal\": \"always\"},\"group\": \"build\"}]}");
+            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\n=> Project Created!");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
         static void referenceStandardAssemblies(ref List<string> references)
         {
             Console.WriteLine("Referencing standard Assemblies...");
@@ -265,5 +428,12 @@ namespace ReCT
                 }
             }
         }
+    }
+
+    class ReCTProject
+    {
+        public string Name { get; set; }
+        public string Icon { get; set; }
+        public string MainClass { get; set; }
     }
 }

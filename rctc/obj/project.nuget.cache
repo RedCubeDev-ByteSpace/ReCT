@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "t2hGgWsx95QlnbD4/2Jx/tYDZmQlmldGiypIPYzqwdA7SxIrxrLmnK/8wA+lH+An5B7LaHNfhfa4bcmt95LCTw==",
+  "dgSpecHash": "+cferzjDVHpzn86ZyDGkaAO9shQtbQIO53RzfhMt0HEuYmVqGTG0K3GVtYm5jcoHOS+OKmf71oFnmXDmJUSYAA==",
   "success": true,
   "projectFilePath": "/external/GitRepos/ReCT/rctc/rctc.csproj",
   "expectedPackageFiles": [
+    "/home/redcube/.nuget/packages/json.net/1.0.33/json.net.1.0.33.nupkg.sha512",
     "/home/redcube/.nuget/packages/mono.cecil/0.11.2/mono.cecil.0.11.2.nupkg.sha512",
     "/home/redcube/.nuget/packages/mono.options/6.6.0.161/mono.options.6.6.0.161.nupkg.sha512",
     "/home/redcube/.nuget/packages/system.collections.immutable/1.5.0/system.collections.immutable.1.5.0.nupkg.sha512",

@@ -105,6 +105,10 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "Json.Net": {
+              "target": "Package",
+              "version": "[1.0.33, )"
+            },
             "Mono.Options": {
               "target": "Package",
               "version": "[6.6.0.161, )"

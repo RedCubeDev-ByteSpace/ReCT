@@ -166,3 +166,4 @@ E:/GitRepos/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.csprojAssemblyReference.cache
 /external/GitRepos/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.dll
 /external/GitRepos/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.pdb
 /external/GitRepos/ReCT/rctc/obj/Debug/netcoreapp3.1/rctc.genruntimeconfig.cache
+/external/GitRepos/ReCT/rctc/bin/Debug/netcoreapp3.1/Json.Net.dll
