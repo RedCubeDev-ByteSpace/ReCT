@@ -17,7 +17,7 @@ namespace ReCT
     {
         private static void Main(string[] args)
         {
-            if (args[0] != "run")
+            if (args.Length == 0 || args[0] != "run")
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("-------------------------------");
@@ -50,12 +50,12 @@ namespace ReCT
                 { "<>", v => sourcePaths.Add(v) }
             };
 
-            if (args[0] == "create") {
+            if (args.Length != 0 && args[0] == "create") {
                 projectActions(args);
                 return;
             }
 
-            if (args[0] == "run") {
+            if (args.Length != 0 && args[0] == "run") {
                 projectRun();
                 return;
             }
