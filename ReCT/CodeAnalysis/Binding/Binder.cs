@@ -1283,12 +1283,12 @@ namespace ReCT.CodeAnalysis.Binding
                 return exp;
             }
 
-            return BindAccessExpressionSuffix(syntax, new BoundObjectAccessExpression(null, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, null, null, null, exp,exp.Type), exp.Type, TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == exp.Type.Name).Key, null);
+            return BindAccessExpressionSuffix(syntax, new BoundObjectAccessExpression(null, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, packageFromType(exp.Type), null, null, exp,exp.Type), exp.Type, TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == exp.Type.Name).Key, packageFromType(exp.Type));
         }
 
         private BoundExpression BindVariableAccessExpression(ObjectAccessExpression syntax, VariableSymbol variable)
         {
-            return BindAccessExpressionSuffix(syntax, new BoundObjectAccessExpression(variable, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, null, null, null, null, variable.Type),  variable.Type, variable.Type.isClass ? TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == variable.Type.Name).Key : null, null);
+            return BindAccessExpressionSuffix(syntax, new BoundObjectAccessExpression(variable, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, packageFromType(variable.Type), null, null, null, variable.Type),  variable.Type, variable.Type.isClass ? TypeSymbol.Class.FirstOrDefault(x => x.Value.Name == variable.Type.Name).Key : null, packageFromType(variable.Type));
         }
 
         private BoundExpression BindAccessExpressionSuffix(ObjectAccessExpression syntax, BoundObjectAccessExpression bac, TypeSymbol type, ClassSymbol classsym, Package.Package package)
@@ -2033,6 +2033,27 @@ namespace ReCT.CodeAnalysis.Binding
                         _diagnostics.ReportNotAVariable(identifierToken.Location, name);
                     return null;
             }
+        }
+
+        private Package.Package packageFromType(TypeSymbol type)
+        {
+            if (type.isArray || type.isClassArray)
+                return resolvePackageType(ArrayToType(type));
+            else
+                return resolvePackageType(type);
+        }
+
+        private Package.Package resolvePackageType(TypeSymbol type)
+        {
+            foreach (var package in _packageNamespaces)
+            {
+                var _class = package.scope.GetDeclaredClasses().FirstOrDefault(x => x.Name == type.Name);
+
+                if (_class != null)
+                    return package;
+            }
+
+            return null;
         }
 
         public static TypeSymbol LookupType(string name)
