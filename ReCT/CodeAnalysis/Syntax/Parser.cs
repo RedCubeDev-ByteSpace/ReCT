@@ -826,6 +826,8 @@ namespace ReCT.CodeAnalysis.Syntax
             else
             {
                 left = ParsePrimaryExpression();
+                if (Current.Kind == SyntaxKind.AccessToken) left = ParseExpressionAccessExpression(left);
+                if (Current.Kind == SyntaxKind.IsKeyword) left = ParseIsExpression(left);
             }
 
             while (true)
@@ -839,8 +841,6 @@ namespace ReCT.CodeAnalysis.Syntax
                 left = new BinaryExpressionSyntax(_syntaxTree, left, operatorToken, right);
             }
 
-            if (Current.Kind == SyntaxKind.AccessToken && !inUnary) return ParseExpressionAccessExpression(left);
-            if (Current.Kind == SyntaxKind.IsKeyword && !inUnary) return ParseIsExpression(left);
             if (Current.Kind == SyntaxKind.QuestionMarkToken && !inUnary && parentPrecedence == 0) return ParseTernaryExpression(left);
 
             return left;
