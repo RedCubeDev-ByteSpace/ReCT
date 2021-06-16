@@ -1977,10 +1977,10 @@ namespace ReCT.CodeAnalysis.Binding
         {
             var name = identifier.Text ?? "?";
             var declare = !identifier.IsMissing;
-            var variable = syntax == SyntaxKind.SetKeyword
-                                ? isVirtual || isOverride
-                                    ? (VariableSymbol)new FunctionalVariableSymbol(name, isReadOnly, type, isVirtual, isOverride)
-                                    : (VariableSymbol)new GlobalVariableSymbol(name, isReadOnly, type)
+            var variable = syntax == SyntaxKind.SetKeyword ?
+                                isVirtual || isOverride ? 
+                                     (VariableSymbol)new FunctionalVariableSymbol(name, isReadOnly, type, isVirtual, isOverride)
+                                    :(VariableSymbol)new GlobalVariableSymbol(name, isReadOnly, type)
                                 : new LocalVariableSymbol(name, isReadOnly, type);
 
             //Console.WriteLine($"VAR: {name} | {declare} | {variable} | {(variable.IsGlobal ? getClassScope() : _scope).Name}");
@@ -1997,7 +1997,7 @@ namespace ReCT.CodeAnalysis.Binding
             if (inClass != null && inClass.ParentSym == null && isOverride)
                 _diagnostics.ReportCantUseOvrVarInNormalClass(identifier.Location);
 
-            if (inClass != null && inClass.ParentSym != null)
+            if (inClass != null && inClass.ParentSym != null && isOverride)
             {   
                 var sym = inClass.ParentSym.Scope.TryLookupSymbol(identifier.Text);
 
