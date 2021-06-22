@@ -213,9 +213,9 @@ namespace ReCT_IDE
         {
             string[][] acs =
             {
-                new[]{ "any", "bool", "int", "byte", "string", "void", "float", "thread", "anyArr", "boolArr", "intArr", "byteArr", "stringArr", "floatArr", "threadArr", "Action" },
+                new[]{ "any", "bool", "int", "byte", "string", "void", "float", "thread", "anyArr", "boolArr", "intArr", "byteArr", "stringArr", "floatArr", "threadArr", "action" },
                 new[]{ "var", "set", "inc", "if", "else", "function", "class", "true", "false", "break", "continue", "for", "from", "to", "return", "while", "die", "ser", "abs", "is", "virt", "ovr", "alias" },
-                new[]{ "Thread", "Constructor" },
+                new[]{ "Thread", "Constructor", "Action"},
                 new[]{ "->GetLength", "->Substring", "->StartThread", "->KillThread", "->Open", "->Write", "->WriteLine", "->Read", "->ReadLine", "->IsConnected", "->Close", "->Push", "->GetBit", "->SetBit", "-Pop", "->At" },
                 new[]{ "#attach", "#copy", "#copyFolder", "#closeConsole", "#noConsole" }
             };
@@ -345,18 +345,17 @@ namespace ReCT_IDE
             e.ChangedRange.SetStyle(AttachStyle, @"(#attach\b|#copy\b|#copyFolder\b|#closeConsole\b|#noConsole\b)", RegexOptions.Singleline);
 
             //system function highlighting
-            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\b(Version|Thread)\b)");
+            e.ChangedRange.SetStyle(SystemFunctionStyle, @"(\b(Version|Thread|Action)\b)");
             e.ChangedRange.SetStyle(SystemFunctionStyle, rectCompCheck.ImportedFunctions);
 
             //types
-            e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\bany\b|\bbool\b|\bint\b|\bbyte\b|\bstring\b|\bvoid\b|\bfloat\b|\bthread\b|\banyArr\b|\bboolArr\b|\bintArr\b|\bbyteArr\b|\bstringArr\b|\bfloatArr\b|\bthreadArr\b)");
+            e.ChangedRange.SetStyle(TypeStyle, @"(\b\?\b|\bany\b|\bbool\b|\bint\b|\bbyte\b|\bstring\b|\bvoid\b|\bfloat\b|\bthread\b|\banyArr\b|\bboolArr\b|\bintArr\b|\bbyteArr\b|\bstringArr\b|\bfloatArr\b|\bthreadArr\b|\baction\b)");
 
             //statementHighlingting
-            e.ChangedRange.SetStyle(VarStyle, @"(\bacs\b|\bvar\b|\bset\b|\binc\b|\bif\b|\belse\b|\bfunction\b|\bclass\b|\btrue\b|\bfalse\b|\bmake\b|\barray\b|\bobject\b)", RegexOptions.Singleline);
-            e.ChangedRange.SetStyle(VarStyle, @"(\~\b)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(VarStyle, @"(\bvar\b|\bset\b|\binc\b|\bif\b|\belse\b|\bfunction\b|\bclass\b|\btrue\b|\bfalse\b|\bmake\b|\barray\b|\bobject\b|\babs\b|\bvirt\b|\bovr\b)", RegexOptions.Singleline);
 
             //settings
-            e.ChangedRange.SetStyle(SettingStyle, @"(\bpackage\b|\bnamespace\b|\btype\b|\buse\b|\bdll\b)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(SettingStyle, @"(\bpackage\b|\bnamespace\b|\btype\b|\buse\b|\bdll\b|\balias\b)", RegexOptions.Singleline);
 
             //numbers
             e.ChangedRange.SetStyle(DecimalStyle, @"(?<=\.)\d+", RegexOptions.Multiline);
