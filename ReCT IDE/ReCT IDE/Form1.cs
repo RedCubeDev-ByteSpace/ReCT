@@ -213,10 +213,10 @@ namespace ReCT_IDE
         {
             string[][] acs =
             {
-                new[]{ "any", "bool", "int", "byte", "string", "void", "float", "thread", "anyArr", "boolArr", "intArr", "byteArr", "stringArr", "floatArr", "threadArr" },
-                new[]{ "var", "set", "inc", "if", "else", "function", "class", "true", "false", "break", "continue", "for", "from", "to", "return", "while", "die" },
+                new[]{ "any", "bool", "int", "byte", "string", "void", "float", "thread", "anyArr", "boolArr", "intArr", "byteArr", "stringArr", "floatArr", "threadArr", "Action" },
+                new[]{ "var", "set", "inc", "if", "else", "function", "class", "true", "false", "break", "continue", "for", "from", "to", "return", "while", "die", "ser", "abs", "is", "virt", "ovr", "alias" },
                 new[]{ "Thread", "Constructor" },
-                new[]{ "->GetLength", "->Substring", "->StartThread", "->KillThread", "->Open", "->Write", "->WriteLine", "->Read", "->ReadLine", "->IsConnected", "->Close", "->Push", "->GetBit", "->SetBit" },
+                new[]{ "->GetLength", "->Substring", "->StartThread", "->KillThread", "->Open", "->Write", "->WriteLine", "->Read", "->ReadLine", "->IsConnected", "->Close", "->Push", "->GetBit", "->SetBit", "-Pop", "->At" },
                 new[]{ "#attach", "#copy", "#copyFolder", "#closeConsole", "#noConsole" }
             };
 
@@ -1253,6 +1253,11 @@ namespace ReCT_IDE
         }
 
         private void ReCTAutoComplete_Selected(object sender, AutocompleteMenuNS.SelectedEventArgs e)
+        {
+
+        }
+
+        private void reCTToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }
