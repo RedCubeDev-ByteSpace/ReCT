@@ -11,7 +11,7 @@
           "lib/netstandard1.0/_._": {}
         }
       },
-      "Mono.Cecil/0.11.2": {
+      "Mono.Cecil/0.11.3": {
         "type": "package",
         "compile": {
           "lib/netstandard2.0/Mono.Cecil.Mdb.dll": {},
@@ -68,10 +68,10 @@
         "runtime.json"
       ]
     },
-    "Mono.Cecil/0.11.2": {
-      "sha512": "hZNAnXKQsOs/SZMFtT/e82/nA/iLgkeDy+sHD8xix4f0m9/3G0RNZplE1QHB+0n8QXq54jLqR/IPgVOkLapkyg==",
+    "Mono.Cecil/0.11.3": {
+      "sha512": "DNYE+io5XfEE8+E+5padThTPHJARJHbz1mhbhMPNrrWGKVKKqj/KEeLvbawAmbIcT73NuxLV7itHZaYCZcVWGg==",
       "type": "package",
-      "path": "mono.cecil/0.11.2",
+      "path": "mono.cecil/0.11.3",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -91,7 +91,7 @@
         "lib/netstandard2.0/Mono.Cecil.Rocks.pdb",
         "lib/netstandard2.0/Mono.Cecil.dll",
         "lib/netstandard2.0/Mono.Cecil.pdb",
-        "mono.cecil.0.11.2.nupkg.sha512",
+        "mono.cecil.0.11.3.nupkg.sha512",
         "mono.cecil.nuspec"
       ]
     },
@@ -250,30 +250,33 @@
   },
   "projectFileDependencyGroups": {
     ".NETStandard,Version=v2.0": [
-      "Mono.Cecil >= 0.11.2",
+      "Mono.Cecil >= 0.11.3",
       "NETStandard.Library >= 2.0.3",
       "System.Collections.Immutable >= 1.5.0"
     ]
   },
   "packageFolders": {
-    "/home/redcube/.nuget/packages/": {}
+    "C:\\Users\\khhsx\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/external/GitRepos/ReCT/ReCT/ReCT.csproj",
+      "projectUniqueName": "C:\\Users\\khhsx\\Source\\Repos\\RedCubeDev-ByteSpace\\ReCT\\ReCT\\ReCT.csproj",
       "projectName": "ReCT",
-      "projectPath": "/external/GitRepos/ReCT/ReCT/ReCT.csproj",
-      "packagesPath": "/home/redcube/.nuget/packages/",
-      "outputPath": "/external/GitRepos/ReCT/ReCT/obj/",
+      "projectPath": "C:\\Users\\khhsx\\Source\\Repos\\RedCubeDev-ByteSpace\\ReCT\\ReCT\\ReCT.csproj",
+      "packagesPath": "C:\\Users\\khhsx\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\khhsx\\Source\\Repos\\RedCubeDev-ByteSpace\\ReCT\\ReCT\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/redcube/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\khhsx\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netstandard2.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Users\\khhsx\\AppData\\Roaming\\Cosmos User Kit\\packages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -294,7 +297,7 @@
         "dependencies": {
           "Mono.Cecil": {
             "target": "Package",
-            "version": "[0.11.2, )"
+            "version": "[0.11.3, )"
           },
           "NETStandard.Library": {
             "suppressParent": "All",
@@ -317,7 +320,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.203/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.200\\RuntimeIdentifierGraph.json"
       }
     }
   }
