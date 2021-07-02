@@ -40,6 +40,11 @@ namespace sys
             return Console.ReadKey(true).KeyChar.ToString();
         }
 
+        public static int Read()
+        {
+            return Console.Read();
+        }
+        
         public static void Clear()
         {
             Console.Clear();
