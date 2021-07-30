@@ -89,11 +89,15 @@ namespace ReCT.CodeAnalysis.Emit
         private readonly Dictionary<string, Package.Package> _packages = new Dictionary<string, Package.Package>();
         private readonly Dictionary<string, MethodDefinition> str_methods = new Dictionary<string, MethodDefinition>();
         private readonly Dictionary<VariableSymbol, VariableDefinition> _locals = new Dictionary<VariableSymbol, VariableDefinition>();
+        private readonly Dictionary<VariableSymbol, VariableDefinition> _lamlocals = new Dictionary<VariableSymbol, VariableDefinition>();
         private readonly Dictionary<VariableSymbol, FieldDefinition> _globals = new Dictionary<VariableSymbol, FieldDefinition>();
         private readonly Dictionary<TypeDefinition, Dictionary<VariableSymbol, FieldDefinition>> _classGlobals = new Dictionary<TypeDefinition, Dictionary<VariableSymbol, FieldDefinition>>();
         private readonly Dictionary<BoundLabel, int> _labels = new Dictionary<BoundLabel, int>();
-        private readonly Dictionary<string, MethodDefinition> _anons = new Dictionary<string, MethodDefinition>();
+        private readonly Dictionary<BoundLabel, int> _lamlabels = new Dictionary<BoundLabel, int>();
         private readonly List<(int InstructionIndex, BoundLabel Target)> _fixups = new List<(int InstructionIndex, BoundLabel Target)>();
+        private readonly List<(int InstructionIndex, BoundLabel Target)> _lamfixups = new List<(int InstructionIndex, BoundLabel Target)>();
+        private readonly Dictionary<string, MethodDefinition> _anons = new Dictionary<string, MethodDefinition>();
+        private bool _inLambda = false;
         
         private TypeDefinition inType = null;
         private ClassSymbol inClass = null;
@@ -879,7 +883,8 @@ namespace ReCT.CodeAnalysis.Emit
                     EmitBaseStatement(ilProcessor, (BoundBaseStatement)node);
                     break;
                 default:
-                    throw new Exception($"Unexpected node kind {node.Kind}");
+                    return;
+                    //throw new Exception($"Unexpected node kind {node.Kind}");
             }
         }
 
@@ -959,7 +964,7 @@ namespace ReCT.CodeAnalysis.Emit
             }
             else
             {
-                _locals.Add(node.Variable, variableDefinition);
+                (_inLambda ? _lamlocals : _locals).Add(node.Variable, variableDefinition);
                 ilProcessor.Body.Variables.Add(variableDefinition);
             }
 
@@ -1047,12 +1052,12 @@ namespace ReCT.CodeAnalysis.Emit
 
         private void EmitLabelStatement(ILProcessor ilProcessor, BoundLabelStatement node)
         {
-            _labels.Add(node.Label, ilProcessor.Body.Instructions.Count);
+            (_inLambda ? _lamlabels : _labels).Add(node.Label, ilProcessor.Body.Instructions.Count);
         }
 
         private void EmitGotoStatement(ILProcessor ilProcessor, BoundGotoStatement node)
         {
-            _fixups.Add((ilProcessor.Body.Instructions.Count, node.Label));
+            (_inLambda ? _lamfixups : _fixups).Add((ilProcessor.Body.Instructions.Count, node.Label));
             ilProcessor.Emit(OpCodes.Br, Instruction.Create(OpCodes.Nop));
         }
 
@@ -1061,7 +1066,7 @@ namespace ReCT.CodeAnalysis.Emit
             EmitExpression(ilProcessor, node.Condition);
 
             var opCode = node.JumpIfTrue ? OpCodes.Brtrue : OpCodes.Brfalse;
-            _fixups.Add((ilProcessor.Body.Instructions.Count, node.Label));
+            (_inLambda ? _lamfixups : _fixups).Add((ilProcessor.Body.Instructions.Count, node.Label));
             ilProcessor.Emit(opCode, Instruction.Create(OpCodes.Nop));
         }
 
@@ -1247,9 +1252,32 @@ namespace ReCT.CodeAnalysis.Emit
             } while (_typeDefinition.Methods.FirstOrDefault(x => x.Name == name) != null);
 
             MethodDefinition anon = new MethodDefinition(name, MethodAttributes.Public | MethodAttributes.Static, _knownTypes[TypeSymbol.Void]);
+
+            _lamlocals.Clear();
+            _lamlabels.Clear();
+            _lamfixups.Clear();
+
+            _inLambda = true;
+
             var il = anon.Body.GetILProcessor();        
-            EmitBlockStatement(il, (BoundBlockStatement)node.Block);
+
+            foreach (var statement in ((BoundBlockStatement)(node.Block)).Statements)
+                EmitStatement(il, statement);
+
             il.Emit(OpCodes.Ret);
+
+            foreach (var fixup in _lamfixups)
+            {
+                var targetLabel = fixup.Target;
+                var targetInstructionIndex = _lamlabels[targetLabel];
+                var targetInstruction = il.Body.Instructions[targetInstructionIndex];
+                var instructionToFixup = il.Body.Instructions[fixup.InstructionIndex];
+                instructionToFixup.Operand = targetInstruction;
+            }
+
+            anon.Body.OptimizeMacros();
+
+            _inLambda = false;
 
             _typeDefinition.Methods.Add(anon);
             ilProcessor.Emit(OpCodes.Ldnull);
@@ -1299,7 +1327,7 @@ namespace ReCT.CodeAnalysis.Emit
             }
             else
             {
-                var variableDefinition = _locals[node.Variable];
+                var variableDefinition = _inLambda ? _lamlocals[node.Variable] : _locals[node.Variable];
                 ilProcessor.Emit(OpCodes.Ldloca, variableDefinition);
             }
         }
@@ -1325,7 +1353,7 @@ namespace ReCT.CodeAnalysis.Emit
                 }
                 else
                 {
-                    var variableDefinition = _locals[node.Variable];
+                    var variableDefinition = _inLambda ? _lamlocals[node.Variable] : _locals[node.Variable];
                     ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
                 }
             }
@@ -1359,7 +1387,7 @@ namespace ReCT.CodeAnalysis.Emit
                     }
                     else
                     {
-                        var variableDefinition = _locals[node.Variable];
+                        var variableDefinition = _inLambda ? _lamlocals[node.Variable] : _locals[node.Variable];
                         ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
                     }
                 }
@@ -1496,7 +1524,7 @@ namespace ReCT.CodeAnalysis.Emit
                 }
                 else
                 {
-                    var variableDefinition = _locals[node.Variable];
+                    var variableDefinition = _inLambda ? _lamlocals[node.Variable] : _locals[node.Variable];
                     ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
                 }
 
@@ -1530,7 +1558,7 @@ namespace ReCT.CodeAnalysis.Emit
             if (node.Variable.IsGlobal && !node.Variable.IsFunctional)
                 fieldDefinition = (inClass == null ? _globals : _classGlobals[inType])[node.Variable];
             else if (!node.Variable.IsGlobal)
-                variableDefinition = _locals[node.Variable];
+                variableDefinition = _inLambda ? _lamlocals[node.Variable] : _locals[node.Variable];
 
             if (inClass != null && !inClass.IsStatic && node.Variable.IsGlobal)
                 ilProcessor.Emit(OpCodes.Ldarg_0);
@@ -1779,7 +1807,7 @@ namespace ReCT.CodeAnalysis.Emit
                 if (node.Variable.IsGlobal)
                     fieldDefinition = (inClass == null ? _globals : _classGlobals[inType])[node.Variable];
                 else
-                    variableDefinition = _locals[node.Variable];
+                    variableDefinition = _inLambda ? _lamlocals[node.Variable] : _locals[node.Variable];
 
                 if (inClass != null && !inClass.IsStatic && node.Variable.IsGlobal)
                     ilProcessor.Emit(OpCodes.Ldarg_0);

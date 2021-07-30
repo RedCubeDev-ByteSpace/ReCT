@@ -1491,12 +1491,20 @@ namespace ReCT.CodeAnalysis.Binding
         
         private BoundExpression BindLambdaExpression(LambdaExpressionSyntax syntax)
         {
+            if (_function != null && _function.Name == "anon")
+            {
+                _diagnostics.ReportLambdaInLambda(syntax.Location);
+                return new BoundErrorExpression();
+            }
+
             var prev = _function;
             _function = new FunctionSymbol("anon", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void);
-            var boundBlock = BindBlockStatement((BlockStatementSyntax)syntax.Block);
+            var boundBlock = (BoundBlockStatement)BindBlockStatement((BlockStatementSyntax)syntax.Block);
+            var loweredBody = (BoundBlockStatement)Lowerer.Lower(_function, boundBlock);
+
             _function = prev;
 
-            return new BoundLambdaExpression(boundBlock);
+            return new BoundLambdaExpression(loweredBody);
         }
 
         private BoundExpression BindIsExpression(IsExpressionSyntax syntax)

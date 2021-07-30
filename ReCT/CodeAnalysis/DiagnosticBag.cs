@@ -567,5 +567,10 @@ namespace ReCT.CodeAnalysis
         {
             Report(location, $"Cant do IsInstance check with Type '{name}' because it needs to be an inherating or abstract Class!");
         }
+
+        internal void ReportLambdaInLambda(TextLocation location)
+        {
+            Report(location, $"Unable to create Lambda Function inside of Lambda Function!");
+        }
     }
 }

@@ -29,6 +29,12 @@ namespace ReCT.CodeAnalysis.Lowering
             return Flatten(function, result);
         }
 
+        public static BoundBlockStatement Simplify(BoundStatement statement)
+        {
+            var lowerer = new Lowerer();
+            return (BoundBlockStatement)lowerer.RewriteStatement(statement);
+        }
+
         private static BoundBlockStatement Flatten(FunctionSymbol function, BoundStatement statement)
         {
             var builder = ImmutableArray.CreateBuilder<BoundStatement>();
