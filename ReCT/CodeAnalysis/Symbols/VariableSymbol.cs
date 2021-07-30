@@ -4,8 +4,8 @@ namespace ReCT.CodeAnalysis.Symbols
 {
     public abstract class VariableSymbol : Symbol
     {
-        internal VariableSymbol(string name, bool isReadOnly, bool isGlobal, bool isFunctional, TypeSymbol type)
-            : base(name)
+        internal VariableSymbol(string name, bool isReadOnly, bool isGlobal, bool isFunctional, TypeSymbol type, Text.TextLocation location)
+            : base(name, location)
         {
             IsReadOnly = isReadOnly;
             IsGlobal = isGlobal;

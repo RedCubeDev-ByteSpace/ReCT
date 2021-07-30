@@ -4,8 +4,8 @@ namespace ReCT.CodeAnalysis.Symbols
 {
     public sealed class EnumSymbol : Symbol
     {
-        public EnumSymbol(string name, Dictionary<string, int> values, TypeSymbol type)
-            : base(name)
+        public EnumSymbol(string name, Dictionary<string, int> values, TypeSymbol type, Text.TextLocation location = new Text.TextLocation())
+            : base(name, location)
         {
             Values = values;
             Type = type;

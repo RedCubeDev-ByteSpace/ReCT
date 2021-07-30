@@ -5,8 +5,8 @@ namespace ReCT.CodeAnalysis.Symbols
 {
     public sealed class FunctionSymbol : Symbol
     {
-        public FunctionSymbol(string name, ImmutableArray<ParameterSymbol> parameters, TypeSymbol type, FunctionDeclarationSyntax declaration = null, bool isPublic = false, string package = "", bool isVirtual = false, bool isOverride = false)
-            : base(name)
+        public FunctionSymbol(string name, ImmutableArray<ParameterSymbol> parameters, TypeSymbol type, FunctionDeclarationSyntax declaration = null, bool isPublic = false, string package = "", bool isVirtual = false, bool isOverride = false, Text.TextLocation location = new Text.TextLocation())
+            : base(name, location)
         {
             Parameters = parameters;
             Type = type;

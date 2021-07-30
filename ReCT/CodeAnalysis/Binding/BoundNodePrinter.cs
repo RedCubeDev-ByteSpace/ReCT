@@ -93,7 +93,8 @@ namespace ReCT.CodeAnalysis.Binding
         {
             writer.WriteIdentifier(node.Variable.Name);
             writer.WriteKeyword(SyntaxKind.AccessToken);
-            writer.WriteIdentifier(node.Function == null ? node.Property.Name : node.Function.Name);
+            writer.WriteIdentifier(node.TypeCall != null ? node.TypeCall.Function.Name : (node.Function != null ? node.Function.Name : node.Property.Name));
+
 
             if (node.AccessType == ObjectAccessExpression.AccessType.Call)
             {

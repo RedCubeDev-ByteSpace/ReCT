@@ -5,7 +5,7 @@ namespace ReCT.CodeAnalysis.Symbols
     public sealed class TypeFunctionSymbol : Symbol
     {
         public TypeFunctionSymbol(string name, ImmutableArray<ParameterSymbol> parameters, TypeSymbol childtype, TypeSymbol type)
-            : base(name)
+            : base(name, new Text.TextLocation())
         {
             Parameters = parameters;
             Childtype = childtype;

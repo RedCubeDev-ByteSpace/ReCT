@@ -5,8 +5,8 @@ namespace ReCT.CodeAnalysis.Symbols
 {
     public sealed class ClassSymbol : Symbol
     {
-        public ClassSymbol(string name, ClassDeclarationSyntax declaration = null, bool isStatic = false, bool isIncluded = false, bool isAbstract = false, bool isSerializable = false, ClassSymbol parentSym = null)
-            : base(name)
+        public ClassSymbol(string name, ClassDeclarationSyntax declaration = null, bool isStatic = false, bool isIncluded = false, bool isAbstract = false, bool isSerializable = false, ClassSymbol parentSym = null, Text.TextLocation location = new Text.TextLocation())
+            : base(name, location)
         {
             Declaration = declaration;
             IsStatic = isStatic;

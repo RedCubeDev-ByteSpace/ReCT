@@ -67,17 +67,17 @@ namespace ReCT.CodeAnalysis.Binding
                 if (statement.Statement is PackageStatementSyntax p)
                 {
                     binder.BindGlobalStatement(p);
-                    Console.WriteLine("imported: " + p.Package.Text);
+                    if (Compilation.PrintDebugMessages) Console.WriteLine("imported: " + p.Package.Text);
                 }
                 if (statement.Statement is UseStatementSyntax u)
                 {
                     binder.BindGlobalStatement(u);
-                    Console.WriteLine("using: " + u.Name.Text);
+                    if (Compilation.PrintDebugMessages) Console.WriteLine("using: " + u.Name.Text);
                 }
                 if (statement.Statement is AliasStatementSyntax a)
                 {
                     binder.BindGlobalStatement(a);
-                    Console.WriteLine("aliasing: " + a.MapThis.Text);
+                    if (Compilation.PrintDebugMessages) Console.WriteLine("aliasing: " + a.MapThis.Text);
                 }
             }
 
@@ -1979,9 +1979,9 @@ namespace ReCT.CodeAnalysis.Binding
             var declare = !identifier.IsMissing;
             var variable = syntax == SyntaxKind.SetKeyword ?
                                 isVirtual || isOverride ? 
-                                     (VariableSymbol)new FunctionalVariableSymbol(name, isReadOnly, type, isVirtual, isOverride)
-                                    :(VariableSymbol)new GlobalVariableSymbol(name, isReadOnly, type)
-                                : new LocalVariableSymbol(name, isReadOnly, type);
+                                     (VariableSymbol)new FunctionalVariableSymbol(name, isReadOnly, type, isVirtual, isOverride, identifier.Location)
+                                    :(VariableSymbol)new GlobalVariableSymbol(name, isReadOnly, type, identifier.Location)
+                                : new LocalVariableSymbol(name, isReadOnly, type, identifier.Location);
 
             //Console.WriteLine($"VAR: {name} | {declare} | {variable} | {(variable.IsGlobal ? getClassScope() : _scope).Name}");
 
@@ -2037,7 +2037,7 @@ namespace ReCT.CodeAnalysis.Binding
 
         private Package.Package packageFromType(TypeSymbol type)
         {
-            if (type.isArray || type.isClassArray)
+            if (type != null && (type.isArray || type.isClassArray))
                 return resolvePackageType(ArrayToType(type));
             else
                 return resolvePackageType(type);

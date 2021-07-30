@@ -56,6 +56,8 @@ namespace ReCT.CodeAnalysis
         public ImmutableArray<EnumSymbol> Enums => GlobalScope.Enums;
         public ImmutableArray<string> UsingPackages => Binder._usingPackages.ToImmutableArray();
 
+        public static bool PrintDebugMessages = true;
+
         internal BoundGlobalScope GlobalScope
         {
             get

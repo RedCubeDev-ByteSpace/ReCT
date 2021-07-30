@@ -109,6 +109,9 @@ namespace ReCT.CodeAnalysis.Binding
 
         public static BoundBinaryOperator Bind(SyntaxKind syntaxKind, TypeSymbol leftType, TypeSymbol rightType)
         {
+            if (leftType.isClass && rightType.isClass && ((syntaxKind == SyntaxKind.EqualsToken || syntaxKind == SyntaxKind.NotEqualsToken)))
+                return new BoundBinaryOperator(syntaxKind, syntaxKind == SyntaxKind.EqualsToken ? BoundBinaryOperatorKind.Equals : BoundBinaryOperatorKind.NotEquals, leftType, TypeSymbol.Bool);
+
             foreach (var op in _operators)
             {
                 if (op.SyntaxKind == syntaxKind && op.LeftType == leftType && op.RightType == rightType)

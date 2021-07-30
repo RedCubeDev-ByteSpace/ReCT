@@ -31,8 +31,8 @@ namespace ReCT.CodeAnalysis.Symbols
         public static Dictionary<ClassSymbol, TypeSymbol> Class;
         public static Dictionary<ClassSymbol, TypeSymbol> ClassArrays;
 
-        public TypeSymbol(string name, bool array = false)
-            : base(name)
+        public TypeSymbol(string name, bool array = false, Text.TextLocation location = new Text.TextLocation())
+            : base(name, location)
         {
             isArray = array;
         }
