@@ -360,13 +360,13 @@ namespace ReCT
         {
             Console.WriteLine("Referencing standard Assemblies...");
             var location = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-            references.Add(location + "/Dotnet ReCT Assemblies/System.Console.dll");
-            references.Add(location + "/Dotnet ReCT Assemblies/System.IO.FileSystem.dll");
-            references.Add(location + "/Dotnet ReCT Assemblies/System.Net.Sockets.dll");
-            references.Add(location + "/Dotnet ReCT Assemblies/System.Runtime.dll");
-            references.Add(location + "/Dotnet ReCT Assemblies/System.Runtime.Extensions.dll");
-            references.Add(location + "/Dotnet ReCT Assemblies/System.Threading.dll");
-            references.Add(location + "/Dotnet ReCT Assemblies/System.Threading.Thread.dll");
+            references.Add(location + "/System Dotnet Assemblies/System.Console.dll");
+            references.Add(location + "/System Dotnet Assemblies/System.IO.FileSystem.dll");
+            references.Add(location + "/System Dotnet Assemblies/System.Net.Sockets.dll");
+            references.Add(location + "/System Dotnet Assemblies/System.Runtime.dll");
+            references.Add(location + "/System Dotnet Assemblies/System.Runtime.Extensions.dll");
+            references.Add(location + "/System Dotnet Assemblies/System.Threading.dll");
+            references.Add(location + "/System Dotnet Assemblies/System.Threading.Thread.dll");
         }
 
         static void evaluateFlags(ref string code, ref List<string> filesToCopy, ref List<string> foldersToCopy, string inPath)
