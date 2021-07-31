@@ -9,7 +9,7 @@
     ".NETStandard,Version=v2.0/": {
       "ReCT/1.0.0": {
         "dependencies": {
-          "Mono.Cecil": "0.11.2",
+          "Mono.Cecil": "0.11.3",
           "NETStandard.Library": "2.0.3",
           "System.Collections.Immutable": "1.5.0"
         },
@@ -18,23 +18,23 @@
         }
       },
       "Microsoft.NETCore.Platforms/1.1.0": {},
-      "Mono.Cecil/0.11.2": {
+      "Mono.Cecil/0.11.3": {
         "runtime": {
           "lib/netstandard2.0/Mono.Cecil.Mdb.dll": {
-            "assemblyVersion": "0.11.2.0",
-            "fileVersion": "0.11.2.0"
+            "assemblyVersion": "0.11.3.0",
+            "fileVersion": "0.11.3.0"
           },
           "lib/netstandard2.0/Mono.Cecil.Pdb.dll": {
-            "assemblyVersion": "0.11.2.0",
-            "fileVersion": "0.11.2.0"
+            "assemblyVersion": "0.11.3.0",
+            "fileVersion": "0.11.3.0"
           },
           "lib/netstandard2.0/Mono.Cecil.Rocks.dll": {
-            "assemblyVersion": "0.11.2.0",
-            "fileVersion": "0.11.2.0"
+            "assemblyVersion": "0.11.3.0",
+            "fileVersion": "0.11.3.0"
           },
           "lib/netstandard2.0/Mono.Cecil.dll": {
-            "assemblyVersion": "0.11.2.0",
-            "fileVersion": "0.11.2.0"
+            "assemblyVersion": "0.11.3.0",
+            "fileVersion": "0.11.3.0"
           }
         }
       },
@@ -66,12 +66,12 @@
       "path": "microsoft.netcore.platforms/1.1.0",
       "hashPath": "microsoft.netcore.platforms.1.1.0.nupkg.sha512"
     },
-    "Mono.Cecil/0.11.2": {
+    "Mono.Cecil/0.11.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-hZNAnXKQsOs/SZMFtT/e82/nA/iLgkeDy+sHD8xix4f0m9/3G0RNZplE1QHB+0n8QXq54jLqR/IPgVOkLapkyg==",
-      "path": "mono.cecil/0.11.2",
-      "hashPath": "mono.cecil.0.11.2.nupkg.sha512"
+      "sha512": "sha512-DNYE+io5XfEE8+E+5padThTPHJARJHbz1mhbhMPNrrWGKVKKqj/KEeLvbawAmbIcT73NuxLV7itHZaYCZcVWGg==",
+      "path": "mono.cecil/0.11.3",
+      "hashPath": "mono.cecil.0.11.3.nupkg.sha512"
     },
     "NETStandard.Library/2.0.3": {
       "type": "package",

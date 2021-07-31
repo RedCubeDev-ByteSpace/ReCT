@@ -1,28 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\khhsx\\Source\\Repos\\RedCubeDev-ByteSpace\\ReCT\\ReCT\\ReCT.csproj": {}
+    "/external/GitRepos/ReCT/ReCT/ReCT.csproj": {}
   },
   "projects": {
-    "C:\\Users\\khhsx\\Source\\Repos\\RedCubeDev-ByteSpace\\ReCT\\ReCT\\ReCT.csproj": {
+    "/external/GitRepos/ReCT/ReCT/ReCT.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\khhsx\\Source\\Repos\\RedCubeDev-ByteSpace\\ReCT\\ReCT\\ReCT.csproj",
+        "projectUniqueName": "/external/GitRepos/ReCT/ReCT/ReCT.csproj",
         "projectName": "ReCT",
-        "projectPath": "C:\\Users\\khhsx\\Source\\Repos\\RedCubeDev-ByteSpace\\ReCT\\ReCT\\ReCT.csproj",
-        "packagesPath": "C:\\Users\\khhsx\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\khhsx\\Source\\Repos\\RedCubeDev-ByteSpace\\ReCT\\ReCT\\obj\\",
+        "projectPath": "/external/GitRepos/ReCT/ReCT/ReCT.csproj",
+        "packagesPath": "/home/redcube/.nuget/packages/",
+        "outputPath": "/external/GitRepos/ReCT/ReCT/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\khhsx\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/redcube/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netstandard2.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Users\\khhsx\\AppData\\Roaming\\Cosmos User Kit\\packages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -66,7 +63,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.203/RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -93,6 +93,7 @@ namespace ReCT
             outputPath = Path.GetFullPath(outputPath);
             
             //change working directory to access compiler files
+            var callcwd = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 
             SyntaxTree[] syntaxTrees = new SyntaxTree[sourcePaths.Count];
@@ -176,18 +177,19 @@ namespace ReCT
             foreach (string s in filesToCopy)
             {
                 Console.WriteLine("Copying File: " + Path.GetFileName(s));
-                if (Path.IsPathRooted(s))
-                    File.Copy(s, Path.GetDirectoryName(outputPath) + "/" + Path.GetFileName(s), true);
+                var source = s.Replace("$CWD", callcwd);
+                if (Path.IsPathRooted(source))
+                    File.Copy(source, Path.GetDirectoryName(outputPath) + "/" + Path.GetFileName(s), true);
                 else
-                    File.Copy("Packages/" + s, Path.GetDirectoryName(outputPath) + "/" + Path.GetFileName(s), true);
+                    File.Copy("Packages/" + source, Path.GetDirectoryName(outputPath) + "/" + Path.GetFileName(source), true);
             }
             foreach (string s in foldersToCopy)
             {
                 Console.WriteLine("Copying Folder: " + s.Split('\\').Last().Split('/').Last());
                 
-                var SourcePath = s;
+                var SourcePath = s.Replace("$CWD", callcwd);
                 var DestinationPath = Path.GetDirectoryName(outputPath) + "/" + s.Split('\\').Last().Split('/').Last();
-                if (!Path.IsPathRooted(s)) SourcePath = "Packages/" + SourcePath;
+                if (!Path.IsPathRooted(SourcePath)) SourcePath = "Packages/" + SourcePath;
 
                 Directory.CreateDirectory(DestinationPath);
 
@@ -240,7 +242,8 @@ namespace ReCT
 
             if (File.Exists($"./Build/{data.Name}.dll"))
             {
-                var proc = Process.Start("dotnet", $"./Build/{data.Name}.dll");
+                Directory.SetCurrentDirectory(Directory.GetCurrentDirectory() + "/Build");
+                var proc = Process.Start("dotnet", $"./{data.Name}.dll");
                 proc.WaitForExit();
             }
             else
