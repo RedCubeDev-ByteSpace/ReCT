@@ -13,7 +13,7 @@ namespace math
     //This is the Official ReCT MATH Package -- ©2021 RedCube
     public static class math
     {
-        private static Random rnd;
+        private static Random rnd = new Random();
 
         public static int Random(int max)
         {
