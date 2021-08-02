@@ -572,5 +572,10 @@ namespace ReCT.CodeAnalysis
         {
             Report(location, $"Unable to create Lambda Function inside of Lambda Function!");
         }
-    }
+
+		internal void ReportUnableToAccessMainInConstructor(TextLocation location)
+		{
+			Report(location, $"Unable to access Main class in Constructor!");
+		}
+	}
 }

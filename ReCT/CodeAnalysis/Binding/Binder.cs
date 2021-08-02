@@ -1217,6 +1217,12 @@ namespace ReCT.CodeAnalysis.Binding
 
 				if (syntax.IdentifierToken.Text == "Main")
 				{
+					if (_function.Name == "Constructor")
+					{
+						_diagnostics.ReportUnableToAccessMainInConstructor(syntax.IdentifierToken.Location);
+                		return new BoundErrorExpression();
+					}
+
 					staticClass = new ClassSymbol("Main", null , true);
                 	staticClass.Scope = new BoundScope(null);
 				}
