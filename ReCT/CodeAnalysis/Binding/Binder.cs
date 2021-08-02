@@ -1214,6 +1214,13 @@ namespace ReCT.CodeAnalysis.Binding
             else
             {
                 var staticClass = ParentScope.GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.IdentifierToken.Text);
+
+				if (syntax.IdentifierToken.Text == "Main")
+				{
+					staticClass = new ClassSymbol("Main", null , true);
+                	staticClass.Scope = new BoundScope(null);
+				}
+
                 if (staticClass != null) return BindAccessExpressionSuffix(syntax, new BoundObjectAccessExpression(null, syntax.Type, null, ImmutableArray.Create<BoundExpression>(), null, null, null, null, staticClass, null, null, null), null, staticClass, null);
                 Package.Package package = null;
 
@@ -1359,8 +1366,9 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (syntax.Type == ObjectAccessExpression.AccessType.Call)
             {
-                Symbol symbol = classsym.Scope.TryLookupSymbol(syntax.Call.Identifier.Text, true);
-                if (classsym.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.Call.Identifier.Text);
+                Symbol symbol = null;
+                if (classsym.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.LookingFor.Text);
+                else symbol = classsym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
 
                 //check if virtual func for it exists
                 if (symbol == null && classsym.ParentSym != null)
@@ -1411,8 +1419,9 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (syntax.Type == ObjectAccessExpression.AccessType.Get)
             {
-                var symbol = classsym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
+				Symbol symbol = null;
                 if (classsym.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.LookingFor.Text);
+                else symbol = classsym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
 
                 //check if virtual func for it exists
                 if (symbol == null && classsym.ParentSym != null)
@@ -1422,11 +1431,14 @@ namespace ReCT.CodeAnalysis.Binding
                     bac.Class = classsym.ParentSym;
                 }
 
+				Console.WriteLine(symbol);
+
                 if (symbol == null || !(symbol is VariableSymbol))
                 {
                     _diagnostics.ReportVariableNotFoundInObject(syntax.LookingFor.Location, syntax.LookingFor.Text, classsym.Name);
                     return new BoundErrorExpression();
                 }
+
 
                 var property = symbol as VariableSymbol;
                 var rtype = property.Type;
@@ -1438,8 +1450,9 @@ namespace ReCT.CodeAnalysis.Binding
 
             if (syntax.Type == ObjectAccessExpression.AccessType.Set)
             {
-                var symbol = classsym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
+                Symbol symbol = null;
                 if (classsym.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.LookingFor.Text);
+                else symbol = classsym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
 
                 //check if virtual func for it exists
                 if (symbol == null && classsym.ParentSym != null)

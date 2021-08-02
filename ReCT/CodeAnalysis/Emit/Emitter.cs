@@ -1431,6 +1431,7 @@ namespace ReCT.CodeAnalysis.Emit
             {
                 if (classSymbol.Name == "Main")
                 {
+					Console.WriteLine("when sus: " + node.Property.Name);
                     ilProcessor.Emit(OpCodes.Ldsfld , _globals.FirstOrDefault(x => x.Key.Name == node.Property.Name).Value);
                     return;
                 }
@@ -2052,7 +2053,7 @@ namespace ReCT.CodeAnalysis.Emit
                     return;
                 }
 
-                if (inClass == null)
+                if (node.InClass == null)
                 {
                     var methodDefinition = (inType == null ? _methods : _classMethods[_classes.FirstOrDefault(x => x.Value == inType).Key])[node.Function];
                     ilProcessor.Emit(OpCodes.Call, methodDefinition);
