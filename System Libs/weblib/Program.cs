@@ -52,6 +52,11 @@ namespace web
                 fields = new MultipartFormDataContent();
             }
 
+			public void AddHeader(string key, string value)
+            {
+                client.DefaultRequestHeaders.Add(key, value);
+            }
+
             public void AddField(string key, string value)
             {
                 fields.Add(new StringContent(value), key);
