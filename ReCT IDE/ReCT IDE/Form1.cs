@@ -130,82 +130,90 @@ namespace ReCT_IDE
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Activate();
-            CenterToScreen();
-
-            if (Properties.Settings.Default.LastOpenFiles == null) Properties.Settings.Default.LastOpenFiles = new System.Collections.Specialized.StringCollection();
-            if (Properties.Settings.Default.LastOpenProjects == null) Properties.Settings.Default.LastOpenProjects = new System.Collections.Specialized.StringCollection();
-            Properties.Settings.Default.Save();
-
-            Menu.Renderer = new MenuRenderer();
-
-            standardMsg += ReCT.info.Version;
-            standardMsg += "\r\npackage sys;";
-
-            errorBox = new Error();
-            SetCodeBoxColors();
-            fileChanged = false;
-            //updateWindowTitle();
-
-            icons[0] = Play.BackgroundImage;
-            icons[1] = Stop.BackgroundImage;
-            icons[2] = Build.BackgroundImage;
-
-            icons[3] = Image.FromFile("res/playIconHL.png");
-            icons[4] = Image.FromFile("res/literally_just_a_fukin_SquareIconHL.png");
-            icons[5] = Image.FromFile("res/gearIconHL.png");
-
-            icons[6] = Image.FromFile("res/playIconLoad.png");
-
-            autocompleteImageList.Images.Add(Image.FromFile("res/typeIcon.png"));
-            autocompleteImageList.Images.Add(Image.FromFile("res/statementIcon.png"));
-            autocompleteImageList.Images.Add(Image.FromFile("res/functionIcon.png"));
-            autocompleteImageList.Images.Add(Image.FromFile("res/typefunctionIcon.png"));
-            autocompleteImageList.Images.Add(Image.FromFile("res/flagIcon.png"));
-            autocompleteImageList.Images.Add(Image.FromFile("res/variableIcon.png")); 
-            autocompleteImageList.Images.Add(Image.FromFile("res/classIcon.png"));
-
-            setAC();
-
-            TabPrefab = (System.Windows.Forms.Button)CtrlClone.ControlFactory.CloneCtrl(Tab);
-            Tab.Dispose();
-            Controls.Remove(Tab);
-
-            var tab = makeNewTab();
-            tabs.Add(tab);
-
-            settings = new Settings(this);
-            settings.Hide();
-
-            settings.autosave.SelectedIndex = Properties.Settings.Default.Autosave;
-            settings.checkBox2.Checked = Properties.Settings.Default.MaximizeRect;         
-
-            dc = new Discord();
-            dc.Initialize();
-
-            presence = new RichPresence()
+            try
             {
-                Details = "Working on Untitled...",
-                Timestamps = new Timestamps()
+                Activate();
+                CenterToScreen();
+
+                if (Properties.Settings.Default.LastOpenFiles == null) Properties.Settings.Default.LastOpenFiles = new System.Collections.Specialized.StringCollection();
+                if (Properties.Settings.Default.LastOpenProjects == null) Properties.Settings.Default.LastOpenProjects = new System.Collections.Specialized.StringCollection();
+                Properties.Settings.Default.Save();
+
+                Menu.Renderer = new MenuRenderer();
+
+                standardMsg += ReCT.info.Version;
+                standardMsg += "\r\npackage sys;";
+
+                errorBox = new Error();
+                SetCodeBoxColors();
+                fileChanged = false;
+                //updateWindowTitle();
+
+                icons[0] = Play.BackgroundImage;
+                icons[1] = Stop.BackgroundImage;
+                icons[2] = Build.BackgroundImage;
+
+                icons[3] = Image.FromFile("res/playIconHL.png");
+                icons[4] = Image.FromFile("res/literally_just_a_fukin_SquareIconHL.png");
+                icons[5] = Image.FromFile("res/gearIconHL.png");
+
+                icons[6] = Image.FromFile("res/playIconLoad.png");
+
+                autocompleteImageList.Images.Add(Image.FromFile("res/typeIcon.png"));
+                autocompleteImageList.Images.Add(Image.FromFile("res/statementIcon.png"));
+                autocompleteImageList.Images.Add(Image.FromFile("res/functionIcon.png"));
+                autocompleteImageList.Images.Add(Image.FromFile("res/typefunctionIcon.png"));
+                autocompleteImageList.Images.Add(Image.FromFile("res/flagIcon.png"));
+                autocompleteImageList.Images.Add(Image.FromFile("res/variableIcon.png"));
+                autocompleteImageList.Images.Add(Image.FromFile("res/classIcon.png"));
+
+                setAC();
+
+                TabPrefab = (System.Windows.Forms.Button)CtrlClone.ControlFactory.CloneCtrl(Tab);
+                Tab.Dispose();
+                Controls.Remove(Tab);
+
+                var tab = makeNewTab();
+                tabs.Add(tab);
+
+                settings = new Settings(this);
+                settings.Hide();
+
+                settings.autosave.SelectedIndex = Properties.Settings.Default.Autosave;
+                settings.checkBox2.Checked = Properties.Settings.Default.MaximizeRect;
+
+                dc = new Discord();
+                dc.Initialize();
+
+                presence = new RichPresence()
                 {
-                    Start = DateTime.UtcNow
-                },
-                Assets = new Assets()
+                    Details = "Working on Untitled...",
+                    Timestamps = new Timestamps()
+                    {
+                        Start = DateTime.UtcNow
+                    },
+                    Assets = new Assets()
+                    {
+                        LargeImageKey = "rect",
+                        LargeImageText = "ReCT IDE",
+                    }
+                };
+
+                presence.Details = "Working on " + tabs[currentTab].name + "...";
+                dc.client.SetPresence(presence);
+
+                OrderTabs();
+
+                if (fileToOpen != "")
                 {
-                    LargeImageKey = "rect",
-                    LargeImageText = "ReCT IDE",
+                    OpenFile(fileToOpen);
+                    fileToOpen = "";
                 }
-            };
-
-            presence.Details = "Working on " + tabs[currentTab].name + "...";
-            dc.client.SetPresence(presence);
-
-            OrderTabs();
-
-            if (fileToOpen != "")
+            }
+            catch(Exception ex)
             {
-                OpenFile(fileToOpen);
-                fileToOpen = "";
+                File.WriteAllText(Path.GetDirectoryName(Application.ExecutablePath) + "/logs/crash.log", ex.Message);
+                new Crash().Show();
             }
         }
 
@@ -919,11 +927,6 @@ namespace ReCT_IDE
         private void Build_MouseLeave(object sender, EventArgs e)
         {
             changeIcon(Build, 2, false);
-        }
-
-        private void CodeBox_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void toolTip1_Popup(object sender, PopupEventArgs e)

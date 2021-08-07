@@ -12,7 +12,7 @@ namespace ReCT_IDE
     {
         public bool isUpdateAvailable(string version)
         {
-            WebRequest request = WebRequest.Create("http://bytespace.tk/Extras/ReCTVersion");
+            WebRequest request = WebRequest.Create("http://bytespace.network/Extras/ReCTVersion");
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             Stream dataStream = response.GetResponseStream();
 
@@ -27,7 +27,7 @@ namespace ReCT_IDE
         }
         public string getUpdateVersion()
         {
-            WebRequest request = WebRequest.Create("http://bytespace.tk/Extras/ReCTVersion");
+            WebRequest request = WebRequest.Create("http://bytespace.network/Extras/ReCTVersion");
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             Stream dataStream = response.GetResponseStream();
 

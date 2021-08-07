@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,13 +15,23 @@ namespace ReCT_IDE
         [STAThread]
         static void Main(string[] args)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            try
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
 
-            if (args.Length > 0)
-                Form1.fileToOpen = args[0];
-
-            Application.Run(new Form1());
+                if (args.Length > 0)
+                    Form1.fileToOpen = args[0];
+                Application.Run(new Form1());
+            }
+            catch (Exception ex)
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(Application.ExecutablePath) + "/logs/");
+                File.WriteAllText(Path.GetDirectoryName(Application.ExecutablePath) + "/logs/crash.log", ex.Message);
+                Crash crash = new Crash();
+                crash.ShowDialog();
+                
+            }
 
         }
     }
