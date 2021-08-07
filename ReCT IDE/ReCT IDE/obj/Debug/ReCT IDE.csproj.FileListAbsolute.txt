@@ -320,3 +320,4 @@ C:\Users\khhsx\Source\Repos\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debu
 C:\Users\khhsx\Source\Repos\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.CopyComplete
 C:\Users\khhsx\Source\Repos\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.exe
 C:\Users\khhsx\Source\Repos\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.pdb
+C:\Users\khhsx\Source\Repos\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Crash.resources

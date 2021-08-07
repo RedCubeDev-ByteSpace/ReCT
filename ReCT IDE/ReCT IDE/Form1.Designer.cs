@@ -115,7 +115,6 @@
             this.CodeBox.Text = resources.GetString("CodeBox.Text");
             this.CodeBox.Zoom = 100;
             this.CodeBox.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.CodeBox_Chnaged);
-            this.CodeBox.Load += new System.EventHandler(this.CodeBox_Load);
             // 
             // fileToolStripMenuItem
             // 
