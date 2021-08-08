@@ -1373,8 +1373,8 @@ namespace ReCT.CodeAnalysis.Binding
             if (syntax.Type == ObjectAccessExpression.AccessType.Call)
             {
                 Symbol symbol = null;
-                if (classsym.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.LookingFor.Text);
-                else symbol = classsym.Scope.TryLookupSymbol(syntax.LookingFor.Text, true);
+                if (classsym.Name == "Main") symbol = ParentScope.TryLookupSymbol(syntax.Call.Identifier.Text);
+                else symbol = classsym.Scope.TryLookupSymbol(syntax.Call.Identifier.Text, true);
 
                 //check if virtual func for it exists
                 if (symbol == null && classsym.ParentSym != null)

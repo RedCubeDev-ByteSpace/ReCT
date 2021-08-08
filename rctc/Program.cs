@@ -170,7 +170,7 @@ namespace ReCT
                 File.Copy(p.fullName, Path.GetDirectoryName(outputPath) + "/" + p.name + "lib.dll", true);
 
                 if (p.name == "audio")
-                    File.Copy("OtherDeps/NetCoreAudio.dll", Path.GetDirectoryName(outputPath) + "/" + "NetCoreAudio.dll", true);
+                    File.Copy("System Dotnet Assemblies/NetCoreAudio.dll", Path.GetDirectoryName(outputPath) + "/" + "NetCoreAudio.dll", true);
             }
             
             //copy files and folders
@@ -230,9 +230,12 @@ namespace ReCT
             if (File.Exists($"./Build/{data.Name}.dll"))
                 File.Delete($"./Build/{data.Name}.dll");
 
+            var dirpath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+            var exename = File.Exists(dirpath + "/rctc") ? "rctc" : "rctc.exe";
+
             Process process = Process.Start(new ProcessStartInfo
             {
-                FileName = "rctc",
+                FileName = dirpath + "/" + exename,
                 UseShellExecute = false,
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
