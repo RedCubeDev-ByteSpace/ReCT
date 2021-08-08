@@ -136,6 +136,12 @@
   <ItemGroup>
     <Compile Include="BoltUpdater.cs" />
     <Compile Include="ControlFactory.cs" />
+    <Compile Include="Crash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Crash.Designer.cs">
+      <DependentUpon>Crash.cs</DependentUpon>
+    </Compile>
     <Compile Include="Discord.cs" />
     <Compile Include="Error.cs">
       <SubType>Form</SubType>
@@ -178,6 +184,9 @@
     <Compile Include="Startup.Designer.cs">
       <DependentUpon>Startup.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Crash.resx">
+      <DependentUpon>Crash.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Error.resx">
       <DependentUpon>Error.cs</DependentUpon>
     </EmbeddedResource>
@@ -247,6 +256,9 @@
   <ItemGroup>
     <Content Include="rectIcon.ico" />
     <Content Include="rectLogo.ico" />
+    <None Include="Resources\crash1.png" />
+    <None Include="Resources\crash.png" />
+    <None Include="Resources\BackgroundImage.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8">
