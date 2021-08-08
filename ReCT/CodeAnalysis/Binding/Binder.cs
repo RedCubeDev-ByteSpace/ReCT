@@ -1082,7 +1082,7 @@ namespace ReCT.CodeAnalysis.Binding
             if (syntax.Package != null)
                 package = _packageNamespaces.FirstOrDefault(x => x.name == syntax.Package.Text);
 
-            if (package != null && _packageAliases.ContainsKey(syntax.Package.Text))
+            if (syntax.Package != null && package == null && _packageAliases.ContainsKey(syntax.Package.Text))
                 package = _packageNamespaces.FirstOrDefault(x => x.name == _packageAliases[syntax.Package.Text]);
 
             ClassSymbol _class = (package == null ? ParentScope : package.scope).GetDeclaredClasses().FirstOrDefault(x => x.Name == syntax.Type.Text);
