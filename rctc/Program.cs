@@ -62,6 +62,18 @@ namespace ReCT
                 return;
             }
 
+            if(args.Length >= 1 && args[0] == "add")
+            {
+                AddPackages(args[1]);
+                return;
+            }
+
+            if (args.Length >= 1 && args[0] == "remove")
+            {
+                RemovePackage(args[1]);
+                return;
+            }
+
             options.Parse(args);
 
             if (helpRequested)
