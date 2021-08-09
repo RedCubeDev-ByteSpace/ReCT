@@ -5,12 +5,12 @@ ReCT (Redcubes epic Compiler Thingy) is a compiler written in C# that compiles a
 
 
 ## Installation
-You can get the latest Release from [Bytespace](https://bytespace.tk/rect).
-There is no installation required. ReCT is a portable zip which includes BoltPM to automatically update.
+You can get the ReCT Compiler from the [AUR](https://aur.archlinux.org/packages/rctc/), the [MPR](https://mpr.hunterwittenborn.com/packages/rctc/) and on Windows using the [ReCTManager](http://rect.ml/) tool.
+Your PM or ReCTManager will also take care of updating ReCT for you.
 
 
 ## Documentation
-The official Documentation can be found at [Rect.ml](http://rect.ml/). On there you can find an overview of what ReCT is capable off and a "Getting Started" section.
+The official Documentation can be found at [docs.rect.ml](http://docs.rect.ml/). On there you can find an overview of what ReCT is capable off and a "Getting Started" section.
 The docs will be kept up to date as best as I can :P
 
 
