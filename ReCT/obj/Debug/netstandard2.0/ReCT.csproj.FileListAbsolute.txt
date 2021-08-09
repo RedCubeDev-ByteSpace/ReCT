@@ -77,3 +77,12 @@ E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfo.cs
 E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csproj.CoreCompileInputs.cache
 E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.dll
 E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.pdb
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.deps.json
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT\bin\Debug\netstandard2.0\ReCT.pdb
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csprojAssemblyReference.cache
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfoInputs.cache
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.AssemblyInfo.cs
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.csproj.CoreCompileInputs.cache
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT\obj\Debug\netstandard2.0\ReCT.pdb

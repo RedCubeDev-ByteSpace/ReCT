@@ -256,24 +256,27 @@
     ]
   },
   "packageFolders": {
-    "/home/redcube/.nuget/packages/": {}
+    "C:\\Users\\khhsx\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/external/GitRepos/ReCT/ReCT/ReCT.csproj",
+      "projectUniqueName": "D:\\vs2019\\RedCubeDev-ByteSpace\\ReCT\\ReCT\\ReCT.csproj",
       "projectName": "ReCT",
-      "projectPath": "/external/GitRepos/ReCT/ReCT/ReCT.csproj",
-      "packagesPath": "/home/redcube/.nuget/packages/",
-      "outputPath": "/external/GitRepos/ReCT/ReCT/obj/",
+      "projectPath": "D:\\vs2019\\RedCubeDev-ByteSpace\\ReCT\\ReCT\\ReCT.csproj",
+      "packagesPath": "C:\\Users\\khhsx\\.nuget\\packages\\",
+      "outputPath": "D:\\vs2019\\RedCubeDev-ByteSpace\\ReCT\\ReCT\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/redcube/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\khhsx\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netstandard2.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Users\\khhsx\\AppData\\Roaming\\Cosmos User Kit\\packages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -317,7 +320,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.203/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.200\\RuntimeIdentifierGraph.json"
       }
     }
   }

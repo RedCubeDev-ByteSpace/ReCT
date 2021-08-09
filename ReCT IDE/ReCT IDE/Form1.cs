@@ -20,6 +20,7 @@ using System.Reflection;
 using System.IO;
 using Newtonsoft.Json;
 using System.Drawing.Text;
+using Mono.Cecil;
 
 namespace ReCT_IDE
 {
@@ -32,8 +33,12 @@ namespace ReCT_IDE
         public Error errorBox;
         public Process running;
         List<AutocompleteMenuNS.AutocompleteItem> standardAC = new List<AutocompleteMenuNS.AutocompleteItem>();
+        List<AutocompleteMenuNS.AutocompleteItem> reccAC = new List<AutocompleteMenuNS.AutocompleteItem>();
+        List<AutocompleteMenuNS.AutocompleteItem> extraAC = new List<AutocompleteMenuNS.AutocompleteItem>();
         PrivateFontCollection collection = new PrivateFontCollection();
         BoltUpdater boltUpdater;
+
+        public List<string> customFuncsListThing = new List<string>();
 
         public Project openProject;
         public string projectPath;
@@ -90,8 +95,7 @@ namespace ReCT_IDE
                 {
                     running = new Process();
                     running.StartInfo.FileName = "CMD.exe";
-                    running.StartInfo.Arguments = "/K cd Bolt & update.cmd";
-
+                    running.StartInfo.Arguments = "/K cd Bolt & update.cmd & exit /B";
                     running.Start();
 
                     Environment.Exit(0);
@@ -110,6 +114,7 @@ namespace ReCT_IDE
             while (!closing)
             {
                 this.buildToolStripMenuItem.ShortcutKeys = SettingsInfo.run;
+                ReloadAutoCompletion();
                 Thread.Sleep(1000);
             }
         }
@@ -220,6 +225,7 @@ namespace ReCT_IDE
                 new[]{ "#attach", "#copy", "#copyFolder", "#closeConsole", "#noConsole" }
             };
 
+
             terms = acs;
             types = "(";
             for(int i = 0; i < acs.GetLength(0); i++)
@@ -233,9 +239,10 @@ namespace ReCT_IDE
             {
                 for (int i = 0; i < acs[type].Length; i++)
                 {
-                    standardAC.Add(new AutocompleteMenuNS.AutocompleteItem() { ImageIndex = type, Text = acs[type][i] });
+                    reccAC.Add(new AutocompleteMenuNS.AutocompleteItem() { ImageIndex = type, Text = acs[type][i] });
                 }
             }
+            standardAC.AddRange(reccAC);
 
             ReCTAutoComplete.SetAutocompleteItems(standardAC);
         }
@@ -323,15 +330,69 @@ namespace ReCT_IDE
 
         Style DebugStyle = new TextStyle(new SolidBrush(Color.FromArgb(125, 125, 125)), null, FontStyle.Regular);
 
+        public void ReloadAutoCompletion()
+        {
+            //I dunno bout this code, it is messy af and will break if u look at it.
+            //I shouldnt have written this tbh but i did...
+
+            //SECTION A (my debug comment, to find this code)
+
+            extraAC = new List<AutocompleteMenuNS.AutocompleteItem>();
+            customFuncsListThing = new List<string>();
+            if (rectCompCheck.packages != null)
+            {
+                for (int i = 0; i < rectCompCheck.packages.Length; i++)
+                {
+                    string packageName = rectCompCheck.packages[i].fullName;
+                    string packagePath = Path.GetFullPath(packageName);
+                    ModuleDefinition packageAsm = ModuleDefinition.ReadModule(packageName);
+                    TypeDefinition package = packageAsm.GetType(rectCompCheck.packages[i].name);
+                    Console.WriteLine(rectCompCheck.packages[i].name);
+                    if (package == null)
+                        continue;
+                    if (package.NestedTypes == null)
+                        continue;
+                    for(int t = 0; t < package.NestedTypes.Count; t++)
+                    {
+                        
+                        TypeDefinition type = package.NestedTypes[t];
+                        Console.WriteLine(type.Name);
+                        for(int m = 0; m < type.Methods.Count; m++)
+                        {
+                            MethodDefinition func = type.Methods[m];
+                            if (!customFuncsListThing.Contains(func.Name))
+                            {
+                                AutocompleteMenuNS.AutocompleteItem autocompleteItem = new AutocompleteMenuNS.AutocompleteItem();
+                                autocompleteItem.Text = "->" + func.Name;
+                                autocompleteItem.ImageIndex = 3;
+                                string parameterText = "";
+                                foreach (var param in func.Parameters)
+                                {
+                                    parameterText += param.ParameterType.Name + " " + param.Name + ", ";
+                                }
+                                autocompleteItem.ToolTipText = parameterText;
+                                extraAC.Add(autocompleteItem);
+                                customFuncsListThing.Add(func.Name);
+                            }
+                        }
+                    }
+                }
+            }
+
+            standardAC = new List<AutocompleteMenuNS.AutocompleteItem>();
+            standardAC.AddRange(reccAC);
+            standardAC.AddRange(extraAC);
+        }
+
         public void ReloadHightlighting(TextChangedEventArgs e)
         {
+       
             e.ChangedRange.ClearFoldingMarkers();
             e.ChangedRange.ClearStyle(UserFunctionStyle);
             e.ChangedRange.ClearStyle(CommentStyle);
             e.ChangedRange.ClearStyle(PackageStyle);
             e.ChangedRange.ClearStyle(ClassStyle);
             e.ChangedRange.ClearStyle(StringStyle);
-
             //set folding markers [DarkMode]
             e.ChangedRange.SetFoldingMarkers("{", "}");
 

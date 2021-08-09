@@ -274,3 +274,49 @@ C:\Users\khhsx\Source\Repos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.exe
 C:\Users\khhsx\Source\Repos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.pdb
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT.dll
 E:\GitRepos\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csprojAssemblyReference.cache
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT IDE.exe.config
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT IDE.exe
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT IDE.pdb
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\DiscordRPC.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Mdb.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Pdb.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Rocks.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Newtonsoft.Json.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Buffers.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Collections.Immutable.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Memory.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Numerics.Vectors.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\DiscordRPC.pdb
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\DiscordRPC.xml
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.pdb
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Mdb.pdb
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Pdb.pdb
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Mono.Cecil.Rocks.pdb
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Newtonsoft.Json.xml
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\ReCT.pdb
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Buffers.xml
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Collections.Immutable.xml
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Memory.xml
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Numerics.Vectors.xml
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\Interop.WMPLib.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\bin\Debug\AxInterop.WMPLib.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csprojAssemblyReference.cache
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\Interop.WMPLib.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\AxInterop.WMPLib.dll
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.ResolveComReference.cache
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Error.resources
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Form1.resources
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.History.resources
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.NewProject.resources
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Properties.Resources.resources
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Settings.resources
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT_IDE.Startup.resources
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.GenerateResource.cache
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.CoreCompileInputs.cache
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.csproj.CopyComplete
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.exe
+D:\vs2019\RedCubeDev-ByteSpace\ReCT\ReCT IDE\ReCT IDE\obj\Debug\ReCT IDE.pdb

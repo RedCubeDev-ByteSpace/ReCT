@@ -1,13 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "jkqypRv3k01/O3buaQbTphRsX1ql/1TIMiKjxC1GPhOrfswrPvx5uNC/CC4EyYE+Ac9hXDukQaTqwlQmztYJ5A==",
+  "dgSpecHash": "HuXDISTf5stzcyJ51vftuB1Xf2+tmi8HVcJTcDXH1vVDVh6jSek/2jdtcyse8D4M17XHHP/oDTPKkao7zvYRlg==",
   "success": true,
-  "projectFilePath": "/external/GitRepos/ReCT/rcti/rcti.csproj",
+  "projectFilePath": "D:\\vs2019\\RedCubeDev-ByteSpace\\ReCT\\rcti\\rcti.csproj",
   "expectedPackageFiles": [
-    "/home/redcube/.nuget/packages/mono.cecil/0.11.2/mono.cecil.0.11.2.nupkg.sha512",
-    "/home/redcube/.nuget/packages/system.collections.immutable/1.5.0/system.collections.immutable.1.5.0.nupkg.sha512",
-    "/home/redcube/.nuget/packages/microsoft.aspnetcore.app.ref/3.1.10/microsoft.aspnetcore.app.ref.3.1.10.nupkg.sha512",
-    "/home/redcube/.nuget/packages/microsoft.netcore.app.host.linux-x64/3.1.15/microsoft.netcore.app.host.linux-x64.3.1.15.nupkg.sha512"
+    "C:\\Users\\khhsx\\.nuget\\packages\\mono.cecil\\0.11.2\\mono.cecil.0.11.2.nupkg.sha512",
+    "C:\\Users\\khhsx\\.nuget\\packages\\system.collections.immutable\\1.5.0\\system.collections.immutable.1.5.0.nupkg.sha512"
   ],
   "logs": []
 }

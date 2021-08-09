@@ -16,6 +16,7 @@ using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using Microsoft.CSharp;
 using System.CodeDom.Compiler;
+using System.Windows.Forms;
 
 namespace ReCT_IDE
 {
@@ -100,8 +101,11 @@ namespace ReCT_IDE
             NamespaceFunctions = "";
             ImportedFunctions = "";
             Classes = "";
-
-            var vars = compilation.Variables.ToArray();
+            var vars = new VariableSymbol[0];
+            if (compilation != null && compilation.Variables != null)
+            {
+                vars = compilation.Variables.ToArray();
+            }
             variables = vars;
             foreach (VariableSymbol vs in vars)
             {
@@ -213,6 +217,16 @@ namespace ReCT_IDE
             inUse = true;
 
             string code = "";
+            if (inPath == null)
+            {
+                SaveFileDialog openFileDialog = new SaveFileDialog();
+                openFileDialog.Title = "Save rect file";
+                openFileDialog.Filter = "ReCT Files (*.rct)|*.rct|All Files|*.*";
+                openFileDialog.RestoreDirectory = true;
+                openFileDialog.FilterIndex = 0;
+                openFileDialog.ShowDialog();
+                inPath = openFileDialog.FileName;
+            }
             using (StreamReader sr = new StreamReader(new FileStream(inPath, FileMode.Open)))
             {
                 code = sr.ReadToEnd();

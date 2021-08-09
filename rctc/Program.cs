@@ -8,6 +8,8 @@ using ReCT.IO;
 using Mono.Options;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
+using System.Text.Json;
+using System.Diagnostics;
 
 namespace ReCT
 {
@@ -15,11 +17,14 @@ namespace ReCT
     {
         private static void Main(string[] args)
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("-------------------------------");
-            Console.WriteLine("ReCT Standalone Compiler " + info.Version);
-            Console.WriteLine("-------------------------------\n");
-            Console.ForegroundColor = ConsoleColor.White;
+            if (args.Length == 0 || args[0] != "run")
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine("ReCT Standalone Compiler " + info.Version);
+                Console.WriteLine("-------------------------------\n");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
 
             string outputPath = default;
             string moduleName = default;
@@ -44,6 +49,18 @@ namespace ReCT
                 { "?|h|help", "Prints help", v => helpRequested = true },
                 { "<>", v => sourcePaths.Add(v) }
             };
+
+            if (args.Length != 0 && args[0] == "create")
+            {
+                projectActions(args);
+                return;
+            }
+
+            if (args.Length != 0 && args[0] == "run")
+            {
+                projectRun();
+                return;
+            }
 
             options.Parse(args);
 
@@ -76,8 +93,9 @@ namespace ReCT
                 sourcePaths[i] = Path.GetFullPath(sourcePaths[i]);
 
             outputPath = Path.GetFullPath(outputPath);
-            
+
             //change working directory to access compiler files
+            var callcwd = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 
             SyntaxTree[] syntaxTrees = new SyntaxTree[sourcePaths.Count];
@@ -99,7 +117,7 @@ namespace ReCT
                     Console.WriteLine($"Evaluating Flags for file '{Path.GetFileName(sourcePaths[pathIndex])}' ...");
                     evaluateFlags(ref code, ref filesToCopy, ref foldersToCopy, sourcePaths[pathIndex]);
                 }
-                
+
                 SyntaxTree syntaxTree = SyntaxTree.Parse(code);
 
                 ImmutableArray<Diagnostic> parserDiagnostics = syntaxTree.Diagnostics;
@@ -125,7 +143,7 @@ namespace ReCT
                 }
 
             Console.WriteLine("Compiling...");
-            
+
             Compilation compilation = Compilation.Create(syntaxTrees.ToArray());
             ImmutableArray<Diagnostic> diagnostics = compilation.Emit(moduleName, referencePaths.ToArray(), outputPath);
 
@@ -136,11 +154,11 @@ namespace ReCT
                 Console.ForegroundColor = ConsoleColor.White;
                 return;
             }
-            
+
             //create runtime config
             Console.WriteLine("Creating runtimeconfig.json ...");
             File.WriteAllText(Path.ChangeExtension(outputPath, "runtimeconfig.json"), "{\"runtimeOptions\": {\"tfm\": \"netcoreapp3.1\",\"framework\": {\"name\": \"Microsoft.NETCore.App\",\"version\": \"3.1.0\"}}}");
-            
+
             //copy needed packages
             Console.WriteLine("Copying needed Packages...");
             foreach (CodeAnalysis.Package.Package p in compilation.Packages)
@@ -154,25 +172,26 @@ namespace ReCT
                 File.Copy(p.fullName, Path.GetDirectoryName(outputPath) + "/" + p.name + "lib.dll", true);
 
                 if (p.name == "audio")
-                    File.Copy("OtherDeps/NetCoreAudio.dll", Path.GetDirectoryName(outputPath) + "/" + "NetCoreAudio.dll", true);
+                    File.Copy("System Dotnet Assemblies/NetCoreAudio.dll", Path.GetDirectoryName(outputPath) + "/" + "NetCoreAudio.dll", true);
             }
-            
+
             //copy files and folders
             foreach (string s in filesToCopy)
             {
                 Console.WriteLine("Copying File: " + Path.GetFileName(s));
-                if (Path.IsPathRooted(s))
-                    File.Copy(s, Path.GetDirectoryName(outputPath) + "/" + Path.GetFileName(s), true);
+                var source = s.Replace("$CWD", callcwd);
+                if (Path.IsPathRooted(source))
+                    File.Copy(source, Path.GetDirectoryName(outputPath) + "/" + Path.GetFileName(s), true);
                 else
-                    File.Copy("Packages/" + s, Path.GetDirectoryName(outputPath) + "/" + Path.GetFileName(s), true);
+                    File.Copy("Packages/" + source, Path.GetDirectoryName(outputPath) + "/" + Path.GetFileName(source), true);
             }
             foreach (string s in foldersToCopy)
             {
                 Console.WriteLine("Copying Folder: " + s.Split('\\').Last().Split('/').Last());
-                
-                var SourcePath = s;
+
+                var SourcePath = s.Replace("$CWD", callcwd);
                 var DestinationPath = Path.GetDirectoryName(outputPath) + "/" + s.Split('\\').Last().Split('/').Last();
-                if (!Path.IsPathRooted(s)) SourcePath = "Packages/" + SourcePath;
+                if (!Path.IsPathRooted(SourcePath)) SourcePath = "Packages/" + SourcePath;
 
                 Directory.CreateDirectory(DestinationPath);
 
@@ -190,17 +209,296 @@ namespace ReCT
             Console.ForegroundColor = ConsoleColor.White;
         }
 
+        static void projectRun()
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("RCTC ");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine(">> Project Run");
+            Console.ForegroundColor = ConsoleColor.White;
+            var rcp = Directory.GetFiles("./").FirstOrDefault(x => x.EndsWith(".rcp"));
+
+            if (rcp == null)
+            {
+                runv2();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Couldnt find Project File (.rcp)!");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+
+
+           
+        }
+
+        static void AddPackages(string pkg)
+        {
+            var rcp = Directory.GetFiles("./").FirstOrDefault(x => x.EndsWith(".rcp2"));
+
+            if (rcp == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Couldnt find Project File (.rcp/.rcp2)!");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+
+            var rcpText = File.ReadAllText(rcp);
+            var data = JsonSerializer.Deserialize<ReCTProjectV2>(rcpText);
+
+            string[] newPackages = new string[data.Packages.Length + 1];
+            Array.Copy(data.Packages, newPackages, data.Packages.Length);
+            newPackages[data.Packages.Length] = pkg;
+            if (!rpm.rpm.List().Contains(pkg))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Couldnt find package!");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+
+            data.Packages = newPackages;
+            File.WriteAllText(rcp, JsonSerializer.Serialize(data));
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Added package " + pkg);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        static void RemovePackage(string pkg)
+        {
+            var rcp = Directory.GetFiles("./").FirstOrDefault(x => x.EndsWith(".rcp2"));
+
+            if (rcp == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Couldnt find Project File (.rcp/.rcp2)!");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+
+            var rcpText = File.ReadAllText(rcp);
+            var data = JsonSerializer.Deserialize<ReCTProjectV2>(rcpText);
+
+            if (!data.Packages.Contains(pkg))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Couldnt find package!");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+            List<string> packages = data.Packages.ToList();
+            packages.Remove(pkg);
+            data.Packages = packages.ToArray();
+            File.WriteAllText(rcp, JsonSerializer.Serialize(data));
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Removed package " + pkg);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        static void runv2()
+        {
+            var rcp = Directory.GetFiles("./").FirstOrDefault(x => x.EndsWith(".rcp2"));
+
+            if (rcp == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Couldnt find Project File (.rcp/.rcp2)!");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+
+            var rcpText = File.ReadAllText(rcp);
+            var data = JsonSerializer.Deserialize<ReCTProjectV2>(rcpText);
+            Console.WriteLine("Downloading packages... ");
+            for (int i = 0; i < data.Packages.Length; i++)
+            {
+                rpm.rpm.Download(data.Packages[i]);
+            }
+
+
+            if (File.Exists($"./Build/{data.Name}.dll"))
+                File.Delete($"./Build/{data.Name}.dll");
+
+            var dirpath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+            var exename = File.Exists(dirpath + "/rctc") ? "rctc" : "rctc.exe";
+
+            Process process = Process.Start(new ProcessStartInfo
+            {
+                FileName = dirpath + "/" + exename,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                Arguments = $"./Classes/{data.MainClass} -s -f -o ./Build/{data.Name}.dll"
+            });
+            process.WaitForExit();
+
+            if (File.Exists($"./Build/{data.Name}.dll"))
+            {
+                Directory.SetCurrentDirectory(Directory.GetCurrentDirectory() + "/Build");
+                var proc = Process.Start("dotnet", $"./{data.Name}.dll");
+                proc.WaitForExit();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Build has Failed!");
+                Console.WriteLine(process.StandardError.ReadToEnd());
+            }
+        }
+
+        static void runv1(string rcp)
+        {
+            var rcpText = File.ReadAllText(rcp);
+            var data = JsonSerializer.Deserialize<ReCTProject>(rcpText);
+
+            if (File.Exists($"./Build/{data.Name}.dll"))
+                File.Delete($"./Build/{data.Name}.dll");
+
+            var dirpath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+            var exename = File.Exists(dirpath + "/rctc") ? "rctc" : "rctc.exe";
+
+            Process process = Process.Start(new ProcessStartInfo
+            {
+                FileName = dirpath + "/" + exename,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                Arguments = $"./Classes/{data.MainClass} -s -f -o ./Build/{data.Name}.dll"
+            });
+            process.WaitForExit();
+
+            if (File.Exists($"./Build/{data.Name}.dll"))
+            {
+                Directory.SetCurrentDirectory(Directory.GetCurrentDirectory() + "/Build");
+                var proc = Process.Start("dotnet", $"./{data.Name}.dll");
+                proc.WaitForExit();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Build has Failed!");
+                Console.WriteLine(process.StandardError.ReadToEnd());
+            }
+        }
+
+        static void projectActions(string[] args)
+        {
+            Console.WriteLine("Project Generator");
+            args = args.Skip(1).ToArray();
+
+            var projectPath = "./";
+            var newDir = false;
+            var vscodeConfig = false;
+            var helpRequested = false;
+            var name = "";
+            var v2 = false;
+
+            OptionSet projectOptions = new OptionSet
+            {
+                "usage: rctc create <name> [options]",
+                { "d=", "The {path} to create the Project at", v => projectPath = v },
+                { "n|newdir", "Will create a new Directory for the Project", v => newDir = true },
+                { "v|vscode", "Will generate .vscode folder with Run-Config", v => vscodeConfig = true },
+                { "?|h|help", "Prints help", v => helpRequested = true },
+                { "v2|verison2|new", "Creates a v2 project instead", v => v2 = true },
+                { "<>", v => name = v }
+            };
+
+            projectOptions.Parse(args);
+
+            if (helpRequested)
+            {
+                projectOptions.WriteOptionDescriptions(Console.Out); return;
+            }
+
+            if (name == "")
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Please provide a name for the Project!");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+
+            if (!Directory.Exists(projectPath))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Given Directory doesnt exist!");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+
+            if (newDir)
+            {
+                var dirname = Path.Combine(projectPath, name);
+                var index = 0;
+                while (Directory.Exists(dirname))
+                    dirname = Path.Combine(projectPath, name + index++);
+
+                Directory.CreateDirectory(Path.Combine(projectPath, dirname));
+                projectPath = Path.Combine(projectPath, dirname);
+            }
+
+            if (Directory.Exists(Path.Combine(projectPath, "Classes")))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Couldnt create 'Classes' folder! (already exists)");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+
+            if (Directory.Exists(Path.Combine(projectPath, "Build")))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Couldnt create 'Build' folder! (already exists)");
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
+            }
+
+            Console.WriteLine("Creating 'Classes' dir...");
+            Directory.CreateDirectory(Path.Combine(projectPath, "Classes"));
+            Console.WriteLine("Creating 'Build' dir...");
+            Directory.CreateDirectory(Path.Combine(projectPath, "Build"));
+            Console.WriteLine("Creating 'Classes/main.rct' file...");
+            File.WriteAllText(Path.Combine(projectPath, "Classes/main.rct"), $"// {name} - ReCT v{info.Version} \npackage sys; use sys;\n\nPrint(\"Hello World!\");");
+            Console.WriteLine("Creating 'build.sh' file...");
+            File.WriteAllText(Path.Combine(projectPath, "build.sh"), $"rm './Build/{name}.dll'\nrctc ./Classes/main.rct -s -f -o './Build/{name}.dll'\necho '-- [ReCT Program] --'\necho ''\ndotnet './Build/{name}.dll'");
+            Console.WriteLine("Creating 'build.cmd' file...");
+            File.WriteAllText(Path.Combine(projectPath, "build.cmd"), $"del './Build/{name}.dll'\nrctc ./Classes/main.rct -s -f -o './Build/{name}.dll'\necho -- [ReCT Program] --\necho \ndotnet './Build/{name}.dll'");
+
+            Console.WriteLine("Creating '" + name + ".rct' file...");
+            if(!v2)
+                File.WriteAllText(Path.Combine(projectPath, $"{name}.rcp"), "{\"Name\": \"" + name + "\", \"Icon\": \"\", \"MainClass\": \"main.rct\"}");
+            else
+                File.WriteAllText(Path.Combine(projectPath, $"{name}.rcp2"), "{\"Name\": \"" + name + "\", \"Icon\": \"\", \"MainClass\": \"main.rct\", \"Packages\": []}");
+            if (vscodeConfig)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("\nGenerating VSCode files..");
+                Console.ForegroundColor = ConsoleColor.White;
+
+                Console.WriteLine("Creating '.vscode' dir..."); Directory.CreateDirectory(Path.Combine(projectPath, ".vscode"));
+                Console.WriteLine("Creating '.vscode/launch.json' file...");
+                File.WriteAllText(Path.Combine(projectPath, ".vscode/launch.json"), "{\"version\": \"0.2.0\",\"configurations\": [{\"name\": \".NET Core Launch (console)\",\"type\": \"coreclr\",\"request\": \"launch\",\"preLaunchTask\": \"buildrect\",\"program\": \"dotnet\",\"args\": [\"${workspaceFolder}/Build/" + name + ".dll\"],\"cwd\": \"${workspaceFolder}\",\"stopAtEntry\": false,\"console\": \"internalConsole\"}]}");
+                Console.WriteLine("Creating '.vscode/tasks.json' file...");
+                File.WriteAllText(Path.Combine(projectPath, ".vscode/tasks.json"), "{\"version\": \"2.0.0\",\"tasks\": [{\"label\": \"buildrect\",\"command\": \"rctc\",\"type\": \"shell\",\"args\": [\"./Classes/main.rct\", \"-s\", \"-f\", \"-o\", \"./Build/" + name + ".dll\"],\"presentation\": {\"reveal\": \"always\"},\"group\": \"build\"}]}");
+            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\n=> Project Created!");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
         static void referenceStandardAssemblies(ref List<string> references)
         {
             Console.WriteLine("Referencing standard Assemblies...");
             var location = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-            references.Add(location + "/Dotnet ReCT Assemblies/System.Console.dll");
-            references.Add(location + "/Dotnet ReCT Assemblies/System.IO.FileSystem.dll");
-            references.Add(location + "/Dotnet ReCT Assemblies/System.Net.Sockets.dll");
-            references.Add(location + "/Dotnet ReCT Assemblies/System.Runtime.dll");
-            references.Add(location + "/Dotnet ReCT Assemblies/System.Runtime.Extensions.dll");
-            references.Add(location + "/Dotnet ReCT Assemblies/System.Threading.dll");
-            references.Add(location + "/Dotnet ReCT Assemblies/System.Threading.Thread.dll");
+            references.Add(location + "/System Dotnet Assemblies/System.Console.dll");
+            references.Add(location + "/System Dotnet Assemblies/System.IO.FileSystem.dll");
+            references.Add(location + "/System Dotnet Assemblies/System.Net.Sockets.dll");
+            references.Add(location + "/System Dotnet Assemblies/System.Runtime.dll");
+            references.Add(location + "/System Dotnet Assemblies/System.Runtime.Extensions.dll");
+            references.Add(location + "/System Dotnet Assemblies/System.Threading.dll");
+            references.Add(location + "/System Dotnet Assemblies/System.Threading.Thread.dll");
         }
 
         static void evaluateFlags(ref string code, ref List<string> filesToCopy, ref List<string> foldersToCopy, string inPath)
@@ -232,17 +530,17 @@ namespace ReCT
                 Console.ForegroundColor = ConsoleColor.White;
                 return;
             }
-            
+
             Console.ForegroundColor = ConsoleColor.Yellow;
-            
+
             if (code.Contains("#closeConsole"))
                 Console.WriteLine("Flag '#closeConsole' is not supported in Standalone mode, will be ignored.");
 
             if (code.Contains("#noConsole"))
                 Console.WriteLine("Flag '#noConsole' is not supported in Standalone mode, will be ignored.");
-            
+
             Console.ForegroundColor = ConsoleColor.White;
-            
+
             while (code.Contains("#copyFolder"))
             {
                 var matches = Regex.Matches(code, @"(?<=#copyFolder\(\" + "\"" + @")(.*)(?=\" + "\"" + @"\))");
@@ -265,5 +563,21 @@ namespace ReCT
                 }
             }
         }
+    }
+
+    class ReCTProjectV2
+    {
+        public string Name { get; set; }
+        public string Icon { get; set; }
+        public string MainClass { get; set; }
+
+        public string[] Packages { get; set; }
+    }
+
+    class ReCTProject
+    {
+        public string Name { get; set; }
+        public string Icon { get; set; }
+        public string MainClass { get; set; }
     }
 }

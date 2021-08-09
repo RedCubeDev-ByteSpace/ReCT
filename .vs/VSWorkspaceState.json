@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\ReCT Installer",
+    "\\ReCT Installer\\ReCT Installer"
   ],
-  "SelectedNode": "\\ReCT Installer.sln",
+  "SelectedNode": "\\ReCT Installer\\ReCT Installer\\ReCT Installer.sln",
   "PreviewInSolutionExplorer": false
 }
