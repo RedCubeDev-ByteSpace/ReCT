@@ -214,7 +214,15 @@ namespace ReCT
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine(">> Project Run");
             Console.ForegroundColor = ConsoleColor.White;
-            var rcp = Directory.GetFiles("./").FirstOrDefault(x => x.EndsWith(".rcp"));
+            
+            
+            var pathStart = "./";
+            
+            if (args[1])
+                if (Directory.Exists(args[1]))
+                    pathStart = [args[1]];
+            
+            var rcp = Directory.GetFiles(pathStart).FirstOrDefault(x => x.EndsWith(".rcp"));
 
             if (rcp == null)
             {
@@ -227,8 +235,8 @@ namespace ReCT
             var rcpText = File.ReadAllText(rcp);
             var data = JsonSerializer.Deserialize<ReCTProject>(rcpText);
 
-            if (File.Exists($"./Build/{data.Name}.dll"))
-                File.Delete($"./Build/{data.Name}.dll");
+            if (File.Exists($"{pathStart}Build/{data.Name}.dll"))
+                File.Delete($"{pathStart}Build/{data.Name}.dll");
 
             var dirpath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
             var exename = File.Exists(dirpath + "/rctc") ? "rctc" : "rctc.exe";
@@ -239,14 +247,14 @@ namespace ReCT
                 UseShellExecute = false,
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
-                Arguments = $"./Classes/{data.MainClass} -s -f -o ./Build/{data.Name}.dll"
+                Arguments = $"{pathStart}Classes/{data.MainClass} -s -f -o {pathStart}Build/{data.Name}.dll"
             });
             process.WaitForExit();
 
-            if (File.Exists($"./Build/{data.Name}.dll"))
+            if (File.Exists($"{pathStart}Build/{data.Name}.dll"))
             {
                 Directory.SetCurrentDirectory(Directory.GetCurrentDirectory() + "/Build");
-                var proc = Process.Start("dotnet", $"./{data.Name}.dll");
+                var proc = Process.Start("dotnet", $"{pathStart}{data.Name}.dll");
                 proc.WaitForExit();
             }
             else
