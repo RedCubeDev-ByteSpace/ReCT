@@ -332,7 +332,7 @@ namespace ReCT
             Console.WriteLine("Creating 'Build' dir...");
             Directory.CreateDirectory(Path.Combine(projectPath, "Build"));
             Console.WriteLine("Creating 'Classes/main.rct' file...");
-            File.WriteAllText(Path.Combine(projectPath, "Classes/main.rct"), $"// {name} - ReCT v{info.Version} \npackage sys; use sys;\n\nPrint(\"Hello World!\");");
+            File.WriteAllText(Path.Combine(projectPath, "Classes/main.rct"), $"// {name} - ReCT {info.Version} \npackage sys; use sys;\n\nPrint(\"Hello World!\");");
             Console.WriteLine("Creating 'build.sh' file...");
             File.WriteAllText(Path.Combine(projectPath, "build.sh"), $"rm './Build/{name}.dll'\nrctc ./Classes/main.rct -s -f -o './Build/{name}.dll'\necho '-- [ReCT Program] --'\necho ''\ndotnet './Build/{name}.dll'");
             Console.WriteLine("Creating 'build.cmd' file...");
