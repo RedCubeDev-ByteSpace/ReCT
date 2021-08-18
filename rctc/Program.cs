@@ -253,7 +253,8 @@ namespace ReCT
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Build has Failed!");
-                    Console.WriteLine(process.StandardError.ReadToEnd());
+                Console.WriteLine(process.StandardError.ReadToEnd());
+                Console.ForegroundColor = ConsoleColor.White;
             }
         }
 
