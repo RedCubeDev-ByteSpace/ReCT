@@ -218,7 +218,7 @@ namespace ReCT
             
             var pathStart = "./";
             
-            if (args[1])
+            if (args.Length > 1)
                 if (Directory.Exists(args[1]))
                     pathStart = [args[1]];
             
