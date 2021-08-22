@@ -14,6 +14,9 @@ namespace io
     //This is the Official ReCT IO Package -- ©2021 RedCube
     public static class io
     {
+        public static int Size(string path){
+            return Convert.ToInt32(new System.IO.FileInfo(path).Length);
+        }
         public static bool FileExists(string path)
         {
             return File.Exists(path);
