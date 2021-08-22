@@ -38,6 +38,11 @@ namespace io
         {
             File.Copy(from, to);
         }
+        
+        public static int FileSize(string path)
+        {
+            return new System.IO.FileInfo(path).Length;
+        }
 
         public static string[] GetFilesInDirectory(string path)
         {
