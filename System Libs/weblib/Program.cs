@@ -36,6 +36,12 @@ namespace web
             return System.Text.Encoding.ASCII.GetString(responseArray);
         }
 
+		public static string UploadString(string url, string data)
+        {
+            WebClient myWebClient = new WebClient();
+            return responseArray = myWebClient.UploadString(url, data);
+        }
+
         public class WebRequest
         {
             private HttpClient client;
