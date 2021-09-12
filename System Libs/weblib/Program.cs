@@ -25,21 +25,31 @@ namespace web
     {
         public static void DownloadFile(string url, string path)
         {
-            WebClient myWebClient = new WebClient();
-            myWebClient.DownloadFile(url, path);
+            WebClient client = new WebClient();
+            client.DownloadFile(url, path);
         }
 
         public static string UploadFile(string url, string path)
         {
-            WebClient myWebClient = new WebClient();
-            byte[] responseArray = myWebClient.UploadFile(url, path);
+            WebClient client = new WebClient();
+            byte[] responseArray = client.UploadFile(url, path);
             return System.Text.Encoding.ASCII.GetString(responseArray);
         }
 
 		public static string UploadString(string url, string data)
         {
-            WebClient myWebClient = new WebClient();
-            return myWebClient.UploadString(url, data);
+            WebClient client = new WebClient();
+            return client.UploadString(url, data);
+        }
+
+		public static string UploadStringWithHeaders(string url, string data, string[] headers)
+        {
+            WebClient client = new WebClient();
+
+			foreach(var h in headers)
+				client.Headers.Add(h.Split(":")[0], h.Split(":")[1]);
+
+            return client.UploadString(url, data);
         }
 
         public class WebRequest
