@@ -1974,6 +1974,16 @@ namespace ReCT.CodeAnalysis.Emit
                 var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "Replace", new[] { "System.String", "System.String" });
                 ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
             }
+	    else if (node.TypeCall.Function == BuiltinFunctions.StartsWith && node.InnerType == TypeSymbol.String)
+            {
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "StartsWith", new[] { "System.String" });
+                ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+            }
+	    else if (node.TypeCall.Function == BuiltinFunctions.EndsWith && node.InnerType == TypeSymbol.String)
+            {
+                var nameSpaceRef = ResolveMethodPublic(_knownTypes[TypeSymbol.String].FullName, "EndsWith", new[] { "System.String" });
+                ilProcessor.Emit(OpCodes.Callvirt, nameSpaceRef);
+            }
             else if (node.TypeCall.Function == BuiltinFunctions.At && node.InnerType == TypeSymbol.String)
             {
                 VariableDefinition temp = new VariableDefinition(_charRef);
