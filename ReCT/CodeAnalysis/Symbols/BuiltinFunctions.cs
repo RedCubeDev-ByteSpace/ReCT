@@ -18,7 +18,9 @@ namespace ReCT.CodeAnalysis.Symbols
         public static readonly TypeFunctionSymbol Replace = new TypeFunctionSymbol("Replace", ImmutableArray.Create(new ParameterSymbol("original", TypeSymbol.String, 0), new ParameterSymbol("replacement", TypeSymbol.String, 1)), TypeSymbol.String, TypeSymbol.String);
         public static readonly TypeFunctionSymbol Substring = new TypeFunctionSymbol("Substring", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0), new ParameterSymbol("length", TypeSymbol.Int, 0)), TypeSymbol.String, TypeSymbol.String);
         public static readonly TypeFunctionSymbol At = new TypeFunctionSymbol("At", ImmutableArray.Create(new ParameterSymbol("index", TypeSymbol.Int, 0)), TypeSymbol.String, TypeSymbol.String);
-
+        public static readonly TypeFunctionSymbol StartsWith = new TypeFunctionSymbol("StartsWith", ImmutableArray.Create(new ParameterSymbol("s", TypeSymbol.String, 0)), TypeSymbol.String, TypeSymbol.Bool);
+        public static readonly TypeFunctionSymbol EndsWith = new TypeFunctionSymbol("EndsWith", ImmutableArray.Create(new ParameterSymbol("s", TypeSymbol.String, 0)), TypeSymbol.String, TypeSymbol.Bool);
+        
         //Thread functions
         public static readonly TypeFunctionSymbol StartThread = new TypeFunctionSymbol("StartThread", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Thread, TypeSymbol.Void);
         public static readonly TypeFunctionSymbol KillThread = new TypeFunctionSymbol("KillThread", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Thread, TypeSymbol.Void);
