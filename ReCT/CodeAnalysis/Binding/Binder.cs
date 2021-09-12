@@ -443,6 +443,13 @@ namespace ReCT.CodeAnalysis.Binding
             {
                 _diagnostics.ReportSymbolAlreadyDeclared(syntax.EnumName.Location, enumSymbol.Name);
             }
+
+			//var enumArraySymbol = new TypeSymbol(enumTypeSymbol.Name + "Arr");
+			//enumArraySymbol.isClass = true;
+			//enumArraySymbol.isClassArray = true;
+			//enumArraySymbol.isEnum = true;
+			//enumArraySymbol.enumSymbol = true;
+			//TypeSymbol.Class.Add(new ClassSymbol(enumTypeSymbol.Name + "Arr", null, false), enumArraySymbol);
         }
 
         private void BindClassMemberDeclaration(ClassDeclarationSyntax syntax, ClassSymbol _class)
@@ -2125,7 +2132,11 @@ namespace ReCT.CodeAnalysis.Binding
                     return TypeSymbol.ActionArr;
                 default:
                     if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
-                    return TypeSymbol.Class.Values.FirstOrDefault(x => x.Name == name);;
+                    var type = TypeSymbol.Class.Values.FirstOrDefault(x => x.Name == name);
+
+                    //if (type == null) throw new Exception($"Couldnt find type '{name}'!");
+                    
+                    return type;
             }
         }
         private TypeSymbol TypeToArray(TypeSymbol type)

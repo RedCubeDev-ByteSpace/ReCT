@@ -1866,11 +1866,28 @@ namespace ReCT.CodeAnalysis.Emit
                 ilProcessor.Emit(OpCodes.Ldc_I4_1);
                 ilProcessor.Emit(OpCodes.Sub);
                 
+				var valType = node.TypeCall.Arguments[0].Type;
                 EmitExpression(ilProcessor, node.TypeCall.Arguments[0]);
 
                 var cType = _knownTypes.FirstOrDefault(x => x.Key.Name == (node.Variable.Type.Name.EndsWith("Arr") ? node.Variable.Type.Name.Replace("Arr", "") : node.Variable.Type.Name));
 
-                ilProcessor.Emit(OpCodes.Castclass, cType.Value);
+               if (valType != cType.Key)
+			   {
+				   if (cType.Key == TypeSymbol.Bool)
+						ilProcessor.Emit(OpCodes.Conv_I1);
+					else if (cType.Key == TypeSymbol.Int)
+						ilProcessor.Emit(OpCodes.Conv_I4);
+					else if (cType.Key == TypeSymbol.Byte)
+						ilProcessor.Emit(OpCodes.Conv_I1);
+					else if (cType.Key == TypeSymbol.Float)
+						ilProcessor.Emit(OpCodes.Conv_R4);
+					else
+						ilProcessor.Emit(OpCodes.Castclass, cType.Value);
+			   }
+
+				
+
+				Console.WriteLine(cType.Key);
 
                 if (cType.Key == TypeSymbol.Bool)
                     ilProcessor.Emit(OpCodes.Stelem_I1);
