@@ -31,6 +31,7 @@ namespace ReCT
 
             bool helpRequested = false;
             bool useFlags = false;
+            bool fixStuff = false;
 
             List<string> referencePaths = new List<string>();
             List<string> sourcePaths = new List<string>();
@@ -47,6 +48,7 @@ namespace ReCT
                 { "m=", "The {name} of the module", v => moduleName = v },
                 { "f", "Use IDE compiler Flags", v => useFlags = true },
                 { "?|h|help", "Prints help", v => helpRequested = true },
+                { "fixEverything|plsFix|removeBugs", "Yoinks all bugs", v => fixStuff = true },
                 { "<>", v => sourcePaths.Add(v) }
             };
 
@@ -61,7 +63,11 @@ namespace ReCT
             }
 
             options.Parse(args);
-
+            
+            if(fixStuff){
+                Console.WriteLine("Fixing ReCT...");
+            }
+            
             if (helpRequested)
             {
                 options.WriteOptionDescriptions(Console.Out);
