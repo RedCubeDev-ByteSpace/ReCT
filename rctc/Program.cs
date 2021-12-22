@@ -482,6 +482,7 @@ namespace ReCT
 
 
 			// jsonizing
+			Console.WriteLine("\nDATA");
 			Console.WriteLine(JsonSerializer.Serialize(data));
 		}
 
