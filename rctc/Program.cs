@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using ReCT.CodeAnalysis;
 using ReCT.CodeAnalysis.Syntax;
+using ReCT.CodeAnalysis.Symbols;
+using ReCT.CodeAnalysis.Binding;
 using ReCT.IO;
 using Mono.Options;
 using System.Collections.Immutable;
@@ -32,6 +34,8 @@ namespace ReCT
             bool helpRequested = false;
             bool useFlags = false;
 
+			bool dryRun = false;
+
             List<string> referencePaths = new List<string>();
             List<string> sourcePaths = new List<string>();
 
@@ -46,6 +50,7 @@ namespace ReCT
                 { "o=", "The output {path} of the assembly to create", v => outputPath = v },
                 { "m=", "The {name} of the module", v => moduleName = v },
                 { "f", "Use IDE compiler Flags", v => useFlags = true },
+                { "d", "Dry run and return JSON compilation data", v => dryRun = true },
                 { "?|h|help", "Prints help", v => helpRequested = true },
                 { "<>", v => sourcePaths.Add(v) }
             };
@@ -143,6 +148,14 @@ namespace ReCT
             Console.WriteLine("Compiling...");
             
             Compilation compilation = Compilation.Create(syntaxTrees.ToArray());
+
+			if (dryRun)
+			{
+				compilation.PrepareProgram();
+				ReturnCompilationData(compilation);
+				return;
+			}
+
             ImmutableArray<Diagnostic> diagnostics = compilation.Emit(moduleName, referencePaths.ToArray(), outputPath);
 
             if (diagnostics.Length != 0)
@@ -435,6 +448,126 @@ namespace ReCT
                 }
             }
         }
+
+		static void ReturnCompilationData(Compilation compilation)
+		{
+			var data = new ReturnCompilationData();
+
+			List<ReCTGlobal>   globals   = new List<ReCTGlobal>();
+			List<ReCTFunction> functions = new List<ReCTFunction>();
+			List<ReCTClass>    classes   = new List<ReCTClass>();
+			List<ReCTPackage>  packages   = new List<ReCTPackage>();
+
+			// globals
+			foreach(var glb in compilation.Variables)
+				CollectGlobalData(ref globals, glb);
+
+			// function data
+			foreach(var fnc in compilation.Functions)
+				CollectFunctionData(ref functions, ref globals, fnc);
+
+			// classes
+			foreach(var cls in compilation.Classes)
+				CollectClassData(ref classes, ref globals, cls);
+
+			// packages
+			foreach(var pck in compilation.Packages)
+				CollectPackageData(ref packages, pck, compilation);
+
+			// finalizing
+			data.Globals = globals.ToArray();
+			data.Functions = functions.ToArray();
+			data.Classes = classes.ToArray();
+			data.Packages = packages.ToArray();
+
+
+			// jsonizing
+			Console.WriteLine(JsonSerializer.Serialize(data));
+		}
+
+		private static void CollectPackageData(ref List<ReCTPackage> packages, CodeAnalysis.Package.Package pck, Compilation cmp)
+		{
+			var package = new ReCTPackage();
+			package.Name = pck.name;
+			package.FullName = pck.fullName;
+
+			List<string> aliases = new List<string>();
+			
+			foreach(KeyValuePair<string, string> alias in cmp.Aliases)
+			if (alias.Value == pck.name)
+				aliases.Add(alias.Key);
+
+			package.Aliases = aliases.ToArray();
+
+			// package contents
+			List<ReCTGlobal>   globals   = new List<ReCTGlobal>();
+			List<ReCTFunction> functions = new List<ReCTFunction>();
+			List<ReCTClass>    classes   = new List<ReCTClass>();
+
+			// functions
+			foreach(var fnc in pck.scope.GetDeclaredFunctions())
+				CollectFunctionData(ref functions, ref globals, fnc);
+
+			// classes
+			foreach(var cls in pck.scope.GetDeclaredClasses())
+				CollectClassData(ref classes, ref globals, cls);
+
+			package.Functions = functions.ToArray();
+			package.Classes = classes.ToArray();
+
+			packages.Add(package);
+		}
+
+		static void CollectFunctionData(ref List<ReCTFunction> functions, ref List<ReCTGlobal> globals, FunctionSymbol fnc)
+		{
+			var function = new ReCTFunction();
+			function.Name = fnc.Name;
+
+			List<ReCTVariable> variables = new List<ReCTVariable>();
+
+			if (fnc.scope != null)
+			{
+				foreach(var vr in fnc.scope.GetDeclaredVariables())
+					CollectVariableData(ref variables, ref globals, vr);
+			}
+
+			function.Variables = variables.ToArray();
+			functions.Add(function);
+		}
+
+		static void CollectClassData(ref List<ReCTClass> classes, ref List<ReCTGlobal> globals, ClassSymbol cls)
+		{
+			var _class = new ReCTClass();
+			_class.Name = cls.Name;
+
+			List<ReCTGlobal> properties = new List<ReCTGlobal>();
+			List<ReCTFunction> functions = new List<ReCTFunction>();
+
+			foreach(var vr in cls.Scope.GetDeclaredVariables())
+				CollectGlobalData(ref properties, vr);
+
+			foreach(var fnc in cls.Scope.GetDeclaredFunctions())
+				CollectFunctionData(ref functions, ref properties, fnc);
+
+			_class.Properties = properties.ToArray();
+			_class.Functions = functions.ToArray();
+
+			classes.Add(_class);
+		}
+
+		static void CollectVariableData(ref List<ReCTVariable> variables, ref List<ReCTGlobal> globals, VariableSymbol variable, bool ignoreGlobals = false)
+		{
+			if (!variable.IsGlobal)
+				variables.Add(new ReCTVariable { Name = variable.Name, Datatype = variable.Type.Name});
+			else if (!ignoreGlobals)
+				globals.Add(new ReCTGlobal { Name = variable.Name, Datatype = variable.Type.Name });
+		}
+
+		static void CollectGlobalData(ref List<ReCTGlobal> globals, VariableSymbol variable)
+		{
+			if (variable.IsGlobal)
+				globals.Add(new ReCTGlobal { Name = variable.Name, Datatype = variable.Type.Name });
+		}
     }
 
     class ReCTProject
@@ -443,4 +576,52 @@ namespace ReCT
         public string Icon { get; set; }
         public string MainClass { get; set; }
     }
+
+	[System.Serializable]
+	class ReCTFunction
+	{
+		public string Name { get; set; }
+		public ReCTVariable[] Variables{ get; set; }
+	}
+
+	[System.Serializable]
+	class ReCTClass
+	{
+		public string Name { get; set; }
+		public ReCTGlobal[] Properties { get; set; }
+		public ReCTFunction[] Functions { get; set; }
+	}
+
+	[System.Serializable]
+	class ReCTPackage
+	{
+		public string Name { get; set; }
+		public string FullName { get; set; }
+		public string[] Aliases { get; set; }
+		public ReCTClass[] Classes { get; set; }
+		public ReCTFunction[] Functions { get; set; }
+	}
+
+	[System.Serializable]
+	class ReCTVariable
+	{
+		public string Name { get; set; }
+		public string Datatype { get; set; }
+	}
+
+	[System.Serializable]
+	class ReCTGlobal
+	{
+		public string Name { get; set; }
+		public string Datatype { get; set; }
+	}
+
+	[System.Serializable]
+	class ReturnCompilationData
+	{
+		public ReCTGlobal[] Globals { get; set; }
+		public ReCTFunction[] Functions { get; set; }
+		public ReCTClass[] Classes { get; set; }
+		public ReCTPackage[] Packages { get; set; }
+	}
 }

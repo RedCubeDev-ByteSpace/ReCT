@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/external/GitRepos/ReCT/ReCT/ReCT.csproj": {}
+    "/mnt/data/Code/C#/ReCT/ReCT/ReCT.csproj": {}
   },
   "projects": {
-    "/external/GitRepos/ReCT/ReCT/ReCT.csproj": {
+    "/mnt/data/Code/C#/ReCT/ReCT/ReCT.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/external/GitRepos/ReCT/ReCT/ReCT.csproj",
+        "projectUniqueName": "/mnt/data/Code/C#/ReCT/ReCT/ReCT.csproj",
         "projectName": "ReCT",
-        "projectPath": "/external/GitRepos/ReCT/ReCT/ReCT.csproj",
+        "projectPath": "/mnt/data/Code/C#/ReCT/ReCT/ReCT.csproj",
         "packagesPath": "/home/redcube/.nuget/packages/",
-        "outputPath": "/external/GitRepos/ReCT/ReCT/obj/",
+        "outputPath": "/mnt/data/Code/C#/ReCT/ReCT/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/redcube/.nuget/NuGet/NuGet.Config"
@@ -63,7 +63,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.203/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.400/RuntimeIdentifierGraph.json"
         }
       }
     }

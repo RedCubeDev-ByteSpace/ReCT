@@ -25,5 +25,6 @@ namespace ReCT.CodeAnalysis.Symbols
         public bool IsOverride { get; }
         public ImmutableArray<ParameterSymbol> Parameters { get; }
         public TypeSymbol Type { get; }
+		public ReCT.CodeAnalysis.Binding.BoundScope scope;
     }
 }

@@ -55,6 +55,7 @@ namespace ReCT.CodeAnalysis
         public ImmutableArray<Package.Package> Packages => Binder._packageNamespaces.ToImmutableArray();
         public ImmutableArray<EnumSymbol> Enums => GlobalScope.Enums;
         public ImmutableArray<string> UsingPackages => Binder._usingPackages.ToImmutableArray();
+        public ImmutableDictionary<string, string> Aliases => Binder._packageAliases.ToImmutableDictionary<string, string>();
 
         public static bool PrintDebugMessages = true;
 
@@ -147,6 +148,11 @@ namespace ReCT.CodeAnalysis
                 return;
             body.WriteTo(writer);
         }
+
+		public void PrepareProgram()
+		{
+			GetProgram();
+		}
 
         public ImmutableArray<Diagnostic> Emit(string moduleName, string[] references, string outputPath)
         {

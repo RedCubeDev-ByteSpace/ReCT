@@ -9,7 +9,7 @@ using Mono.Cecil;
 
 namespace ReCT.CodeAnalysis
 {
-    internal sealed class DiagnosticBag : IEnumerable<Diagnostic>
+    public sealed class DiagnosticBag : IEnumerable<Diagnostic>
     {
         private readonly List<Diagnostic> _diagnostics = new List<Diagnostic>();
 

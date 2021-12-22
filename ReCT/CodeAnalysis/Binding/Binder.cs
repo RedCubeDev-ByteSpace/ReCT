@@ -9,7 +9,7 @@ using ReCT.CodeAnalysis.Text;
 
 namespace ReCT.CodeAnalysis.Binding
 {
-    internal sealed class Binder
+    sealed class Binder
     {
         public static DiagnosticBag _diagnostics = new DiagnosticBag();
         private readonly bool _isScript;
@@ -208,6 +208,8 @@ namespace ReCT.CodeAnalysis.Binding
                     var body = (BoundBlockStatement)binder.BindStatement(fs.Declaration.Body);
                     var loweredBody = Lowerer.Lower(fs, body);
 
+					fs.scope = ((BoundBlockStatement)body).Scope;
+
                     if (fs.Type != TypeSymbol.Void && !ControlFlowGraph.AllPathsReturn(loweredBody))
                         Binder._diagnostics.ReportAllPathsMustReturn(fs.Declaration.Identifier.Location);
 
@@ -223,6 +225,8 @@ namespace ReCT.CodeAnalysis.Binding
                     var body = binder.BindStatement(function.Declaration.Body);
                     var loweredBody = Lowerer.Lower(function, body);
 
+					function.scope = ((BoundBlockStatement)body).Scope;
+
                     if (function.Type != TypeSymbol.Void && !ControlFlowGraph.AllPathsReturn(loweredBody))
                         Binder._diagnostics.ReportAllPathsMustReturn(function.Declaration.Identifier.Location);
 
@@ -236,6 +240,8 @@ namespace ReCT.CodeAnalysis.Binding
                 var binder = new Binder(isScript, parentScope, function);
                 var body = binder.BindStatement(function.Declaration.Body);
                 var loweredBody = Lowerer.Lower(function, body);
+				
+				function.scope = ((BoundBlockStatement)body).Scope;
 
                 if (function.Type != TypeSymbol.Void && !ControlFlowGraph.AllPathsReturn(loweredBody))
                     Binder._diagnostics.ReportAllPathsMustReturn(function.Declaration.Identifier.Location);
@@ -795,9 +801,10 @@ namespace ReCT.CodeAnalysis.Binding
                 statements.Add(statement);
             }
 
+			var blockScope = _scope;
             _scope = _scope.Parent;
 
-            return new BoundBlockStatement(statements.ToImmutable());
+            return new BoundBlockStatement(statements.ToImmutable(), blockScope);
         }
 
         private BoundStatement BindVariableDeclaration(VariableDeclarationSyntax syntax)

@@ -78,3 +78,13 @@ E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csproj.CoreCompileInputs.cac
 E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.dll
 E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.pdb
 E:/GitRepos/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csprojAssemblyReference.cache
+/mnt/data/Code/C#/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.deps.json
+/mnt/data/Code/C#/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.dll
+/mnt/data/Code/C#/ReCT/ReCT/bin/Debug/netstandard2.0/ReCT.pdb
+/mnt/data/Code/C#/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csproj.AssemblyReference.cache
+/mnt/data/Code/C#/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.GeneratedMSBuildEditorConfig.editorconfig
+/mnt/data/Code/C#/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfoInputs.cache
+/mnt/data/Code/C#/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.AssemblyInfo.cs
+/mnt/data/Code/C#/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.csproj.CoreCompileInputs.cache
+/mnt/data/Code/C#/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.dll
+/mnt/data/Code/C#/ReCT/ReCT/obj/Debug/netstandard2.0/ReCT.pdb
