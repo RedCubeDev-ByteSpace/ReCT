@@ -483,6 +483,7 @@ namespace ReCT
 			data.Globals = globals.ToArray();
 			data.Functions = functions.ToArray();
 			data.Classes = classes.ToArray();
+			data.Enums = enums.ToArray();
 			data.Packages = packages.ToArray();
 
 			data.UsingPackageNamespaces = compilation.UsingPackages.ToArray();
@@ -530,6 +531,7 @@ namespace ReCT
 		{
 			var function = new ReCTFunction();
 			function.Name = fnc.Name;
+			function.Returntype = fnc.Type.Name;
 
 			List<ReCTVariable> variables = new List<ReCTVariable>();
 
@@ -605,6 +607,7 @@ namespace ReCT
 	class ReCTFunction
 	{
 		public string Name { get; set; }
+		public string Returntype { get; set; }
 		public ReCTVariable[] Variables{ get; set; }
 	}
 
@@ -653,6 +656,7 @@ namespace ReCT
 		public ReCTGlobal[] Globals { get; set; }
 		public ReCTFunction[] Functions { get; set; }
 		public ReCTClass[] Classes { get; set; }
+		public ReCTEnum[] Enums { get; set; }
 		public ReCTPackage[] Packages { get; set; }
 
 		public string[] UsingPackageNamespaces {get; set; }
