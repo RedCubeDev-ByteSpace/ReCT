@@ -456,7 +456,8 @@ namespace ReCT
 			List<ReCTGlobal>   globals   = new List<ReCTGlobal>();
 			List<ReCTFunction> functions = new List<ReCTFunction>();
 			List<ReCTClass>    classes   = new List<ReCTClass>();
-			List<ReCTPackage>  packages   = new List<ReCTPackage>();
+			List<ReCTEnum>     enums     = new List<ReCTEnum>();
+			List<ReCTPackage>  packages  = new List<ReCTPackage>();
 
 			// globals
 			foreach(var glb in compilation.Variables)
@@ -470,6 +471,10 @@ namespace ReCT
 			foreach(var cls in compilation.Classes)
 				CollectClassData(ref classes, ref globals, cls);
 
+			// enums
+			foreach(var enm in compilation.Enums)
+				CollectEnumData(ref enums, ref globals, enm);
+
 			// packages
 			foreach(var pck in compilation.Packages)
 				CollectPackageData(ref packages, pck, compilation);
@@ -479,6 +484,8 @@ namespace ReCT
 			data.Functions = functions.ToArray();
 			data.Classes = classes.ToArray();
 			data.Packages = packages.ToArray();
+
+			data.UsingPackageNamespaces = compilation.UsingPackages.ToArray();
 
 
 			// jsonizing
@@ -556,6 +563,22 @@ namespace ReCT
 			classes.Add(_class);
 		}
 
+		static void CollectEnumData(ref List<ReCTEnum> enums, ref List<ReCTGlobal> globals, EnumSymbol enm)
+		{
+			var _enum = new ReCTEnum();
+			_enum.Name = enm.Name;
+
+			List<ReCTGlobal> properties = new List<ReCTGlobal>();
+
+			foreach(KeyValuePair<string, int> val in enm.Values)
+				properties.Add(new ReCTGlobal(){ Name = val.Key, Datatype = "int" });
+				
+
+			_enum.Properties = properties.ToArray();
+
+			enums.Add(_enum);
+		}
+
 		static void CollectVariableData(ref List<ReCTVariable> variables, ref List<ReCTGlobal> globals, VariableSymbol variable, bool ignoreGlobals = false)
 		{
 			if (!variable.IsGlobal)
@@ -594,6 +617,13 @@ namespace ReCT
 	}
 
 	[System.Serializable]
+	class ReCTEnum
+	{
+		public string Name { get; set; }
+		public ReCTGlobal[] Properties { get; set; }
+	}
+
+	[System.Serializable]
 	class ReCTPackage
 	{
 		public string Name { get; set; }
@@ -624,5 +654,7 @@ namespace ReCT
 		public ReCTFunction[] Functions { get; set; }
 		public ReCTClass[] Classes { get; set; }
 		public ReCTPackage[] Packages { get; set; }
+
+		public string[] UsingPackageNamespaces {get; set; }
 	}
 }
