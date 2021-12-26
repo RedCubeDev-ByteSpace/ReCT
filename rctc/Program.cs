@@ -19,15 +19,6 @@ namespace ReCT
     {
         private static void Main(string[] args)
         {
-            if (args.Length == 0 || args[0] != "run")
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("-------------------------------");
-                Console.WriteLine("ReCT Standalone Compiler " + info.Version);
-                Console.WriteLine("-------------------------------\n");
-                Console.ForegroundColor = ConsoleColor.White;
-            }
-
             string outputPath = default;
             string moduleName = default;
 
@@ -51,9 +42,19 @@ namespace ReCT
                 { "m=", "The {name} of the module", v => moduleName = v },
                 { "f", "Use IDE compiler Flags", v => useFlags = true },
                 { "d", "Dry run and return JSON compilation data", v => dryRun = true },
+                { "v", "Display version of rctc", v => { Console.WriteLine(ReCT.info.Version); Environment.Exit(0); } },
                 { "?|h|help", "Prints help", v => helpRequested = true },
                 { "<>", v => sourcePaths.Add(v) }
             };
+
+			if (args.Length == 0 || args[0] != "run")
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine("ReCT Standalone Compiler " + info.Version);
+                Console.WriteLine("-------------------------------\n");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
 
             if (args.Length != 0 && args[0] == "create") {
                 projectActions(args);
@@ -454,14 +455,15 @@ namespace ReCT
 			var data = new ReturnCompilationData();
 
 			List<ReCTGlobal>   globals   = new List<ReCTGlobal>();
+			List<ReCTVariable> variables = new List<ReCTVariable>();
 			List<ReCTFunction> functions = new List<ReCTFunction>();
 			List<ReCTClass>    classes   = new List<ReCTClass>();
 			List<ReCTEnum>     enums     = new List<ReCTEnum>();
 			List<ReCTPackage>  packages  = new List<ReCTPackage>();
 
-			// globals
-			foreach(var glb in compilation.Variables)
-				CollectGlobalData(ref globals, glb);
+			// globals + main variables
+			foreach(var variable in compilation.Variables)
+				CollectVariableData(ref variables, ref globals, variable);
 
 			// function data
 			foreach(var fnc in compilation.Functions)
@@ -481,6 +483,7 @@ namespace ReCT
 
 			// finalizing
 			data.Globals = globals.ToArray();
+			data.Variable = variables.ToArray();
 			data.Functions = functions.ToArray();
 			data.Classes = classes.ToArray();
 			data.Enums = enums.ToArray();
@@ -540,6 +543,10 @@ namespace ReCT
 				foreach(var vr in fnc.scope.GetDeclaredVariables())
 					CollectVariableData(ref variables, ref globals, vr);
 			}
+
+			foreach(var param in fnc.Parameters)
+				variables.Add(new ReCTVariable(){ Name = param.Name, Datatype = param.Type.Name});
+
 
 			function.Variables = variables.ToArray();
 			functions.Add(function);
@@ -653,7 +660,9 @@ namespace ReCT
 	[System.Serializable]
 	class ReturnCompilationData
 	{
+
 		public ReCTGlobal[] Globals { get; set; }
+		public ReCTVariable[] Variable { get; set; }
 		public ReCTFunction[] Functions { get; set; }
 		public ReCTClass[] Classes { get; set; }
 		public ReCTEnum[] Enums { get; set; }
