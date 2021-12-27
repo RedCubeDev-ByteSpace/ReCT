@@ -9,7 +9,7 @@ using ReCT.CodeAnalysis.Text;
 
 namespace ReCT.IO
 {
-    public static class TextWriterExtensions
+	public static class TextWriterExtensions
     {
         private static bool IsConsole(this TextWriter writer)
         {
@@ -87,7 +87,7 @@ namespace ReCT.IO
             writer.ResetColor();
         }
 
-        public static void WriteDiagnostics(this TextWriter writer, IEnumerable<Diagnostic> diagnostics)
+        public static void WriteDiagnostics(this TextWriter writer, IEnumerable<Diagnostic> diagnostics, ReCTAttachment[] attachments)
         {
             foreach (var diagnostic in diagnostics.Where(d => d.Location.Text == null))
             {
@@ -102,20 +102,46 @@ namespace ReCT.IO
                                                   .ThenBy(d => d.Location.Span.Length))
             {
                 var text = diagnostic.Location.Text;
-                var fileName = diagnostic.Location.FileName;
                 var startLine = diagnostic.Location.StartLine + 1;
                 var startCharacter = diagnostic.Location.StartCharacter + 1;
-                var endLine = diagnostic.Location.EndLine + 1;
-                var endCharacter = diagnostic.Location.EndCharacter + 1;
+                //var endLine = diagnostic.Location.EndLine + 1;
+                //var endCharacter = diagnostic.Location.EndCharacter + 1;
 
                 var span = diagnostic.Location.Span;
                 var lineIndex = text.GetLineIndex(span.Start);
                 var line = text.Lines[lineIndex];
 
+
+                var attachment = "";
+
+				foreach(var att in attachments)
+					if (span.Start >= att.startingIndex && span.End < att.startingIndex + att.Length)
+					{
+						attachment = "[File '" + att.Name + "']\n";
+						startLine = att.Code.Substring(0, span.Start - att.startingIndex).Split('\n').Length;
+						break;
+					}
+
+				// if we arent inside of an attachment -> adjust line count
+				if (attachment == "")
+				{
+					int goBackBy = 0;
+					int attLines = 0;
+					foreach(var att in attachments)
+						if (att.startingIndex < span.Start)
+						{
+							goBackBy += att.Lines;
+							attLines++;
+						}
+
+					startLine = startLine - goBackBy + attLines;
+				}
+
+
                 writer.WriteLine();
 
                 writer.SetForeground(ConsoleColor.DarkRed);
-                writer.Write($"{fileName}({startLine},{startCharacter},{endLine},{endCharacter}): ");
+                writer.Write($"{attachment}(L: {startLine}; C: {startCharacter}): ");
                 writer.WriteLine(diagnostic);
                 writer.ResetColor();
 

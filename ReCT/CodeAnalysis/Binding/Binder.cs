@@ -1451,7 +1451,6 @@ namespace ReCT.CodeAnalysis.Binding
                     bac.Class = classsym.ParentSym;
                 }
 
-				Console.WriteLine(symbol);
 
                 if (symbol == null || !(symbol is VariableSymbol))
                 {

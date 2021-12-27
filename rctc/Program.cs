@@ -26,6 +26,7 @@ namespace ReCT
             bool useFlags = false;
 
 			bool dryRun = false;
+			bool jsonError = false;
 
             List<string> referencePaths = new List<string>();
             List<string> sourcePaths = new List<string>();
@@ -42,6 +43,7 @@ namespace ReCT
                 { "m=", "The {name} of the module", v => moduleName = v },
                 { "f", "Use IDE compiler Flags", v => useFlags = true },
                 { "d", "Dry run and return JSON compilation data", v => dryRun = true },
+                { "je", "Return JSON error data", v => jsonError = true },
                 { "v", "Display version of rctc", v => { Console.WriteLine(ReCT.info.Version); Environment.Exit(0); } },
                 { "?|h|help", "Prints help", v => helpRequested = true },
                 { "<>", v => sourcePaths.Add(v) }
@@ -103,6 +105,8 @@ namespace ReCT
             Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 
             SyntaxTree[] syntaxTrees = new SyntaxTree[sourcePaths.Count];
+			List<ReCTAttachment> attachments = new List<ReCTAttachment>();
+			string code = "";
 
             for (int pathIndex = 0; pathIndex < sourcePaths.Count; pathIndex++)
             {
@@ -114,12 +118,13 @@ namespace ReCT
                     continue;
                 }
 
-                string code = File.ReadAllText(sourcePaths[pathIndex]);
+                code = File.ReadAllText(sourcePaths[pathIndex]);
+
 
                 if (useFlags)
                 {
                     Console.WriteLine($"Evaluating Flags for file '{Path.GetFileName(sourcePaths[pathIndex])}' ...");
-                    evaluateFlags(ref code, ref filesToCopy, ref foldersToCopy, sourcePaths[pathIndex]);
+                    attachments.AddRange(evaluateFlags(ref code, ref filesToCopy, ref foldersToCopy, sourcePaths[pathIndex]));
                 }
                 
                 SyntaxTree syntaxTree = SyntaxTree.Parse(code);
@@ -128,9 +133,14 @@ namespace ReCT
 
                 if (parserDiagnostics.Length != 0)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Error.WriteDiagnostics(parserDiagnostics);
-                    Console.ForegroundColor = ConsoleColor.White;
+					if (jsonError)
+						outputJSONDiagnostics(parserDiagnostics, attachments.ToArray());
+					else
+					{
+						Console.ForegroundColor = ConsoleColor.Red;
+						Console.Error.WriteDiagnostics(parserDiagnostics, attachments.ToArray());
+						Console.ForegroundColor = ConsoleColor.White;
+					}
                     return;
                 }
 
@@ -161,9 +171,14 @@ namespace ReCT
 
             if (diagnostics.Length != 0)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Error.WriteDiagnostics(diagnostics);
-                Console.ForegroundColor = ConsoleColor.White;
+				if (jsonError)
+					outputJSONDiagnostics(diagnostics, attachments.ToArray());
+				else
+				{
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.Error.WriteDiagnostics(diagnostics, attachments.ToArray());
+					Console.ForegroundColor = ConsoleColor.White;
+				}
                 return;
             }
             
@@ -387,9 +402,11 @@ namespace ReCT
             references.Add(location + "/System Dotnet Assemblies/System.Threading.Thread.dll");
         }
 
-        static void evaluateFlags(ref string code, ref List<string> filesToCopy, ref List<string> foldersToCopy, string inPath)
+        static List<ReCTAttachment> evaluateFlags(ref string code, ref List<string> filesToCopy, ref List<string> foldersToCopy, string inPath)
         {
             Console.WriteLine("Evaluating Flags...");
+
+			List<ReCTAttachment> attachments = new List<ReCTAttachment>();
 
             var lookingforfile = "";
             try
@@ -402,11 +419,30 @@ namespace ReCT
                     neededFile = matches[0].Value;
                     lookingforfile = neededFile;
 
+					// new attachment object
+					ReCTAttachment attachment = new ReCTAttachment();
+
+					// set name of attachment
+					attachment.Name = Path.GetFileName(lookingforfile);
+
+					// figure out starting character
+					attachment.startingIndex = matches[0].Index - 9;
+
+
                     if (!Path.IsPathRooted(lookingforfile))
                         lookingforfile = Path.GetDirectoryName(inPath) + "/" + neededFile;
 
                     var codeFromFile = File.ReadAllText(lookingforfile);
+
+					// set length of attatchment
+					attachment.Code = codeFromFile;
+					attachment.Length = codeFromFile.Length;
+					attachment.Lines = codeFromFile.Split("\n").Length;
+
                     code = code.Replace($"#attach(\"{neededFile}\")", codeFromFile);
+
+					// add attachment to the pile
+					attachments.Add(attachment);
                 }
             }
             catch
@@ -414,7 +450,7 @@ namespace ReCT
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"[L: ?, C: ?] Could not find attachment file '{lookingforfile}'!");
                 Console.ForegroundColor = ConsoleColor.White;
-                return;
+                return attachments;
             }
             
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -448,7 +484,89 @@ namespace ReCT
                     code = code.Replace($"#copy(\"{matches[i].Value}\")", "");
                 }
             }
+
+			return attachments;
         }
+
+		static void outputJSONDiagnostics(IEnumerable<Diagnostic> diagnostics, ReCTAttachment[] attachments)
+		{
+			List<ReCTError> errors = new List<ReCTError>();
+
+			foreach (var diagnostic in diagnostics.Where(d => d.Location.Text == null))
+            {
+				ReCTError newError = new ReCTError()
+				{
+					ErrorMessage = diagnostic.Message
+				};
+				errors.Add(newError);
+            }
+
+            foreach (var diagnostic in diagnostics.Where(d => d.Location.Text != null)
+                                                  .OrderBy(d => d.Location.FileName)
+                                                  .ThenBy(d => d.Location.Span.Start)
+                                                  .ThenBy(d => d.Location.Span.Length))
+            {
+                var text = diagnostic.Location.Text;
+                var startLine = diagnostic.Location.StartLine + 1;
+                var startCharacter = diagnostic.Location.StartCharacter + 1;
+				var endLine = diagnostic.Location.EndLine + 1;
+                var endCharacter = diagnostic.Location.EndCharacter + 1;
+
+				var lineDifference = endLine - startLine;
+
+                var span = diagnostic.Location.Span;
+                var lineIndex = text.GetLineIndex(span.Start);
+                var line = text.Lines[lineIndex];
+
+
+                var attachment = "";
+
+				foreach(var att in attachments)
+					if (span.Start >= att.startingIndex && span.End < att.startingIndex + att.Length)
+					{
+						attachment = "[File '" + att.Name + "']\n";
+						startLine = att.Code.Substring(0, span.Start - att.startingIndex).Split('\n').Length;
+						break;
+					}
+
+				// if we arent inside of an attachment -> adjust line count
+				if (attachment == "")
+				{
+					int goBackBy = 0;
+					int attLines = 0;
+					foreach(var att in attachments)
+						if (att.startingIndex < span.Start)
+						{
+							goBackBy += att.Lines;
+							attLines++;
+						}
+
+					startLine = startLine - goBackBy + attLines;
+				}
+
+
+				ReCTError newError = new ReCTError()
+				{
+					ErrorMessage = diagnostic.Message,
+					Attachment   = attachment,
+
+					startLine    = startLine,
+					startChar    = startCharacter,
+
+					endLine      = startLine + lineDifference,
+					endChar      = endCharacter
+
+				};
+				errors.Add(newError);
+            }
+
+			ReCTErrorData errorData = new ReCTErrorData();
+			errorData.Errors = errors.ToArray();
+
+			// jsonizing
+			Console.WriteLine("\nERRDATA");
+			Console.WriteLine(JsonSerializer.Serialize(errorData));
+		}
 
 		static void ReturnCompilationData(Compilation compilation)
 		{
@@ -669,5 +787,22 @@ namespace ReCT
 		public ReCTPackage[] Packages { get; set; }
 
 		public string[] UsingPackageNamespaces {get; set; }
+	}
+
+	[System.Serializable]
+	class ReCTError
+	{
+		public string Attachment {get; set;}
+		public string ErrorMessage {get; set;}
+		public int startLine {get; set;}
+		public int startChar {get; set;}
+		public int endLine {get; set;}
+		public int endChar {get; set;}
+	}
+
+	[System.Serializable]
+	class ReCTErrorData
+	{
+		public ReCTError[] Errors {get; set;}
 	}
 }
