@@ -107,6 +107,7 @@ namespace ReCT
             SyntaxTree[] syntaxTrees = new SyntaxTree[sourcePaths.Count];
 			List<ReCTAttachment> attachments = new List<ReCTAttachment>();
 			string code = "";
+			string mainCode = "";
 
             for (int pathIndex = 0; pathIndex < sourcePaths.Count; pathIndex++)
             {
@@ -119,7 +120,7 @@ namespace ReCT
                 }
 
                 code = File.ReadAllText(sourcePaths[pathIndex]);
-
+				mainCode = code;
 
                 if (useFlags)
                 {
@@ -134,7 +135,7 @@ namespace ReCT
                 if (parserDiagnostics.Length != 0)
                 {
 					if (jsonError)
-						outputJSONDiagnostics(parserDiagnostics, attachments.ToArray());
+						outputJSONDiagnostics(parserDiagnostics, mainCode, attachments.ToArray());
 					else
 					{
 						Console.ForegroundColor = ConsoleColor.Red;
@@ -172,7 +173,7 @@ namespace ReCT
             if (diagnostics.Length != 0)
             {
 				if (jsonError)
-					outputJSONDiagnostics(diagnostics, attachments.ToArray());
+					outputJSONDiagnostics(diagnostics, mainCode, attachments.ToArray());
 				else
 				{
 					Console.ForegroundColor = ConsoleColor.Red;
@@ -488,7 +489,7 @@ namespace ReCT
 			return attachments;
         }
 
-		static void outputJSONDiagnostics(IEnumerable<Diagnostic> diagnostics, ReCTAttachment[] attachments)
+		static void outputJSONDiagnostics(IEnumerable<Diagnostic> diagnostics, string mainCode, ReCTAttachment[] attachments)
 		{
 			List<ReCTError> errors = new List<ReCTError>();
 
@@ -520,12 +521,15 @@ namespace ReCT
 
 
                 var attachment = "";
+				ReCTAttachment attachmentObject = null;
 
 				foreach(var att in attachments)
 					if (span.Start >= att.startingIndex && span.End < att.startingIndex + att.Length)
 					{
 						attachment = "[File '" + att.Name + "']\n";
 						startLine = att.Code.Substring(0, span.Start - att.startingIndex).Split('\n').Length;
+						endLine = startLine + lineDifference;
+						attachmentObject = att;
 						break;
 					}
 
@@ -542,8 +546,47 @@ namespace ReCT
 						}
 
 					startLine = startLine - goBackBy + attLines;
+					endLine = startLine + lineDifference;
 				}
 
+				// figure out start and end index
+				String code = mainCode;
+				if (attachmentObject != null)
+					code = attachmentObject.Code;
+
+				int startingIndex = -1;
+				int endingIndex = -1;
+
+				int lineNum = 1;
+				int charNum = 0;
+
+				//Console.WriteLine("-[ " + diagnostic.Message + " ]--------");
+
+				for (int i = 0; i < code.Length; i++)
+				{
+					charNum++;
+
+					if (code[i] == '\n') 
+					{
+						// in case the end is in some unreachable location but still this line
+						if (lineNum == endLine)
+							endingIndex = i - 1;
+
+						lineNum++;
+						charNum = 1;
+					}
+
+					if (lineNum == startLine && charNum == startCharacter)
+						startingIndex = i;
+
+					if (lineNum == endLine && charNum == endCharacter)
+						endingIndex = i;
+
+					//Console.WriteLine("LINE: " + lineNum + "; ENDLINE: " + endLine + "; ENDCHAR: " + endCharacter + "; CHAR: " + i);
+				}
+
+				if (startingIndex != -1 && endingIndex == -1)
+					endingIndex = startingIndex + 1;
 
 				ReCTError newError = new ReCTError()
 				{
@@ -553,8 +596,11 @@ namespace ReCT
 					startLine    = startLine,
 					startChar    = startCharacter,
 
-					endLine      = startLine + lineDifference,
-					endChar      = endCharacter
+					endLine      = endLine,
+					endChar      = endCharacter,
+
+					startIndex   = startingIndex,
+					endIndex     = endingIndex
 
 				};
 				errors.Add(newError);
@@ -798,6 +844,8 @@ namespace ReCT
 		public int startChar {get; set;}
 		public int endLine {get; set;}
 		public int endChar {get; set;}
+		public int startIndex {get; set;}
+		public int endIndex {get; set;}
 	}
 
 	[System.Serializable]
