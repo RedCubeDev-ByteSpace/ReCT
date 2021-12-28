@@ -701,6 +701,7 @@ namespace ReCT
 			function.Returntype = fnc.Type.Name;
 
 			List<ReCTVariable> variables = new List<ReCTVariable>();
+			List<ReCTVariable> parameters = new List<ReCTVariable>();
 
 			if (fnc.scope != null)
 			{
@@ -709,10 +710,12 @@ namespace ReCT
 			}
 
 			foreach(var param in fnc.Parameters)
-				variables.Add(new ReCTVariable(){ Name = param.Name, Datatype = param.Type.Name});
+				parameters.Add(new ReCTVariable(){ Name = param.Name, Datatype = param.Type.Name});
 
 
+			variables.AddRange(parameters);
 			function.Variables = variables.ToArray();
+			function.Parameters = parameters.ToArray();
 			functions.Add(function);
 		}
 
@@ -780,6 +783,7 @@ namespace ReCT
 		public string Name { get; set; }
 		public string Returntype { get; set; }
 		public ReCTVariable[] Variables{ get; set; }
+		public ReCTVariable[] Parameters{ get; set; }
 	}
 
 	[System.Serializable]
