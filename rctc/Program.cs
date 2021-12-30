@@ -526,7 +526,7 @@ namespace ReCT
 				foreach(var att in attachments)
 					if (span.Start >= att.startingIndex && span.End < att.startingIndex + att.Length)
 					{
-						attachment = "[File '" + att.Name + "']\n";
+						attachment = att.Name;
 						startLine = att.Code.Substring(0, span.Start - att.startingIndex).Split('\n').Length;
 						endLine = startLine + lineDifference;
 						attachmentObject = att;
