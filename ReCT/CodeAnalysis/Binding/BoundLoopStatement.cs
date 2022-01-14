@@ -1,6 +1,6 @@
 namespace ReCT.CodeAnalysis.Binding
 {
-    internal abstract class BoundLoopStatement : BoundStatement
+    public abstract class BoundLoopStatement : BoundStatement
     {
         protected BoundLoopStatement(BoundLabel breakLabel, BoundLabel continueLabel)
         {

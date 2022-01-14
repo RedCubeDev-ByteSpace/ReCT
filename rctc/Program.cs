@@ -629,6 +629,10 @@ namespace ReCT
 			foreach(var variable in compilation.Variables)
 				CollectVariableData(ref variables, ref globals, variable);
 
+			// recursive megic
+			if (compilation.MainFunction != null && compilation.MainFunction.block != null && compilation.MainFunction.block is BoundBlockStatement bbs)
+				variables.AddRange(CollectVariablesInBlockRecursively(bbs, ref globals));
+
 			// function data
 			foreach(var fnc in compilation.Functions)
 				CollectFunctionData(ref functions, ref globals, fnc);
@@ -709,9 +713,9 @@ namespace ReCT
 			//		CollectVariableData(ref variables, ref globals, vr);
 			//}
 
-			if (fnc.block != null)
+			if (fnc.block != null && fnc.block is BoundBlockStatement bbs)
 			{
-				variables.AddRange(CollectVariablesInBlockRecursively(fnc.block, ref globals));
+				variables.AddRange(CollectVariablesInBlockRecursively(bbs, ref globals));
 			}
 
 			foreach(var param in fnc.Parameters)
@@ -727,16 +731,72 @@ namespace ReCT
 		{
 			List<ReCTVariable> variables = new List<ReCTVariable>();
 
-			if (block.Scope == null) return variables;
+			if (block.Scope != null)
+			{
+				foreach(var vr in block.Scope.GetDeclaredVariables())
+					CollectVariableData(ref variables, ref globals, vr);
+			}
 
-			foreach(var vr in block.Scope.GetDeclaredVariables())
-				CollectVariableData(ref variables, ref globals, vr);
 
 			foreach(var statement in block.Statements)
-				if (statement is BoundBlockStatement newBlock)
+			{
+				switch(statement.Kind)
 				{
-					variables.AddRange(CollectVariablesInBlockRecursively(newBlock, ref globals));
+					case BoundNodeKind.BlockStatement:
+						var blockStatement = statement as BoundBlockStatement;
+						
+						if (blockStatement is BoundBlockStatement bbs)
+							variables.AddRange(CollectVariablesInBlockRecursively(bbs, ref globals));
+
+						break;
+
+					case BoundNodeKind.IfStatement:
+						var ifStatement = statement as BoundIfStatement;
+						
+						if (ifStatement.ThenStatement is BoundBlockStatement ifbbs)
+							variables.AddRange(CollectVariablesInBlockRecursively(ifbbs, ref globals));
+
+						break;
+
+					case BoundNodeKind.ForStatement:
+						var forStatement = statement as BoundForStatement;
+						
+						if (forStatement.Body is BoundBlockStatement forbbs)
+							variables.AddRange(CollectVariablesInBlockRecursively(forbbs, ref globals));
+
+						break;
+
+					case BoundNodeKind.FromToStatement:
+						var fromToStatement = statement as BoundFromToStatement;
+						
+						if (fromToStatement.Body is BoundBlockStatement fromTobbs)
+							variables.AddRange(CollectVariablesInBlockRecursively(fromTobbs, ref globals));
+
+						break;
+
+					case BoundNodeKind.WhileStatement:
+						var whileStatement = statement as BoundWhileStatement;
+						
+						if (whileStatement.Body is BoundBlockStatement whilebbs)
+							variables.AddRange(CollectVariablesInBlockRecursively(whilebbs, ref globals));
+
+						break;
+
+					case BoundNodeKind.TryCatchStatement:
+						var tryCatchStatement = statement as BoundTryCatchStatement;
+						
+						if (tryCatchStatement.NormalStatement is BoundBlockStatement trybbs)
+							variables.AddRange(CollectVariablesInBlockRecursively(trybbs, ref globals));
+
+						if (tryCatchStatement.ExceptionStatement is BoundBlockStatement catchbbs)
+							variables.AddRange(CollectVariablesInBlockRecursively(catchbbs, ref globals));
+
+						break;
+
+					default:
+						break;
 				}
+			}
 
 			return variables;
 		}

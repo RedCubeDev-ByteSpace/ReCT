@@ -1,6 +1,6 @@
 namespace ReCT.CodeAnalysis.Binding
 {
-    internal sealed class BoundWhileStatement : BoundLoopStatement
+    public sealed class BoundWhileStatement : BoundLoopStatement
     {
         public BoundWhileStatement(BoundExpression condition, BoundStatement body, BoundLabel breakLabel, BoundLabel continueLabel)
             : base(breakLabel, continueLabel)

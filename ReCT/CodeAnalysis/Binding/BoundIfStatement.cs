@@ -1,6 +1,6 @@
 namespace ReCT.CodeAnalysis.Binding
 {
-    internal sealed class BoundIfStatement : BoundStatement
+    public sealed class BoundIfStatement : BoundStatement
     {
         public BoundIfStatement(BoundExpression condition, BoundStatement thenStatement, BoundStatement elseStatement)
         {

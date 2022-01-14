@@ -1,6 +1,6 @@
 ﻿namespace ReCT.CodeAnalysis.Binding
 {
-    internal sealed class BoundTryCatchStatement : BoundStatement
+    public sealed class BoundTryCatchStatement : BoundStatement
     {
         public BoundTryCatchStatement(BoundStatement normalStatement, BoundStatement exceptionStatement)
         {

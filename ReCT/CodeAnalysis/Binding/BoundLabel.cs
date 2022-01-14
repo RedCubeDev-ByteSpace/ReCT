@@ -1,6 +1,6 @@
 ﻿namespace ReCT.CodeAnalysis.Binding
 {
-    internal sealed class BoundLabel
+    public sealed class BoundLabel
     {
         internal BoundLabel(string name)
         {

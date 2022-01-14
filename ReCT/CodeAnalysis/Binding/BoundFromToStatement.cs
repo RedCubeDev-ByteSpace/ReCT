@@ -2,7 +2,7 @@
 
 namespace ReCT.CodeAnalysis.Binding
 {
-    internal sealed class BoundFromToStatement : BoundLoopStatement
+    public sealed class BoundFromToStatement : BoundLoopStatement
     {
         public BoundFromToStatement(VariableSymbol variable, BoundExpression lowerBound, BoundExpression upperBound, BoundStatement body, BoundLabel breakLabel, BoundLabel continueLabel)
             : base(breakLabel, continueLabel)

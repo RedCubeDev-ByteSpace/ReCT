@@ -169,6 +169,8 @@ namespace ReCT.CodeAnalysis.Binding
                     else
                     {
                         mainFunction = new FunctionSymbol("main", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.Void, null);
+						var bbs = new BoundBlockStatement(statements.ToImmutable());
+						mainFunction.block = bbs;
                     }
                 }
             }
@@ -209,7 +211,7 @@ namespace ReCT.CodeAnalysis.Binding
                     var loweredBody = Lowerer.Lower(fs, body);
 
 					fs.scope = ((BoundBlockStatement)body).Scope;
-					fs.block = (BoundBlockStatement)body;
+					fs.block = body;
 
                     if (fs.Type != TypeSymbol.Void && !ControlFlowGraph.AllPathsReturn(loweredBody))
                         Binder._diagnostics.ReportAllPathsMustReturn(fs.Declaration.Identifier.Location);
@@ -227,7 +229,7 @@ namespace ReCT.CodeAnalysis.Binding
                     var loweredBody = Lowerer.Lower(function, body);
 
 					function.scope = ((BoundBlockStatement)body).Scope;
-					function.block = (BoundBlockStatement)body;
+					function.block = body;
 
                     if (function.Type != TypeSymbol.Void && !ControlFlowGraph.AllPathsReturn(loweredBody))
                         Binder._diagnostics.ReportAllPathsMustReturn(function.Declaration.Identifier.Location);
@@ -244,7 +246,7 @@ namespace ReCT.CodeAnalysis.Binding
                 var loweredBody = Lowerer.Lower(function, body);
 				
 				function.scope = ((BoundBlockStatement)body).Scope;
-				function.block = (BoundBlockStatement)body;
+				function.block = body;
 
                 if (function.Type != TypeSymbol.Void && !ControlFlowGraph.AllPathsReturn(loweredBody))
                     Binder._diagnostics.ReportAllPathsMustReturn(function.Declaration.Identifier.Location);
