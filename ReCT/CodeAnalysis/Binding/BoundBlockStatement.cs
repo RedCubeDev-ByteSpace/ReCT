@@ -3,7 +3,7 @@ using System.IO;
 
 namespace ReCT.CodeAnalysis.Binding
 {
-    internal sealed class BoundBlockStatement : BoundStatement
+    public sealed class BoundBlockStatement : BoundStatement
     {
         public BoundBlockStatement(ImmutableArray<BoundStatement> statements, BoundScope scope = null)
         {

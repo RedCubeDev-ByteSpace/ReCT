@@ -703,10 +703,15 @@ namespace ReCT
 			List<ReCTVariable> variables = new List<ReCTVariable>();
 			List<ReCTVariable> parameters = new List<ReCTVariable>();
 
-			if (fnc.scope != null)
+			//if (fnc.scope != null)
+			//{
+			//	foreach(var vr in fnc.scope.GetDeclaredVariables())
+			//		CollectVariableData(ref variables, ref globals, vr);
+			//}
+
+			if (fnc.block != null)
 			{
-				foreach(var vr in fnc.scope.GetDeclaredVariables())
-					CollectVariableData(ref variables, ref globals, vr);
+				variables.AddRange(CollectVariablesInBlockRecursively(fnc.block, ref globals));
 			}
 
 			foreach(var param in fnc.Parameters)
@@ -717,6 +722,23 @@ namespace ReCT
 			function.Variables = variables.ToArray();
 			function.Parameters = parameters.ToArray();
 			functions.Add(function);
+		}
+		static List<ReCTVariable> CollectVariablesInBlockRecursively(BoundBlockStatement block, ref List<ReCTGlobal> globals)
+		{
+			List<ReCTVariable> variables = new List<ReCTVariable>();
+
+			if (block.Scope == null) return variables;
+
+			foreach(var vr in block.Scope.GetDeclaredVariables())
+				CollectVariableData(ref variables, ref globals, vr);
+
+			foreach(var statement in block.Statements)
+				if (statement is BoundBlockStatement newBlock)
+				{
+					variables.AddRange(CollectVariablesInBlockRecursively(newBlock, ref globals));
+				}
+
+			return variables;
 		}
 
 		static void CollectClassData(ref List<ReCTClass> classes, ref List<ReCTGlobal> globals, ClassSymbol cls)

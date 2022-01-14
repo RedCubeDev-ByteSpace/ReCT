@@ -1,6 +1,6 @@
 namespace ReCT.CodeAnalysis.Binding
 {
-    internal enum BoundNodeKind
+    public enum BoundNodeKind
     {
         // Statements
         BlockStatement,

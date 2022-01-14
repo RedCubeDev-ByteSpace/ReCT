@@ -26,5 +26,6 @@ namespace ReCT.CodeAnalysis.Symbols
         public ImmutableArray<ParameterSymbol> Parameters { get; }
         public TypeSymbol Type { get; }
 		public ReCT.CodeAnalysis.Binding.BoundScope scope;
+		public ReCT.CodeAnalysis.Binding.BoundBlockStatement block;
     }
 }

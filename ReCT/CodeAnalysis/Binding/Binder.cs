@@ -209,6 +209,7 @@ namespace ReCT.CodeAnalysis.Binding
                     var loweredBody = Lowerer.Lower(fs, body);
 
 					fs.scope = ((BoundBlockStatement)body).Scope;
+					fs.block = (BoundBlockStatement)body;
 
                     if (fs.Type != TypeSymbol.Void && !ControlFlowGraph.AllPathsReturn(loweredBody))
                         Binder._diagnostics.ReportAllPathsMustReturn(fs.Declaration.Identifier.Location);
@@ -226,6 +227,7 @@ namespace ReCT.CodeAnalysis.Binding
                     var loweredBody = Lowerer.Lower(function, body);
 
 					function.scope = ((BoundBlockStatement)body).Scope;
+					function.block = (BoundBlockStatement)body;
 
                     if (function.Type != TypeSymbol.Void && !ControlFlowGraph.AllPathsReturn(loweredBody))
                         Binder._diagnostics.ReportAllPathsMustReturn(function.Declaration.Identifier.Location);
@@ -242,6 +244,7 @@ namespace ReCT.CodeAnalysis.Binding
                 var loweredBody = Lowerer.Lower(function, body);
 				
 				function.scope = ((BoundBlockStatement)body).Scope;
+				function.block = (BoundBlockStatement)body;
 
                 if (function.Type != TypeSymbol.Void && !ControlFlowGraph.AllPathsReturn(loweredBody))
                     Binder._diagnostics.ReportAllPathsMustReturn(function.Declaration.Identifier.Location);
