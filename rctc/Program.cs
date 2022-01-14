@@ -647,7 +647,7 @@ namespace ReCT
 
 			// finalizing
 			data.Globals = globals.ToArray();
-			data.Variable = variables.ToArray();
+			data.Variables = variables.ToArray();
 			data.Functions = functions.ToArray();
 			data.Classes = classes.ToArray();
 			data.Enums = enums.ToArray();
@@ -830,7 +830,7 @@ namespace ReCT
 	{
 
 		public ReCTGlobal[] Globals { get; set; }
-		public ReCTVariable[] Variable { get; set; }
+		public ReCTVariable[] Variables { get; set; }
 		public ReCTFunction[] Functions { get; set; }
 		public ReCTClass[] Classes { get; set; }
 		public ReCTEnum[] Enums { get; set; }
