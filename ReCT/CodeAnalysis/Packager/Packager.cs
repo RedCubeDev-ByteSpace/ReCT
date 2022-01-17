@@ -194,6 +194,8 @@ namespace ReCT.CodeAnalysis.Package
                     return "void";
                 case "thread":
                     return "thread";
+				case "action":
+                    return "action";
                 default:
                     if (netversion.EndsWith("[]"))
                         return netTypeLookup(netversion.Replace("[]", ""), inThisPackage) + "Arr";
