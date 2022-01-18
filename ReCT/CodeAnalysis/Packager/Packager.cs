@@ -202,6 +202,13 @@ namespace ReCT.CodeAnalysis.Package
                     if (inThisPackage.FirstOrDefault(x => x.ToLower() == netversion) != null)
                         return inThisPackage.FirstOrDefault(x => x.ToLower() == netversion);
 
+					foreach(var package in Binder._packageNamespaces)
+					{
+						var type = package.scope.GetDeclaredClasses().FirstOrDefault(x => x.Name.ToLower() == netversion.ToLower());
+						if (type != null)
+							return type.Name;
+					}
+
                     throw new Exception($"Couldnt find .Net type '{netversion}'");
             }
         }
