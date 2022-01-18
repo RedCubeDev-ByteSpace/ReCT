@@ -2145,14 +2145,7 @@ namespace ReCT.CodeAnalysis.Binding
                     if (TypeSymbol.Class == null) TypeSymbol.Class = new Dictionary<ClassSymbol, TypeSymbol>();
                     var type = TypeSymbol.Class.Values.FirstOrDefault(x => x.Name == name);
 					if (type != null) return type;
-
-					foreach(var package in Binder._packageNamespaces)
-					{
-						type = TypeSymbol.Class[package.scope.GetDeclaredClasses().FirstOrDefault(x => x.Name == name)];
-						if (type != null)
-							return type;
-					}
-
+					
                     //if (type == null) throw new Exception($"Couldnt find type '{name}'!");
                     
                     return null;
