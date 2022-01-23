@@ -17,7 +17,7 @@ namespace ReCT
 {
     internal static class Program
     {
-        private static void Main(string[] args)
+        private static int Main(string[] args)
         {
             string outputPath = default;
             string moduleName = default;
@@ -60,12 +60,12 @@ namespace ReCT
 
             if (args.Length != 0 && args[0] == "create") {
                 projectActions(args);
-                return;
+                return 0;
             }
 
             if (args.Length != 0 && args[0] == "run") {
                 projectRun();
-                return;
+                return 0;
             }
 
             options.Parse(args);
@@ -73,7 +73,7 @@ namespace ReCT
             if (helpRequested)
             {
                 options.WriteOptionDescriptions(Console.Out);
-                return;
+                return 0;
             }
 
             if (sourcePaths.Count == 0)
@@ -81,7 +81,7 @@ namespace ReCT
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Error.WriteLine("Error: need at least one source file");
                 Console.ForegroundColor = ConsoleColor.White;
-                return;
+                return -1;
             }
             else
                 Console.WriteLine("Source: " + sourcePaths[0]);
@@ -142,7 +142,7 @@ namespace ReCT
 						Console.Error.WriteDiagnostics(parserDiagnostics, attachments.ToArray());
 						Console.ForegroundColor = ConsoleColor.White;
 					}
-                    return;
+                    return -1;
                 }
 
                 syntaxTrees[pathIndex] = syntaxTree;
@@ -165,7 +165,7 @@ namespace ReCT
 			{
 				compilation.PrepareProgram();
 				ReturnCompilationData(compilation);
-				return;
+				return 0;
 			}
 
             ImmutableArray<Diagnostic> diagnostics = compilation.Emit(moduleName, referencePaths.ToArray(), outputPath);
@@ -180,7 +180,7 @@ namespace ReCT
 					Console.Error.WriteDiagnostics(diagnostics, attachments.ToArray());
 					Console.ForegroundColor = ConsoleColor.White;
 				}
-                return;
+                return -1;
             }
             
             //create runtime config
@@ -235,6 +235,8 @@ namespace ReCT
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("\n=> Compilation Complete!");
             Console.ForegroundColor = ConsoleColor.White;
+
+			return 0;
         }
 
         static void projectRun()
