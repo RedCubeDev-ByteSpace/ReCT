@@ -37,14 +37,6 @@ namespace net
             private StreamReader sr;
             private NetworkStream ns;
 
-			public int ReadTimeout 
-			{
-				set 
-				{
-					ns.ReadTimeout = value;
-				}
-			}
-
             public TCPClient(string ip, int port)
             {
                 client = new TcpClient(ip, port);
@@ -83,6 +75,11 @@ namespace net
             {
                 sw.Flush();
             }
+
+			public void setReadTimeout(int timeout)
+			{
+				ns.ReadTimeout = timeout;
+			}
         }
 
         public class TCPListener
@@ -107,14 +104,6 @@ namespace net
             private StreamWriter sw;
             private StreamReader sr;
             private NetworkStream ns;
-
-			public int ReadTimeout 
-			{
-				set 
-				{
-					ns.ReadTimeout = value;
-				}
-			}
 
             public TCPSocket(object internalTCPData)
             {
@@ -154,6 +143,11 @@ namespace net
             {
                 sw.Flush();
             }
+
+			public void setReadTimeout(int timeout)
+			{
+				ns.ReadTimeout = timeout;
+			}
         }
     }
 }
