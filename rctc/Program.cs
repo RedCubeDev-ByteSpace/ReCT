@@ -24,6 +24,7 @@ namespace ReCT
 
             bool helpRequested = false;
             bool useFlags = false;
+            bool fixStuff = false;
 
 			bool dryRun = false;
 			bool jsonError = false;
@@ -46,6 +47,7 @@ namespace ReCT
                 { "je", "Return JSON error data", v => jsonError = true },
                 { "v", "Display version of rctc", v => { Console.WriteLine(ReCT.info.Version); Environment.Exit(0); } },
                 { "?|h|help", "Prints help", v => helpRequested = true },
+                { "fixEverything|plsFix|removeBugs", "Yoinks all bugs", v => fixStuff = true },
                 { "<>", v => sourcePaths.Add(v) }
             };
 
@@ -69,7 +71,11 @@ namespace ReCT
             }
 
             options.Parse(args);
-
+            
+            if(fixStuff){
+                Console.WriteLine("Fixing ReCT...");
+            }
+            
             if (helpRequested)
             {
                 options.WriteOptionDescriptions(Console.Out);
