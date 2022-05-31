@@ -531,7 +531,7 @@ namespace ReCT.CodeAnalysis.Emit
             foreach (var _class in program.Classes)
             {
                 if (!_class.Key.IsAbstract) continue;
-                var classDefinition = new TypeDefinition(program.Namespace, _class.Key.Name, (_class.Key.IsAbstract ? TypeAttributes.Abstract | TypeAttributes.BeforeFieldInit : (_class.Key.IsStatic ? (TypeAttributes.Abstract | TypeAttributes.Sealed) : 0)) | (_class.Key.IsIncluded ? TypeAttributes.NestedPublic : TypeAttributes.Public), objectType);
+                var classDefinition = new TypeDefinition(program.Namespace, _class.Key.Name, (_class.Key.IsAbstract ? TypeAttributes.Abstract | TypeAttributes.BeforeFieldInit : (_class.Key.IsStatic ? (TypeAttributes.Abstract | TypeAttributes.Sealed) : 0)) | (_class.Key.IsIncluded ? TypeAttributes.NestedPublic : TypeAttributes.Public) | (_class.Key.IsSerializable ? TypeAttributes.Serializable : 0), objectType);
 
                 if (!_class.Key.IsIncluded)
                     _assemblyDefinition.MainModule.Types.Add(classDefinition);
@@ -562,7 +562,7 @@ namespace ReCT.CodeAnalysis.Emit
                 if (_class.Key.ParentSym != null)
                     baseType = _classes[_class.Key.ParentSym];
 
-                var classDefinition = new TypeDefinition(program.Namespace, _class.Key.Name, (_class.Key.IsAbstract ? TypeAttributes.Abstract : (_class.Key.IsStatic ? (TypeAttributes.Abstract | TypeAttributes.Sealed) : 0)) | (_class.Key.IsIncluded ? TypeAttributes.NestedPublic : TypeAttributes.Public) | (baseType != objectType ? TypeAttributes.BeforeFieldInit : 0), baseType);
+                var classDefinition = new TypeDefinition(program.Namespace, _class.Key.Name, (_class.Key.IsAbstract ? TypeAttributes.Abstract : (_class.Key.IsStatic ? (TypeAttributes.Abstract | TypeAttributes.Sealed) : 0)) | (_class.Key.IsIncluded ? TypeAttributes.NestedPublic : TypeAttributes.Public) | (baseType != objectType ? TypeAttributes.BeforeFieldInit : 0) | (_class.Key.IsSerializable ? TypeAttributes.Serializable : 0), baseType);
 
                 if (!_class.Key.IsIncluded)
                     _assemblyDefinition.MainModule.Types.Add(classDefinition);
