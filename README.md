@@ -1,5 +1,5 @@
 # ReCT ![.NET Core](https://github.com/RedCubeDev-ByteSpace/ReCT/workflows/.NET%20Core/badge.svg)
-![ReCT logo](https://bytespace.network/Resources/rectghbanner.png)
+![ReCT logo](https://bytespace.network/res/img/rectghbanner.png)
 ---
 ReCT (Redcubes epic Compiler Thingy) is a compiler written in C# that compiles a language that is also called ReCT. Development started on the 30th of July 2020.
 
